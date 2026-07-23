@@ -56,9 +56,9 @@ function renderOrders(orders, containerId) {
 
         let priceHtml = '';
         if (userRole === 'admin' || userRole === 'super_admin' || (isLoggedIn && order.renter_name === currentUsername)) {
-            priceHtml = `<span class="price-value visible">${order.price || 'Chưa báo giá'}</span>`;
+            priceHtml = `<span style="color: #fff; font-weight: 700; font-size: 0.9rem;">${order.price || 'Chưa báo giá'}</span>`;
         } else {
-            priceHtml = `<span class="price-value hidden" title="Chỉ người đăng đơn và Admin mới xem được giá"><i class="fa-solid fa-lock" style="font-size: 0.8rem; margin-right: 4px;"></i> Ẩn giá</span>`;
+            priceHtml = `<span style="color: #a1a1aa; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;" title="Chỉ người đăng đơn và Admin mới xem được giá"><i class="fa-solid fa-lock"></i> Ẩn giá</span>`;
         }
 
         const card = document.createElement('div');
@@ -66,29 +66,32 @@ function renderOrders(orders, containerId) {
         card.style.animationDelay = `${animDelay}s`;
         card.style.setProperty('--status-color', statusInfo.colorVar);
         
-        let contentHtml = order.content || 'Không có mô tả';
-        if (order.notes) contentHtml += `<br><small style="color:var(--text-muted); margin-top:10px; display:block;">Ghi chú: ${order.notes}</small>`;
+        let contentText = order.content || 'Không có mô tả';
 
         card.innerHTML = `
             <div class="order-header">
                 <div class="booster-info">
-                    <div class="booster-avatar">${avatarInitial}</div>
+                    <div class="booster-avatar" style="border-color: ${statusInfo.colorVar}">${avatarInitial}</div>
                     <div class="booster-details">
-                        <span class="booster-label">Người cày: <strong style="color: var(--text-main);">${order.booster_name || 'Đang chờ...'}</strong></span>
-                        <span class="booster-label" style="margin-top: 2px;">Người thuê: <strong style="color: var(--accent);">${order.renter_name}</strong></span>
-                        <span class="booster-label" style="margin-top: 2px;">Mã đơn: <strong style="color: var(--primary-light);">${order.order_code}</strong></span>
+                        <span class="booster-label">NGƯỜI CÀY: <strong style="color: #fff;">${order.booster_name || 'Đang chờ...'}</strong></span>
+                        <span class="booster-label" style="margin-top: 2px;">NGƯỜI THUÊ: <strong style="color: var(--accent);">${order.renter_name}</strong></span>
+                        <span class="booster-label" style="margin-top: 2px;">MÃ ĐƠN: <strong style="color: var(--primary-light);">${order.order_code}</strong></span>
                         <span class="time-label"><i class="fa-regular fa-clock"></i> ${formatDate(order.created_at)}</span>
                     </div>
                 </div>
                 <div>
-                    <div class="status-badge ${statusInfo.class}" style="border-color:${statusInfo.colorVar}; color:${statusInfo.colorVar}; background: transparent;">
-                        <i class="fa-solid ${statusInfo.icon}"></i> ${statusInfo.text}
+                    <div class="status-badge ${statusInfo.class}" style="border-color:${statusInfo.colorVar}; color:${statusInfo.colorVar}; background: transparent; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.7rem; border-width: 1px; border-style: solid; white-space: nowrap; display: flex; align-items: center; gap: 6px;">
+                        <i class="fa-solid ${statusInfo.icon}" style="font-size: 0.65rem;"></i> ${statusInfo.text.toUpperCase()}
                     </div>
                 </div>
             </div>
-            <div class="order-body">${contentHtml}</div>
-            <div class="order-price-box">
-                <span class="price-label">Giá thanh toán</span>
+            
+            <div class="order-task-content">
+                ${contentText}
+            </div>
+
+            <div class="order-footer">
+                <span style="color: #a1a1aa; font-size: 0.85rem;">Giá thanh toán</span>
                 ${priceHtml}
             </div>
         `;
@@ -122,6 +125,42 @@ async function fetchOrders() {
 
 // Global Setup
 document.addEventListener('DOMContentLoaded', () => {
+
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const userRole = localStorage.getItem('userRole') || 'guest';
+    const currentUsername = localStorage.getItem('username');
+
+    // Setup Global Navbar Profile
+    const navAccountBtn = document.getElementById('navAccountBtn');
+    const navUserProfile = document.getElementById('navUserProfile');
+    const navUsername = document.getElementById('navUsername');
+    const navRole = document.getElementById('navRole');
+    const navAvatarInitials = document.getElementById('navAvatarInitials');
+    
+    if (isLoggedIn && navUserProfile && navAccountBtn) {
+        navAccountBtn.style.display = 'none';
+        navUserProfile.style.display = 'flex';
+        navUsername.textContent = currentUsername || 'User';
+        navAvatarInitials.textContent = (currentUsername || 'U').charAt(0).toUpperCase();
+        let displayRole = 'KHÁCH HÀNG';
+        if(userRole === 'admin') displayRole = 'ADMIN';
+        if(userRole === 'super_admin') displayRole = 'TRÙM CUỐI';
+        navRole.textContent = displayRole;
+    }
+
+    const navLogoutBtn = document.getElementById('navLogoutBtn');
+    if (navLogoutBtn) {
+        navLogoutBtn.addEventListener('click', () => {
+            localStorage.clear();
+            if(supabaseClient) {
+                supabaseClient.auth.signOut().then(() => {
+                    window.location.href = '/';
+                });
+            } else {
+                window.location.href = '/';
+            }
+        });
+    }
 
     // Setup Auth State Listener for Google OAuth & Sync
     if (supabaseClient) {

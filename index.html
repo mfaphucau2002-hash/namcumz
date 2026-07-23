@@ -160,9 +160,9 @@
 <body>
     <!-- Header -->
     <header>
-        <div class="app-container header-wrap">
+        <div class="app-container header-wrap" style="padding: 15px 0;">
             <a href="/" class="logo-section">
-                <span class="logo-text">NAMCUMZ</span>
+                <span class="logo-text" style="font-family: var(--font-main); font-weight: 800; letter-spacing: 2px;">KAZUMI</span>
             </a>
 
             <nav class="navigation">
@@ -172,48 +172,45 @@
                 <a href="/checkscam" class="nav-link scam">
                     <i class="fa-solid fa-shield-virus"></i> Check Scam
                 </a>
-                <a href="/login" class="btn btn-primary" id="loginBtn">
-                    <i class="fa-solid fa-right-to-bracket"></i> Đăng nhập / Đăng ký
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-gamepad"></i> Đơn của tôi
                 </a>
+                <a href="/login" class="nav-link" id="navAccountBtn">
+                    <i class="fa-solid fa-user"></i> Tài khoản
+                </a>
+                
+                <!-- Dynamic User Profile Area (Hidden by default, shown via JS) -->
+                <div id="navUserProfile" style="display: none; align-items: center; gap: 15px; margin-left: 20px;">
+                    <div style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); padding: 5px 15px 5px 5px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.05);">
+                        <div class="nav-avatar" id="navAvatarInitials" style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-gradient); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">A</div>
+                        <div style="display: flex; flex-direction: column; line-height: 1.2;">
+                            <span id="navUsername" style="font-weight: 700; font-size: 0.85rem; color: #fff;">Azrael</span>
+                            <span id="navRole" style="font-size: 0.65rem; font-weight: 800; color: var(--accent); letter-spacing: 0.5px;">BOOSTER</span>
+                        </div>
+                    </div>
+                    <button id="navLogoutBtn" style="background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; transition: 0.2s;">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </div>
             </nav>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="app-container" style="padding-top: 30px; min-height: 70vh;">
-        <div class="hero animate-on-load" style="animation-delay: 0.1s;">
-            <h1>CÁC ĐƠN CÀY</h1>
-            <p>Theo dõi tiến độ cày game của bạn một cách nhanh chóng và bảo mật.</p>
-        </div>
-
-        <!-- Stats -->
-        <div class="stats-row animate-on-load" id="statsRow" style="animation-delay: 0.2s;">
-            <div class="stat-card" style="border-color: rgba(0, 245, 212, 0.25);">
-                <div class="stat-lbl">Tổng đơn</div>
-                <div class="stat-val" style="color: var(--accent);" id="stat-total">0</div>
-            </div>
-            <div class="stat-card" style="border-color: rgba(255, 159, 28, 0.25);">
-                <div class="stat-lbl">Tạm dừng</div>
-                <div class="stat-val" style="color: var(--status-tam-dung);" id="stat-pause">0</div>
-            </div>
-            <div class="stat-card" style="border-color: rgba(255, 183, 3, 0.25);">
-                <div class="stat-lbl">Đang cày</div>
-                <div class="stat-val" style="color: var(--status-dang-cay);" id="stat-playing">0</div>
-            </div>
-            <div class="stat-card" style="border-color: rgba(56, 176, 0, 0.25);">
-                <div class="stat-lbl">Đã hoàn thành</div>
-                <div class="stat-val" style="color: var(--status-hoan-thanh);" id="stat-done">0</div>
-            </div>
+    <main class="app-container" style="padding-top: 40px; min-height: 70vh;">
+        <!-- Clean Heading -->
+        <div class="hero animate-on-load" style="animation-delay: 0.1s; text-align: left; padding: 0 0 30px 0;">
+            <h1 style="font-family: var(--font-main); font-weight: 800; font-size: 2.5rem; text-transform: uppercase; background: -webkit-linear-gradient(45deg, #fff, #a1a1aa); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">CÁC ĐƠN CÀY</h1>
         </div>
 
         <!-- Controls -->
-        <div class="controls-bar animate-on-load" style="animation-delay: 0.3s;">
-            <div class="search-box">
+        <div class="controls-bar animate-on-load" style="animation-delay: 0.2s; display: flex; gap: 20px; align-items: center; margin-bottom: 40px;">
+            <div class="search-box" style="flex: 1; margin-bottom: 0;">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="searchInput" placeholder="Nhập tên người cày hoặc người thuê để tìm kiếm...">
+                <input type="text" id="searchInput" placeholder="Nhập tên người cày hoặc người thuê để tìm kiếm..." style="background: #111216; border: 1px solid rgba(255,255,255,0.05); padding: 14px 20px 14px 45px; width: 100%; border-radius: 8px; color: #fff;">
             </div>
-            <a href="/login" class="btn btn-accent" id="createOrderBtn">
-                <i class="fa-solid fa-plus"></i> Đăng nhập để tạo đơn
+            <a href="/login" class="btn btn-accent" id="createOrderBtn" style="background: var(--accent); color: #000; padding: 14px 24px; border-radius: 8px; font-weight: 700; white-space: nowrap;">
+                <i class="fa-solid fa-plus"></i> Tạo Đơn Cày Mới
             </a>
         </div>
 

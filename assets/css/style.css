@@ -9,26 +9,26 @@
     
     /* Typography */
     --text-main: #ffffff;
-    --text-muted: #8b949e;
+    --text-muted: #a1a1aa;
     
     /* Accents */
-    --accent: #5eead4; /* Mint/Cyan */
-    --accent-hover: #2dd4bf;
+    --accent: #2dd4bf; /* Mint/Cyan */
+    --accent-hover: #14b8a6;
     
     --primary: #8b5cf6; /* Purple */
-    --primary-light: #a78bfa;
-    --primary-gradient: linear-gradient(135deg, #8b5cf6, #3b82f6);
+    --primary-light: #c084fc;
+    --primary-gradient: linear-gradient(135deg, #a855f7, #3b82f6);
     
     /* Status Colors */
-    --status-dang-cay: #f59e0b; /* Amber */
+    --status-dang-cay: #eab308; /* Amber/Yellow for Kazumi */
     --status-hoan-thanh: #22c55e; /* Green */
-    --status-tam-dung: #ef4444; /* Red */
+    --status-tam-dung: #f97316; /* Orange for Kazumi */
     
     --border-light: rgba(255, 255, 255, 0.05);
     --border-hover: rgba(255, 255, 255, 0.15);
     
     --font-main: 'Inter', sans-serif;
-    --font-heading: 'Montserrat', sans-serif;
+    --font-heading: 'Inter', sans-serif;
     --border-radius: 12px;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -316,18 +316,18 @@ header {
     color: var(--accent);
 }
 
-/* Orders Grid */
+/* ------------------- ORDERS GRID ------------------- */
 .orders-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 20px;
     margin-bottom: 80px;
 }
 
 .order-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-light);
-    border-radius: 16px;
+    background: #1a1b1e;
+    border: none;
+    border-radius: 12px;
     padding: 24px;
     position: relative;
     transition: var(--transition);
@@ -336,87 +336,86 @@ header {
     flex-direction: column;
 }
 .order-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--border-hover);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-    background: var(--bg-secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    background: #1c1d21;
 }
 
-/* Left neon line indicator */
+/* Left solid line indicator (Kazumi style) */
 .order-card::before {
     content: '';
     position: absolute;
-    left: -1px;
+    left: 0;
     top: 24px;
     bottom: 24px;
     width: 4px;
     background: var(--status-color, var(--primary));
-    border-radius: 4px;
-    transition: var(--transition);
-    opacity: 0.8;
-}
-.order-card:hover::before {
-    box-shadow: 0 0 12px var(--status-color, var(--primary));
-    opacity: 1;
+    border-radius: 0 4px 4px 0;
 }
 
 .order-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .booster-info {
     display: flex;
     gap: 15px;
+    align-items: flex-start;
 }
-
 .booster-avatar {
-    width: 48px;
-    height: 48px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border-light);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 800;
-    font-size: 1.2rem;
-    color: var(--accent);
-    border: 1px solid rgba(255,255,255,0.1);
-    transition: var(--transition);
-}
-.order-card:hover .booster-avatar {
-    border-color: var(--accent);
-    transform: scale(1.05);
-    background: rgba(94, 234, 212, 0.1);
+    font-weight: bold;
+    color: #fff;
+    font-size: 0.85rem;
 }
 
 .booster-details {
     display: flex;
     flex-direction: column;
+    gap: 2px;
 }
 
 .booster-label {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     color: var(--text-muted);
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-weight: 500;
 }
 .booster-label strong {
-    font-size: 0.95rem;
-    font-weight: 700;
+    font-size: 0.8rem;
     text-transform: none;
-    letter-spacing: 0;
 }
 .time-label {
     font-size: 0.75rem;
     color: var(--text-muted);
-    margin-top: 6px;
+    margin-top: 4px;
+}
+
+.order-task-content {
+    background: #141517;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #fff;
+    margin-bottom: 20px;
+    flex: 1;
+}
+
+.order-footer {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 5px;
+    margin-top: auto;
 }
 
 .status-badge {
