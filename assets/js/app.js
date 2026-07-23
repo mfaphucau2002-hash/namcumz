@@ -1,4 +1,4 @@
-// 1. Initialize Supabase
+﻿// 1. Initialize Supabase
 const SUPABASE_URL = 'https://vqnuutdmcekqkbdvawlw.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxbnV1dGRtY2VrcWtiZHZhd2x3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTgwNjIsImV4cCI6MjEwMDM3NDA2Mn0.T8_AdJOWEmf68oVrOjv8G51IScykzqhBnfHIi5LK-G4';
 
@@ -486,7 +486,7 @@ window.openChat = async (orderId, orderCode) => {
     document.getElementById('chatModal').classList.add('active');
     currentChatOrderId = orderId;
     const msgContainer = document.getElementById('chatMessages');
-    msgContainer.innerHTML = '<div style=""color: var(--text-muted); text-align: center;"">Đang tải tin nhắn...</div>';
+    msgContainer.innerHTML = '<div style="color: var(--text-muted); text-align: center;">Đang tải tin nhắn...</div>';
 
     // Load initial messages
     const { data, error } = await supabaseClient
@@ -497,7 +497,7 @@ window.openChat = async (orderId, orderCode) => {
 
     msgContainer.innerHTML = '';
     if(error) {
-        msgContainer.innerHTML = '<div style=""color: red;"">Lỗi tải tin nhắn: '+error.message+'</div>';
+        msgContainer.innerHTML = '<div style="color: red;">Lỗi tải tin nhắn: '+error.message+'</div>';
     } else {
         data.forEach(msg => appendMessage(msg));
     }
@@ -550,3 +550,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
