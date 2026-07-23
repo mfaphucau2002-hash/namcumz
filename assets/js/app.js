@@ -63,7 +63,7 @@ function renderOrders(orders, containerId) {
 
         let priceHtml = '';
         if (canViewPrivate) {
-            priceHtml = `<span style="color: #fff; font-weight: 700; font-size: 0.9rem;">${order.price || 'Chưa báo giá'}</span>`;
+            priceHtml = `<span style="color: #fff; font-weight: 700; font-size: 0.9rem;">${order.price ? parseInt(order.price).toLocaleString('vi-VN') + ' VNĐ' : 'Chưa báo giá'}</span>`;
         } else {
             priceHtml = `<span style="color: #a1a1aa; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;" title="Chỉ người thuê, người đang cày đơn này và Admin mới xem được giá"><i class="fa-solid fa-lock"></i> Ẩn giá</span>`;
         }
@@ -333,7 +333,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (createOrderForm) {
         createOrderForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const booster = document.getElementById('orderBooster').value;
             const renter = document.getElementById('orderRenter').value;
             const price = document.getElementById('orderPrice').value;
             const content = document.getElementById('orderContent').value;
@@ -358,7 +357,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const { data, error } = await supabaseClient.from('orders').insert([
                 {
                     order_code: order_code,
-                    booster_name: booster,
                     renter_name: renter,
                     content: content,
                     price: price,
@@ -552,8 +550,13 @@ window.fetchNotifications = async () => {
     
     list.innerHTML = '';
     let hasUnread = false;
+    let currentUnreadCount = 0;
+    
     data.forEach(notif => {
-        if (!notif.is_read) hasUnread = true;
+        if (!notif.is_read) {
+            hasUnread = true;
+            currentUnreadCount++;
+        }
         list.innerHTML += `
             <div style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); ${notif.is_read ? 'opacity: 0.7;' : 'background: rgba(168, 85, 247, 0.1);'}">
                 <div style="font-weight: bold; font-size: 0.85rem; color: #fff; margin-bottom: 4px;">${notif.title}</div>
@@ -562,6 +565,14 @@ window.fetchNotifications = async () => {
             </div>
         `;
     });
+    
+    let previousUnreadCount = parseInt(localStorage.getItem('unreadNotifs') || '0');
+    if (currentUnreadCount > previousUnreadCount) {
+        try {
+            new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3').play();
+        } catch(e) {}
+    }
+    localStorage.setItem('unreadNotifs', currentUnreadCount);
     
     if (hasUnread && badge) {
         badge.style.display = 'block';
