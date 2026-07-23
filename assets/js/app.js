@@ -168,43 +168,47 @@ document.addEventListener('DOMContentLoaded', () => {
             if (event === 'SIGNED_IN' && session) {
                 const userId = session.user.id;
                 
-                // Check if already synced to avoid redundant DB calls and reloads
-                const isSynced = localStorage.getItem('userId') === userId;
+                // Always sync role from DB to ensure Admin changes reflect immediately
+                let user = session.user.user_metadata.display_name || session.user.email.split('@')[0];
                 
-                if (!isSynced) {
-                    let user = session.user.user_metadata.display_name || session.user.email.split('@')[0];
-                    
-                    const { data: roleData } = await supabaseClient
-                        .from('user_roles')
-                        .select('role')
-                        .eq('id', userId)
-                        .single();
-                    
-                    let role = 'customer';
-                    if (roleData && roleData.role) {
-                        role = roleData.role;
-                    }
+                const { data: roleData } = await supabaseClient
+                    .from('user_roles')
+                    .select('role')
+                    .eq('id', userId)
+                    .single();
+                
+                let role = 'customer';
+                if (roleData && roleData.role) {
+                    role = roleData.role;
+                }
 
-                    if (user.toLowerCase() === 'admin') {
-                        role = 'super_admin';
-                    }
+                if (user.toLowerCase() === 'admin') {
+                    role = 'super_admin';
+                }
 
-                    localStorage.setItem('isLoggedIn', 'true');
-                    localStorage.setItem('username', user);
-                    localStorage.setItem('userRole', role);
-                    localStorage.setItem('userId', userId);
+                const previousRole = localStorage.getItem('userRole');
+                const isNewSync = localStorage.getItem('userId') !== userId;
+
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('username', user);
+                localStorage.setItem('userRole', role);
+                localStorage.setItem('userId', userId);
+                
+                // If role changed while logged in, reload the UI to reflect new permissions
+                if (!isNewSync && previousRole !== role) {
+                    location.reload();
+                    return;
                 }
                 
                 // Redirect away from login page if authenticated
                 if (window.location.pathname.includes('login')) {
-                    const currentRole = localStorage.getItem('userRole');
-                    if (currentRole === 'admin' || currentRole === 'super_admin') {
+                    if (role === 'admin' || role === 'super_admin') {
                         window.location.href = '/admin';
                     } else {
                         window.location.href = '/';
                     }
-                } else if (!isSynced) {
-                    // Refresh UI on current page only if it was a new sync
+                } else if (isNewSync) {
+                    // Refresh UI on current page only if it was a new login
                     location.reload();
                 }
             } else if (event === 'SIGNED_OUT') {
