@@ -224,6 +224,25 @@ header {
     text-transform: uppercase;
     letter-spacing: 1px;
 }
+
+.animated-heading {
+    font-family: var(--font-main);
+    font-weight: 800;
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    background: linear-gradient(270deg, #5eead4, #a855f7, #3b82f6, #5eead4);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientCycle 4s ease infinite;
+}
+
+@keyframes gradientCycle {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
 .hero p {
     color: var(--text-muted);
     max-width: 650px;
@@ -297,11 +316,11 @@ header {
 }
 .search-box input {
     width: 100%;
-    background: var(--bg-card);
-    border: 1px solid var(--border-light);
-    color: var(--text-main);
+    background: #111216;
+    border: 1px solid rgba(255,255,255,0.05);
+    color: #fff;
     padding: 16px 20px 16px 55px;
-    border-radius: 12px;
+    border-radius: 8px;
     font-family: var(--font-main);
     font-size: 1rem;
     transition: var(--transition);
