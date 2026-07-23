@@ -358,6 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 {
                     order_code: order_code,
                     renter_name: renter,
+                    booster_name: '',
                     content: content,
                     price: price,
                     status: 'cho_xu_ly',
