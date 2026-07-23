@@ -272,11 +272,21 @@
                 });
             }
 
-            // Mock Google Login for Booster
+            // Google Login for Booster
             const googleBtn = document.getElementById('googleLoginBtn');
             if(googleBtn) {
-                googleBtn.addEventListener('click', () => {
-                    alert("Tính năng Đăng nhập bằng Google đang được bảo trì hoặc chờ cấu hình Supabase OAuth.");
+                googleBtn.addEventListener('click', async () => {
+                    if (typeof supabaseClient === 'undefined') {
+                        alert("Chưa kết nối Supabase!"); return;
+                    }
+                    // Bấm nút -> Chuyển hướng tới Google
+                    const { data, error } = await supabaseClient.auth.signInWithOAuth({
+                        provider: 'google',
+                        options: {
+                            redirectTo: window.location.origin + '/login'
+                        }
+                    });
+                    if(error) alert("Lỗi kết nối Google: " + error.message);
                 });
             }
         });

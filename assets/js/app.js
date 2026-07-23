@@ -55,7 +55,7 @@ function renderOrders(orders, containerId) {
         const animDelay = 0.2 + (index * 0.1);
 
         let priceHtml = '';
-        if (userRole === 'admin' || (isLoggedIn && order.renter_name === currentUsername)) {
+        if (userRole === 'admin' || userRole === 'super_admin' || (isLoggedIn && order.renter_name === currentUsername)) {
             priceHtml = `<span class="price-value visible">${order.price || 'Chưa báo giá'}</span>`;
         } else {
             priceHtml = `<span class="price-value hidden" title="Chỉ người đăng đơn và Admin mới xem được giá"><i class="fa-solid fa-lock" style="font-size: 0.8rem; margin-right: 4px;"></i> Ẩn giá</span>`;
@@ -122,6 +122,54 @@ async function fetchOrders() {
 
 // Global Setup
 document.addEventListener('DOMContentLoaded', () => {
+
+    // Setup Auth State Listener for Google OAuth & Sync
+    if (supabaseClient) {
+        supabaseClient.auth.onAuthStateChange(async (event, session) => {
+            if (event === 'SIGNED_IN' && session) {
+                // If localstorage already matches session, don't re-fetch (prevent loop)
+                if(localStorage.getItem('userId') === session.user.id) return;
+
+                const userId = session.user.id;
+                let user = session.user.user_metadata.display_name || session.user.email.split('@')[0];
+                
+                const { data: roleData, error: roleError } = await supabaseClient
+                    .from('user_roles')
+                    .select('role')
+                    .eq('id', userId)
+                    .single();
+                
+                let role = 'customer';
+                if (roleData && roleData.role) {
+                    role = roleData.role;
+                }
+
+                if (user.toLowerCase() === 'admin') {
+                    role = 'super_admin';
+                }
+
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('username', user);
+                localStorage.setItem('userRole', role);
+                localStorage.setItem('userId', userId);
+                
+                // If we are on login page, redirect
+                if (window.location.pathname.includes('login')) {
+                    if (role === 'admin' || role === 'super_admin') {
+                        window.location.href = '/admin';
+                    } else {
+                        window.location.href = '/';
+                    }
+                } else {
+                    // Refresh UI on current page if needed
+                    location.reload();
+                }
+            } else if (event === 'SIGNED_OUT') {
+                localStorage.clear();
+            }
+        });
+    }
+
     // 1. Fetch Orders
     if (document.getElementById('ordersGrid')) {
         fetchOrders();
@@ -131,6 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     const userRole = localStorage.getItem('userRole') || 'guest';
     const currentUsername = localStorage.getItem('username');
+    const currentUserId = localStorage.getItem('userId');
 
     if(isLoggedIn) {
         const loginBtn = document.getElementById('loginBtn');
@@ -202,7 +251,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     renter_name: renter,
                     content: content,
                     price: price,
-                    status: 'cho_xu_ly'
+                    status: 'cho_xu_ly',
+                    user_id: currentUserId || null
                 }
             ]);
 
@@ -235,8 +285,6 @@ document.addEventListener('DOMContentLoaded', () => {
         profileForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const newName = document.getElementById('profileDisplayName').value;
-            // Here we would ideally update Supabase auth display_name
-            // For now we just update localStorage to simulate it
             localStorage.setItem('username', newName);
             alert('Cập nhật tên tài khoản thành công!');
         });
@@ -294,13 +342,35 @@ document.addEventListener('DOMContentLoaded', () => {
             if (error) {
                 alert('Tên tài khoản hoặc mật khẩu không đúng!');
             } else {
+                const userId = data.user.id;
+                
+                // Fetch actual role from the user_roles table we just created
+                const { data: roleData, error: roleError } = await supabaseClient
+                    .from('user_roles')
+                    .select('role')
+                    .eq('id', userId)
+                    .single();
+                
+                let role = 'customer';
+                if (roleData && roleData.role) {
+                    role = roleData.role;
+                }
+
+                // Temporary override for 'admin' username to always be super_admin to avoid locking out the user
+                if (user.toLowerCase() === 'admin') {
+                    role = 'super_admin';
+                    // Optional: Try to upsert the super_admin role into the table for the 'admin' user just in case
+                    await supabaseClient.from('user_roles').upsert({ id: userId, username: user, role: 'super_admin' });
+                }
+
                 localStorage.setItem('isLoggedIn', 'true');
                 localStorage.setItem('username', user);
-                if (user.toLowerCase() === 'admin') {
-                    localStorage.setItem('userRole', 'admin');
+                localStorage.setItem('userRole', role);
+                localStorage.setItem('userId', userId);
+
+                if (role === 'admin' || role === 'super_admin') {
                     window.location.href = '/admin';
                 } else {
-                    localStorage.setItem('userRole', 'customer');
                     window.location.href = '/';
                 }
             }

@@ -42,6 +42,7 @@
             font-weight: 600;
             transition: var(--transition);
             border-left: 3px solid transparent;
+            cursor: pointer;
         }
         .sidebar-link:hover, .sidebar-link.active {
             color: var(--accent);
@@ -63,6 +64,13 @@
             margin-left: 260px;
             padding: 40px;
             background: var(--bg-main);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
         }
 
         /* Top Bar */
@@ -91,6 +99,7 @@
             justify-content: center;
             font-weight: bold;
             color: white;
+            text-transform: uppercase;
         }
 
         /* Data Table */
@@ -165,7 +174,8 @@
                 <a href="/" class="logo-text" style="font-size: 1.5rem;">NAMCUMZ</a>
             </div>
             <nav class="sidebar-nav">
-                <a href="#" class="sidebar-link active"><i class="fa-solid fa-list-check"></i> Quản lý đơn cày</a>
+                <a class="sidebar-link active" onclick="switchTab('orders', this)"><i class="fa-solid fa-list-check"></i> Quản lý đơn cày</a>
+                <a class="sidebar-link" id="staffTabLink" onclick="switchTab('staff', this)" style="display: none;"><i class="fa-solid fa-users-gear"></i> Quản lý nhân sự</a>
                 <a href="/checkscam" class="sidebar-link"><i class="fa-solid fa-shield-virus"></i> Check Scam</a>
                 <a href="/" class="sidebar-link"><i class="fa-solid fa-house"></i> Về trang chủ</a>
             </nav>
@@ -178,52 +188,81 @@
 
         <!-- Main Content -->
         <main class="admin-main">
-            <div class="admin-topbar animate-on-load">
-                <div class="admin-title">
-                    <h1>Quản lý Đơn Cày Thuê</h1>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Hệ thống quản trị viên toàn quyền</p>
+            <!-- TAB: QUẢN LÝ ĐƠN -->
+            <div id="tab-orders" class="tab-content active">
+                <div class="admin-topbar animate-on-load">
+                    <div class="admin-title">
+                        <h1>Quản lý Đơn Cày Thuê</h1>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;" id="adminRoleText">Hệ thống quản trị viên</p>
+                    </div>
+                    <div class="admin-profile">
+                        <button class="btn btn-accent" id="openAddModalBtn"><i class="fa-solid fa-plus"></i> Thêm Đơn Thủ Công</button>
+                        <div class="admin-avatar" id="adminAvatarInitials">AD</div>
+                    </div>
                 </div>
-                <div class="admin-profile">
-                    <button class="btn btn-accent" id="openAddModalBtn"><i class="fa-solid fa-plus"></i> Thêm Đơn Thủ Công</button>
-                    <div class="admin-avatar">AD</div>
+
+                <!-- Stats -->
+                <div class="stats-row animate-on-load" style="animation-delay: 0.1s; margin: 0 0 40px 0;">
+                    <div class="stat-card">
+                        <div class="stat-lbl">Chờ xử lý</div>
+                        <div class="stat-val" style="color: #a855f7;" id="adm-stat-pending">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-lbl">Đang cày</div>
+                        <div class="stat-val" style="color: var(--status-dang-cay);" id="adm-stat-playing">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-lbl">Hoàn thành</div>
+                        <div class="stat-val" style="color: var(--status-hoan-thanh);" id="adm-stat-done">0</div>
+                    </div>
+                </div>
+
+                <!-- Table Orders -->
+                <div class="table-container animate-on-load" style="animation-delay: 0.2s;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Mã Đơn</th>
+                                <th>Khách Hàng</th>
+                                <th>Người Cày</th>
+                                <th>Nội dung</th>
+                                <th>Giá</th>
+                                <th>Trạng Thái</th>
+                                <th>Hành Động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody">
+                            <tr><td colspan="7" style="text-align: center;">Đang tải dữ liệu...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- Stats -->
-            <div class="stats-row animate-on-load" style="animation-delay: 0.1s; margin: 0 0 40px 0;">
-                <div class="stat-card">
-                    <div class="stat-lbl">Chờ xử lý</div>
-                    <div class="stat-val" style="color: #a855f7;" id="adm-stat-pending">0</div>
+            <!-- TAB: QUẢN LÝ NHÂN SỰ -->
+            <div id="tab-staff" class="tab-content">
+                <div class="admin-topbar animate-on-load">
+                    <div class="admin-title">
+                        <h1>Quản lý Nhân Sự (Super Admin)</h1>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Thăng cấp / Giáng cấp quyền hạn người dùng</p>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-lbl">Đang cày</div>
-                    <div class="stat-val" style="color: var(--status-dang-cay);" id="adm-stat-playing">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-lbl">Hoàn thành</div>
-                    <div class="stat-val" style="color: var(--status-hoan-thanh);" id="adm-stat-done">0</div>
-                </div>
-            </div>
 
-            <!-- Table -->
-            <div class="table-container animate-on-load" style="animation-delay: 0.2s;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Mã Đơn</th>
-                            <th>Khách Hàng</th>
-                            <th>Người Cày</th>
-                            <th>Nội dung</th>
-                            <th>Giá</th>
-                            <th>Trạng Thái</th>
-                            <th>Hành Động</th>
-                        </tr>
-                    </thead>
-                    <tbody id="adminTableBody">
-                        <!-- Rendered by JS -->
-                        <tr><td colspan="7" style="text-align: center;">Đang tải dữ liệu...</td></tr>
-                    </tbody>
-                </table>
+                <!-- Table Staff -->
+                <div class="table-container animate-on-load" style="animation-delay: 0.1s;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tên Tài Khoản</th>
+                                <th>ID Người Dùng</th>
+                                <th>Quyền Hạn Hiện Tại</th>
+                                <th>Hành Động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="staffTableBody">
+                            <tr><td colspan="4" style="text-align: center;">Đang tải dữ liệu...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </main>
     </div>
@@ -232,7 +271,7 @@
     <div class="modal-overlay" id="adminOrderModal">
         <div class="modal-content">
             <button class="modal-close" id="closeAdminModal"><i class="fa-solid fa-xmark"></i></button>
-            <h2 class="modal-title" id="modalTitle">THÊM/SỬA ĐƠN HÀNG</h2>
+            <h2 class="modal-title" id="modalTitle" style="color: var(--accent); margin-bottom: 20px;">THÊM/SỬA ĐƠN HÀNG</h2>
             <form id="adminOrderForm">
                 <input type="hidden" id="adminOrderId"> <!-- Hidden ID for Edit -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
@@ -273,12 +312,40 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/app.js"></script>
     <script>
+        // Tab switching logic
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabId).classList.add('active');
+            el.classList.add('active');
+
+            if(tabId === 'staff') {
+                loadStaffTable();
+            } else {
+                loadAdminTable();
+            }
+        }
+
         // Admin specific logic
         document.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('userRole') !== 'admin') {
+            const userRole = localStorage.getItem('userRole');
+            const username = localStorage.getItem('username');
+            
+            if (userRole !== 'admin' && userRole !== 'super_admin') {
                 alert('Bạn không có quyền truy cập trang quản trị!');
                 window.location.href = '/';
                 return;
+            }
+
+            // Setup UI based on role
+            document.getElementById('adminAvatarInitials').textContent = username ? username.substring(0,2) : 'AD';
+            
+            if(userRole === 'super_admin') {
+                document.getElementById('adminRoleText').textContent = 'Quyền hạn: SUPER ADMIN (Trùm cuối)';
+                document.getElementById('staffTabLink').style.display = 'flex';
+            } else {
+                document.getElementById('adminRoleText').textContent = 'Quyền hạn: ADMIN (Nhân viên)';
             }
 
             const modal = document.getElementById('adminOrderModal');
@@ -306,7 +373,7 @@
             });
 
             // Fetch and render Admin Table
-            async function loadAdminTable() {
+            window.loadAdminTable = async () => {
                 const { data, error } = await supabaseClient.from('orders').select('*').order('created_at', { ascending: false });
                 if(error) return;
 
@@ -346,9 +413,9 @@
                 document.getElementById('adm-stat-pending').textContent = pending;
                 document.getElementById('adm-stat-playing').textContent = playing;
                 document.getElementById('adm-stat-done').textContent = done;
-            }
+            };
 
-            // Global functions for inline onclick handlers
+            // Global functions for Orders
             window.editOrder = async (id) => {
                 const { data, error } = await supabaseClient.from('orders').select('*').eq('id', id).single();
                 if(data) {
@@ -367,6 +434,55 @@
                 if(confirm('Bạn có chắc chắn muốn xóa đơn này không?')) {
                     const { error } = await supabaseClient.from('orders').delete().eq('id', id);
                     if(!error) loadAdminTable();
+                }
+            };
+
+            // Fetch and render Staff Table
+            window.loadStaffTable = async () => {
+                const { data, error } = await supabaseClient.from('user_roles').select('*').order('username', { ascending: true });
+                if(error) {
+                    alert("Lỗi tải danh sách nhân sự: " + error.message);
+                    return;
+                }
+
+                const tbody = document.getElementById('staffTableBody');
+                tbody.innerHTML = '';
+
+                data.forEach(user => {
+                    let roleDisplay = '';
+                    let roleColor = '';
+                    if(user.role === 'super_admin') { roleDisplay = 'Trùm Cuối'; roleColor = 'var(--status-tam-dung)'; }
+                    else if(user.role === 'admin') { roleDisplay = 'Quản trị viên'; roleColor = 'var(--status-dang-cay)'; }
+                    else { roleDisplay = 'Khách hàng'; roleColor = 'var(--text-muted)'; }
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong style="color: var(--accent);">${user.username || 'Không xác định'}</strong></td>
+                        <td style="font-size: 0.8rem; color: var(--text-muted);">${user.id}</td>
+                        <td style="color: ${roleColor}; font-weight: bold;">${roleDisplay}</td>
+                        <td>
+                            <select onchange="updateUserRole('${user.id}', this.value)" class="form-control" style="padding: 4px; width: auto; font-size: 0.8rem; background: var(--bg-secondary);">
+                                <option value="customer" ${user.role === 'customer' ? 'selected' : ''}>Khách hàng</option>
+                                <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Quản trị viên (Admin)</option>
+                                <option value="super_admin" ${user.role === 'super_admin' ? 'selected' : ''}>Trùm Cuối (Super Admin)</option>
+                            </select>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            };
+
+            window.updateUserRole = async (id, newRole) => {
+                if(confirm(`Bạn có chắc chắn muốn đổi quyền của người này thành ${newRole} không?`)) {
+                    const { error } = await supabaseClient.from('user_roles').update({ role: newRole }).eq('id', id);
+                    if(error) {
+                        alert("Lỗi cập nhật quyền: " + error.message);
+                    } else {
+                        alert("Cập nhật quyền thành công!");
+                        loadStaffTable();
+                    }
+                } else {
+                    loadStaffTable(); // Reset dropdown visually
                 }
             };
 
