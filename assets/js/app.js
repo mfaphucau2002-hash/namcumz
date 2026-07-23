@@ -237,6 +237,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 let role = 'customer';
                 if (roleData && roleData.role) {
                     role = roleData.role;
+                } else if (session.user.app_metadata && session.user.app_metadata.provider === 'google') {
+                    role = 'booster';
+                    // Auto-register them in user_roles as booster
+                    await supabaseClient.from('user_roles').upsert({ id: userId, username: session.user.email, role: 'booster' });
                 }
 
                 if (user.toLowerCase() === 'admin') {
