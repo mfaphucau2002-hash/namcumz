@@ -8,6 +8,62 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- CSS -->
     <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 550px;
+            padding: 30px;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .modal-close:hover {
+            color: var(--status-tam-dung);
+        }
+        .modal-title {
+            font-family: var(--font-heading);
+            color: var(--accent);
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+        }
+    </style>
 </head>
 <body>
     <!-- Header -->
@@ -81,6 +137,34 @@
             <p>&copy; 2026 NAMCUMZ. Hệ thống bảo mật thông tin khách hàng tuyệt đối.</p>
         </div>
     </footer>
+
+    <!-- Create Order Modal -->
+    <div class="modal-overlay" id="createOrderModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModalBtn"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="modal-title"><i class="fa-solid fa-plus-circle"></i> TẠO YÊU CẦU CÀY THUÊ</h2>
+            <form id="createOrderForm">
+                <div class="form-group">
+                    <label class="form-label">Tên Ingame (Hoặc ID Truy kích)</label>
+                    <input type="text" id="orderIngame" class="form-control" placeholder="Nhập tên nhân vật..." required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nội dung / Gói cày thuê mong muốn</label>
+                    <textarea id="orderContent" class="form-control" rows="4" placeholder="Ví dụ: Cày từ rank Vàng lên Kim Cương..." required style="resize: vertical;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Ghi chú thêm (Tùy chọn)</label>
+                    <input type="text" id="orderNotes" class="form-control" placeholder="Giờ giấc cày, yêu cầu khác...">
+                </div>
+                <div style="margin-top: 15px; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">
+                    <i class="fa-solid fa-circle-info" style="color: var(--accent);"></i> Yêu cầu của bạn sẽ được gửi tới Admin. Chúng tôi sẽ liên hệ lại qua game hoặc kênh liên lạc để chốt giá (Admin sẽ cập nhật giá sau).
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1.05rem;">
+                    GỬI YÊU CẦU NGAY
+                </button>
+            </form>
+        </div>
+    </div>
 
     <!-- JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

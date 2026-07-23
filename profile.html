@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cài đặt tài khoản - NAMCUMZ</title>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .profile-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin-top: 40px;
+        }
+        .profile-container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .profile-header h1 {
+            font-size: 2rem;
+            color: var(--primary-light);
+            text-transform: uppercase;
+        }
+        .profile-notice {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        .warning-box {
+            background: rgba(245, 158, 11, 0.05);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .warning-box-title {
+            color: var(--status-dang-cay); /* yellow */
+            font-size: 0.9rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        .warning-box ul {
+            list-style: none;
+            padding-left: 10px;
+        }
+        .warning-box li {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 15px;
+        }
+        .warning-box li::before {
+            content: '■';
+            position: absolute;
+            left: 0;
+            top: 1px;
+            font-size: 0.6rem;
+            color: var(--text-muted);
+        }
+        .status-ready {
+            color: var(--status-hoan-thanh);
+            font-weight: 700;
+        }
+        
+        /* File Input Customization */
+        .file-upload-wrapper {
+            display: flex;
+            align-items: center;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .file-upload-btn {
+            background: #e2e8f0;
+            color: #0f172a;
+            padding: 12px 20px;
+            font-weight: 700;
+            cursor: pointer;
+            border-right: 1px solid var(--border-light);
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        .file-upload-text {
+            padding: 12px 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            flex-grow: 1;
+        }
+        .file-input {
+            display: none;
+        }
+
+        .btn-save {
+            width: 100%;
+            margin-top: 20px;
+            background: #38bdf8;
+            color: #0f172a;
+            font-weight: 800;
+            padding: 16px;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-save:hover {
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
+            transform: translateY(-2px);
+            background: #7dd3fc;
+        }
+
+        @media (max-width: 768px) {
+            .profile-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="app-container header-wrap">
+            <a href="/" class="logo-section">
+                <span class="logo-text">NAMCUMZ</span>
+            </a>
+            <nav class="navigation">
+                <a href="/" class="nav-link">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <div class="profile-wrapper animate-on-load">
+            <div class="profile-container">
+                <div class="profile-header">
+                    <h1>CÀI ĐẶT TÀI KHOẢN</h1>
+                </div>
+
+                <p class="profile-notice">Lưu ý: Hệ thống áp dụng giới hạn thay đổi nghiêm ngặt và độc lập. Mỗi lần cập nhật tên tài khoản sẽ kích hoạt thời gian chờ đổi tên là <strong style="color: var(--status-dang-cay);">60 ngày</strong>, và cập nhật avatar sẽ kích hoạt thời gian chờ đổi avatar là <strong style="color: var(--status-dang-cay);">60 ngày</strong>.</p>
+
+                <div class="warning-box">
+                    <div class="warning-box-title">
+                        <i class="fa-solid fa-clock"></i> THỜI GIAN CHỜ CHO LẦN SỬA TIẾP THEO:
+                    </div>
+                    <ul>
+                        <li>Tên tài khoản: <span class="status-ready">Sẵn sàng thay đổi</span></li>
+                        <li>Ảnh đại diện: <span class="status-ready">Sẵn sàng thay đổi</span></li>
+                    </ul>
+                </div>
+
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label class="form-label">TÊN TÀI KHOẢN</label>
+                        <input type="text" id="profileDisplayName" class="form-control" placeholder="Nhập tên hiển thị mới...">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">CHỌN ẢNH ĐẠI DIỆN MỚI (TÙY CHỌN)</label>
+                        <div class="file-upload-wrapper">
+                            <label for="avatarUpload" class="file-upload-btn">Chọn tệp</label>
+                            <div class="file-upload-text" id="fileNameText">Chưa có tệp nào được chọn</div>
+                            <input type="file" id="avatarUpload" class="file-input" accept="image/*">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-save" id="btnSaveProfile">
+                        LƯU THAY ĐỔI
+                    </button>
+                </form>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button id="logoutBtn" class="btn btn-secondary" style="border-color: rgba(239, 68, 68, 0.3); color: var(--status-tam-dung);">
+                        <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer style="margin-top: 80px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+        &copy; Website Bảo mật tuyệt đối bằng liên kết linh hoạt.
+    </footer>
+
+    <script>
+        document.getElementById('avatarUpload').addEventListener('change', function(e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : "Chưa có tệp nào được chọn";
+            document.getElementById('fileNameText').textContent = fileName;
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>

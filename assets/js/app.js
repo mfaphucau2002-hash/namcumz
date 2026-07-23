@@ -2,7 +2,6 @@
 const SUPABASE_URL = 'https://vqnuutdmcekqkbdvawlw.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxbnV1dGRtY2VrcWtiZHZhd2x3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTgwNjIsImV4cCI6MjEwMDM3NDA2Mn0.T8_AdJOWEmf68oVrOjv8G51IScykzqhBnfHIi5LK-G4';
 
-// Check if supabase library is loaded
 let supabaseClient = null;
 if (window.supabase) {
     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -10,35 +9,35 @@ if (window.supabase) {
     console.error("Supabase CDN not loaded!");
 }
 
-let allOrders = []; // To store fetched orders for searching
+let allOrders = [];
 
-// Helper functions for UI
+// Helper functions
 function getStatusDetails(status) {
     switch(status) {
-        case 'dang_cay': 
-            return { text: 'Đang cày', icon: 'fa-spinner fa-spin', class: 'status-dang_cay', colorVar: 'var(--status-dang-cay)' };
-        case 'hoan_thanh': 
-            return { text: 'Hoàn thành', icon: 'fa-circle-check', class: 'status-hoan_thanh', colorVar: 'var(--status-hoan-thanh)' };
-        case 'tam_dung': 
-            return { text: 'Tạm dừng', icon: 'fa-circle-pause', class: 'status-tam_dung', colorVar: 'var(--status-tam-dung)' };
-        default: 
-            return { text: 'Unknown', icon: 'fa-question', class: '', colorVar: 'var(--text-muted)' };
+        case 'dang_cay': return { text: 'Đang cày', icon: 'fa-spinner fa-spin', class: 'status-dang_cay', colorVar: 'var(--status-dang-cay)' };
+        case 'hoan_thanh': return { text: 'Hoàn thành', icon: 'fa-circle-check', class: 'status-hoan_thanh', colorVar: 'var(--status-hoan-thanh)' };
+        case 'tam_dung': return { text: 'Tạm dừng', icon: 'fa-circle-pause', class: 'status-tam_dung', colorVar: 'var(--status-tam-dung)' };
+        case 'cho_xu_ly': return { text: 'Chờ xử lý', icon: 'fa-hourglass-half', class: 'status-tam_dung', colorVar: '#a855f7' };
+        default: return { text: 'Unknown', icon: 'fa-question', class: '', colorVar: 'var(--text-muted)' };
     }
 }
 
-// Format date
 function formatDate(dateString) {
+    if (!dateString) return '';
     const d = new Date(dateString);
     const time = d.toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'});
     const date = d.toLocaleDateString('vi-VN', {day: '2-digit', month: '2-digit', year: 'numeric'});
     return `${time} ${date}`;
 }
 
+function generateOrderCode() {
+    return '#' + Math.floor(10000 + Math.random() * 90000);
+}
+
 function renderOrders(orders, containerId) {
     const container = document.getElementById(containerId);
     if(!container) return;
 
-    // Check if user is logged in
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     const userRole = localStorage.getItem('userRole') || 'guest';
     const currentUsername = localStorage.getItem('username');
@@ -52,19 +51,14 @@ function renderOrders(orders, containerId) {
 
     orders.forEach((order, index) => {
         const statusInfo = getStatusDetails(order.status);
-        const avatarInitial = order.booster_name ? order.booster_name.charAt(0).toUpperCase() : 'A';
-
-        // Calculate animation delay for staggering effect
+        const avatarInitial = order.booster_name ? order.booster_name.charAt(0).toUpperCase() : '?';
         const animDelay = 0.2 + (index * 0.1);
 
-        // Price visibility logic
         let priceHtml = '';
         if (userRole === 'admin' || (isLoggedIn && order.renter_name === currentUsername)) {
-            priceHtml = `<span class="price-value visible">${order.price || '0'} đ</span>`;
+            priceHtml = `<span class="price-value visible">${order.price || 'Chưa báo giá'}</span>`;
         } else {
-            priceHtml = `<span class="price-value hidden" title="Chỉ người đăng đơn và Admin mới xem được giá">
-                            <i class="fa-solid fa-lock" style="font-size: 0.8rem; margin-right: 4px;"></i> Ẩn giá
-                        </span>`;
+            priceHtml = `<span class="price-value hidden" title="Chỉ người đăng đơn và Admin mới xem được giá"><i class="fa-solid fa-lock" style="font-size: 0.8rem; margin-right: 4px;"></i> Ẩn giá</span>`;
         }
 
         const card = document.createElement('div');
@@ -72,26 +66,27 @@ function renderOrders(orders, containerId) {
         card.style.animationDelay = `${animDelay}s`;
         card.style.setProperty('--status-color', statusInfo.colorVar);
         
+        let contentHtml = order.content || 'Không có mô tả';
+        if (order.notes) contentHtml += `<br><small style="color:var(--text-muted); margin-top:10px; display:block;">Ghi chú: ${order.notes}</small>`;
+
         card.innerHTML = `
             <div class="order-header">
                 <div class="booster-info">
                     <div class="booster-avatar">${avatarInitial}</div>
                     <div class="booster-details">
-                        <span class="booster-label">Người cày: <strong style="color: var(--text-main);">${order.booster_name}</strong></span>
+                        <span class="booster-label">Người cày: <strong style="color: var(--text-main);">${order.booster_name || 'Đang chờ...'}</strong></span>
                         <span class="booster-label" style="margin-top: 2px;">Người thuê: <strong style="color: var(--accent);">${order.renter_name}</strong></span>
                         <span class="booster-label" style="margin-top: 2px;">Mã đơn: <strong style="color: var(--primary-light);">${order.order_code}</strong></span>
                         <span class="time-label"><i class="fa-regular fa-clock"></i> ${formatDate(order.created_at)}</span>
                     </div>
                 </div>
                 <div>
-                    <div class="status-badge ${statusInfo.class}">
+                    <div class="status-badge ${statusInfo.class}" style="border-color:${statusInfo.colorVar}; color:${statusInfo.colorVar}; background: transparent;">
                         <i class="fa-solid ${statusInfo.icon}"></i> ${statusInfo.text}
                     </div>
                 </div>
             </div>
-            <div class="order-body">
-                ${order.content || 'Không có mô tả'}
-            </div>
+            <div class="order-body">${contentHtml}</div>
             <div class="order-price-box">
                 <span class="price-label">Giá thanh toán</span>
                 ${priceHtml}
@@ -105,57 +100,71 @@ function updateStats(orders) {
     const elTotal = document.getElementById('stat-total');
     if(elTotal) {
         elTotal.textContent = orders.length;
-        document.getElementById('stat-pause').textContent = orders.filter(o => o.status === 'tam_dung').length;
+        document.getElementById('stat-pause').textContent = orders.filter(o => o.status === 'tam_dung' || o.status === 'cho_xu_ly').length;
         document.getElementById('stat-playing').textContent = orders.filter(o => o.status === 'dang_cay').length;
         document.getElementById('stat-done').textContent = orders.filter(o => o.status === 'hoan_thanh').length;
     }
 }
 
-// Fetch orders from Supabase
 async function fetchOrders() {
     if (!supabaseClient) return;
-
     try {
-        const { data, error } = await supabaseClient
-            .from('orders')
-            .select('*')
-            .order('created_at', { ascending: false });
-
+        const { data, error } = await supabaseClient.from('orders').select('*').order('created_at', { ascending: false });
         if (error) throw error;
-        
         allOrders = data;
         renderOrders(allOrders, 'ordersGrid');
         updateStats(allOrders);
     } catch (error) {
         console.error("Lỗi khi tải dữ liệu:", error.message);
-        document.getElementById('ordersGrid').innerHTML = '<div style="color: var(--status-tam-dung);">Lỗi kết nối tới cơ sở dữ liệu. Vui lòng kiểm tra lại cấu hình.</div>';
+        document.getElementById('ordersGrid').innerHTML = '<div style="color: var(--status-tam-dung);">Lỗi kết nối tới cơ sở dữ liệu.</div>';
     }
 }
 
-// Search functionality & Setup
+// Global Setup
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Fetch Data
+    // 1. Fetch Orders
     if (document.getElementById('ordersGrid')) {
         fetchOrders();
     }
 
-    // 2. Update UI based on login status
+    // 2. UI Auth State
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const userRole = localStorage.getItem('userRole') || 'guest';
+    const currentUsername = localStorage.getItem('username');
+
     if(isLoggedIn) {
         const loginBtn = document.getElementById('loginBtn');
         if(loginBtn) {
-            loginBtn.innerHTML = '<i class="fa-solid fa-user"></i> Tài khoản';
-            loginBtn.href = localStorage.getItem('userRole') === 'admin' ? '/admin' : '#';
+            loginBtn.innerHTML = '<i class="fa-solid fa-user"></i> Cài đặt tài khoản';
+            loginBtn.href = '/profile';
         }
 
         const createOrderBtn = document.getElementById('createOrderBtn');
         if(createOrderBtn) {
             createOrderBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Tạo đơn mới';
-            createOrderBtn.href = '#'; // Functionality to add real orders can be implemented here
+            createOrderBtn.href = '#'; 
+            createOrderBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('createOrderModal').classList.add('active');
+            });
+        }
+    } else {
+        // If not logged in, profile redirect
+        const path = window.location.pathname;
+        if(path.includes('profile')) {
+            window.location.href = '/login';
         }
     }
 
-    // 3. Search input logic
+    // Modal Close logic
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', () => {
+            document.getElementById('createOrderModal').classList.remove('active');
+        });
+    }
+
+    // Search logic
     const searchInput = document.getElementById('searchInput');
     if(searchInput) {
         searchInput.addEventListener('input', (e) => {
@@ -168,12 +177,70 @@ document.addEventListener('DOMContentLoaded', () => {
             renderOrders(filtered, 'ordersGrid');
         });
     }
-});
 
-// Auth Logic
-document.addEventListener('DOMContentLoaded', () => {
-    if (!supabaseClient) return;
-    
+    // Order Submit Logic
+    const createOrderForm = document.getElementById('createOrderForm');
+    if (createOrderForm) {
+        createOrderForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const ingame = document.getElementById('orderIngame').value;
+            const content = document.getElementById('orderContent').value;
+            const notes = document.getElementById('orderNotes').value;
+
+            // Generate order
+            const order_code = generateOrderCode();
+            
+            createOrderForm.querySelector('button').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG GỬI...';
+            createOrderForm.querySelector('button').disabled = true;
+
+            const { data, error } = await supabaseClient.from('orders').insert([
+                {
+                    order_code: order_code,
+                    booster_name: '', // Empty initially
+                    renter_name: currentUsername,
+                    content: `[${ingame}] ${content}`,
+                    price: '', // Empty initially
+                    status: 'cho_xu_ly'
+                }
+            ]);
+
+            if (error) {
+                alert('Có lỗi xảy ra: ' + error.message);
+            } else {
+                alert('Tạo yêu cầu cày thuê thành công! Đơn hàng đang chờ xử lý.');
+                document.getElementById('createOrderModal').classList.remove('active');
+                createOrderForm.reset();
+                fetchOrders(); // refresh
+            }
+
+            createOrderForm.querySelector('button').innerHTML = 'GỬI YÊU CẦU NGAY';
+            createOrderForm.querySelector('button').disabled = false;
+        });
+    }
+
+    // --- PROFILE LOGIC ---
+    const profileForm = document.getElementById('profileForm');
+    if (profileForm) {
+        document.getElementById('profileDisplayName').value = currentUsername;
+
+        profileForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newName = document.getElementById('profileDisplayName').value;
+            // Here we would ideally update Supabase auth display_name
+            // For now we just update localStorage to simulate it
+            localStorage.setItem('username', newName);
+            alert('Cập nhật tên tài khoản thành công!');
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.clear();
+            supabaseClient.auth.signOut().then(() => {
+                window.location.href = '/';
+            });
+        });
+    }
+
+    // --- AUTH LOGIC (LOGIN/REGISTER) ---
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
 
@@ -191,16 +258,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const email = username + '@namcumz.com';
-
             const { data, error } = await supabaseClient.auth.signUp({
-                email: email,
-                password: pass,
-                options: {
-                    data: {
-                        display_name: displayName,
-                        role: 'customer'
-                    }
-                }
+                email: email, password: pass, options: { data: { display_name: displayName, role: 'customer' } }
             });
 
             if (error) {
@@ -217,13 +276,10 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const user = document.getElementById('username').value.trim();
             const pass = document.getElementById('password').value;
-
-            // Admin manual bypass just in case, but let's use real auth
             const email = user + '@namcumz.com';
 
             const { data, error } = await supabaseClient.auth.signInWithPassword({
-                email: email,
-                password: pass
+                email: email, password: pass
             });
 
             if (error) {
@@ -231,7 +287,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 localStorage.setItem('isLoggedIn', 'true');
                 localStorage.setItem('username', user);
-                // Check if admin (you can set an admin user manually in Supabase later)
                 if (user.toLowerCase() === 'admin') {
                     localStorage.setItem('userRole', 'admin');
                     window.location.href = '/admin';
