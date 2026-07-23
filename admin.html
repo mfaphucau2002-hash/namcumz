@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - NAMCUMZ</title>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* Admin Layout */
+        body {
+            background-color: #050810; /* Darker bg for admin */
+        }
+        .admin-layout {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+        }
+        .sidebar-logo {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid var(--border-light);
+            margin-bottom: 20px;
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 15px;
+            flex: 1;
+        }
+        .sidebar-menu li {
+            margin-bottom: 8px;
+        }
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            color: var(--text-muted);
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: rgba(0, 245, 212, 0.1);
+            color: var(--accent);
+        }
+        /* Main Content */
+        .admin-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .admin-header {
+            height: 70px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            background: rgba(21, 26, 40, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .admin-content {
+            padding: 30px;
+        }
+        
+        /* Dashboard Cards */
+        .dash-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .d-card {
+            background: linear-gradient(145deg, var(--bg-card), var(--bg-secondary));
+            border: 1px solid var(--border-light);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+        .d-card i {
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            font-size: 4rem;
+            opacity: 0.05;
+        }
+        
+        /* Table */
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-card);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .admin-table th, .admin-table td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .admin-table th {
+            background: rgba(255,255,255,0.02);
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .admin-table tr:hover td {
+            background: rgba(255,255,255,0.02);
+        }
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 5px;
+            margin-right: 5px;
+            transition: var(--transition);
+        }
+        .action-btn:hover {
+            color: var(--accent);
+        }
+        .action-btn.del:hover {
+            color: var(--status-tam-dung);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <span class="logo-text" style="font-size: 1.2rem;">NAMCUMZ ADMIN</span>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active"><i class="fa-solid fa-gauge"></i> Tổng quan</a></li>
+                <li><a href="#"><i class="fa-solid fa-list-check"></i> Quản lý Đơn cày</a></li>
+                <li><a href="#"><i class="fa-solid fa-users"></i> Khách hàng</a></li>
+                <li><a href="#"><i class="fa-solid fa-shield-virus"></i> Danh sách đen</a></li>
+                <li><a href="index.html" style="margin-top: 50px; color: var(--text-muted);"><i class="fa-solid fa-arrow-right-from-bracket"></i> Về trang chủ</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <h2 style="font-size: 1.2rem; font-weight: 600;">Dashboard</h2>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="width: 35px; height: 35px; border-radius: 50%; background: var(--accent); color: var(--bg-main); display: flex; align-items: center; justify-content: center; font-weight: bold;">A</div>
+                    <span>Admin</span>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <div class="dash-cards">
+                    <div class="d-card" style="border-top: 3px solid var(--primary-light);">
+                        <div class="stat-lbl">Tổng doanh thu</div>
+                        <div class="stat-val" style="color: var(--text-main);">850,000 đ</div>
+                        <i class="fa-solid fa-wallet" style="color: var(--primary-light);"></i>
+                    </div>
+                    <div class="d-card" style="border-top: 3px solid var(--accent);">
+                        <div class="stat-lbl">Đơn đang cày</div>
+                        <div class="stat-val" style="color: var(--text-main);">1</div>
+                        <i class="fa-solid fa-gamepad" style="color: var(--accent);"></i>
+                    </div>
+                    <div class="d-card" style="border-top: 3px solid var(--status-tam-dung);">
+                        <div class="stat-lbl">Tố cáo Scam mới</div>
+                        <div class="stat-val" style="color: var(--text-main);">0</div>
+                        <i class="fa-solid fa-triangle-exclamation" style="color: var(--status-tam-dung);"></i>
+                    </div>
+                </div>
+
+                <h3 style="margin-bottom: 20px; font-weight: 600;">Đơn Cày Mới Nhất</h3>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn</th>
+                            <th>Khách hàng</th>
+                            <th>Người cày</th>
+                            <th>Giá (VND)</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong style="color: var(--primary-light);">#00005</strong></td>
+                            <td>Khách hàng A</td>
+                            <td>NamCumz</td>
+                            <td>500,000</td>
+                            <td><span class="status-badge status-dang_cay" style="display: inline-flex;"><i class="fa-solid fa-spinner fa-spin"></i> Đang cày</span></td>
+                            <td>
+                                <button class="action-btn"><i class="fa-solid fa-pen"></i></button>
+                                <button class="action-btn del"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--primary-light);">#00004</strong></td>
+                            <td>Khách hàng B</td>
+                            <td>Team NamCumz</td>
+                            <td>200,000</td>
+                            <td><span class="status-badge status-hoan_thanh" style="display: inline-flex;"><i class="fa-solid fa-circle-check"></i> Hoàn thành</span></td>
+                            <td>
+                                <button class="action-btn"><i class="fa-solid fa-pen"></i></button>
+                                <button class="action-btn del"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--primary-light);">#00003</strong></td>
+                            <td>Khách hàng C</td>
+                            <td>NamCumz</td>
+                            <td>150,000</td>
+                            <td><span class="status-badge status-tam_dung" style="display: inline-flex;"><i class="fa-solid fa-circle-pause"></i> Tạm dừng</span></td>
+                            <td>
+                                <button class="action-btn"><i class="fa-solid fa-pen"></i></button>
+                                <button class="action-btn del"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // Check if user is admin
+        document.addEventListener('DOMContentLoaded', () => {
+            const role = localStorage.getItem('userRole');
+            if (role !== 'admin') {
+                alert('Bạn không có quyền truy cập trang này!');
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+</html>

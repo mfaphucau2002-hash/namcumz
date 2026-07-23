@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập & Đăng ký - NAMCUMZ</title>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .auth-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin-top: 40px;
+        }
+        .auth-container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        .auth-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .auth-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        .auth-header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+        .auth-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+        .auth-col {
+            display: flex;
+            flex-direction: column;
+        }
+        .auth-col-title {
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+        .auth-col:nth-child(2) .auth-col-title {
+            color: var(--primary-light);
+        }
+        
+        .divider {
+            width: 1px;
+            background: var(--border-light);
+            margin: 0 -20px; /* Offset the gap */
+        }
+        
+        @media (max-width: 768px) {
+            .auth-split {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            .divider {
+                width: 100%;
+                height: 1px;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="app-container header-wrap">
+            <a href="index.html" class="logo-section">
+                <span class="logo-text">NAMCUMZ</span>
+            </a>
+            <nav class="navigation">
+                <a href="index.html" class="nav-link">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <div class="auth-wrapper animate-on-load">
+            <div class="auth-container">
+                <div class="auth-header">
+                    <h1 class="logo-text" style="font-size: 2.5rem; display: inline-block;">NAMCUMZ</h1>
+                    <h2 style="font-size: 1.5rem; margin: 15px 0;">HỆ THỐNG CÀY THUÊ CHUYÊN NGHIỆP</h2>
+                    <p>Đăng nhập bằng tài khoản Google (để bắt đầu tạo đơn cày thuê).<br>Đăng nhập tài khoản Khách hàng (để theo dõi trạng thái đơn cày).</p>
+                </div>
+
+                <div class="auth-tabs" style="justify-content: center; max-width: 500px; margin: 0 auto 40px;">
+                    <div class="auth-tab active"><i class="fa-solid fa-user-shield"></i> Đăng nhập Booster</div>
+                    <div class="auth-tab" style="color: var(--accent); border-bottom: 2px solid var(--accent);"><i class="fa-solid fa-users"></i> Tài khoản Khách hàng</div>
+                </div>
+
+                <div class="auth-split">
+                    <!-- Login Column -->
+                    <div class="auth-col">
+                        <h3 class="auth-col-title">ĐĂNG NHẬP</h3>
+                        <form id="loginForm">
+                            <div class="form-group">
+                                <label class="form-label">TÊN TÀI KHOẢN</label>
+                                <input type="text" class="form-control" id="username" placeholder="Nhập tên tài khoản...">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">MẬT KHẨU</label>
+                                <input type="password" class="form-control" id="password" placeholder="Nhập mật khẩu...">
+                            </div>
+                            <button type="submit" class="btn btn-accent" style="width: 100%; margin-top: 10px;">
+                                <i class="fa-solid fa-right-to-bracket"></i> Đăng nhập
+                            </button>
+                        </form>
+                        <div style="margin-top: 20px; padding: 15px; background: rgba(94, 234, 212, 0.05); border: 1px dashed rgba(94, 234, 212, 0.2); border-radius: 8px; text-align: center; color: var(--accent); font-size: 0.85rem; font-weight: 600;">
+                            Sau khi đăng ký hãy đăng nhập ngay tại đây
+                        </div>
+                    </div>
+
+                    <!-- Register Column -->
+                    <div class="auth-col">
+                        <h3 class="auth-col-title" style="color: var(--primary-light);">ĐĂNG KÝ</h3>
+                        <form id="registerForm">
+                            <div class="form-group">
+                                <label class="form-label">TÊN TÀI KHOẢN ĐĂNG NHẬP (VIẾT LIỀN, KHÔNG DẤU)</label>
+                                <input type="text" class="form-control" placeholder="Ví dụ: nguyenvana">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">TÊN HIỂN THỊ (TRÊN WEB)</label>
+                                <input type="text" class="form-control" placeholder="Ví dụ: Nguyễn Văn A">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">MẬT KHẨU</label>
+                                <input type="password" class="form-control" placeholder="Nhập mật khẩu...">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">XÁC NHẬN LẠI MẬT KHẨU</label>
+                                <input type="password" class="form-control" placeholder="Nhập lại mật khẩu...">
+                            </div>
+                            <button type="button" class="btn btn-primary" style="width: 100%; margin-top: 10px; background: #8b5cf6;">
+                                <i class="fa-solid fa-user-plus"></i> Tạo tài khoản
+                            </button>
+                        </form>
+                        <div style="margin-top: 20px; padding: 15px; background: rgba(139, 92, 246, 0.05); border: 1px dashed rgba(139, 92, 246, 0.2); border-radius: 8px; text-align: center; color: var(--primary-light); font-size: 0.85rem; font-weight: 600;">
+                            Nếu đã có tài khoản, hãy bỏ qua bước này.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+
+            if(user === 'admin' && pass === 'admin') {
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userRole', 'admin');
+                localStorage.setItem('username', 'Admin');
+                window.location.href = 'admin.html';
+            } else if (user && pass) {
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userRole', 'customer');
+                localStorage.setItem('username', user);
+                window.location.href = 'index.html';
+            } else {
+                alert("Vui lòng nhập đầy đủ thông tin!");
+            }
+        });
+    </script>
+</body>
+</html>
