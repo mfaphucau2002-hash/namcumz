@@ -513,7 +513,8 @@ window.changeOrderStatus = async (orderId, newStatus, customerId) => {
                 content: `Đơn cày của bạn đã được chuyển sang trạng thái mới.`
             }]);
         }
-        fetchOrders();
+        if (typeof fetchOrders === 'function') fetchOrders();
+        if (typeof loadMyOrders === 'function') loadMyOrders();
     }
 };
 

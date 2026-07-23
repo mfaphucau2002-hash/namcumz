@@ -115,6 +115,24 @@
                     let priceHtml = order.price ? `<span style="color: #fff;">${parseInt(order.price).toLocaleString('vi-VN')} VNĐ</span>` : `<span style="color: var(--text-muted);">Chưa báo giá</span>`;
                     let contentText = order.content || 'Không có mô tả';
                     
+                    let isAssignedBooster = order.booster_id === currentUserId;
+                    let statusBadgeHtml = '';
+                    if (isAssignedBooster) {
+                        statusBadgeHtml = `
+                            <select onchange="changeOrderStatus('${order.id}', this.value, '${order.user_id}')" style="background: #18181b; color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 6px 10px; font-size: 0.8rem; outline: none; cursor: pointer;">
+                                <option value="dang_cay" ${order.status === 'dang_cay' ? 'selected' : ''}>Đang cày</option>
+                                <option value="hoan_thanh" ${order.status === 'hoan_thanh' ? 'selected' : ''}>Hoàn thành</option>
+                                <option value="tam_dung" ${order.status === 'tam_dung' ? 'selected' : ''}>Tạm dừng</option>
+                            </select>
+                        `;
+                    } else {
+                        statusBadgeHtml = `
+                            <div class="status-badge" style="color: ${statusObj.colorVar}; border-color: ${statusObj.colorVar};">
+                                <i class="fa-solid ${statusObj.icon}"></i> ${statusObj.text.toUpperCase()}
+                            </div>
+                        `;
+                    }
+                    
                     grid.innerHTML += `
                         <div class="order-card animate-on-load">
                             <div class="order-header">
@@ -125,9 +143,7 @@
                                         <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-top:2px;">NGƯỜI THUÊ: <span style="color: var(--accent);">${order.renter_name}</span></div>
                                     </div>
                                 </div>
-                                <div class="status-badge" style="color: ${statusObj.colorVar}; border-color: ${statusObj.colorVar};">
-                                    <i class="fa-solid ${statusObj.icon}"></i> ${statusObj.text.toUpperCase()}
-                                </div>
+                                ${statusBadgeHtml}
                             </div>
                             <div class="order-details">
                                 <div style="font-size: 0.8rem; font-weight: 700; color: #a855f7; margin-bottom: 8px;">MÃ ĐƠN: ${order.order_code}</div>
