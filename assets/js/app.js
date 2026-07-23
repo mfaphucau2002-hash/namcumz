@@ -514,10 +514,16 @@ window.openChat = async (orderId, orderCode) => {
 window.appendMessage = function(msg) {
     const msgContainer = document.getElementById('chatMessages');
     if(!msgContainer) return;
+    
+    // Check for duplicates
+    const msgId = msg.id || msg.created_at;
+    if(msgContainer.querySelector([data-id="${msgId}"])) return;
+
     const isMine = msg.sender_id === localStorage.getItem('userId');
     const div = document.createElement('div');
-    div.style.cssText = `max-width: 80%; padding: 10px 15px; border-radius: 12px; margin-bottom: 5px; clear: both; ${isMine ? 'background: var(--accent); color: #000; align-self: flex-end; border-bottom-right-radius: 4px;' : 'background: #334155; color: #fff; align-self: flex-start; border-bottom-left-radius: 4px;'}`;
-    div.innerHTML = `<div style="font-size: 0.7rem; font-weight: bold; margin-bottom: 4px; ${isMine ? 'color: #333;' : 'color: var(--accent);'}">${msg.sender_name}</div><div>${msg.message}</div>`;
+    div.setAttribute('data-id', msgId);
+    div.style.cssText = `max-width: 80%; padding: 10px 15px; border-radius: 12px; margin-bottom: 5px; clear: both; `;
+    div.innerHTML = `<div style="font-size: 0.7rem; font-weight: bold; margin-bottom: 4px; "></div><div></div>`;
     msgContainer.appendChild(div);
     msgContainer.scrollTop = msgContainer.scrollHeight;
 };
@@ -526,16 +532,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const sendChatBtn = document.getElementById('sendChatBtn');
     const chatInput = document.getElementById('chatInput');
     if(sendChatBtn && chatInput) {
-        const sendMessage = async () => {
+                const sendMessage = async () => {
             const text = chatInput.value.trim();
             if(!text || !currentChatOrderId) return;
             chatInput.value = '';
-            await supabaseClient.from('order_messages').insert([{
+            
+            const newMsg = {
                 order_id: currentChatOrderId,
                 sender_id: localStorage.getItem('userId'),
                 sender_name: localStorage.getItem('username'),
-                message: text
-            }]);
+                message: text,
+                created_at: new Date().toISOString()
+            };
+            
+            // Optimistic update
+            appendMessage(newMsg);
+            
+            const { error } = await supabaseClient.from('order_messages').insert([newMsg]);
+            if (error) {
+                alert("Lỗi gửi tin nhắn: " + error.message);
+            }
         };
         sendChatBtn.addEventListener('click', sendMessage);
         chatInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
@@ -550,4 +566,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+
 
