@@ -88,7 +88,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/app.js"></script>
-    <script>
+            <script>
         function switchTab(tabId, el) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
@@ -110,29 +110,33 @@
                 
                 grid.innerHTML = '';
                 data.forEach(order => {
-                    let statusObj = getStatusData(order.status);
+                    let statusObj = typeof getStatusDetails === 'function' ? getStatusDetails(order.status) : { text: 'Unknown', icon: 'fa-question', class: '', colorVar: 'var(--text-muted)' };
+                    let avatar = order.booster_name ? order.booster_name.charAt(0).toUpperCase() : '?';
+                    let priceHtml = order.price ? <span style="color: #fff;"> + order.price + </span> : <span style="color: var(--text-muted);">Chưa báo giá</span>;
+                    let contentText = order.content || 'Không có mô tả';
+                    
                     grid.innerHTML += 
-                        <div class="order-card ">
+                        <div class="order-card animate-on-load">
                             <div class="order-header">
                                 <div class="booster-info">
-                                    <div class="booster-avatar"></div>
+                                    <div class="booster-avatar" style="border-color:  + statusObj.colorVar + "> + avatar + </div>
                                     <div>
-                                        <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">NGƯỜI CÀY: <span style="color: #fff;"></span></div>
-                                        <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-top:2px;">NGƯỜI THUÊ: <span style="color: var(--accent);"></span></div>
+                                        <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">NGƯỜI CÀY: <span style="color: #fff;"> + (order.booster_name || 'Đang chờ...') + </span></div>
+                                        <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-top:2px;">NGƯỜI THUÊ: <span style="color: var(--accent);"> + order.renter_name + </span></div>
                                     </div>
                                 </div>
-                                <div class="status-badge" style="color: ; border-color: ;">
-                                    <i class="fa-solid "></i> 
+                                <div class="status-badge" style="color:  + statusObj.colorVar + ; border-color:  + statusObj.colorVar + ;">
+                                    <i class="fa-solid  + statusObj.icon + "></i>  + statusObj.text.toUpperCase() + 
                                 </div>
                             </div>
                             <div class="order-details">
-                                <div style="font-size: 0.8rem; font-weight: 700; color: #a855f7; margin-bottom: 8px;">MÃ ĐƠN: </div>
-                                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;"><i class="fa-regular fa-clock"></i> </div>
-                                <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 6px; font-size: 0.9rem; line-height: 1.5; font-weight: 500;"></div>
+                                <div style="font-size: 0.8rem; font-weight: 700; color: #a855f7; margin-bottom: 8px;">MÃ ĐƠN:  + order.order_code + </div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;"><i class="fa-regular fa-clock"></i>  + new Date(order.created_at).toLocaleString('vi-VN') + </div>
+                                <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 6px; font-size: 0.9rem; line-height: 1.5; font-weight: 500;"> + contentText + </div>
                             </div>
                             <div class="order-footer">
                                 <div style="font-size: 0.85rem; color: var(--text-muted);">Giá thanh toán</div>
-                                <div style="font-size: 1.1rem; font-weight: 800; color: #fff;"></div>
+                                <div style="font-size: 1.1rem; font-weight: 800; color: #fff;"> + priceHtml + </div>
                             </div>
                         </div>;
                 });
@@ -177,5 +181,7 @@
     </script>
 </body>
 </html>
+
+
 
 
