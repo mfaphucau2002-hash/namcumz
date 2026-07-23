@@ -146,6 +146,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if(userRole === 'admin') displayRole = 'ADMIN';
         if(userRole === 'super_admin') displayRole = 'TRÙM CUỐI';
         navRole.textContent = displayRole;
+
+        // Make avatar and info clickable to go to admin/profile
+        const goToDashboard = () => {
+            if (userRole === 'admin' || userRole === 'super_admin') {
+                window.location.href = '/admin';
+            } else {
+                window.location.href = '/profile';
+            }
+        };
+        navAvatarInitials.style.cursor = 'pointer';
+        navUsername.parentElement.style.cursor = 'pointer';
+        navAvatarInitials.addEventListener('click', goToDashboard);
+        navUsername.parentElement.addEventListener('click', goToDashboard);
     }
 
     const navLogoutBtn = document.getElementById('navLogoutBtn');
