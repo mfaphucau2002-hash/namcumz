@@ -185,10 +185,17 @@ document.addEventListener('DOMContentLoaded', () => {
         navAccountBtn.style.display = 'none';
         navUserProfile.style.display = 'flex';
         navUsername.textContent = currentUsername || 'User';
-        navAvatarInitials.textContent = (currentUsername || 'U').charAt(0).toUpperCase();
+        let avatarUrl = localStorage.getItem('avatarUrl');
+        if (avatarUrl) {
+            navAvatarInitials.innerHTML = `<img src="${avatarUrl}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" referrerpolicy="no-referrer" />`;
+            navAvatarInitials.style.background = 'transparent';
+        } else {
+            navAvatarInitials.textContent = (currentUsername || 'U').charAt(0).toUpperCase();
+        }
         let displayRole = 'KHÁCH HÀNG';
         if(userRole === 'admin') displayRole = 'ADMIN';
         if(userRole === 'super_admin') displayRole = 'TRÙM CUỐI';
+        if(userRole === 'booster') displayRole = 'BOOSTER';
         navRole.textContent = displayRole;
 
         // Make avatar and info clickable to go to admin/profile
@@ -254,6 +261,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('username', user);
                 localStorage.setItem('userRole', role);
                 localStorage.setItem('userId', userId);
+                if (session.user.user_metadata && session.user.user_metadata.avatar_url) {
+                    localStorage.setItem('avatarUrl', session.user.user_metadata.avatar_url);
+                } else if (session.user.user_metadata && session.user.user_metadata.picture) {
+                    localStorage.setItem('avatarUrl', session.user.user_metadata.picture);
+                }
                 
                 // If role changed while logged in, reload the UI to reflect new permissions
                 if (!isNewSync && previousRole !== role) {
