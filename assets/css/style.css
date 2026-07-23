@@ -557,3 +557,14 @@ header {
         align-items: stretch;
     }
 }
+/* Premium Hero Overlay */
+.hero h1 {
+    font-size: 3.5rem !important;
+    font-weight: 900 !important;
+    background: linear-gradient(135deg, #a855f7, #2dd4bf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 40px rgba(168, 85, 247, 0.4);
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+}
