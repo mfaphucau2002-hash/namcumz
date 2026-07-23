@@ -516,8 +516,8 @@ window.appendMessage = function(msg) {
     if(!msgContainer) return;
     const isMine = msg.sender_id === localStorage.getItem('userId');
     const div = document.createElement('div');
-    div.style.cssText = "max-width: 80%; padding: 10px 15px; border-radius: 12px; margin-bottom: 5px; clear: both;  + (isMine ? 'background: var(--accent); color: #000; align-self: flex-end; border-bottom-right-radius: 4px;' : 'background: #334155; color: #fff; align-self: flex-start; border-bottom-left-radius: 4px;') + ";
-    div.innerHTML = <div style=""font-size: 0.7rem; font-weight: bold; margin-bottom: 4px;  + (isMine ? 'color: #333;' : 'color: var(--accent);') + "" ></div><div></div>;
+    div.style.cssText = `max-width: 80%; padding: 10px 15px; border-radius: 12px; margin-bottom: 5px; clear: both; ${isMine ? 'background: var(--accent); color: #000; align-self: flex-end; border-bottom-right-radius: 4px;' : 'background: #334155; color: #fff; align-self: flex-start; border-bottom-left-radius: 4px;'}`;
+    div.innerHTML = `<div style="font-size: 0.7rem; font-weight: bold; margin-bottom: 4px; ${isMine ? 'color: #333;' : 'color: var(--accent);'}">${msg.sender_name}</div><div>${msg.message}</div>`;
     msgContainer.appendChild(div);
     msgContainer.scrollTop = msgContainer.scrollHeight;
 };
