@@ -1,4 +1,4 @@
-﻿// 1. Initialize Supabase
+// 1. Initialize Supabase
 const SUPABASE_URL = 'https://vqnuutdmcekqkbdvawlw.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxbnV1dGRtY2VrcWtiZHZhd2x3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTgwNjIsImV4cCI6MjEwMDM3NDA2Mn0.T8_AdJOWEmf68oVrOjv8G51IScykzqhBnfHIi5LK-G4';
 
@@ -517,13 +517,13 @@ window.appendMessage = function(msg) {
     
     // Check for duplicates
     const msgId = msg.id || msg.created_at;
-    if(msgContainer.querySelector([data-id="${msgId}"])) return;
+    if(msgContainer.querySelector(`[data-id="${msgId}"]`)) return;
 
     const isMine = msg.sender_id === localStorage.getItem('userId');
     const div = document.createElement('div');
     div.setAttribute('data-id', msgId);
-    div.style.cssText = `max-width: 80%; padding: 10px 15px; border-radius: 12px; margin-bottom: 5px; clear: both; `;
-    div.innerHTML = `<div style="font-size: 0.7rem; font-weight: bold; margin-bottom: 4px; "></div><div></div>`;
+    div.style.cssText = `max-width: 80%; padding: 10px 15px; border-radius: 12px; margin-bottom: 5px; clear: both; ${isMine ? 'background: var(--accent); color: #000; align-self: flex-end; border-bottom-right-radius: 4px;' : 'background: #334155; color: #fff; align-self: flex-start; border-bottom-left-radius: 4px;'}`;
+    div.innerHTML = `<div style="font-size: 0.7rem; font-weight: bold; margin-bottom: 4px; ${isMine ? 'color: #333;' : 'color: var(--accent);'}">${msg.sender_name}</div><div>${msg.message}</div>`;
     msgContainer.appendChild(div);
     msgContainer.scrollTop = msgContainer.scrollHeight;
 };
