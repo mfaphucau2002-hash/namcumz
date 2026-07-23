@@ -224,6 +224,7 @@
                             <tr>
                                 <th>Mã Đơn</th>
                                 <th>Khách Hàng</th>
+                                <th>Mã Nhận Đơn</th>
                                 <th>Người Cày</th>
                                 <th>Nội dung</th>
                                 <th>Giá</th>
@@ -398,6 +399,7 @@
                     tr.innerHTML = `
                         <td><strong>${order.order_code}</strong></td>
                         <td style="color: var(--accent);">${order.renter_name}</td>
+                        <td style="color: var(--status-dang-cay); font-family: monospace;">${order.secret_code || '-'}</td>
                         <td>${order.booster_name || '-'}</td>
                         <td><div style="max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${order.content}</div></td>
                         <td style="color: var(--status-dang-cay); font-weight:bold;">${order.price || '-'}</td>
@@ -508,6 +510,8 @@
                 } else {
                     // Insert
                     payload.order_code = '#' + Math.floor(10000 + Math.random() * 90000);
+                    // Generate secret code for manual admin orders so customer can claim it later
+                    payload.secret_code = 'NAM-' + Math.random().toString(36).substring(2, 6).toUpperCase();
                     const { error } = await supabaseClient.from('orders').insert([payload]);
                     if(!error) {
                         modal.classList.remove('active');

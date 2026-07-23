@@ -54,11 +54,28 @@ function renderOrders(orders, containerId) {
         const avatarInitial = order.booster_name ? order.booster_name.charAt(0).toUpperCase() : '?';
         const animDelay = 0.2 + (index * 0.1);
 
+        const currentUserId = localStorage.getItem('userId');
+        const isOwner = (order.user_id === currentUserId) || (order.renter_name === currentUsername);
+        const isAssignedBooster = order.booster_id === currentUserId;
+        const isAdmin = userRole === 'admin' || userRole === 'super_admin';
+        const isBoosterRole = userRole === 'booster';
+        const canViewPrivate = isAdmin || isOwner || isAssignedBooster || isBoosterRole;
+
         let priceHtml = '';
-        if (userRole === 'admin' || userRole === 'super_admin' || (isLoggedIn && order.renter_name === currentUsername)) {
+        if (canViewPrivate) {
             priceHtml = `<span style="color: #fff; font-weight: 700; font-size: 0.9rem;">${order.price || 'Chưa báo giá'}</span>`;
         } else {
-            priceHtml = `<span style="color: #a1a1aa; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;" title="Chỉ người đăng đơn và Admin mới xem được giá"><i class="fa-solid fa-lock"></i> Ẩn giá</span>`;
+            priceHtml = `<span style="color: #a1a1aa; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;" title="Chỉ người đăng đơn, Booster và Admin mới xem được giá"><i class="fa-solid fa-lock"></i> Ẩn giá</span>`;
+        }
+
+        let actionButtons = '';
+        if (isLoggedIn) {
+            if (order.status === 'cho_xu_ly' && isBoosterRole && !order.booster_id) {
+                actionButtons += `<button onclick="acceptOrder('${order.id}')" class="btn" style="background: var(--accent); color: #000; font-weight: bold; padding: 6px 12px; font-size: 0.8rem; margin-right: 5px;"><i class="fa-solid fa-handshake"></i> Nhận đơn này</button>`;
+            }
+            if (canViewPrivate) {
+                actionButtons += `<button onclick="openChat('${order.id}', '${order.order_code}')" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;"><i class="fa-solid fa-comments"></i> Chat</button>`;
+            }
         }
 
         const card = document.createElement('div');
@@ -91,8 +108,11 @@ function renderOrders(orders, containerId) {
             </div>
 
             <div class="order-footer">
-                <span style="color: #a1a1aa; font-size: 0.85rem;">Giá thanh toán</span>
-                ${priceHtml}
+                <div>
+                    <span style="color: #a1a1aa; font-size: 0.85rem; display:block;">Giá thanh toán</span>
+                    ${priceHtml}
+                </div>
+                <div>${actionButtons}</div>
             </div>
         `;
         container.appendChild(card);
@@ -294,6 +314,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const price = document.getElementById('orderPrice').value;
             const content = document.getElementById('orderContent').value;
 
+            // Anti-Spam Check (5 minutes)
+            const lastOrderTime = localStorage.getItem('lastOrderTime');
+            if (lastOrderTime) {
+                const diff = (Date.now() - parseInt(lastOrderTime)) / 1000 / 60;
+                if (diff < 5) {
+                    alert(`Bạn đang gửi quá nhanh! Vui lòng chờ ${Math.ceil(5 - diff)} phút nữa để đăng đơn tiếp theo.`);
+                    return;
+                }
+            }
+
             // Generate order
             const order_code = generateOrderCode();
             
@@ -317,6 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Có lỗi xảy ra: ' + error.message);
             } else {
                 alert('Tạo đơn cày thuê thành công!');
+                localStorage.setItem('lastOrderTime', Date.now());
                 document.getElementById('createOrderModal').classList.remove('active');
                 createOrderForm.reset();
                 fetchOrders(); // refresh
@@ -431,6 +462,91 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.location.href = '/';
                 }
             }
+        });
+    }
+});
+
+// --- ACCEPT ORDER (BOOSTER) ---
+window.acceptOrder = async (orderId) => {
+    if(!confirm('Bạn chắc chắn muốn nhận đơn này?')) return;
+    const { error } = await supabaseClient
+        .from('orders')
+        .update({ booster_id: localStorage.getItem('userId'), booster_name: localStorage.getItem('username'), status: 'dang_cay' })
+        .eq('id', orderId);
+    if(error) alert('Lỗi: ' + error.message);
+    else { alert('Nhận đơn thành công!'); fetchOrders(); }
+};
+
+// --- CHAT LOGIC ---
+let currentChatSub = null;
+let currentChatOrderId = null;
+
+window.openChat = async (orderId, orderCode) => {
+    document.getElementById('chatOrderCode').textContent = orderCode;
+    document.getElementById('chatModal').classList.add('active');
+    currentChatOrderId = orderId;
+    const msgContainer = document.getElementById('chatMessages');
+    msgContainer.innerHTML = '<div style=""color: var(--text-muted); text-align: center;"">Đang tải tin nhắn...</div>';
+
+    // Load initial messages
+    const { data, error } = await supabaseClient
+        .from('order_messages')
+        .select('*')
+        .eq('order_id', orderId)
+        .order('created_at', { ascending: true });
+
+    msgContainer.innerHTML = '';
+    if(error) {
+        msgContainer.innerHTML = '<div style=""color: red;"">Lỗi tải tin nhắn: '+error.message+'</div>';
+    } else {
+        data.forEach(msg => appendMessage(msg));
+    }
+
+    // Subscribe to realtime messages
+    if(currentChatSub) await supabaseClient.removeChannel(currentChatSub);
+    currentChatSub = supabaseClient.channel('chat_'+orderId)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'order_messages', filter: 'order_id=eq.'+orderId }, payload => {
+            appendMessage(payload.new);
+        })
+        .subscribe();
+};
+
+window.appendMessage = function(msg) {
+    const msgContainer = document.getElementById('chatMessages');
+    if(!msgContainer) return;
+    const isMine = msg.sender_id === localStorage.getItem('userId');
+    const div = document.createElement('div');
+    div.style.cssText = "max-width: 80%; padding: 10px 15px; border-radius: 12px; margin-bottom: 5px; clear: both;  + (isMine ? 'background: var(--accent); color: #000; align-self: flex-end; border-bottom-right-radius: 4px;' : 'background: #334155; color: #fff; align-self: flex-start; border-bottom-left-radius: 4px;') + ";
+    div.innerHTML = <div style=""font-size: 0.7rem; font-weight: bold; margin-bottom: 4px;  + (isMine ? 'color: #333;' : 'color: var(--accent);') + "" ></div><div></div>;
+    msgContainer.appendChild(div);
+    msgContainer.scrollTop = msgContainer.scrollHeight;
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    const sendChatBtn = document.getElementById('sendChatBtn');
+    const chatInput = document.getElementById('chatInput');
+    if(sendChatBtn && chatInput) {
+        const sendMessage = async () => {
+            const text = chatInput.value.trim();
+            if(!text || !currentChatOrderId) return;
+            chatInput.value = '';
+            await supabaseClient.from('order_messages').insert([{
+                order_id: currentChatOrderId,
+                sender_id: localStorage.getItem('userId'),
+                sender_name: localStorage.getItem('username'),
+                message: text
+            }]);
+        };
+        sendChatBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
+    }
+    const closeChatBtn = document.getElementById('closeChatBtn');
+    if(closeChatBtn) {
+        closeChatBtn.addEventListener('click', () => {
+            document.getElementById('chatModal').classList.remove('active');
+            if(currentChatSub) supabaseClient.removeChannel(currentChatSub);
+            currentChatSub = null;
+            currentChatOrderId = null;
         });
     }
 });

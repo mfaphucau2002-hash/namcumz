@@ -1,213 +1,178 @@
-<!DOCTYPE html>
-<html lang="vi">
+﻿<!DOCTYPE html>
+<html lang=""vi"">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cài đặt tài khoản - NAMCUMZ</title>
+    <meta charset=""UTF-8"">
+    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+    <title>Trang Cá Nhân - NAMCUMZ</title>
     <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel=""stylesheet"" href=""https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"">
     <!-- CSS -->
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel=""stylesheet"" href=""assets/css/style.css"">
     <style>
-        .profile-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            margin-top: 40px;
-        }
-        .profile-container {
-            width: 100%;
-            max-width: 800px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-light);
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-        }
-        .profile-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .profile-header h1 {
-            font-size: 2rem;
-            color: var(--primary-light);
-            text-transform: uppercase;
-        }
-        .profile-notice {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 25px;
-            line-height: 1.6;
-        }
-        .warning-box {
-            background: rgba(245, 158, 11, 0.05);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-        .warning-box-title {
-            color: var(--status-dang-cay); /* yellow */
-            font-size: 0.9rem;
-            font-weight: 800;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-        }
-        .warning-box ul {
-            list-style: none;
-            padding-left: 10px;
-        }
-        .warning-box li {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-            position: relative;
-            padding-left: 15px;
-        }
-        .warning-box li::before {
-            content: '■';
-            position: absolute;
-            left: 0;
-            top: 1px;
-            font-size: 0.6rem;
-            color: var(--text-muted);
-        }
-        .status-ready {
-            color: var(--status-hoan-thanh);
-            font-weight: 700;
-        }
-        
-        /* File Input Customization */
-        .file-upload-wrapper {
-            display: flex;
-            align-items: center;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-light);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        .file-upload-btn {
-            background: #e2e8f0;
-            color: #0f172a;
-            padding: 12px 20px;
-            font-weight: 700;
-            cursor: pointer;
-            border-right: 1px solid var(--border-light);
-            font-size: 0.9rem;
-            flex-shrink: 0;
-        }
-        .file-upload-text {
-            padding: 12px 20px;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            flex-grow: 1;
-        }
-        .file-input {
-            display: none;
-        }
-
-        .btn-save {
-            width: 100%;
-            margin-top: 20px;
-            background: #38bdf8;
-            color: #0f172a;
-            font-weight: 800;
-            padding: 16px;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
-            border: none;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .btn-save:hover {
-            box-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
-            transform: translateY(-2px);
-            background: #7dd3fc;
-        }
-
-        @media (max-width: 768px) {
-            .profile-container {
-                padding: 20px;
-            }
-        }
+        .profile-layout { display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background: var(--bg-card); border-right: 1px solid var(--border-light); padding: 24px 0; display: flex; flex-direction: column; position: fixed; height: 100vh; }
+        .sidebar-logo { text-align: center; margin-bottom: 40px; padding: 0 20px; }
+        .sidebar-nav { flex: 1; }
+        .sidebar-link { display: flex; align-items: center; gap: 12px; padding: 16px 24px; color: var(--text-muted); font-weight: 600; transition: var(--transition); border-left: 3px solid transparent; cursor: pointer; }
+        .sidebar-link:hover, .sidebar-link.active { color: var(--accent); background: rgba(94, 234, 212, 0.05); border-left-color: var(--accent); }
+        .sidebar-link i { width: 20px; text-align: center; }
+        .sidebar-footer { padding: 24px; border-top: 1px solid var(--border-light); }
+        .profile-main { flex: 1; margin-left: 260px; padding: 40px; background: var(--bg-main); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .section-title { font-size: 1.8rem; color: var(--primary-light); text-transform: uppercase; margin-bottom: 20px; }
+        .my-orders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        .claim-box { background: rgba(94, 234, 212, 0.05); border: 1px solid var(--accent); padding: 30px; border-radius: 12px; max-width: 500px; margin-bottom: 40px; }
+        .btn-save { width: 100%; margin-top: 20px; background: #38bdf8; color: #0f172a; font-weight: 800; padding: 16px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; border-radius: 8px; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); border: none; cursor: pointer; transition: var(--transition); }
+        .btn-save:hover { box-shadow: 0 0 25px rgba(56, 189, 248, 0.6); transform: translateY(-2px); background: #7dd3fc; }
     </style>
 </head>
 <body>
-    <header>
-        <div class="app-container header-wrap">
-            <a href="/" class="logo-section">
-                <span class="logo-text">NAMCUMZ</span>
-            </a>
-            <nav class="navigation">
-                <a href="/" class="nav-link">
-                    <i class="fa-solid fa-arrow-left"></i> Quay lại
-                </a>
+    <div class=""profile-layout"">
+        <aside class=""sidebar"">
+            <div class=""sidebar-logo"">
+                <a href=""/"" class=""logo-text"" style=""font-size: 1.5rem;"">NAMCUMZ</a>
+            </div>
+            <nav class=""sidebar-nav"">
+                <a class=""sidebar-link active"" onclick=""switchTab('my-orders', this)""><i class=""fa-solid fa-gamepad""></i> Đơn của tôi</a>
+                <a class=""sidebar-link"" onclick=""switchTab('claim-order', this)""><i class=""fa-solid fa-key""></i> Nhận đơn (Bằng mã)</a>
+                <a class=""sidebar-link"" onclick=""switchTab('settings', this)""><i class=""fa-solid fa-user-gear""></i> Cài đặt tài khoản</a>
+                <a href=""/"" class=""sidebar-link""><i class=""fa-solid fa-house""></i> Về trang chủ</a>
             </nav>
-        </div>
-    </header>
+            <div class=""sidebar-footer"">
+                <button id=""logoutBtn"" class=""btn btn-secondary"" style=""width: 100%; border-color: rgba(239, 68, 68, 0.3); color: var(--status-tam-dung);"">
+                    <i class=""fa-solid fa-right-from-bracket""></i> Đăng xuất
+                </button>
+            </div>
+        </aside>
 
-    <main class="app-container">
-        <div class="profile-wrapper animate-on-load">
-            <div class="profile-container">
-                <div class="profile-header">
-                    <h1>CÀI ĐẶT TÀI KHOẢN</h1>
+        <main class=""profile-main"">
+            <div id=""tab-my-orders"" class=""tab-content active animate-on-load"">
+                <h1 class=""section-title"">ĐƠN CÀY CỦA TÔI</h1>
+                <p style=""color: var(--text-muted); margin-bottom: 30px;"">Danh sách các đơn hàng bạn đã tạo hoặc đã nhận bằng mã.</p>
+                <div class=""my-orders-grid"" id=""myOrdersGrid"">
+                    <div style=""color: var(--text-muted);"">Đang tải dữ liệu...</div>
                 </div>
+            </div>
 
-                <p class="profile-notice">Lưu ý: Hệ thống áp dụng giới hạn thay đổi nghiêm ngặt và độc lập. Mỗi lần cập nhật tên tài khoản sẽ kích hoạt thời gian chờ đổi tên là <strong style="color: var(--status-dang-cay);">60 ngày</strong>, và cập nhật avatar sẽ kích hoạt thời gian chờ đổi avatar là <strong style="color: var(--status-dang-cay);">60 ngày</strong>.</p>
-
-                <div class="warning-box">
-                    <div class="warning-box-title">
-                        <i class="fa-solid fa-clock"></i> THỜI GIAN CHỜ CHO LẦN SỬA TIẾP THEO:
-                    </div>
-                    <ul>
-                        <li>Tên tài khoản: <span class="status-ready">Sẵn sàng thay đổi</span></li>
-                        <li>Ảnh đại diện: <span class="status-ready">Sẵn sàng thay đổi</span></li>
-                    </ul>
-                </div>
-
-                <form id="profileForm">
-                    <div class="form-group">
-                        <label class="form-label">TÊN TÀI KHOẢN</label>
-                        <input type="text" id="profileDisplayName" class="form-control" placeholder="Nhập tên hiển thị mới...">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">CHỌN ẢNH ĐẠI DIỆN MỚI (TÙY CHỌN)</label>
-                        <div class="file-upload-wrapper">
-                            <label for="avatarUpload" class="file-upload-btn">Chọn tệp</label>
-                            <div class="file-upload-text" id="fileNameText">Chưa có tệp nào được chọn</div>
-                            <input type="file" id="avatarUpload" class="file-input" accept="image/*">
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn-save" id="btnSaveProfile">
-                        LƯU THAY ĐỔI
-                    </button>
-                </form>
+            <div id=""tab-claim-order"" class=""tab-content animate-on-load"">
+                <h1 class=""section-title"">NHẬN ĐƠN BẰNG MÃ</h1>
+                <p style=""color: var(--text-muted); margin-bottom: 30px;"">Nếu Admin tạo đơn hộ bạn, hãy nhập <strong>Mã Nhận Đơn</strong> (được Admin cấp) vào đây để liên kết đơn đó vào tài khoản của bạn.</p>
                 
-                <div style="text-align: center; margin-top: 30px;">
-                    <button id="logoutBtn" class="btn btn-secondary" style="border-color: rgba(239, 68, 68, 0.3); color: var(--status-tam-dung);">
-                        <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                <div class=""claim-box"">
+                    <div class=""form-group"">
+                        <label class=""form-label"" style=""color: var(--accent);"">MÃ NHẬN ĐƠN</label>
+                        <input type=""text"" id=""claimCodeInput"" class=""form-control"" placeholder=""VD: NAM-8X2A"" style=""font-size: 1.2rem; letter-spacing: 2px; font-weight: bold; text-transform: uppercase;"">
+                    </div>
+                    <button class=""btn btn-primary"" id=""btnClaimOrder"" style=""width: 100%; margin-top: 10px;"">
+                        <i class=""fa-solid fa-link""></i> LIÊN KẾT ĐƠN
                     </button>
                 </div>
             </div>
-        </div>
-    </main>
 
-    <footer style="margin-top: 80px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
-        &copy; Website Bảo mật tuyệt đối bằng liên kết linh hoạt.
-    </footer>
+            <div id=""tab-settings"" class=""tab-content animate-on-load"">
+                <h1 class=""section-title"">CÀI ĐẶT TÀI KHOẢN</h1>
+                <div style=""max-width: 500px; background: var(--bg-card); padding: 30px; border-radius: 12px; border: 1px solid var(--border-light);"">
+                    <form id=""profileForm"">
+                        <div class=""form-group"">
+                            <label class=""form-label"">TÊN HIỂN THỊ MỚI</label>
+                            <input type=""text"" id=""profileDisplayName"" class=""form-control"" placeholder=""Nhập tên mới..."">
+                        </div>
+                        <button type=""submit"" class=""btn-save"" id=""btnSaveProfile"">LƯU THAY ĐỔI</button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
 
+    <script src=""https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2""></script>
+    <script src=""assets/js/app.js""></script>
     <script>
-        document.getElementById('avatarUpload').addEventListener('change', function(e) {
-            const fileName = e.target.files[0] ? e.target.files[0].name : "Chưa có tệp nào được chọn";
-            document.getElementById('fileNameText').textContent = fileName;
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            el.classList.add('active');
+            if (tabId === 'my-orders') loadMyOrders();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentUserId = localStorage.getItem('userId');
+            if (!currentUserId) { window.location.href = '/login'; return; }
+
+            window.loadMyOrders = async () => {
+                const grid = document.getElementById('myOrdersGrid');
+                grid.innerHTML = '<div style=""color: var(--text-muted);"">Đang tải dữ liệu...</div>';
+                const { data, error } = await supabaseClient.from('orders').select('*').eq('user_id', currentUserId).order('created_at', { ascending: false });
+                if (error) return grid.innerHTML = '<div style=""color: var(--status-tam-dung);"">Lỗi tải dữ liệu.</div>';
+                if (data.length === 0) return grid.innerHTML = '<div style=""color: var(--text-muted);"">Bạn chưa có đơn cày nào.</div>';
+                
+                grid.innerHTML = '';
+                data.forEach(order => {
+                    let statusObj = getStatusData(order.status);
+                    grid.innerHTML += 
+                        <div class=""order-card "">
+                            <div class=""order-header"">
+                                <div class=""booster-info"">
+                                    <div class=""booster-avatar""></div>
+                                    <div>
+                                        <div style=""font-size: 0.75rem; color: var(--text-muted); font-weight: 700;"">NGƯỜI CÀY: <span style=""color: #fff;""></span></div>
+                                        <div style=""font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-top:2px;"">NGƯỜI THUÊ: <span style=""color: var(--accent);""></span></div>
+                                    </div>
+                                </div>
+                                <div class=""status-badge"" style=""color: ; border-color: ;"">
+                                    <i class=""fa-solid ""></i> 
+                                </div>
+                            </div>
+                            <div class=""order-details"">
+                                <div style=""font-size: 0.8rem; font-weight: 700; color: #a855f7; margin-bottom: 8px;"">MÃ ĐƠN: </div>
+                                <div style=""font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;""><i class=""fa-regular fa-clock""></i> </div>
+                                <div style=""background: rgba(255,255,255,0.03); padding: 12px; border-radius: 6px; font-size: 0.9rem; line-height: 1.5; font-weight: 500;""></div>
+                            </div>
+                            <div class=""order-footer"">
+                                <div style=""font-size: 0.85rem; color: var(--text-muted);"">Giá thanh toán</div>
+                                <div style=""font-size: 1.1rem; font-weight: 800; color: #fff;""></div>
+                            </div>
+                        </div>;
+                });
+            };
+
+            loadMyOrders();
+
+            const btnClaimOrder = document.getElementById('btnClaimOrder');
+            if (btnClaimOrder) {
+                btnClaimOrder.addEventListener('click', async () => {
+                    const code = document.getElementById('claimCodeInput').value.trim().toUpperCase();
+                    if (!code) return alert(""Vui lòng nhập mã nhận đơn!"");
+                    btnClaimOrder.innerHTML = '<i class=""fa-solid fa-spinner fa-spin""></i> ĐANG XỬ LÝ...';
+                    
+                    const { data, error } = await supabaseClient.from('orders').select('id, user_id').eq('secret_code', code).single();
+                    
+                    if (error || !data) {
+                        alert(""Mã nhận đơn không hợp lệ hoặc không tồn tại!"");
+                    } else if (data.user_id && data.user_id === currentUserId) {
+                        alert(""Bạn đã nhận đơn này rồi!"");
+                    } else {
+                        const { error: updateErr } = await supabaseClient.from('orders').update({ user_id: currentUserId, secret_code: null }).eq('id', data.id);
+                        if (updateErr) alert(""Có lỗi: "" + updateErr.message);
+                        else {
+                            alert(""Nhận đơn thành công! Đơn hàng đã được thêm vào mục Đơn Của Tôi."");
+                            document.getElementById('claimCodeInput').value = '';
+                            switchTab('my-orders', document.querySelector('.sidebar-link'));
+                        }
+                    }
+                    btnClaimOrder.innerHTML = '<i class=""fa-solid fa-link""></i> LIÊN KẾT ĐƠN';
+                });
+            }
+
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    localStorage.clear();
+                    if(supabaseClient) supabaseClient.auth.signOut().then(() => window.location.href = '/');
+                });
+            }
         });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="assets/js/app.js"></script>
 </body>
 </html>
