@@ -58,10 +58,102 @@
         }
         .modal-title {
             font-family: var(--font-heading);
-            color: var(--accent);
+            color: #ffffff;
             margin-bottom: 25px;
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        /* Premium Modal Override */
+        .premium-modal {
+            background: #0f0f11 !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            box-shadow: 0 0 40px rgba(168, 85, 247, 0.2), inset 0 0 20px rgba(168, 85, 247, 0.05) !important;
+            border-radius: 16px !important;
+            max-width: 500px !important;
+        }
+        .premium-modal .form-label {
+            color: #a1a1aa;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .premium-modal .form-control {
+            background: #18181b;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border-radius: 8px;
+            padding: 14px 16px;
+        }
+        .premium-modal .form-control:focus {
+            border-color: rgba(168, 85, 247, 0.5);
+            box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
+        }
+        .price-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .price-input-wrapper input {
+            padding-right: 60px; /* space for VND */
+        }
+        .price-input-wrapper .currency {
+            position: absolute;
+            right: 16px;
+            color: #2dd4bf;
+            font-weight: 800;
+            font-size: 0.95rem;
+        }
+        .modal-notice {
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 0.85rem;
+            color: #a1a1aa;
+            margin-top: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .modal-notice i {
+            color: #c084fc;
+            margin-top: 2px;
+        }
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        .btn-cancel {
+            background: #27272a;
+            color: #d4d4d8;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-cancel:hover {
+            background: #3f3f46;
+        }
+        .btn-submit-premium {
+            background: #a855f7;
+            color: #fff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+        }
+        .btn-submit-premium:hover {
+            background: #c084fc;
+            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.6);
         }
     </style>
 </head>
@@ -140,28 +232,43 @@
 
     <!-- Create Order Modal -->
     <div class="modal-overlay" id="createOrderModal">
-        <div class="modal-content">
-            <button class="modal-close" id="closeModalBtn"><i class="fa-solid fa-xmark"></i></button>
-            <h2 class="modal-title"><i class="fa-solid fa-plus-circle"></i> TẠO YÊU CẦU CÀY THUÊ</h2>
+        <div class="modal-content premium-modal">
+            <button class="modal-close" id="closeModalBtn" style="top: 25px;"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="modal-title">TẠO ĐƠN CÀY THUÊ MỚI</h2>
             <form id="createOrderForm">
+                
                 <div class="form-group">
-                    <label class="form-label">Tên Ingame (Hoặc ID Truy kích)</label>
-                    <input type="text" id="orderIngame" class="form-control" placeholder="Nhập tên nhân vật..." required>
+                    <label class="form-label">TÊN NGƯỜI CÀY THUÊ (MẶC ĐỊNH)</label>
+                    <input type="text" id="orderBooster" class="form-control" value="Azrael" placeholder="Tên booster...">
                 </div>
+
                 <div class="form-group">
-                    <label class="form-label">Nội dung / Gói cày thuê mong muốn</label>
-                    <textarea id="orderContent" class="form-control" rows="4" placeholder="Ví dụ: Cày từ rank Vàng lên Kim Cương..." required style="resize: vertical;"></textarea>
+                    <label class="form-label">NGƯỜI THUÊ CÀY</label>
+                    <input type="text" id="orderRenter" class="form-control" placeholder="Nhập tên khách hàng/người thuê..." required>
                 </div>
+
                 <div class="form-group">
-                    <label class="form-label">Ghi chú thêm (Tùy chọn)</label>
-                    <input type="text" id="orderNotes" class="form-control" placeholder="Giờ giấc cày, yêu cầu khác...">
+                    <label class="form-label">GIÁ TIỀN</label>
+                    <div class="price-input-wrapper">
+                        <input type="number" id="orderPrice" class="form-control" style="width: 100%;" placeholder="Ví dụ: 150000" required>
+                        <span class="currency">VND</span>
+                    </div>
                 </div>
-                <div style="margin-top: 15px; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">
-                    <i class="fa-solid fa-circle-info" style="color: var(--accent);"></i> Yêu cầu của bạn sẽ được gửi tới Admin. Chúng tôi sẽ liên hệ lại qua game hoặc kênh liên lạc để chốt giá (Admin sẽ cập nhật giá sau).
+
+                <div class="form-group">
+                    <label class="form-label">NỘI DUNG CÀY THUÊ (MÔ TẢ CHI TIẾT)</label>
+                    <textarea id="orderContent" class="form-control" rows="4" placeholder="Nhập mục tiêu cày rank, game, thời gian..." required style="resize: vertical;"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1.05rem;">
-                    GỬI YÊU CẦU NGAY
-                </button>
+
+                <div class="modal-notice">
+                    <i class="fa-solid fa-clock"></i>
+                    <div>Đơn mới luôn ở trạng thái <strong style="color: #f43f5e;">Đã Nhận</strong> cho đến khi Bạn đổi trạng thái.</div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" id="cancelModalBtn">Hủy</button>
+                    <button type="submit" class="btn-submit-premium" id="submitModalBtn">Tạo đơn</button>
+                </div>
             </form>
         </div>
     </div>

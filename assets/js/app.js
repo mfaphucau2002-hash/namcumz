@@ -183,23 +183,25 @@ document.addEventListener('DOMContentLoaded', () => {
     if (createOrderForm) {
         createOrderForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const ingame = document.getElementById('orderIngame').value;
+            const booster = document.getElementById('orderBooster').value;
+            const renter = document.getElementById('orderRenter').value;
+            const price = document.getElementById('orderPrice').value;
             const content = document.getElementById('orderContent').value;
-            const notes = document.getElementById('orderNotes').value;
 
             // Generate order
             const order_code = generateOrderCode();
             
-            createOrderForm.querySelector('button').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG GỬI...';
-            createOrderForm.querySelector('button').disabled = true;
+            const submitBtn = document.getElementById('submitModalBtn');
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang tải...';
+            submitBtn.disabled = true;
 
             const { data, error } = await supabaseClient.from('orders').insert([
                 {
                     order_code: order_code,
-                    booster_name: '', // Empty initially
-                    renter_name: currentUsername,
-                    content: `[${ingame}] ${content}`,
-                    price: '', // Empty initially
+                    booster_name: booster,
+                    renter_name: renter,
+                    content: content,
+                    price: price,
                     status: 'cho_xu_ly'
                 }
             ]);
@@ -207,15 +209,22 @@ document.addEventListener('DOMContentLoaded', () => {
             if (error) {
                 alert('Có lỗi xảy ra: ' + error.message);
             } else {
-                alert('Tạo yêu cầu cày thuê thành công! Đơn hàng đang chờ xử lý.');
+                alert('Tạo đơn cày thuê thành công!');
                 document.getElementById('createOrderModal').classList.remove('active');
                 createOrderForm.reset();
                 fetchOrders(); // refresh
             }
 
-            createOrderForm.querySelector('button').innerHTML = 'GỬI YÊU CẦU NGAY';
-            createOrderForm.querySelector('button').disabled = false;
+            submitBtn.innerHTML = 'Tạo đơn';
+            submitBtn.disabled = false;
         });
+
+        const cancelBtn = document.getElementById('cancelModalBtn');
+        if(cancelBtn) {
+            cancelBtn.addEventListener('click', () => {
+                document.getElementById('createOrderModal').classList.remove('active');
+            });
+        }
     }
 
     // --- PROFILE LOGIC ---
