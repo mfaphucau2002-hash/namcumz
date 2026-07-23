@@ -78,11 +78,11 @@
 <body>
     <header>
         <div class="app-container header-wrap">
-            <a href="index.html" class="logo-section">
+            <a href="/" class="logo-section">
                 <span class="logo-text">NAMCUMZ</span>
             </a>
             <nav class="navigation">
-                <a href="index.html" class="nav-link">
+                <a href="/" class="nav-link">
                     <i class="fa-solid fa-arrow-left"></i> Quay lại
                 </a>
             </nav>
@@ -131,21 +131,21 @@
                         <form id="registerForm">
                             <div class="form-group">
                                 <label class="form-label">TÊN TÀI KHOẢN ĐĂNG NHẬP (VIẾT LIỀN, KHÔNG DẤU)</label>
-                                <input type="text" class="form-control" placeholder="Ví dụ: nguyenvana">
+                                <input type="text" id="regUsername" class="form-control" placeholder="Ví dụ: nguyenvana" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">TÊN HIỂN THỊ (TRÊN WEB)</label>
-                                <input type="text" class="form-control" placeholder="Ví dụ: Nguyễn Văn A">
+                                <input type="text" id="regDisplay" class="form-control" placeholder="Ví dụ: Nguyễn Văn A" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">MẬT KHẨU</label>
-                                <input type="password" class="form-control" placeholder="Nhập mật khẩu...">
+                                <input type="password" id="regPass" class="form-control" placeholder="Nhập mật khẩu..." required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">XÁC NHẬN LẠI MẬT KHẨU</label>
-                                <input type="password" class="form-control" placeholder="Nhập lại mật khẩu...">
+                                <input type="password" id="regConfirm" class="form-control" placeholder="Nhập lại mật khẩu..." required>
                             </div>
-                            <button type="button" class="btn btn-primary" style="width: 100%; margin-top: 10px; background: #8b5cf6;">
+                            <button type="submit" id="regSubmitBtn" class="btn btn-primary" style="width: 100%; margin-top: 10px; background: #8b5cf6;">
                                 <i class="fa-solid fa-user-plus"></i> Tạo tài khoản
                             </button>
                         </form>
@@ -159,27 +159,7 @@
         </div>
     </main>
 
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
 
-            if(user === 'admin' && pass === 'admin') {
-                localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('userRole', 'admin');
-                localStorage.setItem('username', 'Admin');
-                window.location.href = 'admin.html';
-            } else if (user && pass) {
-                localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('userRole', 'customer');
-                localStorage.setItem('username', user);
-                window.location.href = 'index.html';
-            } else {
-                alert("Vui lòng nhập đầy đủ thông tin!");
-            }
-        });
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/app.js"></script>
 </body>

@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const loginBtn = document.getElementById('loginBtn');
         if(loginBtn) {
             loginBtn.innerHTML = '<i class="fa-solid fa-user"></i> TÃ i khoáº£n';
-            loginBtn.href = localStorage.getItem('userRole') === 'admin' ? 'admin.html' : '#';
+            loginBtn.href = localStorage.getItem('userRole') === 'admin' ? '/admin' : '#';
         }
 
         const createOrderBtn = document.getElementById('createOrderBtn');
@@ -166,6 +166,80 @@ document.addEventListener('DOMContentLoaded', () => {
                 (o.order_code && o.order_code.toLowerCase().includes(val))
             );
             renderOrders(filtered, 'ordersGrid');
+        });
+    }
+});
+
+// Auth Logic
+document.addEventListener('DOMContentLoaded', () => {
+    if (!supabaseClient) return;
+    
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+
+    if (registerForm) {
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('regUsername').value.trim();
+            const displayName = document.getElementById('regDisplay').value.trim();
+            const pass = document.getElementById('regPass').value;
+            const confirm = document.getElementById('regConfirm').value;
+
+            if (pass !== confirm) {
+                alert('M?t kh?u xác nh?n không kh?p!');
+                return;
+            }
+
+            const email = username + '@namcumz.com';
+
+            const { data, error } = await supabaseClient.auth.signUp({
+                email: email,
+                password: pass,
+                options: {
+                    data: {
+                        display_name: displayName,
+                        role: 'customer'
+                    }
+                }
+            });
+
+            if (error) {
+                alert('L?i dang ký: ' + error.message);
+            } else {
+                alert('Ðang ký thành công! Hãy dang nh?p b?ng Tên tài kho?n v?a t?o.');
+                registerForm.reset();
+            }
+        });
+    }
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value;
+
+            // Admin manual bypass just in case, but let's use real auth
+            const email = user + '@namcumz.com';
+
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: pass
+            });
+
+            if (error) {
+                alert('Tên tài kho?n ho?c m?t kh?u không dúng!');
+            } else {
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('username', user);
+                // Check if admin (you can set an admin user manually in Supabase later)
+                if (user.toLowerCase() === 'admin') {
+                    localStorage.setItem('userRole', 'admin');
+                    window.location.href = '/admin';
+                } else {
+                    localStorage.setItem('userRole', 'customer');
+                    window.location.href = '/';
+                }
+            }
         });
     }
 });

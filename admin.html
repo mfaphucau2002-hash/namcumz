@@ -151,7 +151,7 @@
                 <li><a href="#"><i class="fa-solid fa-list-check"></i> Quản lý Đơn cày</a></li>
                 <li><a href="#"><i class="fa-solid fa-users"></i> Khách hàng</a></li>
                 <li><a href="#"><i class="fa-solid fa-shield-virus"></i> Danh sách đen</a></li>
-                <li><a href="index.html" style="margin-top: 50px; color: var(--text-muted);"><i class="fa-solid fa-arrow-right-from-bracket"></i> Về trang chủ</a></li>
+                <li><a href="/" style="margin-top: 50px; color: var(--text-muted);"><i class="fa-solid fa-arrow-right-from-bracket"></i> Về trang chủ</a></li>
             </ul>
         </aside>
 
@@ -242,7 +242,7 @@
             const role = localStorage.getItem('userRole');
             if (role !== 'admin') {
                 alert('Bạn không có quyền truy cập trang này!');
-                window.location.href = 'index.html';
+                window.location.href = '/';
             }
         });
     </script>
