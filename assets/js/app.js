@@ -1,4 +1,4 @@
-// 1. Initialize Supabase
+﻿// 1. Initialize Supabase
 const SUPABASE_URL = 'https://vqnuutdmcekqkbdvawlw.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxbnV1dGRtY2VrcWtiZHZhd2x3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTgwNjIsImV4cCI6MjEwMDM3NDA2Mn0.T8_AdJOWEmf68oVrOjv8G51IScykzqhBnfHIi5LK-G4';
 
@@ -73,6 +73,15 @@ function renderOrders(orders, containerId) {
             if (order.status === 'cho_xu_ly' && isBoosterRole && !order.booster_id) {
                 actionButtons += `<button onclick="acceptOrder('${order.id}')" class="btn" style="background: var(--accent); color: #000; font-weight: bold; padding: 6px 12px; font-size: 0.8rem; margin-right: 5px;"><i class="fa-solid fa-handshake"></i> Nhận đơn này</button>`;
             }
+                        if (isAssignedBooster) {
+                actionButtons += `
+                    <select onchange="changeOrderStatus('${order.id}', this.value, '${order.user_id}')" style="background: #18181b; color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 6px 10px; font-size: 0.8rem; margin-right: 5px; outline: none; cursor: pointer;">
+                        <option value="dang_cay" ` + (order.status === 'dang_cay' ? 'selected' : '') + `>Đang cày</option>
+                        <option value="hoan_thanh" ` + (order.status === 'hoan_thanh' ? 'selected' : '') + `>Hoàn thành</option>
+                        <option value="tam_dung" ` + (order.status === 'tam_dung' ? 'selected' : '') + `>Tạm dừng</option>
+                    </select>
+                `;
+            }
             if (canViewPrivate) {
                 actionButtons += `<button onclick="openChat('${order.id}', '${order.order_code}')" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;"><i class="fa-solid fa-comments"></i> Chat</button>`;
             }
@@ -145,6 +154,21 @@ async function fetchOrders() {
 
 // Global Setup
 document.addEventListener('DOMContentLoaded', () => {
+    const notifBtn = document.getElementById('notificationBtn');
+    if (notifBtn) notifBtn.addEventListener('click', toggleNotificationDropdown);
+    const markReadBtn = document.getElementById('markAllReadBtn');
+    if (markReadBtn) markReadBtn.addEventListener('click', markAllNotificationsRead);
+    
+    // Initial fetch
+    if(localStorage.getItem('userId')) {
+        fetchNotifications();
+        // Subscribe to notifications realtime
+        supabaseClient.channel('public:notifications')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: 'user_id=eq.' + localStorage.getItem('userId') }, payload => {
+                fetchNotifications();
+            })
+            .subscribe();
+    }
 
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     const userRole = localStorage.getItem('userRole') || 'guest';
@@ -477,6 +501,80 @@ window.acceptOrder = async (orderId) => {
     else { alert('Nhận đơn thành công!'); fetchOrders(); }
 };
 
+window.changeOrderStatus = async (orderId, newStatus, customerId) => {
+    const { error } = await supabaseClient.from('orders').update({ status: newStatus }).eq('id', orderId);
+    if (error) {
+        alert("Lỗi cập nhật trạng thái: " + error.message);
+    } else {
+        alert("Cập nhật thành công!");
+        // Insert notification for the customer
+        if (customerId && customerId !== 'null') {
+            await supabaseClient.from('notifications').insert([{
+                user_id: customerId,
+                title: "Trạng thái đơn hàng",
+                content: Đơn cày của bạn đã được chuyển sang trạng thái mới.
+            }]);
+        }
+        fetchOrders();
+    }
+};
+
+window.toggleNotificationDropdown = () => {
+    const dropdown = document.getElementById('notificationDropdown');
+    const badge = document.getElementById('notificationBadge');
+    if (dropdown) {
+        dropdown.style.display = dropdown.style.display === 'none' ? 'flex' : 'none';
+        if (dropdown.style.display === 'flex' && badge) badge.style.display = 'none'; // mark visually read
+    }
+};
+
+window.fetchNotifications = async () => {
+    const currentUserId = localStorage.getItem('userId');
+    if (!currentUserId) return;
+    
+    const { data, error } = await supabaseClient
+        .from('notifications')
+        .select('*')
+        .eq('user_id', currentUserId)
+        .order('created_at', { ascending: false })
+        .limit(20);
+        
+    const list = document.getElementById('notificationList');
+    const badge = document.getElementById('notificationBadge');
+    
+    if (error || !list) return;
+    
+    if (data.length === 0) {
+        list.innerHTML = <div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">Không có thông báo</div>;
+        if (badge) badge.style.display = 'none';
+        return;
+    }
+    
+    list.innerHTML = '';
+    let hasUnread = false;
+    data.forEach(notif => {
+        if (!notif.is_read) hasUnread = true;
+        list.innerHTML += 
+            <div style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); ">
+                <div style="font-weight: bold; font-size: 0.85rem; color: #fff; margin-bottom: 4px;"></div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);"></div>
+                <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 6px; text-align: right;"><i class="fa-regular fa-clock"></i> </div>
+            </div>
+        ;
+    });
+    
+    if (hasUnread && badge) {
+        badge.style.display = 'block';
+    }
+};
+
+window.markAllNotificationsRead = async () => {
+    const currentUserId = localStorage.getItem('userId');
+    if (!currentUserId) return;
+    await supabaseClient.from('notifications').update({ is_read: true }).eq('user_id', currentUserId).eq('is_read', false);
+    fetchNotifications();
+};
+
 // --- CHAT LOGIC ---
 let currentChatSub = null;
 let currentChatOrderId = null;
@@ -529,6 +627,21 @@ window.appendMessage = function(msg) {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    const notifBtn = document.getElementById('notificationBtn');
+    if (notifBtn) notifBtn.addEventListener('click', toggleNotificationDropdown);
+    const markReadBtn = document.getElementById('markAllReadBtn');
+    if (markReadBtn) markReadBtn.addEventListener('click', markAllNotificationsRead);
+    
+    // Initial fetch
+    if(localStorage.getItem('userId')) {
+        fetchNotifications();
+        // Subscribe to notifications realtime
+        supabaseClient.channel('public:notifications')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: 'user_id=eq.' + localStorage.getItem('userId') }, payload => {
+                fetchNotifications();
+            })
+            .subscribe();
+    }
     const sendChatBtn = document.getElementById('sendChatBtn');
     const chatInput = document.getElementById('chatInput');
     if(sendChatBtn && chatInput) {
@@ -566,6 +679,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+
+
 
 
 
