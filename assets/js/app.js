@@ -1,33 +1,16 @@
-// Mock Data for Orders (Since Supabase is not connected yet)
-const mockOrders = [
-    {
-        id: '#00005',
-        booster: 'NamCumz',
-        renter: 'Khách hàng A',
-        time: '14:41 23/07/2026',
-        status: 'dang_cay',
-        content: 'Cày rank từ Vàng lên Kim Cương, cày full nhiệm vụ sự kiện.',
-        price: '500,000'
-    },
-    {
-        id: '#00004',
-        booster: 'Team NamCumz',
-        renter: 'Khách hàng B',
-        time: '10:15 22/07/2026',
-        status: 'hoan_thanh',
-        content: 'Hoàn thành 100% bản đồ mới + nhặt rương.',
-        price: '200,000'
-    },
-    {
-        id: '#00003',
-        booster: 'NamCumz',
-        renter: 'Khách hàng C',
-        time: '08:30 21/07/2026',
-        status: 'tam_dung',
-        content: 'Xả nhựa 3 acc HSR 2 ngày.',
-        price: '150,000'
-    }
-];
+// 1. Initialize Supabase
+const SUPABASE_URL = 'https://vqnuutdmcekqkbdvawlw.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxbnV1dGRtY2VrcWtiZHZhd2x3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTgwNjIsImV4cCI6MjEwMDM3NDA2Mn0.T8_AdJOWEmf68oVrOjv8G51IScykzqhBnfHIi5LK-G4';
+
+// Check if supabase library is loaded
+let supabaseClient = null;
+if (window.supabase) {
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+} else {
+    console.error("Supabase CDN not loaded!");
+}
+
+let allOrders = []; // To store fetched orders for searching
 
 // Helper functions for UI
 function getStatusDetails(status) {
@@ -43,27 +26,41 @@ function getStatusDetails(status) {
     }
 }
 
+// Format date
+function formatDate(dateString) {
+    const d = new Date(dateString);
+    const time = d.toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'});
+    const date = d.toLocaleDateString('vi-VN', {day: '2-digit', month: '2-digit', year: 'numeric'});
+    return `${time} ${date}`;
+}
+
 function renderOrders(orders, containerId) {
     const container = document.getElementById(containerId);
     if(!container) return;
 
-    // Check if user is logged in (Mock)
+    // Check if user is logged in
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     const userRole = localStorage.getItem('userRole') || 'guest';
+    const currentUsername = localStorage.getItem('username');
 
     container.innerHTML = '';
 
+    if (orders.length === 0) {
+        container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">Không tìm thấy đơn cày nào.</div>';
+        return;
+    }
+
     orders.forEach((order, index) => {
         const statusInfo = getStatusDetails(order.status);
-        const avatarInitial = order.booster.charAt(0).toUpperCase();
+        const avatarInitial = order.booster_name ? order.booster_name.charAt(0).toUpperCase() : 'A';
 
         // Calculate animation delay for staggering effect
-        const animDelay = 0.4 + (index * 0.1);
+        const animDelay = 0.2 + (index * 0.1);
 
         // Price visibility logic
         let priceHtml = '';
-        if (userRole === 'admin' || (isLoggedIn && order.renter === 'Tên Của Tôi')) {
-            priceHtml = `<span class="price-value visible">${order.price} VND</span>`;
+        if (userRole === 'admin' || (isLoggedIn && order.renter_name === currentUsername)) {
+            priceHtml = `<span class="price-value visible">${order.price || '0'} đ</span>`;
         } else {
             priceHtml = `<span class="price-value hidden" title="Chỉ người đăng đơn và Admin mới xem được giá">
                             <i class="fa-solid fa-lock" style="font-size: 0.8rem; margin-right: 4px;"></i> Ẩn giá
@@ -74,15 +71,16 @@ function renderOrders(orders, containerId) {
         card.className = 'order-card animate-on-load';
         card.style.animationDelay = `${animDelay}s`;
         card.style.setProperty('--status-color', statusInfo.colorVar);
+        
         card.innerHTML = `
             <div class="order-header">
                 <div class="booster-info">
                     <div class="booster-avatar">${avatarInitial}</div>
                     <div class="booster-details">
-                        <span class="booster-label">Người cày: <strong style="color: var(--text-main);">${order.booster}</strong></span>
-                        <span class="booster-label" style="margin-top: 2px;">Người thuê: <strong style="color: var(--accent);">${order.renter}</strong></span>
-                        <span class="booster-label" style="margin-top: 2px;">Mã đơn: <strong style="color: var(--primary-light);">${order.id}</strong></span>
-                        <span class="time-label"><i class="fa-regular fa-clock"></i> ${order.time}</span>
+                        <span class="booster-label">Người cày: <strong style="color: var(--text-main);">${order.booster_name}</strong></span>
+                        <span class="booster-label" style="margin-top: 2px;">Người thuê: <strong style="color: var(--accent);">${order.renter_name}</strong></span>
+                        <span class="booster-label" style="margin-top: 2px;">Mã đơn: <strong style="color: var(--primary-light);">${order.order_code}</strong></span>
+                        <span class="time-label"><i class="fa-regular fa-clock"></i> ${formatDate(order.created_at)}</span>
                     </div>
                 </div>
                 <div>
@@ -92,7 +90,7 @@ function renderOrders(orders, containerId) {
                 </div>
             </div>
             <div class="order-body">
-                ${order.content}
+                ${order.content || 'Không có mô tả'}
             </div>
             <div class="order-price-box">
                 <span class="price-label">Giá thanh toán</span>
@@ -113,36 +111,59 @@ function updateStats(orders) {
     }
 }
 
-// Search functionality
-document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.getElementById('searchInput');
-    
-    // Initial Render
-    renderOrders(mockOrders, 'ordersGrid');
-    updateStats(mockOrders);
+// Fetch orders from Supabase
+async function fetchOrders() {
+    if (!supabaseClient) return;
 
-    // Update UI based on login status
+    try {
+        const { data, error } = await supabaseClient
+            .from('orders')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        
+        allOrders = data;
+        renderOrders(allOrders, 'ordersGrid');
+        updateStats(allOrders);
+    } catch (error) {
+        console.error("Lỗi khi tải dữ liệu:", error.message);
+        document.getElementById('ordersGrid').innerHTML = '<div style="color: var(--status-tam-dung);">Lỗi kết nối tới cơ sở dữ liệu. Vui lòng kiểm tra lại cấu hình.</div>';
+    }
+}
+
+// Search functionality & Setup
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Fetch Data
+    if (document.getElementById('ordersGrid')) {
+        fetchOrders();
+    }
+
+    // 2. Update UI based on login status
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     if(isLoggedIn) {
         const loginBtn = document.getElementById('loginBtn');
         if(loginBtn) {
             loginBtn.innerHTML = '<i class="fa-solid fa-user"></i> Tài khoản';
-            loginBtn.href = localStorage.getItem('userRole') === 'admin' ? 'admin.html' : 'profile.html';
+            loginBtn.href = localStorage.getItem('userRole') === 'admin' ? 'admin.html' : '#';
         }
 
         const createOrderBtn = document.getElementById('createOrderBtn');
         if(createOrderBtn) {
             createOrderBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Tạo đơn mới';
-            createOrderBtn.href = '#'; // Mock action
+            createOrderBtn.href = '#'; // Functionality to add real orders can be implemented here
         }
     }
 
+    // 3. Search input logic
+    const searchInput = document.getElementById('searchInput');
     if(searchInput) {
         searchInput.addEventListener('input', (e) => {
             const val = e.target.value.toLowerCase();
-            const filtered = mockOrders.filter(o => 
-                o.booster.toLowerCase().includes(val) || 
-                o.renter.toLowerCase().includes(val)
+            const filtered = allOrders.filter(o => 
+                (o.booster_name && o.booster_name.toLowerCase().includes(val)) || 
+                (o.renter_name && o.renter_name.toLowerCase().includes(val)) ||
+                (o.order_code && o.order_code.toLowerCase().includes(val))
             );
             renderOrders(filtered, 'ordersGrid');
         });
