@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const confirm = document.getElementById('regConfirm').value;
 
             if (pass !== confirm) {
-                alert('M?t kh?u x�c nh?n kh�ng kh?p!');
+                alert('Mật khẩu xác nhận không khớp!');
                 return;
             }
 
@@ -204,9 +204,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (error) {
-                alert('L?i dang k�: ' + error.message);
+                alert('Lỗi đăng ký: ' + error.message);
             } else {
-                alert('�ang k� th�nh c�ng! H�y dang nh?p b?ng T�n t�i kho?n v?a t?o.');
+                alert('Đăng ký thành công! Hãy đăng nhập bằng Tên tài khoản vừa tạo.');
                 registerForm.reset();
             }
         });
@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (error) {
-                alert('T�n t�i kho?n ho?c m?t kh?u kh�ng d�ng!');
+                alert('Tên tài khoản hoặc mật khẩu không đúng!');
             } else {
                 localStorage.setItem('isLoggedIn', 'true');
                 localStorage.setItem('username', user);
