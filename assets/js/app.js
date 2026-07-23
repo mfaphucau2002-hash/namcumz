@@ -219,9 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 2. UI Auth State
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    const userRole = localStorage.getItem('userRole') || 'guest';
-    const currentUsername = localStorage.getItem('username');
     const currentUserId = localStorage.getItem('userId');
 
     if(isLoggedIn) {
