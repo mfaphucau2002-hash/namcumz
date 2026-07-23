@@ -59,13 +59,13 @@ function renderOrders(orders, containerId) {
         const isAssignedBooster = order.booster_id === currentUserId;
         const isAdmin = userRole === 'admin' || userRole === 'super_admin';
         const isBoosterRole = userRole === 'booster';
-        const canViewPrivate = isAdmin || isOwner || isAssignedBooster || isBoosterRole;
+        const canViewPrivate = isAdmin || isOwner || isAssignedBooster;
 
         let priceHtml = '';
         if (canViewPrivate) {
             priceHtml = `<span style="color: #fff; font-weight: 700; font-size: 0.9rem;">${order.price || 'Chưa báo giá'}</span>`;
         } else {
-            priceHtml = `<span style="color: #a1a1aa; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;" title="Chỉ người đăng đơn, Booster và Admin mới xem được giá"><i class="fa-solid fa-lock"></i> Ẩn giá</span>`;
+            priceHtml = `<span style="color: #a1a1aa; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;" title="Chỉ người thuê, người đang cày đơn này và Admin mới xem được giá"><i class="fa-solid fa-lock"></i> Ẩn giá</span>`;
         }
 
         let actionButtons = '';
