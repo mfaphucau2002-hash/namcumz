@@ -1,4 +1,4 @@
-﻿// 1. Initialize Supabase
+// 1. Initialize Supabase
 const SUPABASE_URL = 'https://vqnuutdmcekqkbdvawlw.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxbnV1dGRtY2VrcWtiZHZhd2x3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTgwNjIsImV4cCI6MjEwMDM3NDA2Mn0.T8_AdJOWEmf68oVrOjv8G51IScykzqhBnfHIi5LK-G4';
 
@@ -512,7 +512,7 @@ window.changeOrderStatus = async (orderId, newStatus, customerId) => {
             await supabaseClient.from('notifications').insert([{
                 user_id: customerId,
                 title: "Trạng thái đơn hàng",
-                content: Đơn cày của bạn đã được chuyển sang trạng thái mới.
+                content: `Đơn cày của bạn đã được chuyển sang trạng thái mới.`
             }]);
         }
         fetchOrders();
@@ -545,7 +545,7 @@ window.fetchNotifications = async () => {
     if (error || !list) return;
     
     if (data.length === 0) {
-        list.innerHTML = <div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">Không có thông báo</div>;
+        list.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">Không có thông báo</div>`;
         if (badge) badge.style.display = 'none';
         return;
     }
@@ -554,13 +554,13 @@ window.fetchNotifications = async () => {
     let hasUnread = false;
     data.forEach(notif => {
         if (!notif.is_read) hasUnread = true;
-        list.innerHTML += 
-            <div style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); ">
-                <div style="font-weight: bold; font-size: 0.85rem; color: #fff; margin-bottom: 4px;"></div>
-                <div style="font-size: 0.8rem; color: var(--text-muted);"></div>
-                <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 6px; text-align: right;"><i class="fa-regular fa-clock"></i> </div>
+        list.innerHTML += `
+            <div style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); ${notif.is_read ? 'opacity: 0.7;' : 'background: rgba(168, 85, 247, 0.1);'}">
+                <div style="font-weight: bold; font-size: 0.85rem; color: #fff; margin-bottom: 4px;">${notif.title}</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">${notif.content}</div>
+                <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 6px; text-align: right;"><i class="fa-regular fa-clock"></i> ${new Date(notif.created_at).toLocaleString('vi-VN')}</div>
             </div>
-        ;
+        `;
     });
     
     if (hasUnread && badge) {
@@ -664,6 +664,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const { error } = await supabaseClient.from('order_messages').insert([newMsg]);
             if (error) {
                 alert("Lỗi gửi tin nhắn: " + error.message);
+            } else {
+                // Determine who to notify
+                const { data: orderData } = await supabaseClient.from('orders').select('user_id, booster_id').eq('id', currentChatOrderId).single();
+                if (orderData) {
+                    const receiverId = localStorage.getItem('userId') === orderData.user_id ? orderData.booster_id : orderData.user_id;
+                    if (receiverId) {
+                        await supabaseClient.from('notifications').insert([{
+                            user_id: receiverId,
+                            title: "Tin nhắn mới",
+                            content: `Bạn có tin nhắn mới từ ` + localStorage.getItem('username')
+                        }]);
+                    }
+                }
             }
         };
         sendChatBtn.addEventListener('click', sendMessage);
