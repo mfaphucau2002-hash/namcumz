@@ -549,7 +549,11 @@ window.fetchOrderLogs = async function() {
 function setupNavbar() {
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     const userRole = localStorage.getItem('userRole') || 'guest';
-    const currentUsername = localStorage.getItem('username') || '';
+    let currentUsername = localStorage.getItem('username');
+    if (!currentUsername || currentUsername === 'null' || currentUsername === 'undefined') {
+        currentUsername = 'Người dùng';
+        if (userRole === 'admin' || userRole === 'super_admin') currentUsername = 'Admin';
+    }
     
     const navAccountBtn = document.getElementById('navAccountBtn');
     const navUserProfile = document.getElementById('navUserProfile');
