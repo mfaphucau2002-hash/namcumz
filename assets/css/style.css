@@ -804,3 +804,66 @@ body { font-weight: 400; background-color: var(--bg-dark); }
 }
 .logo-container img { width: 36px; height: 36px; border-radius: 8px; }
 .logo-text { font-size: 20px; font-weight: 800; letter-spacing: 1px; background: linear-gradient(to right, #fff, var(--primary-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
+
+/* --- PREMIUM ANIMATIONS & EFFECTS --- */
+@keyframes smoothGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.logo-text, .dashboard-title {
+    background: linear-gradient(270deg, var(--primary), var(--secondary), var(--primary-light));
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: smoothGradient 8s ease-in-out infinite;
+}
+
+@keyframes fadeUpPremium {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dashboard-title {
+    animation: fadeUpPremium 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes subtlePulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.15); opacity: 0.8; filter: brightness(1.2); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.status-dang-cay i {
+    display: inline-block;
+    animation: subtlePulse 2s ease-in-out infinite;
+}
+
+.nav-link, .btn, .oc-title, .tab-btn {
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease, background-color 0.2s ease !important;
+}
+
+.nav-link:hover, .btn:hover {
+    transform: translateY(-2px);
+}
+
+.oc-title:hover {
+    color: var(--primary) !important;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+    .nav-link:hover, .btn:hover, .oc-title:hover {
+        transform: translateY(-1px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

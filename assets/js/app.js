@@ -13,6 +13,34 @@ let currentService = 'all';
 let currentSort = 'newest';
 
 // --- Helper Functions ---
+window.animateCountUp = function(element, target, duration = 1500) {
+    if(!element) return;
+    const isReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (isReduced) {
+        element.innerText = target;
+        return;
+    }
+    const start = parseInt(element.innerText.replace(/\D/g, '')) || 0;
+    const diff = target - start;
+    if (diff === 0) {
+        element.innerText = target;
+        return;
+    }
+    const startTime = performance.now();
+    function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        element.innerText = Math.floor(start + diff * easeOut);
+        if (progress < 1) {
+            requestAnimationFrame(update);
+        } else {
+            element.innerText = target;
+        }
+    }
+    requestAnimationFrame(update);
+};
+
 function timeAgo(dateString) {
     const date = new Date(dateString);
     const now = new Date();
@@ -147,7 +175,11 @@ window.renderOrders = function(ordersToRender, containerId) {
 
         let priceHtml = '';
         if (canViewPrivate) {
-            priceHtml = `${order.price ? parseInt(order.price).toLocaleString('vi-VN') + ' đ' : 'Chưa báo giá'}`;
+            if (order.price) {
+                priceHtml = `<span class="count-up-price" data-val="${parseInt(order.price)}">0</span> đ`;
+            } else {
+                priceHtml = 'Chưa báo giá';
+            }
         } else {
             priceHtml = `<span style="font-size: 14px;"><i class="fa-solid fa-lock"></i> Ẩn</span>`;
         }
@@ -233,6 +265,44 @@ window.renderOrders = function(ordersToRender, containerId) {
         `;
         container.innerHTML += html;
     });
+
+    // Add Intersection Observer for prices
+    const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const el = entry.target;
+                const targetVal = parseInt(el.getAttribute('data-val'));
+                
+                const start = 0;
+                const duration = 1200;
+                const startTime = performance.now();
+                const isReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                
+                if (isReduced) {
+                    el.innerText = targetVal.toLocaleString('vi-VN');
+                    obs.unobserve(el);
+                    return;
+                }
+
+                function update(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const easeOut = 1 - Math.pow(1 - progress, 3);
+                    el.innerText = Math.floor(start + targetVal * easeOut).toLocaleString('vi-VN');
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(update);
+                    } else {
+                        el.innerText = targetVal.toLocaleString('vi-VN');
+                    }
+                }
+                requestAnimationFrame(update);
+                obs.unobserve(el); // run only once
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.count-up-price').forEach(price => observer.observe(price));
 };
 
 window.updateDashboardStats = function(orders) {
@@ -245,13 +315,13 @@ window.updateDashboardStats = function(orders) {
     const progEl = document.getElementById('stat-progress');
     const compEl = document.getElementById('stat-completed');
     
-    if(pendingEl) pendingEl.innerText = counts.cho_xu_ly;
-    if(progEl) progEl.innerText = counts.dang_cay;
-    if(compEl) compEl.innerText = counts.hoan_thanh;
+    if(pendingEl) window.animateCountUp(pendingEl, counts.cho_xu_ly);
+    if(progEl) window.animateCountUp(progEl, counts.dang_cay);
+    if(compEl) window.animateCountUp(compEl, counts.hoan_thanh);
     
     ['all', 'cho_xu_ly', 'dang_cay', 'cho_nghiem_thu', 'hoan_thanh'].forEach(status => {
         const el = document.getElementById('count-' + status);
-        if (el) el.innerText = counts[status] || 0;
+        if (el) window.animateCountUp(el, counts[status] || 0, 800);
     });
 };
 
