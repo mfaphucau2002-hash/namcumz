@@ -735,8 +735,8 @@ window.sendMessage = async () => {
         created_at: new Date().toISOString()
     };
     
-    // Optimistic update
-    if (typeof appendMessage === 'function') appendMessage(newMsg);
+    // Realtime will handle the UI update to avoid duplicates
+    // if (typeof appendMessage === 'function') appendMessage(newMsg);
     
     const { error } = await supabaseClient.from('order_messages').insert([newMsg]);
     if (error) {
