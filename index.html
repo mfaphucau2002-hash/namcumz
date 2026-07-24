@@ -165,11 +165,13 @@
     <!-- Header -->
     <header>
         <div class="app-container header-wrap" style="padding: 15px 0;">
-            <a href="/" class="logo-section">
+            <a href="/" class="logo-section" style="z-index: 1001;">
                 <img src="/assets/images/logo.jpg" alt="NAMCUMZ Logo" style="height: 35px; width: 35px; border-radius: 50%; object-fit: cover;"> <span class="logo-text" style="font-family: var(--font-main); font-weight: 800; letter-spacing: 2px;">NAMCUMZ</span>
             </a>
+            
+            <button class="menu-toggle" id="menuToggle" style="z-index: 1001;"><i class="fa-solid fa-bars"></i></button>
 
-            <nav class="navigation">
+            <nav class="navigation" id="navLinks">
                 <a href="/" class="nav-link active">
                     <i class="fa-solid fa-chart-line"></i> Các đơn cày
                 </a>

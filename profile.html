@@ -79,6 +79,14 @@
                             <label class="form-label">TÊN HIỂN THỊ MỚI</label>
                             <input type="text" id="profileDisplayName" class="form-control" placeholder="Nhập tên mới...">
                         </div>
+                        <div class="form-group">
+                            <label class="form-label">TIỂU SỬ (BIO)</label>
+                            <textarea id="profileBio" class="form-control" rows="3" placeholder="Giới thiệu bản thân..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">LINK ẢNH ĐẠI DIỆN</label>
+                            <input type="text" id="profileAvatar" class="form-control" placeholder="https://...">
+                        </div>
                         <button type="submit" class="btn-save" id="btnSaveProfile">LƯU THAY ĐỔI</button>
                     </form>
                 </div>
@@ -154,13 +162,13 @@
                     grid.innerHTML += `
                         <div class="order-card animate-on-load">
                             <div class="order-header">
-                                <div class="booster-info">
-                                    <div class="booster-avatar" style="border-color: ${statusObj.colorVar}">${avatar}</div>
-                                    <div>
-                                        <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">NGƯỜI CÀY: <span style="color: #fff;">${order.booster_name || 'Đang chờ...'}</span></div>
-                                        <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-top:2px;">NGƯỜI THUÊ: <span style="color: var(--accent);">${order.renter_name}</span></div>
-                                    </div>
-                                </div>
+                                  <div class="booster-info">
+                                      <div class="booster-avatar" style="border-color: ${statusObj.colorVar}">${avatar}</div>
+                                      <div>
+                                          <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">NGƯỜI CÀY: ${order.booster_id ? `<a href="booster.html?id=${order.booster_id}" style="color: #fff; text-decoration: underline;">${order.booster_name}</a>` : '<span style="color: #fff;">Đang chờ...</span>'}</div>
+                                          <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-top:2px;">NGƯỜI THUÊ: <span style="color: var(--accent);">${order.renter_name}</span></div>
+                                      </div>
+                                  </div>
                                 ${statusBadgeHtml}
                             </div>
                             <div class="order-details">
@@ -180,6 +188,36 @@
 
             loadMyOrders();
 
+            if (document.getElementById('profileDisplayName') && currentUserId) {
+                // Fetch current user info
+                supabaseClient.from('user_roles').select('*').eq('id', currentUserId).single().then(({data}) => {
+                    if(data) {
+                        if(data.username) document.getElementById('profileDisplayName').value = data.username;
+                        if(data.bio) document.getElementById('profileBio').value = data.bio;
+                        if(data.avatar_url) document.getElementById('profileAvatar').value = data.avatar_url;
+                    }
+                });
+
+                document.getElementById('profileForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const newName = document.getElementById('profileDisplayName').value.trim();
+                    const newBio = document.getElementById('profileBio').value.trim();
+                    const newAvatar = document.getElementById('profileAvatar').value.trim();
+                    if(!newName) return alert("Tên không được để trống!");
+                    
+                    const btn = document.getElementById('btnSaveProfile');
+                    btn.innerHTML = 'ĐANG LƯU...';
+                    
+                    const { error } = await supabaseClient.from('user_roles').update({ username: newName, bio: newBio, avatar_url: newAvatar }).eq('id', currentUserId);
+                    if(error) alert("Lỗi cập nhật: " + error.message);
+                    else {
+                        localStorage.setItem('username', newName);
+                        alert("Đã lưu thông tin!");
+                    }
+                    btn.innerHTML = 'LƯU THAY ĐỔI';
+                });
+            }
+
             const btnClaimOrder = document.getElementById('btnClaimOrder');
             if (btnClaimOrder) {
                 btnClaimOrder.addEventListener('click', async () => {
@@ -187,21 +225,21 @@
                     if (!code) return alert("Vui lòng nhập mã nhận đơn!");
                     btnClaimOrder.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG XỬ LÝ...';
                     
-                    const { data, error } = await supabaseClient.from('orders').select('id, user_id').eq('secret_code', code).single();
+                    const { data, error } = await supabaseClient.rpc('claim_order_by_secret', {
+                        p_secret_code: code,
+                        p_user_id: currentUserId
+                    });
                     
-                    if (error || !data) {
-                        alert("Mã nhận đơn không hợp lệ hoặc không tồn tại!");
-                    } else if (data.user_id && data.user_id === currentUserId) {
-                        alert("Bạn đã nhận đơn này rồi!");
+                    if (error) {
+                        alert("Có lỗi xảy ra: " + error.message);
+                    } else if (data === true) {
+                        alert("Nhận đơn thành công! Đơn hàng đã được thêm vào mục Đơn Của Tôi.");
+                        document.getElementById('claimCodeInput').value = '';
+                        switchTab('my-orders', document.querySelector('.sidebar-link'));
                     } else {
-                        const { error: updateErr } = await supabaseClient.from('orders').update({ user_id: currentUserId, secret_code: null }).eq('id', data.id);
-                        if (updateErr) alert("Có lỗi: " + updateErr.message);
-                        else {
-                            alert("Nhận đơn thành công! Đơn hàng đã được thêm vào mục Đơn Của Tôi.");
-                            document.getElementById('claimCodeInput').value = '';
-                            switchTab('my-orders', document.querySelector('.sidebar-link'));
-                        }
+                        alert("Mã nhận đơn không hợp lệ, không tồn tại hoặc bạn đã nhận đơn này rồi!");
                     }
+                    
                     btnClaimOrder.innerHTML = '<i class="fa-solid fa-link"></i> LIÊN KẾT ĐƠN';
                 });
             }

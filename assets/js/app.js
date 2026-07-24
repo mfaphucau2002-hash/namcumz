@@ -118,7 +118,7 @@ function renderOrders(orders, containerId) {
                 <div class="booster-info">
                     <div class="booster-avatar" style="border-color: ${statusInfo.colorVar}">${avatarInitial}</div>
                     <div class="booster-details">
-                        <span class="booster-label">NGƯỜI CÀY: <strong style="color: #fff;">${order.booster_name || 'Đang chờ...'}</strong></span>
+                        <span class="booster-label">NGƯỜI CÀY: ${order.booster_id ? `<a href="booster.html?id=${order.booster_id}" style="color: #fff; text-decoration: underline; font-weight: bold;">${order.booster_name}</a>` : '<strong style="color: #fff;">Đang chờ...</strong>'}</span>
                         <span class="booster-label" style="margin-top: 2px;">NGƯỜI THUÊ: <strong style="color: var(--accent);">${order.renter_name}</strong></span>
                     </div>
                 </div>
@@ -915,3 +915,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+// --- MOBILE MENU TOGGLE ---
+document.addEventListener('DOMContentLoaded', () => {
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+    if (menuToggle && navLinks) {
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+    }
+});
