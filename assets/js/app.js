@@ -524,12 +524,13 @@ window.changeOrderStatus = async (orderId, newStatus, customerId) => {
         alert("Lỗi cập nhật trạng thái: " + error.message);
     } else {
         alert("Cập nhật thành công!");
-        // Insert notification for the customer
+        // Notify customer
         if (customerId && customerId !== 'null') {
             await supabaseClient.from('notifications').insert([{
                 user_id: customerId,
                 title: "Trạng thái đơn hàng",
-                content: `Đơn cày của bạn đã được chuyển sang trạng thái mới.`
+                content: `Đơn cày của bạn đã được chuyển sang trạng thái mới.`,
+                order_id: orderId
             }]);
         }
         if (typeof fetchOrders === 'function') fetchOrders();
@@ -577,8 +578,9 @@ window.fetchNotifications = async () => {
             hasUnread = true;
             currentUnreadCount++;
         }
+        const clickAction = (notif.order_id && notif.order_id !== 'null' && notif.order_id !== 'undefined') ? `onclick="window.openChat('${notif.order_id}', 'Đơn #${notif.order_id.slice(0,6).toUpperCase()}')"` : '';
         list.innerHTML += `
-            <div style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); ${notif.is_read ? 'opacity: 0.7;' : 'background: rgba(168, 85, 247, 0.1);'}">
+            <div ${clickAction} style="${clickAction ? 'cursor: pointer; transition: background 0.2s;' : ''} padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); ${notif.is_read ? 'opacity: 0.7;' : 'background: rgba(168, 85, 247, 0.1);'}">
                 <div style="font-weight: bold; font-size: 0.85rem; color: #fff; margin-bottom: 4px;">${notif.title}</div>
                 <div style="font-size: 0.8rem; color: var(--text-muted);">${notif.content}</div>
                 <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 6px; text-align: right;"><i class="fa-regular fa-clock"></i> ${new Date(notif.created_at).toLocaleString('vi-VN')}</div>
@@ -588,9 +590,9 @@ window.fetchNotifications = async () => {
     
     let previousUnreadCount = parseInt(localStorage.getItem('unreadNotifs') || '0');
     if (currentUnreadCount > previousUnreadCount) {
-        try {
-            new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3').play();
-        } catch(e) {}
+        if (typeof playNotificationSound === 'function') {
+            playNotificationSound();
+        }
     }
     localStorage.setItem('unreadNotifs', currentUnreadCount);
     
@@ -610,20 +612,38 @@ window.markAllNotificationsRead = async () => {
 let currentChatSub = null;
 let currentChatOrderId = null;
 
+window.playNotificationSound = () => {
+    try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(1760, audioCtx.currentTime + 0.1);
+        gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.05);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+        oscillator.start(audioCtx.currentTime);
+        oscillator.stop(audioCtx.currentTime + 0.4);
+    } catch(e) { console.error('Audio play failed', e); }
+};
+
 window.openChat = async (orderId, orderCode) => {
-    document.getElementById('chatOrderCode').textContent = orderCode;
+    document.getElementById('chatOrderCode').textContent = orderCode || 'Chi tiết';
     document.getElementById('chatModal').classList.add('active');
     currentChatOrderId = orderId;
+    
     const msgContainer = document.getElementById('chatMessages');
-    msgContainer.innerHTML = '<div style="color: var(--text-muted); text-align: center;">Đang tải tin nhắn...</div>';
-
-    // Load initial messages
+    msgContainer.innerHTML = '<div style="text-align: center; color: var(--text-muted); margin-top: 50px;"><i class="fa-solid fa-spinner fa-spin fa-2x"></i></div>';
+    
     const { data, error } = await supabaseClient
         .from('order_messages')
         .select('*')
         .eq('order_id', orderId)
         .order('created_at', { ascending: true });
-
+        
     msgContainer.innerHTML = '';
     if(error) {
         msgContainer.innerHTML = '<div style="color: red;">Lỗi tải tin nhắn: '+error.message+'</div>';
@@ -637,6 +657,9 @@ window.openChat = async (orderId, orderCode) => {
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'order_messages' }, payload => {
             if (payload.new.order_id === currentChatOrderId) {
                 appendMessage(payload.new);
+                if (payload.new.sender_id !== localStorage.getItem('userId')) {
+                    playNotificationSound();
+                }
             }
         })
         .subscribe((status) => {
@@ -727,7 +750,8 @@ window.sendMessage = async () => {
                 await supabaseClient.from('notifications').insert([{
                     user_id: receiverId,
                     title: "Tin nhắn mới",
-                    content: `Bạn có tin nhắn mới từ ` + localStorage.getItem('username')
+                    content: `Bạn có tin nhắn mới từ ` + localStorage.getItem('username'),
+                    order_id: currentChatOrderId
                 }]);
             }
         }
