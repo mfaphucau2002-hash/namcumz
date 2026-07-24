@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -296,8 +296,8 @@
             </div>
             
             <div style="padding: 20px; border-top: 1px solid var(--border-light); display: flex; gap: 10px; background: rgba(15, 23, 42, 0.95); border-radius: 0 0 16px 16px;">
-                <input type="text" id="chatInput" class="form-control" placeholder="Nhập tin nhắn..." style="flex: 1;">
-                <button id="sendChatBtn" class="btn btn-primary" style="padding: 0 20px;"><i class="fa-solid fa-paper-plane"></i></button>
+                <input type="text" id="chatInput" onkeydown="if(event.key === 'Enter') { event.preventDefault(); window.sendMessage(); }" class="form-control" placeholder="Nhập tin nhắn..." style="flex: 1;">
+                <button id="sendChatBtn" onclick="window.sendMessage()" class="btn btn-primary" style="padding: 0 20px;"><i class="fa-solid fa-paper-plane"></i></button>
             </div>
         </div>
     </div>

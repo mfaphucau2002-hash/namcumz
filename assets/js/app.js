@@ -684,51 +684,6 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .subscribe();
     }
-    const sendChatBtn = document.getElementById('sendChatBtn');
-    const chatInput = document.getElementById('chatInput');
-    if(sendChatBtn && chatInput) {
-                const sendMessage = async () => {
-            const text = chatInput.value.trim();
-            if(!text || !currentChatOrderId) return;
-            chatInput.value = '';
-            
-            const newMsg = {
-                order_id: currentChatOrderId,
-                sender_id: localStorage.getItem('userId'),
-                sender_name: localStorage.getItem('username'),
-                message: text,
-                created_at: new Date().toISOString()
-            };
-            
-            // Optimistic update
-            appendMessage(newMsg);
-            
-            const { error } = await supabaseClient.from('order_messages').insert([newMsg]);
-            if (error) {
-                alert("Lỗi gửi tin nhắn: " + error.message);
-            } else {
-                // Determine who to notify
-                const { data: orderData } = await supabaseClient.from('orders').select('user_id, booster_id').eq('id', currentChatOrderId).single();
-                if (orderData) {
-                    const receiverId = localStorage.getItem('userId') === orderData.user_id ? orderData.booster_id : orderData.user_id;
-                    if (receiverId) {
-                        await supabaseClient.from('notifications').insert([{
-                            user_id: receiverId,
-                            title: "Tin nhắn mới",
-                            content: `Bạn có tin nhắn mới từ ` + localStorage.getItem('username')
-                        }]);
-                    }
-                }
-            }
-        };
-        sendChatBtn.addEventListener('click', sendMessage);
-        chatInput.addEventListener('keydown', (e) => { 
-            if(e.key === 'Enter') {
-                e.preventDefault();
-                sendMessage(); 
-            }
-        });
-    }
     const closeChatBtn = document.getElementById('closeChatBtn');
     if(closeChatBtn) {
         closeChatBtn.addEventListener('click', () => {
@@ -739,6 +694,44 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+window.sendMessage = async () => {
+    const chatInput = document.getElementById('chatInput');
+    if(!chatInput) return;
+    
+    const text = chatInput.value.trim();
+    if(!text || !currentChatOrderId) return;
+    chatInput.value = '';
+    
+    const newMsg = {
+        order_id: currentChatOrderId,
+        sender_id: localStorage.getItem('userId'),
+        sender_name: localStorage.getItem('username'),
+        message: text,
+        created_at: new Date().toISOString()
+    };
+    
+    // Optimistic update
+    if (typeof appendMessage === 'function') appendMessage(newMsg);
+    
+    const { error } = await supabaseClient.from('order_messages').insert([newMsg]);
+    if (error) {
+        alert("Lỗi gửi tin nhắn: " + error.message);
+    } else {
+        // Determine who to notify
+        const { data: orderData } = await supabaseClient.from('orders').select('user_id, booster_id').eq('id', currentChatOrderId).single();
+        if (orderData) {
+            const receiverId = localStorage.getItem('userId') === orderData.user_id ? orderData.booster_id : orderData.user_id;
+            if (receiverId) {
+                await supabaseClient.from('notifications').insert([{
+                    user_id: receiverId,
+                    title: "Tin nhắn mới",
+                    content: `Bạn có tin nhắn mới từ ` + localStorage.getItem('username')
+                }]);
+            }
+        }
+    }
+};
 
 
 
