@@ -1,4 +1,4 @@
-﻿// 1. Initialize Supabase
+// 1. Initialize Supabase
 const SUPABASE_URL = 'https://vqnuutdmcekqkbdvawlw.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxbnV1dGRtY2VrcWtiZHZhd2x3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTgwNjIsImV4cCI6MjEwMDM3NDA2Mn0.T8_AdJOWEmf68oVrOjv8G51IScykzqhBnfHIi5LK-G4';
 
@@ -82,8 +82,14 @@ function renderOrders(orders, containerId) {
                         <option value="tam_dung" ` + (order.status === 'tam_dung' ? 'selected' : '') + `>Tạm dừng</option>
                     </select>
                 `;
+                        if (isOwner) {
+                    if (order.status !== 'cho_xu_ly') {
+                        actionButtons += `<button onclick="window.openTicketModal('${order.id}')" class="btn btn-outline" style="border-color: #ef4444; color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Báo cáo</button>`;
+                    }
+                    actionButtons += `<button onclick="window.openChat('${order.id}', '${order.order_code}')" class="btn btn-outline" style="border-color: var(--primary-light); color: var(--primary-light);"><i class="fa-solid fa-comments"></i> Chat</button>`;
+                }
             }
-            if (canViewPrivate) {
+            if (canViewPrivate && !isOwner) {
                 actionButtons += `<button onclick="openChat('${order.id}', '${order.order_code}')" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;"><i class="fa-solid fa-comments"></i> Chat</button>`;
             }
         }
@@ -394,13 +400,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     status: 'cho_xu_ly',
                     user_id: currentUserId || null
                 }
-            ]);
+            ]).select();
 
             if (error) {
                 alert('Có lỗi xảy ra: ' + error.message);
             } else {
                 alert('Tạo đơn cày thuê thành công!');
                 localStorage.setItem('lastOrderTime', Date.now());
+                if(data && data[0]) await logOrderAction(data[0].id, 'Đơn hàng mới được tạo.');
+            
                 document.getElementById('createOrderModal').classList.remove('active');
                 createOrderForm.reset();
                 fetchOrders(); // refresh
@@ -527,7 +535,10 @@ window.acceptOrder = async (orderId) => {
         .update({ booster_id: localStorage.getItem('userId'), booster_name: localStorage.getItem('username'), status: 'dang_cay' })
         .eq('id', orderId);
     if(error) alert('Lỗi: ' + error.message);
-    else { alert('Nhận đơn thành công!'); fetchOrders(); }
+    else { 
+        await logOrderAction(orderId, 'Đơn hàng đã được nhận bởi ' + localStorage.getItem('username'));
+        alert('Nhận đơn thành công!'); fetchOrders(); 
+    }
 };
 
 window.changeOrderStatus = async (orderId, newStatus, customerId) => {
@@ -545,6 +556,9 @@ window.changeOrderStatus = async (orderId, newStatus, customerId) => {
                 order_id: orderId
             }]);
         }
+        await logOrderAction(orderId, 'Trạng thái đơn được cập nhật thành: ' + getStatusDetails(newStatus).text);
+        if(newStatus === 'hoan_thanh') sendTelegramNotification('✅ Đơn #' + orderId + ' đã hoàn thành!');
+        
         if (typeof fetchOrders === 'function') fetchOrders();
         if (typeof loadMyOrders === 'function') loadMyOrders();
     }
@@ -772,24 +786,6 @@ window.uploadChatImage = async (event) => {
     }
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-    const notifBtn = document.getElementById('notificationBtn');
-    if (notifBtn) notifBtn.addEventListener('click', toggleNotificationDropdown);
-    const markReadBtn = document.getElementById('markAllReadBtn');
-    if (markReadBtn) markReadBtn.addEventListener('click', markAllNotificationsRead);
-    
-    // Initial fetch
-    if(localStorage.getItem('userId')) {
-        fetchNotifications();
-        // Subscribe to notifications realtime
-        supabaseClient.channel('public:notifications')
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: 'user_id=eq.' + localStorage.getItem('userId') }, payload => {
-                fetchNotifications();
-            })
-            .subscribe();
-    }
-});
-
 window.closeChat = () => {
     const chatModal = document.getElementById('chatModal');
     if (chatModal) chatModal.classList.remove('active');
@@ -956,19 +952,19 @@ async function fetchLeaderboard() {
         
         const avatar = b.avatar_url || 'https://via.placeholder.com/40/a855f7/fff?text=' + b.username.charAt(0).toUpperCase();
         
-        list.innerHTML += \
+        list.innerHTML += `
             <div class="lb-item">
-                <div class="lb-rank-badge" style="background: \; color: \">
-                    #\
+                <div class="lb-rank-badge" style="background: ${index < 3 ? 'rgba(255,255,255,0.1)' : 'transparent'}; color: ${badgeColor}">
+                    #${index + 1}
                 </div>
-                <img src="\" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;" alt="Ava">
+                <img src="${avatar}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;" alt="Ava">
                 <div class="lb-info">
-                    <div class="lb-name">\</div>
-                    <div class="lb-stats">\ đơn hoàn thành</div>
+                    <div class="lb-name">${b.username}</div>
+                    <div class="lb-stats">${b.orders_completed || 0} đơn hoàn thành</div>
                 </div>
-                <div class="lb-badge" style="color: \"><i class="fa-solid \"></i></div>
+                <div class="lb-badge" style="color: ${badgeColor}"><i class="fa-solid ${badgeIcon}"></i></div>
             </div>
-        \;
+        `;
     });
 }
 
@@ -1039,7 +1035,7 @@ window.switchChatTab = function(tab) {
 
 // 4. Order Logs System
 async function logOrderAction(orderId, actionText) {
-    const userId = currentUser ? currentUser.id : null;
+    const userId = localStorage.getItem('userId') || null;
     await supabaseClient.from('order_logs').insert([
         { order_id: orderId, user_id: userId, action: actionText }
     ]);
@@ -1068,15 +1064,15 @@ window.fetchOrderLogs = async function() {
         const role = log.profiles ? log.profiles.role : '';
         const roleBadge = role === 'booster' ? '<span class="badge badge-warning" style="font-size:0.6rem; padding: 2px 5px;">Booster</span>' : '';
         
-        container.innerHTML += \
-            <div style="background: rgba(255,255,255,0.02); border-left: 3px solid var(--accent); padding: 10px 15px; border-radius: 4px; font-size: 0.85rem;">
+        container.innerHTML += `
+            <div style="background: rgba(255,255,255,0.02); border-left: 3px solid var(--accent); padding: 10px 15px; border-radius: 4px; font-size: 0.85rem; margin-bottom: 10px;">
                 <div style="color: var(--primary-light); font-weight: bold; margin-bottom: 5px;">
-                    \ \
-                    <span style="float: right; color: var(--text-muted); font-weight: normal; font-size: 0.75rem;">\</span>
+                    ${username} ${roleBadge}
+                    <span style="float: right; color: var(--text-muted); font-weight: normal; font-size: 0.75rem;">${time}</span>
                 </div>
-                <div style="color: #fff;">\</div>
+                <div style="color: #fff;">${log.action}</div>
             </div>
-        \;
+        `;
     });
 };
 
@@ -1087,8 +1083,13 @@ window.openTicketModal = function(orderId) {
     document.getElementById('ticketModal').classList.add('active');
 };
 
+document.addEventListener('DOMContentLoaded', () => {
+    if(document.getElementById('leaderboardList')) fetchLeaderboard();
+});
+
 window.submitTicket = async function() {
-    if (!currentUser) return alert('Vui lòng đăng nhập!');
+    const currentUserId = localStorage.getItem('userId');
+    if (!currentUserId) return alert('Vui lòng đăng nhập!');
     const issue = document.getElementById('ticketIssueType').value;
     const desc = document.getElementById('ticketComment').value;
     
@@ -1107,7 +1108,7 @@ window.submitTicket = async function() {
     } else {
         alert('Gửi khiếu nại thành công! Admin sẽ xử lý sớm nhất.');
         document.getElementById('ticketModal').classList.remove('active');
-        sendTelegramNotification(\🚨 KHIẾU NẠI MỚI - Đơn #\\nLý do: \\nChi tiết: \\);
+        sendTelegramNotification(`🚨 KHIẾU NẠI MỚI - Đơn #${window.ticketOrderId}\nLý do: ${issue}\nChi tiết: ${desc}`);
     }
     
     btn.innerHTML = 'GỬI KHIẾU NẠI';
@@ -1125,7 +1126,7 @@ async function sendTelegramNotification(message) {
         return;
     }
     try {
-        await fetch(\https://api.telegram.org/bot\/sendMessage\, {
+        await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -1137,5 +1138,3 @@ async function sendTelegramNotification(message) {
         console.error("Telegram error:", e);
     }
 }
-
-
