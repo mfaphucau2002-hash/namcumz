@@ -34,138 +34,24 @@ function generateOrderCode() {
     return '#' + Math.floor(10000 + Math.random() * 90000);
 }
 
-function renderOrders(orders, containerId) {
-    const container = document.getElementById(containerId);
-    if(!container) return;
+// Removed old renderOrders & updateStats
 
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    const userRole = localStorage.getItem('userRole') || 'guest';
-    const currentUsername = localStorage.getItem('username');
-
-    container.innerHTML = '';
-
-    if (orders.length === 0) {
-        container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">Không tìm thấy đơn cày nào.</div>';
-        return;
-    }
-
-    orders.forEach((order, index) => {
-        const statusInfo = getStatusDetails(order.status);
-        const avatarInitial = order.booster_name ? order.booster_name.charAt(0).toUpperCase() : '?';
-        const animDelay = 0.2 + (index * 0.1);
-
-        const currentUserId = localStorage.getItem('userId');
-        const isOwner = (order.user_id === currentUserId) || (order.renter_name === currentUsername);
-        const isAssignedBooster = order.booster_id === currentUserId;
-        const isAdmin = userRole === 'admin' || userRole === 'super_admin';
-        const isBoosterRole = userRole === 'booster';
-        const canViewPrivate = isAdmin || isOwner || isAssignedBooster;
-
-        let priceHtml = '';
-        if (canViewPrivate) {
-            priceHtml = `${order.price ? parseInt(order.price).toLocaleString('vi-VN') + ' VNĐ' : 'Chưa báo giá'}`;
-        } else {
-            priceHtml = `<span title="Chỉ người thuê, người đang cày đơn này và Admin mới xem được giá"><i class="fa-solid fa-lock"></i> Ẩn giá</span>`;
-        }
-
-        let actionButtons = '';
-        if (isLoggedIn) {
-            if (order.status === 'cho_xu_ly' && (isBoosterRole || isAdmin) && !order.booster_id) {
-                actionButtons += `<button onclick="acceptOrder('${order.id}')" class="btn" style="background: var(--accent); color: #000; font-weight: bold; padding: 6px 12px; font-size: 0.8rem; margin-right: 5px;"><i class="fa-solid fa-handshake"></i> Nhận đơn này</button>`;
-            }
-            if (isAssignedBooster || isAdmin) {
-                actionButtons += `
-                    <select onchange="changeOrderStatus('${order.id}', this.value, '${order.user_id}')" style="background: #18181b; color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 6px 10px; font-size: 0.8rem; margin-right: 5px; outline: none; cursor: pointer;">
-                        <option value="cho_xu_ly" ` + (order.status === 'cho_xu_ly' ? 'selected' : '') + `>Chờ xử lý</option>
-                        <option value="dang_cay" ` + (order.status === 'dang_cay' ? 'selected' : '') + `>Đang cày</option>
-                        <option value="hoan_thanh" ` + (order.status === 'hoan_thanh' ? 'selected' : '') + `>Hoàn thành</option>
-                        <option value="tam_dung" ` + (order.status === 'tam_dung' ? 'selected' : '') + `>Tạm dừng</option>
-                    </select>
-                `;
-                        if (isOwner) {
-                    if (order.status !== 'cho_xu_ly') {
-                        actionButtons += `<button onclick="window.openTicketModal('${order.id}')" class="btn btn-outline" style="border-color: #ef4444; color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Báo cáo</button>`;
-                    }
-                    actionButtons += `<button onclick="window.openChat('${order.id}', '${order.order_code}')" class="btn btn-outline" style="border-color: var(--primary-light); color: var(--primary-light);"><i class="fa-solid fa-comments"></i> Chat</button>`;
-                }
-            }
-            if (canViewPrivate && !isOwner) {
-                actionButtons += `<button onclick="openChat('${order.id}', '${order.order_code}')" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;"><i class="fa-solid fa-comments"></i> Chat</button>`;
-            }
-        }
-
-        let ratingHtml = '';
-        if (order.rating) {
-            let stars = '';
-            for(let i=1; i<=5; i++) {
-                stars += `<i class="fa-solid fa-star" style="color: ${i <= order.rating ? '#eab308' : '#334155'}; font-size: 0.9rem;"></i>`;
-            }
-            ratingHtml = `
-                <div class="review-display">
-                    <div>${stars}</div>
-                    <div style="color: var(--primary-light); font-size: 0.85rem; margin-top: 4px;"><i>"${order.review_comment || ''}"</i></div>
-                </div>
-            `;
-        } else if (order.status === 'hoan_thanh' && isOwner) {
-            actionButtons += `<button onclick="openRatingModal('${order.id}')" class="btn" style="background: #eab308; color: #000; font-weight: bold; padding: 6px 12px; font-size: 0.8rem; margin-right: 5px;"><i class="fa-solid fa-star"></i> Đánh giá ngay</button>`;
-        }
-
-        const btnHtml = actionButtons ? `<div class="action-btns" style="margin-top: 15px;">${actionButtons}</div>` : '';
-
-        const card = document.createElement('div');
-        card.className = 'order-card animate-on-load';
-        card.style.animationDelay = `${animDelay}s`;
-        card.style.setProperty('--status-color', statusInfo.colorVar);
-        
-        let contentText = canViewPrivate ? (order.content || 'Không có mô tả') : '*** Nội dung bị ẩn để bảo vệ quyền riêng tư ***';
-
-        card.innerHTML = `
-            <div class="order-header">
-                <div class="booster-info">
-                    <div class="booster-avatar" style="border-color: ${statusInfo.colorVar}">${avatarInitial}</div>
-                    <div class="booster-details">
-                        <span class="booster-label">NGƯỜI CÀY: ${order.booster_id ? `<a href="booster.html?id=${order.booster_id}" style="color: #fff; text-decoration: underline; font-weight: bold;">${order.booster_name}</a>` : '<strong style="color: #fff;">Đang chờ...</strong>'}</span>
-                        <span class="booster-label" style="margin-top: 2px;">NGƯỜI THUÊ: <strong style="color: var(--accent);">${order.renter_name}</strong></span>
-                    </div>
-                </div>
-                <div class="status-badge ${statusInfo.class}" style="border-color:${statusInfo.colorVar}; color:${statusInfo.colorVar};">
-                    <i class="fa-solid ${statusInfo.icon}"></i> ${statusInfo.text.toUpperCase()}
-                </div>
-            </div>
-            <div class="order-task-content" style="margin-top: 15px;">
-                <div style="font-size: 0.8rem; font-weight: 700; color: #a855f7; margin-bottom: 8px;">MÃ ĐƠN: ${order.order_code}</div>
-                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;"><i class="fa-regular fa-clock"></i> ${new Date(order.created_at).toLocaleString('vi-VN')}</div>
-                <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 6px; font-size: 0.9rem; line-height: 1.5; font-weight: 500;">${contentText}</div>
-                ${ratingHtml}
-            </div>
-            <div class="order-footer">
-                <div style="font-size: 0.85rem; color: var(--text-muted);">Giá thanh toán</div>
-                <div style="font-size: 1.1rem; font-weight: 800; color: #fff;">${priceHtml}</div>
-            </div>
-            ${btnHtml}
-        `;
-        container.appendChild(card);
-    });
-}
-
-function updateStats(orders) {
-    const elTotal = document.getElementById('stat-total');
-    if(elTotal) {
-        elTotal.textContent = orders.length;
-        document.getElementById('stat-pause').textContent = orders.filter(o => o.status === 'tam_dung' || o.status === 'cho_xu_ly').length;
-        document.getElementById('stat-playing').textContent = orders.filter(o => o.status === 'dang_cay').length;
-        document.getElementById('stat-done').textContent = orders.filter(o => o.status === 'hoan_thanh').length;
-    }
-}
-
-async function fetchOrders() {
+window.fetchOrders = async function() {
     if (!supabaseClient) return;
     try {
         const { data, error } = await supabaseClient.from('orders').select('*').order('created_at', { ascending: false });
         if (error) throw error;
         allOrders = data;
-        renderOrders(allOrders, 'ordersGrid');
-        updateStats(allOrders);
+        
+        if(typeof window.applyFilters === 'function') {
+            window.applyFilters();
+        } else {
+            renderOrders(allOrders, 'ordersGrid');
+        }
+        
+        if(typeof updateDashboardStats === 'function') {
+            updateDashboardStats(allOrders);
+        }
     } catch (error) {
         console.error("Lỗi khi tải dữ liệu:", error.message);
         document.getElementById('ordersGrid').innerHTML = '<div style="color: var(--status-tam-dung);">Lỗi kết nối tới cơ sở dữ liệu.</div>';
@@ -1362,11 +1248,12 @@ function renderOrders(ordersToRender, containerId) {
 function timeAgo(dateString) {
     const date = new Date(dateString);
     const now = new Date();
-    const diff = Math.floor((now - date) / 1000); // seconds
-    if (diff < 60) return Vừa xong;
-    if (diff < 3600) return \ phút trước;
-    if (diff < 86400) return \ giờ trước;
-    return \ ngày trước;
+    const diff = Math.floor((now - date) / 1000);
+    if (diff < 60) return `Vừa xong`;
+    if (diff < 3600) return `${Math.floor(diff/60)} phút trước`;
+    if (diff < 86400) return `${Math.floor(diff/3600)} giờ trước`;
+    return `${Math.floor(diff/86400)} ngày trước`;
+}
 }
 
 // Close dropdown on outside click
@@ -1379,4 +1266,5 @@ document.addEventListener('click', (e) => {
         }
     }
 });
+
 
