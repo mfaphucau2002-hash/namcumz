@@ -70,12 +70,13 @@ function renderOrders(orders, containerId) {
 
         let actionButtons = '';
         if (isLoggedIn) {
-            if (order.status === 'cho_xu_ly' && isBoosterRole && !order.booster_id) {
+            if (order.status === 'cho_xu_ly' && (isBoosterRole || isAdmin) && !order.booster_id) {
                 actionButtons += `<button onclick="acceptOrder('${order.id}')" class="btn" style="background: var(--accent); color: #000; font-weight: bold; padding: 6px 12px; font-size: 0.8rem; margin-right: 5px;"><i class="fa-solid fa-handshake"></i> Nhận đơn này</button>`;
             }
-                        if (isAssignedBooster) {
+            if (isAssignedBooster || isAdmin) {
                 actionButtons += `
                     <select onchange="changeOrderStatus('${order.id}', this.value, '${order.user_id}')" style="background: #18181b; color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 6px 10px; font-size: 0.8rem; margin-right: 5px; outline: none; cursor: pointer;">
+                        <option value="cho_xu_ly" ` + (order.status === 'cho_xu_ly' ? 'selected' : '') + `>Chờ xử lý</option>
                         <option value="dang_cay" ` + (order.status === 'dang_cay' ? 'selected' : '') + `>Đang cày</option>
                         <option value="hoan_thanh" ` + (order.status === 'hoan_thanh' ? 'selected' : '') + `>Hoàn thành</option>
                         <option value="tam_dung" ` + (order.status === 'tam_dung' ? 'selected' : '') + `>Tạm dừng</option>
