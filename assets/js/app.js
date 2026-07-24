@@ -1,4 +1,4 @@
-// 1. Initialize Supabase
+﻿// 1. Initialize Supabase
 const SUPABASE_URL = 'https://vqnuutdmcekqkbdvawlw.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxbnV1dGRtY2VrcWtiZHZhd2x3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTgwNjIsImV4cCI6MjEwMDM3NDA2Mn0.T8_AdJOWEmf68oVrOjv8G51IScykzqhBnfHIi5LK-G4';
 
@@ -925,3 +925,217 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// --- GIAI DOAN 2 PRO FEATURES ---
+
+// 1. Leaderboard Logic
+async function fetchLeaderboard() {
+    const list = document.getElementById('leaderboardList');
+    if (!list) return;
+    
+    const { data, error } = await supabaseClient
+        .from('user_roles')
+        .select('*')
+        .eq('role', 'booster')
+        .order('orders_completed', { ascending: false })
+        .limit(5);
+        
+    if (error || !data || data.length === 0) {
+        list.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem;">Chưa có dữ liệu</div>';
+        return;
+    }
+    
+    list.innerHTML = '';
+    data.forEach((b, index) => {
+        let badgeIcon = '';
+        let badgeColor = '';
+        if (index === 0) { badgeIcon = 'fa-trophy'; badgeColor = '#f59e0b'; } // Vang
+        else if (index === 1) { badgeIcon = 'fa-medal'; badgeColor = '#94a3b8'; } // Bac
+        else if (index === 2) { badgeIcon = 'fa-award'; badgeColor = '#b45309'; } // Dong
+        else { badgeIcon = 'fa-star'; badgeColor = 'var(--text-muted)'; }
+        
+        const avatar = b.avatar_url || 'https://via.placeholder.com/40/a855f7/fff?text=' + b.username.charAt(0).toUpperCase();
+        
+        list.innerHTML += \
+            <div class="lb-item">
+                <div class="lb-rank-badge" style="background: \; color: \">
+                    #\
+                </div>
+                <img src="\" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;" alt="Ava">
+                <div class="lb-info">
+                    <div class="lb-name">\</div>
+                    <div class="lb-stats">\ đơn hoàn thành</div>
+                </div>
+                <div class="lb-badge" style="color: \"><i class="fa-solid \"></i></div>
+            </div>
+        \;
+    });
+}
+
+// 2. Price Calculator
+window.calculatePrice = function() {
+    const service = document.getElementById('calcService').value;
+    const extra = document.getElementById('calcExtraOptions');
+    const priceInput = document.getElementById('orderPrice');
+    
+    extra.style.display = 'none';
+    extra.innerHTML = '';
+    
+    if (service === 'lahoan') {
+        priceInput.value = 100000;
+        extra.style.display = 'block';
+        extra.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem;">Giá tham khảo: 100,000 VNĐ cho La Hoàn tầng 9-12 full sao.</div>';
+    } else if (service === 'khampha') {
+        extra.style.display = 'block';
+        extra.innerHTML = '<select id="calcRegion" class="form-control" onchange="window.updateKhamPhaPrice()"><option value="mond">Mondstadt (150k)</option><option value="liyue">Liyue (250k)</option><option value="sumeru">Sumeru (350k)</option><option value="natlan">Natlan (400k)</option></select>';
+        window.updateKhamPhaPrice();
+    } else if (service === 'theluc') {
+        priceInput.value = 20000;
+        extra.style.display = 'block';
+        extra.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem;">Giá tham khảo: 20,000 VNĐ/Ngày xả nhựa + Ủy thác.</div>';
+    } else {
+        priceInput.value = '';
+    }
+};
+
+window.updateKhamPhaPrice = function() {
+    const region = document.getElementById('calcRegion');
+    if(!region) return;
+    const val = region.value;
+    let price = 0;
+    if(val === 'mond') price = 150000;
+    if(val === 'liyue') price = 250000;
+    if(val === 'sumeru') price = 350000;
+    if(val === 'natlan') price = 400000;
+    document.getElementById('orderPrice').value = price;
+};
+
+// 3. Chat/Logs Tabs
+window.switchChatTab = function(tab) {
+    document.getElementById('tabBtnChat').classList.remove('active');
+    document.getElementById('tabBtnChat').style.borderBottomColor = 'transparent';
+    document.getElementById('tabBtnChat').style.color = 'var(--text-muted)';
+    
+    document.getElementById('tabBtnLogs').classList.remove('active');
+    document.getElementById('tabBtnLogs').style.borderBottomColor = 'transparent';
+    document.getElementById('tabBtnLogs').style.color = 'var(--text-muted)';
+    
+    document.getElementById('chatTabContent').style.display = 'none';
+    document.getElementById('logsTabContent').style.display = 'none';
+    
+    if (tab === 'chat') {
+        document.getElementById('tabBtnChat').classList.add('active');
+        document.getElementById('tabBtnChat').style.borderBottomColor = 'var(--accent)';
+        document.getElementById('tabBtnChat').style.color = '#fff';
+        document.getElementById('chatTabContent').style.display = 'block';
+    } else {
+        document.getElementById('tabBtnLogs').classList.add('active');
+        document.getElementById('tabBtnLogs').style.borderBottomColor = 'var(--accent)';
+        document.getElementById('tabBtnLogs').style.color = '#fff';
+        document.getElementById('logsTabContent').style.display = 'block';
+        window.fetchOrderLogs(); // Need activeOrderId
+    }
+};
+
+// 4. Order Logs System
+async function logOrderAction(orderId, actionText) {
+    const userId = currentUser ? currentUser.id : null;
+    await supabaseClient.from('order_logs').insert([
+        { order_id: orderId, user_id: userId, action: actionText }
+    ]);
+}
+
+window.fetchOrderLogs = async function() {
+    if(!currentChatOrderId) return;
+    const container = document.getElementById('orderLogsContainer');
+    container.innerHTML = '<div style="text-align: center; color: var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải nhật ký...</div>';
+    
+    const { data, error } = await supabaseClient
+        .from('order_logs')
+        .select('*, profiles:user_id(username, role)')
+        .eq('order_id', currentChatOrderId)
+        .order('created_at', { ascending: false });
+        
+    if (error || !data || data.length === 0) {
+        container.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem;">Chưa có nhật ký hoạt động.</div>';
+        return;
+    }
+    
+    container.innerHTML = '';
+    data.forEach(log => {
+        const time = new Date(log.created_at).toLocaleString('vi-VN');
+        const username = log.profiles ? log.profiles.username : 'Hệ thống';
+        const role = log.profiles ? log.profiles.role : '';
+        const roleBadge = role === 'booster' ? '<span class="badge badge-warning" style="font-size:0.6rem; padding: 2px 5px;">Booster</span>' : '';
+        
+        container.innerHTML += \
+            <div style="background: rgba(255,255,255,0.02); border-left: 3px solid var(--accent); padding: 10px 15px; border-radius: 4px; font-size: 0.85rem;">
+                <div style="color: var(--primary-light); font-weight: bold; margin-bottom: 5px;">
+                    \ \
+                    <span style="float: right; color: var(--text-muted); font-weight: normal; font-size: 0.75rem;">\</span>
+                </div>
+                <div style="color: #fff;">\</div>
+            </div>
+        \;
+    });
+};
+
+// 5. Ticket System
+window.openTicketModal = function(orderId) {
+    window.ticketOrderId = orderId;
+    document.getElementById('ticketComment').value = '';
+    document.getElementById('ticketModal').classList.add('active');
+};
+
+window.submitTicket = async function() {
+    if (!currentUser) return alert('Vui lòng đăng nhập!');
+    const issue = document.getElementById('ticketIssueType').value;
+    const desc = document.getElementById('ticketComment').value;
+    
+    if(!desc.trim()) return alert('Vui lòng mô tả chi tiết sự cố!');
+    
+    const btn = document.getElementById('submitTicketBtn');
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gửi...';
+    btn.disabled = true;
+    
+    const { error } = await supabaseClient.from('support_tickets').insert([
+        { order_id: window.ticketOrderId, user_id: currentUser.id, issue_type: issue, description: desc }
+    ]);
+    
+    if (error) {
+        alert('Lỗi: ' + error.message);
+    } else {
+        alert('Gửi khiếu nại thành công! Admin sẽ xử lý sớm nhất.');
+        document.getElementById('ticketModal').classList.remove('active');
+        sendTelegramNotification(\🚨 KHIẾU NẠI MỚI - Đơn #\\nLý do: \\nChi tiết: \\);
+    }
+    
+    btn.innerHTML = 'GỬI KHIẾU NẠI';
+    btn.disabled = false;
+};
+
+// 6. Telegram API Notification (Skeleton)
+// You need to fill BOT_TOKEN and CHAT_ID
+const TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE';
+const TELEGRAM_CHAT_ID = 'YOUR_CHAT_ID_HERE';
+
+async function sendTelegramNotification(message) {
+    if(TELEGRAM_BOT_TOKEN === 'YOUR_BOT_TOKEN_HERE') {
+        console.log("Telegram Bot Token is not configured. Message:", message);
+        return;
+    }
+    try {
+        await fetch(\https://api.telegram.org/bot\/sendMessage\, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: TELEGRAM_CHAT_ID,
+                text: message
+            })
+        });
+    } catch(e) {
+        console.error("Telegram error:", e);
+    }
+}
+
+
