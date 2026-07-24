@@ -63,9 +63,9 @@ function renderOrders(orders, containerId) {
 
         let priceHtml = '';
         if (canViewPrivate) {
-            priceHtml = `<span style="color: #fff; font-weight: 700; font-size: 0.9rem;">${order.price ? parseInt(order.price).toLocaleString('vi-VN') + ' VNĐ' : 'Chưa báo giá'}</span>`;
+            priceHtml = `${order.price ? parseInt(order.price).toLocaleString('vi-VN') + ' VNĐ' : 'Chưa báo giá'}`;
         } else {
-            priceHtml = `<span style="color: #a1a1aa; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;" title="Chỉ người thuê, người đang cày đơn này và Admin mới xem được giá"><i class="fa-solid fa-lock"></i> Ẩn giá</span>`;
+            priceHtml = `<span title="Chỉ người thuê, người đang cày đơn này và Admin mới xem được giá"><i class="fa-solid fa-lock"></i> Ẩn giá</span>`;
         }
 
         let actionButtons = '';
@@ -88,12 +88,29 @@ function renderOrders(orders, containerId) {
             }
         }
 
+        let ratingHtml = '';
+        if (order.rating) {
+            let stars = '';
+            for(let i=1; i<=5; i++) {
+                stars += `<i class="fa-solid fa-star" style="color: ${i <= order.rating ? '#eab308' : '#334155'}; font-size: 0.9rem;"></i>`;
+            }
+            ratingHtml = `
+                <div class="review-display">
+                    <div>${stars}</div>
+                    <div style="color: var(--primary-light); font-size: 0.85rem; margin-top: 4px;"><i>"${order.review_comment || ''}"</i></div>
+                </div>
+            `;
+        } else if (order.status === 'hoan_thanh' && isOwner) {
+            actionButtons += `<button onclick="openRatingModal('${order.id}')" class="btn" style="background: #eab308; color: #000; font-weight: bold; padding: 6px 12px; font-size: 0.8rem; margin-right: 5px;"><i class="fa-solid fa-star"></i> Đánh giá ngay</button>`;
+        }
+
+        const btnHtml = actionButtons ? `<div class="action-btns" style="margin-top: 15px;">${actionButtons}</div>` : '';
+
         const card = document.createElement('div');
         card.className = 'order-card animate-on-load';
         card.style.animationDelay = `${animDelay}s`;
         card.style.setProperty('--status-color', statusInfo.colorVar);
         
-        let displayOrderCode = canViewPrivate ? order.order_code : '#*** (Ẩn mã)';
         let contentText = canViewPrivate ? (order.content || 'Không có mô tả') : '*** Nội dung bị ẩn để bảo vệ quyền riêng tư ***';
 
         card.innerHTML = `
@@ -103,28 +120,23 @@ function renderOrders(orders, containerId) {
                     <div class="booster-details">
                         <span class="booster-label">NGƯỜI CÀY: <strong style="color: #fff;">${order.booster_name || 'Đang chờ...'}</strong></span>
                         <span class="booster-label" style="margin-top: 2px;">NGƯỜI THUÊ: <strong style="color: var(--accent);">${order.renter_name}</strong></span>
-                        <span class="booster-label" style="margin-top: 2px;">MÃ ĐƠN: <strong style="color: var(--primary-light);">${displayOrderCode}</strong></span>
-                        <span class="time-label"><i class="fa-regular fa-clock"></i> ${formatDate(order.created_at)}</span>
                     </div>
                 </div>
-                <div>
-                    <div class="status-badge ${statusInfo.class}" style="border-color:${statusInfo.colorVar}; color:${statusInfo.colorVar}; background: transparent; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.7rem; border-width: 1px; border-style: solid; white-space: nowrap; display: flex; align-items: center; gap: 6px;">
-                        <i class="fa-solid ${statusInfo.icon}" style="font-size: 0.65rem;"></i> ${statusInfo.text.toUpperCase()}
-                    </div>
+                <div class="status-badge ${statusInfo.class}" style="border-color:${statusInfo.colorVar}; color:${statusInfo.colorVar};">
+                    <i class="fa-solid ${statusInfo.icon}"></i> ${statusInfo.text.toUpperCase()}
                 </div>
             </div>
-            
-            <div class="order-task-content">
-                ${contentText}
+            <div class="order-task-content" style="margin-top: 15px;">
+                <div style="font-size: 0.8rem; font-weight: 700; color: #a855f7; margin-bottom: 8px;">MÃ ĐƠN: ${order.order_code}</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;"><i class="fa-regular fa-clock"></i> ${new Date(order.created_at).toLocaleString('vi-VN')}</div>
+                <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 6px; font-size: 0.9rem; line-height: 1.5; font-weight: 500;">${contentText}</div>
+                ${ratingHtml}
             </div>
-
             <div class="order-footer">
-                <div>
-                    <span style="color: #a1a1aa; font-size: 0.85rem; display:block;">Giá thanh toán</span>
-                    ${priceHtml}
-                </div>
-                <div>${actionButtons}</div>
+                <div style="font-size: 0.85rem; color: var(--text-muted);">Giá thanh toán</div>
+                <div style="font-size: 1.1rem; font-weight: 800; color: #fff;">${priceHtml}</div>
             </div>
+            ${btnHtml}
         `;
         container.appendChild(card);
     });
@@ -686,9 +698,78 @@ window.appendMessage = function(msg) {
     const timestampHTML = `<div style="font-size: 0.6rem; margin-top: 4px; opacity: 0.7; text-align: ${isMine ? 'right' : 'left'};">${timeStr} ${dateStr}</div>`;
     
     div.style.cssText = `max-width: 80%; padding: 10px 15px; border-radius: 12px; margin-bottom: 5px; clear: both; ${isMine ? 'background: var(--accent); color: #000; align-self: flex-end; border-bottom-right-radius: 4px;' : 'background: #334155; color: #fff; align-self: flex-start; border-bottom-left-radius: 4px;'}`;
-    div.innerHTML = `<div style="font-size: 0.7rem; font-weight: bold; margin-bottom: 4px; ${isMine ? 'color: #333;' : 'color: var(--accent);'}">${msg.sender_name}</div><div style="word-break: break-word;">${msg.message}</div>${timestampHTML}`;
+    
+    let imgHtml = '';
+    if (msg.image_url) {
+        imgHtml = `<div style="margin-top: 8px;"><a href="${msg.image_url}" target="_blank"><img src="${msg.image_url}" style="max-width: 100%; max-height: 200px; border-radius: 6px; cursor: zoom-in;" /></a></div>`;
+    }
+    
+    div.innerHTML = `<div style="font-size: 0.7rem; font-weight: bold; margin-bottom: 4px; ${isMine ? 'color: #333;' : 'color: var(--accent);'}">${msg.sender_name}</div><div style="word-break: break-word;">${msg.message}</div>${imgHtml}${timestampHTML}`;
     msgContainer.appendChild(div);
     msgContainer.scrollTop = msgContainer.scrollHeight;
+};
+
+window.uploadChatImage = async (event) => {
+    const file = event.target.files[0];
+    if (!file || !currentChatOrderId) return;
+    
+    event.target.value = '';
+    
+    if (file.size > 5 * 1024 * 1024) {
+        return alert("Ảnh quá lớn, vui lòng chọn ảnh dưới 5MB!");
+    }
+
+    const chatInput = document.getElementById('chatInput');
+    const sendChatBtn = document.getElementById('sendChatBtn');
+    if (chatInput) chatInput.placeholder = "Đang tải ảnh lên...";
+    if (sendChatBtn) sendChatBtn.disabled = true;
+
+    try {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
+        const filePath = `${currentChatOrderId}/${fileName}`;
+        
+        const { error } = await supabaseClient.storage
+            .from('chat_images')
+            .upload(filePath, file, { cacheControl: '3600', upsert: false });
+            
+        if (error) throw error;
+        
+        const { data: { publicUrl } } = supabaseClient.storage
+            .from('chat_images')
+            .getPublicUrl(filePath);
+            
+        const newMsg = {
+            order_id: currentChatOrderId,
+            sender_id: localStorage.getItem('userId'),
+            sender_name: localStorage.getItem('username'),
+            message: 'Đã gửi một hình ảnh 🖼️',
+            image_url: publicUrl,
+            created_at: new Date().toISOString()
+        };
+        
+        const { error: dbError } = await supabaseClient.from('order_messages').insert([newMsg]);
+        if (dbError) throw dbError;
+        
+        const { data: orderData } = await supabaseClient.from('orders').select('user_id, booster_id').eq('id', currentChatOrderId).single();
+        if (orderData) {
+            const receiverId = localStorage.getItem('userId') === orderData.user_id ? orderData.booster_id : orderData.user_id;
+            if (receiverId) {
+                await supabaseClient.from('notifications').insert([{
+                    user_id: receiverId,
+                    title: "Tin nhắn mới",
+                    content: `Bạn có tin nhắn mới từ ` + localStorage.getItem('username'),
+                    order_id: currentChatOrderId
+                }]);
+            }
+        }
+    } catch (err) {
+        console.error("Lỗi upload ảnh:", err);
+        alert("Lỗi tải ảnh: " + err.message);
+    } finally {
+        if (chatInput) chatInput.placeholder = "Nhập tin nhắn...";
+        if (sendChatBtn) sendChatBtn.disabled = false;
+    }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -758,8 +839,79 @@ window.sendMessage = async () => {
     }
 };
 
+// --- RATING LOGIC ---
+let currentRatingOrderId = null;
+let currentRatingValue = 0;
 
+window.openRatingModal = (orderId) => {
+    currentRatingOrderId = orderId;
+    currentRatingValue = 0;
+    const commentInput = document.getElementById('ratingComment');
+    if (commentInput) commentInput.value = '';
+    const textDisplay = document.getElementById('ratingText');
+    if (textDisplay) {
+        textDisplay.textContent = 'Chưa chọn';
+        textDisplay.style.color = 'var(--text-muted)';
+    }
+    document.querySelectorAll('.rating-stars i').forEach(star => {
+        star.classList.remove('active');
+        star.style.color = '#334155';
+    });
+    const ratingModal = document.getElementById('ratingModal');
+    if(ratingModal) ratingModal.classList.add('active');
+};
 
+document.addEventListener('DOMContentLoaded', () => {
+    const stars = document.querySelectorAll('.rating-stars i');
+    const ratingText = document.getElementById('ratingText');
+    const texts = ['Rất tệ', 'Tệ', 'Bình thường', 'Tốt', 'Tuyệt vời'];
+    
+    stars.forEach(star => {
+        star.addEventListener('click', () => {
+            currentRatingValue = parseInt(star.getAttribute('data-value'));
+            stars.forEach((s, i) => {
+                if (i < currentRatingValue) {
+                    s.classList.add('active');
+                    s.style.color = '#eab308';
+                } else {
+                    s.classList.remove('active');
+                    s.style.color = '#334155';
+                }
+            });
+            if (ratingText) {
+                ratingText.textContent = texts[currentRatingValue - 1];
+                ratingText.style.color = '#eab308';
+            }
+        });
+    });
 
+    const submitRatingBtn = document.getElementById('submitRatingBtn');
+    if (submitRatingBtn) {
+        submitRatingBtn.addEventListener('click', async () => {
+            if (currentRatingValue === 0) return alert("Vui lòng chọn số sao!");
+            const comment = document.getElementById('ratingComment').value.trim();
+            
+            submitRatingBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG GỬI...';
+            
+            const { error } = await supabaseClient
+                .from('orders')
+                .update({ rating: currentRatingValue, review_comment: comment })
+                .eq('id', currentRatingOrderId);
+                
+            if (error) {
+                alert("Có lỗi xảy ra: " + error.message);
+            } else {
+                alert("Cảm ơn bạn đã đánh giá!");
+                document.getElementById('ratingModal').classList.remove('active');
+                if (typeof fetchOrders === 'function') fetchOrders();
+                if (typeof window.loadMyOrders === 'function') window.loadMyOrders();
+                else {
+                    document.dispatchEvent(new Event('reloadProfileOrders'));
+                }
+            }
+            submitRatingBtn.innerHTML = 'GỬI ĐÁNH GIÁ';
+        });
+    }
+});
 
 

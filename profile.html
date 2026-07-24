@@ -116,6 +116,7 @@
                     let contentText = order.content || 'Không có mô tả';
                     
                     let isAssignedBooster = order.booster_id === currentUserId;
+                    let isOwner = order.user_id === currentUserId;
                     let statusBadgeHtml = '';
                     if (isAssignedBooster) {
                         statusBadgeHtml = `
@@ -131,6 +132,23 @@
                                 <i class="fa-solid ${statusObj.icon}"></i> ${statusObj.text.toUpperCase()}
                             </div>
                         `;
+                    }
+                    
+                    let ratingHtml = '';
+                    let actionButtons = '';
+                    if (order.rating) {
+                        let stars = '';
+                        for(let i=1; i<=5; i++) {
+                            stars += `<i class="fa-solid fa-star" style="color: ${i <= order.rating ? '#eab308' : '#334155'}; font-size: 0.9rem;"></i>`;
+                        }
+                        ratingHtml = `
+                            <div class="review-display">
+                                <div>${stars}</div>
+                                <div style="color: var(--primary-light); font-size: 0.85rem; margin-top: 4px;"><i>"${order.review_comment || ''}"</i></div>
+                            </div>
+                        `;
+                    } else if (order.status === 'hoan_thanh' && isOwner) {
+                        actionButtons += `<button onclick="openRatingModal('${order.id}')" class="btn" style="background: #eab308; color: #000; font-weight: bold; padding: 6px 12px; font-size: 0.8rem; margin-right: 5px;"><i class="fa-solid fa-star"></i> Đánh giá ngay</button>`;
                     }
                     
                     grid.innerHTML += `
@@ -149,10 +167,12 @@
                                 <div style="font-size: 0.8rem; font-weight: 700; color: #a855f7; margin-bottom: 8px;">MÃ ĐƠN: ${order.order_code}</div>
                                 <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;"><i class="fa-regular fa-clock"></i> ${new Date(order.created_at).toLocaleString('vi-VN')}</div>
                                 <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 6px; font-size: 0.9rem; line-height: 1.5; font-weight: 500;">${contentText}</div>
+                                ${ratingHtml}
                             </div>
                             <div class="order-footer">
                                 <div style="font-size: 0.85rem; color: var(--text-muted);">Giá thanh toán</div>
                                 <div style="font-size: 1.1rem; font-weight: 800; color: #fff;">${priceHtml}</div>
+                                <div>${actionButtons}</div>
                             </div>
                         </div>`;
                 });

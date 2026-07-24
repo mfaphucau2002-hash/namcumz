@@ -154,8 +154,11 @@
         }
         .btn-submit-premium:hover {
             background: #c084fc;
-            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.6);
-        }
+          .btn-save:hover { box-shadow: 0 0 25px rgba(192, 132, 252, 0.6); transform: translateY(-2px); background: #c084fc; }
+        /* Rating Stars */
+        .rating-stars { font-size: 2rem; color: #334155; display: flex; justify-content: center; gap: 10px; cursor: pointer; }
+        .rating-stars i.active, .rating-stars i:hover { color: #eab308; transition: 0.2s; }
+        .review-display { background: rgba(234, 179, 8, 0.1); padding: 10px; border-radius: 8px; margin-top: 10px; border: 1px solid rgba(234, 179, 8, 0.3); }
     </style>
 </head>
 <body>
@@ -283,6 +286,28 @@
         </div>
     </div>
 
+    <!-- Rating Modal -->
+    <div class="modal-overlay" id="ratingModal">
+        <div class="modal-content premium-modal" style="max-width: 500px;">
+            <button class="modal-close" onclick="document.getElementById('ratingModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="modal-title" style="color: var(--accent); margin-bottom: 20px;">ĐÁNH GIÁ BOOSTER</h2>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div class="rating-stars" id="ratingStars">
+                    <i class="fa-solid fa-star" data-value="1"></i>
+                    <i class="fa-solid fa-star" data-value="2"></i>
+                    <i class="fa-solid fa-star" data-value="3"></i>
+                    <i class="fa-solid fa-star" data-value="4"></i>
+                    <i class="fa-solid fa-star" data-value="5"></i>
+                </div>
+                <div id="ratingText" style="color: var(--primary-light); margin-top: 10px; font-weight: bold;">Chưa chọn</div>
+            </div>
+            <div class="form-group">
+                <textarea id="ratingComment" class="form-control" rows="3" placeholder="Chia sẻ cảm nhận của bạn về Booster này..."></textarea>
+            </div>
+            <button id="submitRatingBtn" class="btn btn-primary" style="width: 100%;">GỬI ĐÁNH GIÁ</button>
+        </div>
+    </div>
+    
     <!-- Chat Modal -->
     <div class="modal-overlay" id="chatModal">
         <div class="modal-content premium-modal" style="max-width: 600px; padding: 0;">
@@ -296,6 +321,10 @@
             </div>
             
             <div style="padding: 20px; border-top: 1px solid var(--border-light); display: flex; gap: 10px; background: rgba(15, 23, 42, 0.95); border-radius: 0 0 16px 16px;">
+                <label for="chatImageInput" class="btn" style="padding: 0 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2);">
+                    <i class="fa-solid fa-image"></i>
+                </label>
+                <input type="file" id="chatImageInput" accept="image/*" style="display: none;" onchange="window.uploadChatImage(event)">
                 <input type="text" id="chatInput" onkeydown="if(event.key === 'Enter') { event.preventDefault(); window.sendMessage(); }" class="form-control" placeholder="Nhập tin nhắn..." style="flex: 1;">
                 <button id="sendChatBtn" onclick="window.sendMessage()" class="btn btn-primary" style="padding: 0 20px;"><i class="fa-solid fa-paper-plane"></i></button>
             </div>
