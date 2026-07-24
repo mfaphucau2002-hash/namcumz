@@ -633,10 +633,14 @@ window.openChat = async (orderId, orderCode) => {
     // Subscribe to realtime messages
     if(currentChatSub) await supabaseClient.removeChannel(currentChatSub);
     currentChatSub = supabaseClient.channel('chat_'+orderId)
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'order_messages', filter: 'order_id=eq.'+orderId }, payload => {
-            appendMessage(payload.new);
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'order_messages' }, payload => {
+            if (payload.new.order_id === currentChatOrderId) {
+                appendMessage(payload.new);
+            }
         })
-        .subscribe();
+        .subscribe((status) => {
+            console.log('Realtime chat status:', status);
+        });
 };
 
 window.appendMessage = function(msg) {
