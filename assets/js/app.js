@@ -684,16 +684,17 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .subscribe();
     }
-    const closeChatBtn = document.getElementById('closeChatBtn');
-    if(closeChatBtn) {
-        closeChatBtn.addEventListener('click', () => {
-            document.getElementById('chatModal').classList.remove('active');
-            if(currentChatSub) supabaseClient.removeChannel(currentChatSub);
-            currentChatSub = null;
-            currentChatOrderId = null;
-        });
-    }
 });
+
+window.closeChat = () => {
+    const chatModal = document.getElementById('chatModal');
+    if (chatModal) chatModal.classList.remove('active');
+    if(currentChatSub && typeof supabaseClient !== 'undefined') {
+        supabaseClient.removeChannel(currentChatSub);
+    }
+    currentChatSub = null;
+    currentChatOrderId = null;
+};
 
 window.sendMessage = async () => {
     const chatInput = document.getElementById('chatInput');
