@@ -1,4 +1,4 @@
-// 1. Initialize Supabase
+﻿// 1. Initialize Supabase
 const SUPABASE_URL = 'https://vqnuutdmcekqkbdvawlw.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxbnV1dGRtY2VrcWtiZHZhd2x3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTgwNjIsImV4cCI6MjEwMDM3NDA2Mn0.T8_AdJOWEmf68oVrOjv8G51IScykzqhBnfHIi5LK-G4';
 
@@ -1138,3 +1138,245 @@ async function sendTelegramNotification(message) {
         console.error("Telegram error:", e);
     }
 }
+
+
+// --- NEW RENDER & FILTER LOGIC ---
+let currentTab = 'all';
+let currentSearch = '';
+let currentService = 'all';
+let currentSort = 'newest';
+
+window.filterByTab = function(tab) {
+    currentTab = tab;
+    // Update active UI
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    if(document.getElementById('tab-' + tab)) {
+        document.getElementById('tab-' + tab).classList.add('active');
+    }
+    window.applyFilters();
+};
+
+window.applyFilters = function() {
+    currentSearch = document.getElementById('searchInput') ? document.getElementById('searchInput').value.toLowerCase() : '';
+    currentService = document.getElementById('filterService') ? document.getElementById('filterService').value : 'all';
+    currentSort = document.getElementById('filterSort') ? document.getElementById('filterSort').value : 'newest';
+    
+    let filtered = allOrders.filter(order => {
+        // Tab filter
+        if (currentTab !== 'all' && order.status !== currentTab) return false;
+        
+        // Service filter (fuzzy matching since service is stored in orderContent)
+        if (currentService !== 'all' && order.content) {
+            if (!order.content.toLowerCase().includes(currentService.toLowerCase())) return false;
+        }
+        
+        // Search filter
+        if (currentSearch) {
+            const code = order.order_code ? order.order_code.toLowerCase() : '';
+            const renter = order.renter_name ? order.renter_name.toLowerCase() : '';
+            const content = order.content ? order.content.toLowerCase() : '';
+            if (!code.includes(currentSearch) && !renter.includes(currentSearch) && !content.includes(currentSearch)) {
+                return false;
+            }
+        }
+        
+        return true;
+    });
+    
+    // Sort
+    filtered.sort((a, b) => {
+        if (currentSort === 'newest') return new Date(b.created_at) - new Date(a.created_at);
+        if (currentSort === 'oldest') return new Date(a.created_at) - new Date(b.created_at);
+        if (currentSort === 'price_desc') return (b.price || 0) - (a.price || 0);
+        if (currentSort === 'price_asc') return (a.price || 0) - (b.price || 0);
+        return 0;
+    });
+    
+    renderOrders(filtered, 'ordersGrid');
+};
+
+function updateDashboardStats(orders) {
+    if(!document.getElementById('totalOrdersBadge')) return;
+    
+    let pending = 0;
+    let progress = 0;
+    let warning = 0; // arbitrary near deadline logic
+    let completed = 0;
+    
+    let counts = { all: orders.length, cho_xu_ly: 0, dang_cay: 0, cho_nghiem_thu: 0, hoan_thanh: 0 };
+    
+    orders.forEach(o => {
+        if (counts[o.status] !== undefined) counts[o.status]++;
+        
+        if (o.status === 'cho_xu_ly') pending++;
+        else if (o.status === 'dang_cay') progress++;
+        else if (o.status === 'hoan_thanh') completed++;
+        
+        // Check near deadline (e.g., within 24h, just a placeholder if deadline doesn't exist)
+    });
+    
+    document.getElementById('totalOrdersBadge').innerText = `${orders.length} đơn`;
+    document.getElementById('stat-pending').innerText = pending;
+    document.getElementById('stat-progress').innerText = progress;
+    document.getElementById('stat-warning').innerText = warning; // Need deadline in DB for real logic
+    document.getElementById('stat-completed').innerText = completed;
+    
+    // Update tab counts
+    ['all', 'cho_xu_ly', 'dang_cay', 'cho_nghiem_thu', 'hoan_thanh'].forEach(status => {
+        const el = document.getElementById('count-' + status);
+        if (el) el.innerText = counts[status] || 0;
+    });
+}
+
+function maskString(str) {
+    if (!str) return '***';
+    if (str.length <= 3) return str + '***';
+    return str.substring(0, 3) + '***' + str.substring(str.length - 1);
+}
+
+function renderOrders(ordersToRender, containerId) {
+    const container = document.getElementById(containerId);
+    if(!container) return;
+
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const userRole = localStorage.getItem('userRole') || 'guest';
+    const currentUsername = localStorage.getItem('username');
+    const currentUserId = localStorage.getItem('userId');
+
+    container.innerHTML = '';
+
+    if (ordersToRender.length === 0) {
+        container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 60px; background: rgba(255,255,255,0.02); border-radius: 14px;"><i class="fa-solid fa-box-open" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i><br>Không có đơn hàng nào khớp với tìm kiếm của bạn.</div>';
+        return;
+    }
+
+    ordersToRender.forEach((order, index) => {
+        const statusInfo = getStatusDetails(order.status);
+        const isOwner = (order.user_id === currentUserId) || (order.renter_name === currentUsername);
+        const isAssignedBooster = order.booster_id === currentUserId;
+        const isAdmin = userRole === 'admin' || userRole === 'super_admin';
+        const isBoosterRole = userRole === 'booster';
+        const canViewPrivate = isAdmin || isOwner || isAssignedBooster;
+
+        let priceHtml = '';
+        if (canViewPrivate) {
+            priceHtml = `${order.price ? parseInt(order.price).toLocaleString('vi-VN') + ' đ' : 'Chưa báo giá'}`;
+        } else {
+            priceHtml = `<span style="font-size: 14px;"><i class="fa-solid fa-lock"></i> Ẩn</span>`;
+        }
+
+        let actionButtons = '';
+        if (isLoggedIn) {
+            if (order.status === 'cho_xu_ly' && (isBoosterRole || isAdmin) && !order.booster_id) {
+                actionButtons += `<button onclick="acceptOrder('${order.id}')" class="btn btn-primary" style="flex:1"><i class="fa-solid fa-handshake"></i> Nhận đơn</button>`;
+            }
+            if (isAssignedBooster || isAdmin) {
+                actionButtons += `
+                    <select onchange="changeOrderStatus('${order.id}', this.value, '${order.user_id}')" style="background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 12px; flex:1; outline: none; cursor: pointer;">
+                        <option value="cho_xu_ly" ` + (order.status === 'cho_xu_ly' ? 'selected' : '') + `>Chờ xử lý</option>
+                        <option value="dang_cay" ` + (order.status === 'dang_cay' ? 'selected' : '') + `>Đang cày</option>
+                        <option value="hoan_thanh" ` + (order.status === 'hoan_thanh' ? 'selected' : '') + `>Hoàn thành</option>
+                        <option value="tam_dung" ` + (order.status === 'tam_dung' ? 'selected' : '') + `>Tạm dừng</option>
+                    </select>
+                `;
+            }
+            if (isOwner) {
+                if (order.status !== 'cho_xu_ly') {
+                    actionButtons += `<button onclick="window.openTicketModal('${order.id}')" class="btn btn-outline" style="border: 1px solid var(--status-tam-dung); color: var(--status-tam-dung); flex: 0.5;"><i class="fa-solid fa-triangle-exclamation"></i> Báo cáo</button>`;
+                }
+            }
+            if (canViewPrivate) {
+                actionButtons += `<button onclick="window.openChat('${order.id}', '${order.order_code}')" class="btn" style="background: var(--primary); color: #fff; flex: 1;"><i class="fa-solid fa-comments"></i> Chat</button>`;
+            }
+        }
+
+        let ratingHtml = '';
+        if (order.rating) {
+            let stars = '';
+            for(let i=1; i<=5; i++) {
+                stars += `<i class="fa-solid fa-star" style="color: ${i <= order.rating ? 'var(--genshin-gold)' : 'var(--border-light)'}; font-size: 12px;"></i>`;
+            }
+            ratingHtml = `
+                <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 10px; margin-top: 12px;">
+                    <div>${stars}</div>
+                    <div style="color: var(--text-light); font-size: 12px; margin-top: 4px;"><i>"${order.review_comment || ''}"</i></div>
+                </div>
+            `;
+        } else if (order.status === 'hoan_thanh' && isOwner) {
+            actionButtons += `<button onclick="openRatingModal('${order.id}')" class="btn" style="background: var(--genshin-gold); color: #000; flex: 1;"><i class="fa-solid fa-star"></i> Đánh giá</button>`;
+        }
+
+        const html = `
+            <div class="card order-card-modern animate-on-load" style="animation-delay: ${0.1 + (index%10)*0.05}s;">
+                <div class="oc-header">
+                    <div>
+                        <div class="oc-id">${order.order_code || '#-----'}</div>
+                        <h3 class="oc-title">${order.content ? order.content.substring(0, 35) + (order.content.length > 35 ? '...' : '') : 'Không có mô tả'}</h3>
+                    </div>
+                    <div class="oc-status" style="background: ${statusInfo.colorVar}20; color: ${statusInfo.colorVar}; border: 1px solid ${statusInfo.colorVar}40;">
+                        <i class="fa-solid ${statusInfo.icon}"></i> ${statusInfo.text}
+                    </div>
+                </div>
+                
+                <div class="oc-body">
+                    <div class="oc-row">
+                        <span class="oc-label">Trò chơi</span>
+                        <span class="oc-value"><i class="fa-solid fa-gamepad" style="color: var(--primary-light)"></i> Genshin Impact</span>
+                    </div>
+                    <div class="oc-row">
+                        <span class="oc-label">Người thuê</span>
+                        <span class="oc-value">${isAdmin ? order.renter_name : maskString(order.renter_name)}</span>
+                    </div>
+                    <div class="oc-row">
+                        <span class="oc-label">Booster</span>
+                        <span class="oc-value" style="color: var(--secondary)">${order.booster_name || 'Chưa nhận'}</span>
+                    </div>
+                    <div class="oc-row" style="align-items: center; margin-top: 8px;">
+                        <span class="oc-label">Giá</span>
+                        <span class="oc-price">${priceHtml}</span>
+                    </div>
+                    
+                    ${order.status === 'dang_cay' ? `
+                    <div class="oc-progress-wrap">
+                        <div class="oc-progress-bar">
+                            <div class="oc-progress-fill" style="width: 50%;"></div>
+                        </div>
+                        <div class="oc-progress-text">
+                            <span>Tiến độ</span>
+                            <span>50%</span>
+                        </div>
+                    </div>` : ''}
+                </div>
+                
+                ${ratingHtml}
+                
+                ${actionButtons ? `<div class="oc-footer">${actionButtons}</div>` : ''}
+            </div>
+        `;
+        container.innerHTML += html;
+    });
+}
+
+
+// Format time relative
+function timeAgo(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = Math.floor((now - date) / 1000); // seconds
+    if (diff < 60) return Vừa xong;
+    if (diff < 3600) return \ phút trước;
+    if (diff < 86400) return \ giờ trước;
+    return \ ngày trước;
+}
+
+// Close dropdown on outside click
+document.addEventListener('click', (e) => {
+    const notifBtn = document.getElementById('notificationBtn');
+    const dropdown = document.getElementById('notificationDropdown');
+    if(notifBtn && dropdown) {
+        if(!notifBtn.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('active');
+        }
+    }
+});
+
