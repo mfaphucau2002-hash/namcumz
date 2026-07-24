@@ -93,7 +93,8 @@ function renderOrders(orders, containerId) {
         card.style.animationDelay = `${animDelay}s`;
         card.style.setProperty('--status-color', statusInfo.colorVar);
         
-        let contentText = order.content || 'Không có mô tả';
+        let displayOrderCode = canViewPrivate ? order.order_code : '#*** (Ẩn mã)';
+        let contentText = canViewPrivate ? (order.content || 'Không có mô tả') : '*** Nội dung bị ẩn để bảo vệ quyền riêng tư ***';
 
         card.innerHTML = `
             <div class="order-header">
@@ -102,7 +103,7 @@ function renderOrders(orders, containerId) {
                     <div class="booster-details">
                         <span class="booster-label">NGƯỜI CÀY: <strong style="color: #fff;">${order.booster_name || 'Đang chờ...'}</strong></span>
                         <span class="booster-label" style="margin-top: 2px;">NGƯỜI THUÊ: <strong style="color: var(--accent);">${order.renter_name}</strong></span>
-                        <span class="booster-label" style="margin-top: 2px;">MÃ ĐƠN: <strong style="color: var(--primary-light);">${order.order_code}</strong></span>
+                        <span class="booster-label" style="margin-top: 2px;">MÃ ĐƠN: <strong style="color: var(--primary-light);">${displayOrderCode}</strong></span>
                         <span class="time-label"><i class="fa-regular fa-clock"></i> ${formatDate(order.created_at)}</span>
                     </div>
                 </div>
@@ -654,8 +655,15 @@ window.appendMessage = function(msg) {
     const isMine = msg.sender_id === localStorage.getItem('userId');
     const div = document.createElement('div');
     div.setAttribute('data-id', msgId);
+    
+    // Format timestamp
+    const dateObj = new Date(msg.created_at || new Date());
+    const timeStr = dateObj.toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'});
+    const dateStr = dateObj.toLocaleDateString('vi-VN', {day: '2-digit', month: '2-digit'});
+    const timestampHTML = `<div style="font-size: 0.6rem; margin-top: 4px; opacity: 0.7; text-align: ${isMine ? 'right' : 'left'};">${timeStr} ${dateStr}</div>`;
+    
     div.style.cssText = `max-width: 80%; padding: 10px 15px; border-radius: 12px; margin-bottom: 5px; clear: both; ${isMine ? 'background: var(--accent); color: #000; align-self: flex-end; border-bottom-right-radius: 4px;' : 'background: #334155; color: #fff; align-self: flex-start; border-bottom-left-radius: 4px;'}`;
-    div.innerHTML = `<div style="font-size: 0.7rem; font-weight: bold; margin-bottom: 4px; ${isMine ? 'color: #333;' : 'color: var(--accent);'}">${msg.sender_name}</div><div>${msg.message}</div>`;
+    div.innerHTML = `<div style="font-size: 0.7rem; font-weight: bold; margin-bottom: 4px; ${isMine ? 'color: #333;' : 'color: var(--accent);'}">${msg.sender_name}</div><div style="word-break: break-word;">${msg.message}</div>${timestampHTML}`;
     msgContainer.appendChild(div);
     msgContainer.scrollTop = msgContainer.scrollHeight;
 };
@@ -714,7 +722,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
         sendChatBtn.addEventListener('click', sendMessage);
-        chatInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
+        chatInput.addEventListener('keydown', (e) => { 
+            if(e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage(); 
+            }
+        });
     }
     const closeChatBtn = document.getElementById('closeChatBtn');
     if(closeChatBtn) {
