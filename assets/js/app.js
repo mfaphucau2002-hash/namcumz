@@ -860,12 +860,48 @@ function bindEvents() {
     if(chatForm) chatForm.addEventListener('submit', window.sendMessage);
 }
 
+function initDynamicSlogan() {
+    const sloganEl = document.getElementById('dynamicSlogan');
+    if (!sloganEl) return;
+    const isReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (isReduced) return; // Do not animate slogan if reduced motion
+    
+    const slogans = [
+        "Cày thuê Genshin minh bạch",
+        "Theo dõi tiến độ theo thời gian thực",
+        "Booster được xác minh",
+        "Nghiệm thu trước khi hoàn thành"
+    ];
+    let index = 0;
+    
+    setInterval(() => {
+        sloganEl.style.opacity = '0';
+        sloganEl.style.transform = 'translateY(-6px)';
+        
+        setTimeout(() => {
+            index = (index + 1) % slogans.length;
+            sloganEl.innerText = slogans[index];
+            
+            sloganEl.style.transition = 'none';
+            sloganEl.style.transform = 'translateY(6px)';
+            
+            // force reflow
+            void sloganEl.offsetHeight;
+            
+            sloganEl.style.transition = 'opacity 450ms cubic-bezier(0.4, 0, 0.2, 1), transform 450ms cubic-bezier(0.4, 0, 0.2, 1)';
+            sloganEl.style.opacity = '1';
+            sloganEl.style.transform = 'translateY(0)';
+        }, 450);
+    }, 3500);
+}
+
 function initSupabaseLogic() {
     if(!supabaseClient) return;
     
     injectDynamicModals();
     setupNavbar();
     bindEvents();
+    initDynamicSlogan();
     
     supabaseClient.auth.onAuthStateChange(async (event, session) => {
         if (event === 'SIGNED_IN' && session) {
