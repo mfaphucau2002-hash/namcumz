@@ -823,33 +823,31 @@
         // ============================================================
         (function checkLandingSession() {
             try {
-                // Supabase JS v2 tự lưu session với key: sb-{project_ref}-auth-token
-                const SUPA_KEY = 'sb-vqnuutdmcekqkbdvawlw-auth-token';
-                const tokenStr = localStorage.getItem(SUPA_KEY);
-
-                let isLoggedIn = false;
-                let userId = null;
-
-                if (tokenStr) {
-                    try {
-                        const token = JSON.parse(tokenStr);
-                        const expiresAt = token?.expires_at || 0;
-                        const now = Math.floor(Date.now() / 1000);
-                        // Token còn hạn (hoặc chưa hết) và có user
-                        if (token?.user && (expiresAt === 0 || expiresAt > now - 60)) {
-                            isLoggedIn = true;
-                            userId = token.user.id;
-                        }
-                    } catch(e) {}
-                }
-
-                // Fallback: kiểm tra flag localStorage mà app.js ghi
+                let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                
+                // Backup: Scan any Supabase token key in localStorage
                 if (!isLoggedIn) {
-                    isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        if (key && (key.startsWith('sb-') && key.endsWith('-auth-token'))) {
+                            try {
+                                const token = JSON.parse(localStorage.getItem(key));
+                                if (token && token.user) {
+                                    isLoggedIn = true;
+                                    localStorage.setItem('isLoggedIn', 'true');
+                                    localStorage.setItem('userId', token.user.id);
+                                    break;
+                                }
+                            } catch(e) {}
+                        }
+                    }
                 }
 
                 if (isLoggedIn) {
-                    const username = localStorage.getItem('username') || 'Nhà Lữ Hành';
+                    let username = localStorage.getItem('username');
+                    if (!username || username === 'null' || username === 'undefined') {
+                        username = 'Nhà Lữ Hành';
+                    }
                     const role = localStorage.getItem('userRole') || 'customer';
                     applyLoggedInUI(username, role);
                 }
