@@ -3,199 +3,714 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NAMCUMZ - Dịch Vụ Cày Thuê Genshin Impact Uy Tín</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>NAMCUMZ - Dịch Vụ Cày Thuê Genshin Impact</title>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Marcellus+SC&display=swap" rel="stylesheet">
     <link rel="icon" type="image/jpeg" href="/assets/images/logo.jpg">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- CSS -->
+    <!-- Base CSS (Keeping for compatibility with existing components if needed) -->
     <link rel="stylesheet" href="assets/css/style.css">
+    
     <style>
-        .hero-section {
-            min-height: 85vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            background: radial-gradient(circle at 50% 50%, rgba(152, 104, 248, 0.15) 0%, rgba(8, 11, 16, 1) 60%);
+        :root {
+            --lp-bg: #070B15;
+            --lp-bg-sec: #0D1424;
+            --lp-card: rgba(18, 25, 43, 0.88);
+            --lp-border: rgba(224, 194, 118, 0.28);
+            --lp-gold: #E0C276;
+            --lp-purple: #9A74F5;
+            --lp-teal: #68D5C1;
+            --lp-text: #F7F3E8;
+            --lp-text-muted: #AEB8CC;
+            --lp-warn: #FFB84D;
+            --lp-error: #FF667A;
+            --font-head: 'Marcellus SC', serif;
+            --font-body: 'Be Vietnam Pro', sans-serif;
         }
-        .hero-content {
-            z-index: 2;
-            max-width: 800px;
-            padding: 0 20px;
+        body.landing-page {
+            background-color: var(--lp-bg) !important;
+            color: var(--lp-text) !important;
+            font-family: var(--font-body) !important;
+            font-weight: 400 !important;
+            margin: 0 !important; padding: 0 !important;
+            overflow-x: hidden !important;
         }
-        .hero-title {
-            font-size: 3.5rem;
-            font-weight: 800;
-            margin-bottom: 20px;
-            line-height: 1.2;
-            background: linear-gradient(270deg, var(--primary), var(--secondary), var(--primary-light));
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: smoothGradient 8s ease-in-out infinite;
+        .landing-page h1, .landing-page h2, .landing-page h3, .landing-page h4, .landing-page h5 {
+            font-family: var(--font-head);
+            font-weight: 600;
+            text-transform: none;
+            color: var(--lp-text);
         }
-        .hero-subtitle {
-            font-size: 1.25rem;
-            color: var(--text-muted);
-            margin-bottom: 40px;
-            line-height: 1.6;
-        }
-        .hero-buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .btn-hero {
-            padding: 16px 32px;
-            font-size: 1.1rem;
-            border-radius: 12px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            padding: 80px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .feature-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-light);
-            border-radius: 16px;
-            padding: 30px;
-            text-align: center;
-            transition: var(--transition);
-        }
-        .feature-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(152, 104, 248, 0.4);
-            box-shadow: 0 10px 30px rgba(152, 104, 248, 0.1);
-        }
-        .feature-icon {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 20px;
-        }
-        .feature-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-            color: var(--text-light);
-        }
-        .feature-desc {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
+        .landing-page a { text-decoration: none; }
         
+        /* HEADER */
+        .lp-header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            padding: 15px 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            background: transparent;
+            transition: all 0.3s ease;
+        }
+        .lp-header.scrolled {
+            background: rgba(7, 11, 21, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--lp-border);
+        }
+        .lp-logo {
+            font-family: var(--font-head); font-size: 24px; font-weight: 700;
+            background: linear-gradient(90deg, var(--lp-purple), var(--lp-teal));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-size: 200% 200%;
+            animation: gradientMove 8s ease infinite;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .lp-nav { display: flex; gap: 24px; align-items: center; }
+        .lp-nav a { color: var(--lp-text-muted); font-weight: 500; font-size: 15px; transition: 0.2s; }
+        .lp-nav a:hover { color: var(--lp-gold); }
+        .lp-actions { display: flex; gap: 15px; align-items: center; }
+        .lp-btn-login { color: var(--lp-text); font-weight: 500; padding: 8px 16px; border-radius: 8px; transition: 0.2s; }
+        .lp-btn-login:hover { background: rgba(255,255,255,0.05); }
+        .lp-btn-primary { 
+            background: var(--lp-gold); color: #000; font-weight: 600; padding: 10px 24px; 
+            border-radius: 8px; transition: 0.2s; position: relative; overflow: hidden; display: inline-block;
+        }
+        .lp-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(224, 194, 118, 0.3); }
+        .hamburger { display: none; color: var(--lp-text); font-size: 24px; background: none; border: none; cursor: pointer; }
+        
+        /* HERO */
+        .lp-hero {
+            position: relative; height: 720px; display: flex; align-items: center; justify-content: center;
+            text-align: center; overflow: hidden;
+        }
+        .lp-hero-video {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2;
+        }
+        .lp-hero-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: linear-gradient(180deg, rgba(7, 11, 21, 0.6) 0%, rgba(7, 11, 21, 0.9) 100%);
+        }
+        .lp-hero-content { z-index: 1; max-width: 800px; padding: 0 20px; opacity: 0; animation: fadeUp 1s 0.2s forwards; }
+        .lp-eyebrow { color: var(--lp-gold); font-size: 14px; font-weight: 600; letter-spacing: 2px; margin-bottom: 16px; display: block; text-transform: uppercase; }
+        .lp-hero h1 { font-size: 3.5rem; margin-bottom: 24px; line-height: 1.2; background: linear-gradient(90deg, #F7F3E8, #E0C276); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .lp-hero p { font-size: 1.1rem; color: var(--lp-text-muted); margin-bottom: 40px; line-height: 1.6; }
+        .lp-hero-btns { display: flex; gap: 20px; justify-content: center; margin-bottom: 50px; }
+        .lp-btn-secondary { background: rgba(224, 194, 118, 0.1); border: 1px solid var(--lp-border); color: var(--lp-gold); padding: 10px 24px; border-radius: 8px; font-weight: 500; transition: 0.2s; backdrop-filter: blur(5px); display: inline-block; }
+        .lp-btn-secondary:hover { background: rgba(224, 194, 118, 0.2); }
+        .lp-features { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+        .lp-feature { display: flex; align-items: center; gap: 8px; color: var(--lp-text-muted); font-size: 14px; }
+        .lp-feature i { color: var(--lp-teal); }
+        
+        /* PARTICLES */
+        .particles { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+        .particle { position: absolute; background: #fff; border-radius: 50%; opacity: 0.5; animation: floatUp 15s infinite linear; }
+        
+        /* METRICS */
+        .lp-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding: 60px 5%; max-width: 1200px; margin: -50px auto 0; position: relative; z-index: 10; }
+        .lp-metric-card { background: var(--lp-card); border: 1px solid var(--lp-border); border-radius: 16px; padding: 24px; text-align: center; backdrop-filter: blur(8px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .lp-metric-value { font-size: 2.5rem; font-family: var(--font-head); color: var(--lp-gold); margin-bottom: 8px; }
+        .lp-metric-label { color: var(--lp-text-muted); font-size: 14px; font-weight: 500; }
+
+        /* SERVICES */
+        .lp-section { padding: 80px 5%; max-width: 1200px; margin: 0 auto; }
+        .lp-section-header { text-align: center; margin-bottom: 50px; }
+        .lp-section-header h2 { font-size: 2.5rem; margin-bottom: 16px; }
+        .lp-section-header p { color: var(--lp-text-muted); max-width: 600px; margin: 0 auto; }
+        .lp-services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+        .lp-service-card { background: var(--lp-card); border: 1px solid var(--lp-border); border-radius: 16px; overflow: hidden; transition: 0.25s ease; position: relative; display: flex; flex-direction: column; }
+        .lp-service-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.3), 0 0 15px rgba(224, 194, 118, 0.1); border-color: rgba(224, 194, 118, 0.6); }
+        .lp-service-img { width: 100%; height: 160px; object-fit: cover; transition: 0.3s ease; }
+        .lp-service-card:hover .lp-service-img { transform: scale(1.03); }
+        .lp-service-badge { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); border: 1px solid var(--lp-gold); color: var(--lp-gold); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+        .lp-service-content { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+        .lp-service-title { font-size: 1.25rem; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .lp-service-title i { color: var(--lp-teal); }
+        .lp-service-desc { color: var(--lp-text-muted); font-size: 14px; margin-bottom: 20px; line-height: 1.5; flex: 1; }
+        .lp-service-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 16px; margin-top: auto; }
+        .lp-service-price { color: var(--lp-gold); font-weight: 600; font-size: 1.1rem; }
+        .lp-service-price span { font-size: 12px; color: var(--lp-text-muted); font-weight: 400; }
+        .lp-service-time { font-size: 12px; color: var(--lp-text-muted); }
+        .lp-btn-outline { border: 1px solid var(--lp-border); color: var(--lp-text); background: transparent; padding: 6px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; transition: 0.2s; }
+        .lp-service-card:hover .lp-btn-outline { background: var(--lp-gold); color: #000; }
+
+        /* TEYVAT TV */
+        .lp-tv { background: var(--lp-bg-sec); padding: 80px 5%; border-top: 1px solid rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .lp-tv-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; max-width: 1200px; margin: 0 auto; }
+        .lp-tv-main { border-radius: 16px; overflow: hidden; position: relative; aspect-ratio: 16/9; background: #000; border: 1px solid var(--lp-border); cursor: pointer; }
+        .lp-tv-side { display: flex; flex-direction: column; gap: 24px; }
+        .lp-tv-sub { border-radius: 12px; overflow: hidden; position: relative; aspect-ratio: 16/9; background: #000; border: 1px solid var(--lp-border); cursor: pointer; }
+        .lp-tv-thumb { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; transition: 0.3s; }
+        .lp-tv-main:hover .lp-tv-thumb, .lp-tv-sub:hover .lp-tv-thumb { opacity: 1; transform: scale(1.02); }
+        .lp-play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60px; height: 60px; background: rgba(224, 194, 118, 0.8); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; font-size: 20px; backdrop-filter: blur(4px); transition: 0.2s; }
+        .lp-tv-main:hover .lp-play-btn { transform: translate(-50%, -50%) scale(1.1); background: var(--lp-gold); }
+        .lp-tv-title { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+
+        /* PROCESS TIMELINE */
+        .lp-process { display: flex; justify-content: space-between; position: relative; margin-top: 40px; }
+        .lp-process::before { content: ''; position: absolute; top: 30px; left: 50px; right: 50px; height: 2px; background: rgba(224, 194, 118, 0.2); z-index: 0; }
+        .lp-step { flex: 1; text-align: center; position: relative; z-index: 1; padding: 0 15px; opacity: 0; transform: translateY(20px); transition: 0.5s ease; }
+        .lp-step.visible { opacity: 1; transform: translateY(0); }
+        .lp-step-icon { width: 60px; height: 60px; background: var(--lp-bg); border: 2px solid var(--lp-gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--lp-gold); margin: 0 auto 20px; box-shadow: 0 0 15px rgba(224, 194, 118, 0.2); }
+        .lp-step h3 { font-size: 1.1rem; margin-bottom: 10px; color: var(--lp-text); }
+        .lp-step p { font-size: 14px; color: var(--lp-text-muted); }
+
+        /* DASHBOARD SHOWCASE */
+        .lp-dash-showcase { background: radial-gradient(circle at center, rgba(104, 213, 193, 0.05) 0%, transparent 70%); }
+        .lp-dash-frame { background: var(--lp-card); border: 1px solid var(--lp-border); border-radius: 12px; padding: 10px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); max-width: 1000px; margin: 40px auto 0; position: relative; }
+        .lp-dash-frame img { width: 100%; border-radius: 8px; display: block; opacity: 0.9; }
+
+        /* BOOSTER PROFILES */
+        .lp-boosters-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+        .lp-booster-card { background: var(--lp-card); border: 1px solid var(--lp-border); border-radius: 16px; padding: 24px; text-align: center; position: relative; overflow: hidden; opacity: 0; transform: translateY(20px); transition: 0.5s ease; }
+        .lp-booster-card.visible { opacity: 1; transform: translateY(0); }
+        .lp-booster-bg { position: absolute; top: 0; left: 0; right: 0; height: 80px; background: linear-gradient(45deg, rgba(154, 116, 245, 0.2), rgba(104, 213, 193, 0.2)); }
+        .lp-booster-avatar { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--lp-bg); position: relative; z-index: 1; margin: 30px auto 15px; background: #fff; object-fit: cover; }
+        .lp-booster-name { font-size: 1.2rem; font-weight: 600; margin-bottom: 5px; color: var(--lp-text); }
+        .lp-booster-skill { color: var(--lp-teal); font-size: 13px; margin-bottom: 15px; }
+        .lp-booster-stats { display: flex; justify-content: space-around; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .lp-b-stat { display: flex; flex-direction: column; font-size: 12px; color: var(--lp-text-muted); }
+        .lp-b-stat span { color: var(--lp-text); font-weight: 600; font-size: 15px; margin-top: 4px; }
+        .lp-booster-verified { position: absolute; top: 12px; right: 12px; color: var(--lp-gold); font-size: 14px; background: rgba(0,0,0,0.5); padding: 4px 8px; border-radius: 12px; border: 1px solid var(--lp-border); }
+
+        /* REVIEWS */
+        .lp-reviews { overflow: hidden; white-space: nowrap; padding: 20px 0; }
+        .lp-review-track { display: inline-block; animation: scrollLeft 30s linear infinite; }
+        .lp-review-track:hover { animation-play-state: paused; }
+        .lp-review-card { display: inline-block; width: 350px; background: var(--lp-card); border: 1px solid var(--lp-border); border-radius: 16px; padding: 20px; margin-right: 20px; white-space: normal; vertical-align: top; }
+        .lp-review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .lp-review-user { font-weight: 600; color: var(--lp-gold); display: flex; align-items: center; }
+        .lp-review-service { font-size: 12px; color: var(--lp-teal); }
+        .lp-review-text { font-size: 14px; color: var(--lp-text-muted); line-height: 1.5; font-style: italic; }
+
+        /* MASCOT */
+        .lp-mascot { position: fixed; bottom: 20px; right: 20px; z-index: 1000; transform: translateY(150%); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: flex-end; gap: 15px; }
+        .lp-mascot.show { transform: translateY(0); }
+        .lp-mascot-img { width: 120px; height: auto; animation: float 4s ease-in-out infinite; cursor: pointer; }
+        .lp-mascot-bubble { background: var(--lp-card); border: 1px solid var(--lp-gold); border-radius: 12px 12px 0 12px; padding: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); position: relative; max-width: 200px; display: none; }
+        .lp-mascot-bubble.show { display: block; animation: popIn 0.3s forwards; }
+        .lp-mascot-close { position: absolute; top: 5px; right: 5px; background: none; border: none; color: var(--lp-text-muted); cursor: pointer; }
+
+        /* MUSIC TOGGLE */
+        .lp-music-toggle { position: fixed; bottom: 20px; left: 20px; z-index: 999; background: rgba(0,0,0,0.5); border: 1px solid var(--lp-border); border-radius: 20px; padding: 8px 15px; color: var(--lp-text-muted); font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(4px); transition: 0.2s; }
+        .lp-music-toggle:hover { color: var(--lp-text); border-color: var(--lp-text); }
+        .lp-music-toggle.playing { color: var(--lp-gold); border-color: var(--lp-gold); }
+
+        /* FOOTER */
+        .lp-footer { background: #04060a; padding: 40px 5% 20px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); }
+        .lp-footer-disclaimer { color: rgba(255,255,255,0.3); font-size: 12px; max-width: 800px; margin: 0 auto 20px; line-height: 1.5; }
+
+        /* ANIMATIONS */
+        @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes floatUp { 0% { transform: translateY(100vh) scale(0); opacity: 0; } 50% { opacity: 0.5; } 100% { transform: translateY(-100px) scale(1); opacity: 0; } }
+        @keyframes scrollLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
+        @keyframes shimmer { 0% { box-shadow: 0 0 0 0 rgba(224, 194, 118, 0.4); } 50% { box-shadow: 0 0 20px 0 rgba(224, 194, 118, 0); } 100% { box-shadow: 0 0 0 0 rgba(224, 194, 118, 0); } }
+        .shimmer-btn { animation: shimmer 6s infinite; }
+
+        .observe { opacity: 0; transform: translateY(20px); transition: 0.5s ease; }
+        .observe.visible { opacity: 1; transform: translateY(0); }
+
+        /* RESPONSIVE */
+        @media (max-width: 992px) {
+            .lp-tv-grid { grid-template-columns: 1fr; }
+            .lp-tv-side { display: grid; grid-template-columns: 1fr 1fr; }
+            .lp-process { flex-direction: column; gap: 30px; }
+            .lp-process::before { left: 30px; top: 0; bottom: 0; width: 2px; height: auto; }
+            .lp-step { display: flex; text-align: left; align-items: flex-start; gap: 20px; }
+            .lp-step-icon { margin: 0; flex-shrink: 0; }
+        }
         @media (max-width: 768px) {
-            .hero-title { font-size: 2.5rem; }
-            .hero-subtitle { font-size: 1.1rem; }
-            .btn-hero { width: 100%; justify-content: center; }
+            .lp-nav, .lp-actions { display: none; }
+            .hamburger { display: block; }
+            .lp-hero { height: 620px; }
+            .lp-hero h1 { font-size: 2.5rem; }
+            .lp-metrics { grid-template-columns: 1fr 1fr; }
+            .lp-tv-side { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 480px) {
+            .lp-metrics { grid-template-columns: 1fr; }
+            .lp-mascot { display: none !important; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            * { animation: none !important; transition: none !important; }
         }
     </style>
 </head>
-<body>
-    <!-- Header -->
-    <header>
-        <div class="app-container header-wrap" style="padding: 15px 0;">
-            <a href="/" class="logo-section" style="z-index: 1001;">
-                <img src="/assets/images/logo.jpg" alt="NAMCUMZ Logo" style="height: 35px; width: 35px; border-radius: 50%; object-fit: cover;"> <span class="logo-text" style="font-family: var(--font-main); font-weight: 800; letter-spacing: 2px;">NAMCUMZ</span>
-            </a>
-            
-            <button class="menu-toggle" id="menuToggle" style="z-index: 1001;"><i class="fa-solid fa-bars"></i></button>
+<body class="landing-page">
 
-            <nav class="navigation" id="navLinks">
-                <a href="/" class="nav-link active">
-                    <i class="fa-solid fa-home"></i> Trang chủ
-                </a>
-                <a href="/dashboard.html" class="nav-link">
-                    <i class="fa-solid fa-chart-line"></i> Bảng điều khiển
-                </a>
-                <a href="/checkscam" class="nav-link scam">
-                    <i class="fa-solid fa-shield-virus"></i> Check Scam
-                </a>
-                <a href="/login.html" class="nav-link" id="navAccountBtn">
-                    <i class="fa-solid fa-user"></i> Đăng nhập
-                </a>
-            </nav>
+    <!-- HEADER -->
+    <header class="lp-header" id="lpHeader">
+        <a href="/" class="lp-logo">
+            <img src="/assets/images/logo.jpg" alt="Logo" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+            NAMCUMZ
+        </a>
+        <nav class="lp-nav">
+            <a href="#dich-vu">Dịch vụ</a>
+            <a href="#quy-trinh">Quy trình</a>
+            <a href="#booster">Booster</a>
+            <a href="#tv">Teyvat TV</a>
+        </nav>
+        <div class="lp-actions">
+            <a href="/login" class="lp-btn-login">Đăng nhập</a>
+            <a href="/login" class="lp-btn-primary shimmer-btn">Tạo đơn ngay</a>
         </div>
+        <button class="hamburger" onclick="window.location.href='/login'"><i class="fa-solid fa-bars"></i></button>
     </header>
 
-    <!-- Main Content -->
-    <main>
-        <section class="hero-section">
-            <div class="hero-content">
-                <div class="animate-on-load">
-                    <h1 class="hero-title">DỊCH VỤ CÀY THUÊ GENSHIN IMPACT CHUYÊN NGHIỆP</h1>
-                </div>
-                <div class="animate-on-load" style="animation-delay: 0.1s;">
-                    <p class="hero-subtitle">
-                        Nhanh chóng - An toàn - Bảo mật. Khám phá map 100%, vượt La Hoàn Thâm Cảnh, farm thánh di vật với đội ngũ Booster chuyên nghiệp, đã được xác minh danh tính.
-                    </p>
-                </div>
-                <div class="animate-on-load hero-buttons" style="animation-delay: 0.2s;">
-                    <a href="/dashboard.html" class="btn btn-primary btn-hero">
-                        <i class="fa-solid fa-rocket"></i> Đặt Đơn Ngay
-                    </a>
-                    <a href="/login.html" class="btn btn-hero" style="background: var(--card-bg); color: var(--text-light); border: 1px solid var(--border-light);">
-                        <i class="fa-brands fa-google"></i> Trở Thành Booster
-                    </a>
-                </div>
+    <!-- HERO -->
+    <section class="lp-hero">
+        <!-- Placeholder for video, use poster as fallback if video doesn't exist -->
+        <video class="lp-hero-video" autoplay muted loop playsinline poster="https://th.bing.com/th/id/OIG4.XhH..b7z_nQzU8j8P.Oa?pid=ImgGn">
+            <source src="https://media.w3.org/2010/05/sintel/trailer.mp4" type="video/mp4">
+        </video>
+        <div class="lp-hero-overlay"></div>
+        <div class="particles" id="particles"></div>
+        
+        <div class="lp-hero-content">
+            <span class="lp-eyebrow">DỊCH VỤ DÀNH CHO NHÀ LỮ HÀNH</span>
+            <h1>Cày thuê Genshin Impact an toàn và minh bạch</h1>
+            <p>Theo dõi tiến độ, chat trực tiếp với Booster và nghiệm thu toàn bộ kết quả ngay trên hệ thống NAMCUMZ.</p>
+            <div class="lp-hero-btns">
+                <a href="#dich-vu" class="lp-btn-primary">Khám phá dịch vụ</a>
+                <a href="#quy-trinh" class="lp-btn-secondary"><i class="fa-solid fa-play"></i> Xem cách hoạt động</a>
             </div>
-        </section>
+            <div class="lp-features">
+                <div class="lp-feature"><i class="fa-solid fa-check-circle"></i> Booster đã xác minh</div>
+                <div class="lp-feature"><i class="fa-solid fa-shield-halved"></i> Giao dịch trung gian</div>
+                <div class="lp-feature"><i class="fa-solid fa-eye"></i> Theo dõi tiến độ trực tiếp</div>
+                <div class="lp-feature"><i class="fa-solid fa-headset"></i> Hỗ trợ 24/7</div>
+            </div>
+        </div>
+    </section>
 
-        <section class="features">
-            <div class="feature-card animate-on-load" style="animation-delay: 0.1s;">
-                <i class="fa-solid fa-shield-halved feature-icon"></i>
-                <h3 class="feature-title">An Toàn Tuyệt Đối</h3>
-                <p class="feature-desc">Mọi Booster đều phải đặt cọc và xác minh CCCD. Giao dịch trung gian an toàn qua NAMCUMZ, bảo vệ tài sản và thông tin tài khoản của bạn 100%.</p>
-            </div>
-            <div class="feature-card animate-on-load" style="animation-delay: 0.2s;">
-                <i class="fa-solid fa-bolt feature-icon"></i>
-                <h3 class="feature-title">Tiến Độ Thần Tốc</h3>
-                <p class="feature-desc">Đội ngũ cày thuê chuyên nghiệp, hoàn thành chỉ tiêu nhanh chóng theo đúng deadline đã cam kết, cập nhật tiến độ liên tục.</p>
-            </div>
-            <div class="feature-card animate-on-load" style="animation-delay: 0.3s;">
-                <i class="fa-solid fa-money-bill-wave feature-icon"></i>
-                <h3 class="feature-title">Giá Cả Cạnh Tranh</h3>
-                <p class="feature-desc">Bảng giá niêm yết rõ ràng, không phát sinh chi phí. Nhiều gói dịch vụ linh hoạt từ cày map, rương, ấn đến nhiệm vụ ma thần.</p>
-            </div>
-            <div class="feature-card animate-on-load" style="animation-delay: 0.4s;">
-                <i class="fa-solid fa-headset feature-icon"></i>
-                <h3 class="feature-title">Hỗ Trợ 24/7</h3>
-                <p class="feature-desc">Đội ngũ Admin và CSKH luôn sẵn sàng giải đáp thắc mắc, xử lý khiếu nại và hỗ trợ bạn trong suốt quá trình cày thuê.</p>
-            </div>
-        </section>
-    </main>
+    <!-- METRICS -->
+    <section class="lp-metrics" id="metrics">
+        <div class="lp-metric-card">
+            <div class="lp-metric-value count-up" data-val="15420">0</div>
+            <div class="lp-metric-label">Tổng đơn hoàn thành</div>
+        </div>
+        <div class="lp-metric-card">
+            <div class="lp-metric-value count-up" data-val="128">0</div>
+            <div class="lp-metric-label">Booster đã xác minh</div>
+        </div>
+        <div class="lp-metric-card">
+            <div class="lp-metric-value"><span class="count-up" data-val="99">0</span>%</div>
+            <div class="lp-metric-label">Tỷ lệ đúng hạn</div>
+        </div>
+        <div class="lp-metric-card">
+            <div class="lp-metric-value"><span class="count-up" data-val="4.9">0</span></div>
+            <div class="lp-metric-label">Điểm đánh giá trung bình</div>
+        </div>
+    </section>
 
-    <!-- App Logic for checking login -->
+    <!-- SERVICES -->
+    <section class="lp-section" id="dich-vu">
+        <div class="lp-section-header observe">
+            <h2>Dịch Vụ Nổi Bật</h2>
+            <p>Các gói cày thuê được thiết kế tối ưu nhất cho hành trình khám phá Teyvat của bạn.</p>
+        </div>
+        <div class="lp-services-grid">
+            <!-- Service 1 -->
+            <div class="lp-service-card observe">
+                <img src="https://th.bing.com/th/id/OIG4.XhH..b7z_nQzU8j8P.Oa?pid=ImgGn" class="lp-service-img" alt="La Hoàn" loading="lazy">
+                <div class="lp-service-badge">Phổ biến</div>
+                <div class="lp-service-content">
+                    <h3 class="lp-service-title"><i class="fa-solid fa-chess-rook"></i> La Hoàn Thâm Cảnh</h3>
+                    <p class="lp-service-desc">Clear 36 sao La Hoàn an toàn bằng kỹ năng thực sự. Nhận ngay tối đa Nguyên Thạch mỗi kỳ.</p>
+                    <div class="lp-service-footer">
+                        <div class="lp-service-price">Từ 50.000đ <span>/ kỳ</span></div>
+                        <button class="lp-btn-outline" onclick="window.location.href='/login'">Xem chi tiết</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Service 2 -->
+            <div class="lp-service-card observe" style="transition-delay: 0.1s">
+                <img src="https://th.bing.com/th/id/OIG3.P7_cZkK_.J0uP.oZ2aB5?pid=ImgGn" class="lp-service-img" alt="Map" loading="lazy">
+                <div class="lp-service-badge" style="color: var(--lp-teal); border-color: var(--lp-teal);">Tiết kiệm</div>
+                <div class="lp-service-content">
+                    <h3 class="lp-service-title"><i class="fa-solid fa-map-location-dot"></i> Rush Map & Khám phá</h3>
+                    <p class="lp-service-desc">Đạt 100% tiến độ khám phá, thu thập rương, nhặt Thần Đồng nhanh chóng và an toàn.</p>
+                    <div class="lp-service-footer">
+                        <div class="lp-service-price">Từ 100.000đ <span>/ vùng</span></div>
+                        <button class="lp-btn-outline" onclick="window.location.href='/login'">Xem chi tiết</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Service 3 -->
+            <div class="lp-service-card observe" style="transition-delay: 0.2s">
+                <img src="https://th.bing.com/th/id/OIG4.0hU2466KqA.r_U.H.c00?pid=ImgGn" class="lp-service-img" alt="Nhựa" loading="lazy">
+                <div class="lp-service-content">
+                    <h3 class="lp-service-title"><i class="fa-solid fa-bolt"></i> Daily & Xả Nhựa</h3>
+                    <p class="lp-service-desc">Ủy thác hàng ngày, xả nhựa farm vật liệu/thánh di vật. Duy trì tài khoản đều đặn.</p>
+                    <div class="lp-service-footer">
+                        <div class="lp-service-price">Từ 15.000đ <span>/ ngày</span></div>
+                        <button class="lp-btn-outline" onclick="window.location.href='/login'">Xem chi tiết</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Service 4 -->
+            <div class="lp-service-card observe">
+                <img src="https://th.bing.com/th/id/OIG4.H._C52jG4U_J_b_b?pid=ImgGn" class="lp-service-img" alt="Build" loading="lazy">
+                <div class="lp-service-content">
+                    <h3 class="lp-service-title"><i class="fa-solid fa-hammer"></i> Build Nhân Vật</h3>
+                    <p class="lp-service-desc">Farm nguyên liệu đột phá, thiên phú và cày cấp độ nhân vật/vũ khí nhanh nhất.</p>
+                    <div class="lp-service-footer">
+                        <div class="lp-service-price">Tùy chọn</div>
+                        <button class="lp-btn-outline" onclick="window.location.href='/login'">Xem chi tiết</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Service 5 -->
+            <div class="lp-service-card observe" style="transition-delay: 0.1s">
+                <img src="https://th.bing.com/th/id/OIG2.D_T5b6j_J_b_b?pid=ImgGn" class="lp-service-img" alt="Theater" loading="lazy">
+                <div class="lp-service-badge">Mới</div>
+                <div class="lp-service-content">
+                    <h3 class="lp-service-title"><i class="fa-solid fa-masks-theater"></i> Nhà Hát Giả Tưởng</h3>
+                    <p class="lp-service-desc">Vượt ải Nhà Hát Giả Tưởng chế độ Khó/Hỗn Kháng. Đội hình được tư vấn tối ưu.</p>
+                    <div class="lp-service-footer">
+                        <div class="lp-service-price">Từ 80.000đ <span>/ kỳ</span></div>
+                        <button class="lp-btn-outline" onclick="window.location.href='/login'">Xem chi tiết</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Service 6 -->
+            <div class="lp-service-card observe" style="transition-delay: 0.2s">
+                <img src="https://th.bing.com/th/id/OIG1.T_b6j_J_b_b?pid=ImgGn" class="lp-service-img" alt="Custom" loading="lazy">
+                <div class="lp-service-content">
+                    <h3 class="lp-service-title"><i class="fa-solid fa-wand-magic-sparkles"></i> Theo Yêu Cầu</h3>
+                    <p class="lp-service-desc">Cày sự kiện, câu cá, đánh boss ẩn hoặc bất cứ yêu cầu nào khác từ bạn.</p>
+                    <div class="lp-service-footer">
+                        <div class="lp-service-price">Liên hệ</div>
+                        <button class="lp-btn-outline" onclick="window.location.href='/login'">Xem chi tiết</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TEYVAT TV -->
+    <section class="lp-tv" id="tv">
+        <div class="lp-section-header observe">
+            <h2>Teyvat TV - Xem NAMCUMZ Hoạt Động</h2>
+            <p>Trải nghiệm chân thực quy trình làm việc và thành quả của các Booster.</p>
+        </div>
+        <div class="lp-tv-grid">
+            <div class="lp-tv-main observe" onclick="alert('Đang phát video (Demo)')">
+                <img src="https://th.bing.com/th/id/OIG4.XhH..b7z_nQzU8j8P.Oa?pid=ImgGn" class="lp-tv-thumb" alt="Main Video" loading="lazy">
+                <div class="lp-play-btn"><i class="fa-solid fa-play"></i></div>
+                <div class="lp-tv-title">Cách tạo đơn và theo dõi tiến độ trong 60 giây</div>
+            </div>
+            <div class="lp-tv-side">
+                <div class="lp-tv-sub observe" style="transition-delay: 0.1s" onclick="alert('Đang phát video (Demo)')">
+                    <img src="https://th.bing.com/th/id/OIG3.P7_cZkK_.J0uP.oZ2aB5?pid=ImgGn" class="lp-tv-thumb" alt="Sub Video 1" loading="lazy">
+                    <div class="lp-play-btn" style="width: 40px; height: 40px; font-size: 14px;"><i class="fa-solid fa-play"></i></div>
+                    <div class="lp-tv-title" style="font-size: 13px; padding: 10px;">Tiến trình một đơn Rush Map 100%</div>
+                </div>
+                <div class="lp-tv-sub observe" style="transition-delay: 0.2s" onclick="alert('Đang phát video (Demo)')">
+                    <img src="https://th.bing.com/th/id/OIG2.D_T5b6j_J_b_b?pid=ImgGn" class="lp-tv-thumb" alt="Sub Video 2" loading="lazy">
+                    <div class="lp-play-btn" style="width: 40px; height: 40px; font-size: 14px;"><i class="fa-solid fa-play"></i></div>
+                    <div class="lp-tv-title" style="font-size: 13px; padding: 10px;">Highlight La Hoàn Thâm Cảnh</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROCESS -->
+    <section class="lp-section" id="quy-trinh">
+        <div class="lp-section-header observe">
+            <h2>Quy Trình Đặt Đơn</h2>
+            <p>4 bước đơn giản và bảo mật để đưa tài khoản của bạn lên tầm cao mới.</p>
+        </div>
+        <div class="lp-process">
+            <div class="lp-step observe">
+                <div class="lp-step-icon"><i class="fa-solid fa-list-check"></i></div>
+                <h3>1. Chọn Dịch Vụ</h3>
+                <p>Chọn gói cày thuê phù hợp hoặc gửi yêu cầu tùy chỉnh chi tiết.</p>
+            </div>
+            <div class="lp-step observe" style="transition-delay: 0.1s">
+                <div class="lp-step-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                <h3>2. Nhận Báo Giá</h3>
+                <p>Admin xác nhận đơn và báo giá minh bạch. Khách hàng nạp tiền để giữ chỗ.</p>
+            </div>
+            <div class="lp-step observe" style="transition-delay: 0.2s">
+                <div class="lp-step-icon"><i class="fa-solid fa-bolt"></i></div>
+                <h3>3. Tiến Hành</h3>
+                <p>Booster uy tín tiếp nhận và cập nhật tiến độ liên tục trên hệ thống.</p>
+            </div>
+            <div class="lp-step observe" style="transition-delay: 0.3s">
+                <div class="lp-step-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+                <h3>4. Nghiệm Thu</h3>
+                <p>Nhận bàn giao, kiểm tra ảnh kết quả và đánh giá chất lượng Booster.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- DASHBOARD SHOWCASE -->
+    <section class="lp-section lp-dash-showcase">
+        <div class="lp-section-header observe">
+            <h2>Hệ Thống Quản Lý Đơn Trực Quan</h2>
+            <p>Tương tác với Booster, xem ảnh nghiệm thu và theo dõi tiến độ % theo thời gian thực.</p>
+        </div>
+        <div class="lp-dash-frame observe">
+            <!-- Simulated dashboard image -->
+            <div style="background: var(--lp-bg); padding: 10px; border-radius: 8px 8px 0 0; display: flex; gap: 8px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <div style="width: 12px; height: 12px; border-radius: 50%; background: #FF667A;"></div>
+                <div style="width: 12px; height: 12px; border-radius: 50%; background: #FFB84D;"></div>
+                <div style="width: 12px; height: 12px; border-radius: 50%; background: #68D5C1;"></div>
+            </div>
+            <img src="/assets/images/logo.jpg" alt="Dashboard Preview" style="height: 400px; object-fit: cover; object-position: top; width: 100%;">
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); padding: 20px 40px; border-radius: 12px; border: 1px solid var(--lp-gold); backdrop-filter: blur(10px); text-align: center;">
+                <h3 style="color: var(--lp-gold); margin-bottom: 15px; font-size: 1.2rem;"><i class="fa-solid fa-lock"></i> Độc Quyền Trải Nghiệm</h3>
+                <a href="/login" class="lp-btn-primary" style="display: inline-block;">Đăng nhập để xem</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- BOOSTERS -->
+    <section class="lp-section" id="booster">
+        <div class="lp-section-header observe">
+            <h2>Booster Hàng Đầu</h2>
+            <p>Đội ngũ người chơi kỳ cựu đã được xác minh danh tính và năng lực qua hàng trăm đơn hàng.</p>
+        </div>
+        <div class="lp-boosters-grid">
+            <!-- B1 -->
+            <div class="lp-booster-card observe">
+                <div class="lp-booster-bg"></div>
+                <div class="lp-booster-verified"><i class="fa-solid fa-circle-check"></i> Đã xác minh</div>
+                <img src="/assets/images/logo.jpg" class="lp-booster-avatar" alt="Avatar" loading="lazy">
+                <div class="lp-booster-name">Kazuha_Main</div>
+                <div class="lp-booster-skill">Chuyên La Hoàn & Build</div>
+                <div class="lp-booster-stats">
+                    <div class="lp-b-stat">Đơn HT <span>142</span></div>
+                    <div class="lp-b-stat">Đánh giá <span>5.0 <i class="fa-solid fa-star" style="color: var(--lp-gold); font-size:10px;"></i></span></div>
+                </div>
+            </div>
+            <!-- B2 -->
+            <div class="lp-booster-card observe" style="transition-delay: 0.1s">
+                <div class="lp-booster-bg"></div>
+                <div class="lp-booster-verified"><i class="fa-solid fa-circle-check"></i> Đã xác minh</div>
+                <img src="/assets/images/logo.jpg" class="lp-booster-avatar" alt="Avatar" loading="lazy">
+                <div class="lp-booster-name">Explorer_Pro</div>
+                <div class="lp-booster-skill">Chuyên Rush Map 100%</div>
+                <div class="lp-booster-stats">
+                    <div class="lp-b-stat">Đơn HT <span>89</span></div>
+                    <div class="lp-b-stat">Đánh giá <span>4.9 <i class="fa-solid fa-star" style="color: var(--lp-gold); font-size:10px;"></i></span></div>
+                </div>
+            </div>
+            <!-- B3 -->
+            <div class="lp-booster-card observe" style="transition-delay: 0.2s">
+                <div class="lp-booster-bg"></div>
+                <div class="lp-booster-verified"><i class="fa-solid fa-circle-check"></i> Đã xác minh</div>
+                <img src="/assets/images/logo.jpg" class="lp-booster-avatar" alt="Avatar" loading="lazy">
+                <div class="lp-booster-name">YaeMiko_Teyvat</div>
+                <div class="lp-booster-skill">Nhà Hát Giả Tưởng & Sự Kiện</div>
+                <div class="lp-booster-stats">
+                    <div class="lp-b-stat">Đơn HT <span>215</span></div>
+                    <div class="lp-b-stat">Đánh giá <span>5.0 <i class="fa-solid fa-star" style="color: var(--lp-gold); font-size:10px;"></i></span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- REVIEWS -->
+    <section class="lp-section" style="padding-bottom: 40px;">
+        <div class="lp-section-header observe">
+            <h2>Khách Hàng Nói Gì?</h2>
+            <p>100% đánh giá thực tế từ người dùng sau khi nghiệm thu đơn cày thuê.</p>
+        </div>
+        <div class="lp-reviews">
+            <div class="lp-review-track">
+                <!-- Duplicate cards for infinite scroll illusion -->
+                <div class="lp-review-card">
+                    <div class="lp-review-header">
+                        <div class="lp-review-user">N***n <i class="fa-solid fa-certificate" style="color: var(--lp-teal); font-size: 12px; margin-left: 4px;" title="Đã xác minh"></i></div>
+                        <div>
+                            <i class="fa-solid fa-star" style="color: var(--lp-gold); font-size: 12px;"></i>
+                            <i class="fa-solid fa-star" style="color: var(--lp-gold); font-size: 12px;"></i>
+                            <i class="fa-solid fa-star" style="color: var(--lp-gold); font-size: 12px;"></i>
+                            <i class="fa-solid fa-star" style="color: var(--lp-gold); font-size: 12px;"></i>
+                            <i class="fa-solid fa-star" style="color: var(--lp-gold); font-size: 12px;"></i>
+                        </div>
+                    </div>
+                    <div class="lp-review-service">La Hoàn Thâm Cảnh</div>
+                    <p class="lp-review-text">"Booster đánh siêu nét, team mình phèn mà vẫn qua 36 sao trong vòng 30 phút. Uy tín nha shop!"</p>
+                </div>
+                <div class="lp-review-card">
+                    <div class="lp-review-header">
+                        <div class="lp-review-user">T***n <i class="fa-solid fa-certificate" style="color: var(--lp-teal); font-size: 12px; margin-left: 4px;" title="Đã xác minh"></i></div>
+                        <div>
+                            <i class="fa-solid fa-star" style="color: var(--lp-gold); font-size: 12px;"></i>
+                            <i class="fa-solid fa-star" style="color: var(--lp-gold); font-size: 12px;"></i>
+                            <i class="fa-solid fa-star" style="color: var(--lp-gold); font-size: 12px;"></i>
+                            <i class="fa-solid fa-star" style="color: var(--lp-gold); font-size: 12px;"></i>
+                            <i class="fa-solid fa-star" style="color: var(--lp-gold); font-size: 12px;"></i>
+                        </div>
+                    </div>
+                    <div class="lp-review-service">Rush Map Fontaine</div>
+                    <p class="lp-review-text">"Ngủ một đêm dậy thấy rương mở sạch 100%, Thần Đồng gom đủ. Giao diện xem tiến độ rất xịn sò."</p>
+                </div>
+                <div class="lp-review-card">
+                    <div class="lp-review-header">
+                        <div class="lp-review-user">L***y <i class="fa-solid fa-certificate" style="color: var(--lp-teal); font-size: 12px; margin-left: 4px;" title="Đã xác minh"></i></div>
+                        <div>
+                            <i class="fa-solid fa-star" style="color: var(--lp-gold); font-size: 12px;"></i>
+                            <i class="fa-solid fa-star" style="color: var(--lp-gold); font-size: 12px;"></i>
+                            <i class="fa-solid fa-star" style="color: var(--lp-gold); font-size: 12px;"></i>
+                            <i class="fa-solid fa-star" style="color: var(--lp-gold); font-size: 12px;"></i>
+                            <i class="fa-solid fa-star-half-stroke" style="color: var(--lp-gold); font-size: 12px;"></i>
+                        </div>
+                    </div>
+                    <div class="lp-review-service">Build Nhân Vật</div>
+                    <p class="lp-review-text">"Giá sinh viên, cập nhật đầy đủ, an toàn. Rất recommend mọi người dùng thử dịch vụ ở đây."</p>
+                </div>
+                <div class="lp-review-card">
+                    <div class="lp-review-header">
+                        <div class="lp-review-user">N***n <i class="fa-solid fa-certificate" style="color: var(--lp-teal); font-size: 12px; margin-left: 4px;" title="Đã xác minh"></i></div>
+                        <div>
+                            <i class="fa-solid fa-star" style="color: var(--lp-gold); font-size: 12px;"></i>
+                            <i class="fa-solid fa-star" style="color: var(--lp-gold); font-size: 12px;"></i>
+                            <i class="fa-solid fa-star" style="color: var(--lp-gold); font-size: 12px;"></i>
+                            <i class="fa-solid fa-star" style="color: var(--lp-gold); font-size: 12px;"></i>
+                            <i class="fa-solid fa-star" style="color: var(--lp-gold); font-size: 12px;"></i>
+                        </div>
+                    </div>
+                    <div class="lp-review-service">La Hoàn Thâm Cảnh</div>
+                    <p class="lp-review-text">"Booster đánh siêu nét, team mình phèn mà vẫn qua 36 sao trong vòng 30 phút. Uy tín nha shop!"</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="lp-footer">
+        <div class="lp-logo" style="justify-content: center; margin-bottom: 20px;">
+            <img src="/assets/images/logo.jpg" alt="Logo" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;"> NAMCUMZ
+        </div>
+        <p class="lp-footer-disclaimer">
+            Tuyên bố từ chối trách nhiệm: NAMCUMZ là dịch vụ cày thuê độc lập do cộng đồng xây dựng. 
+            Chúng tôi KHÔNG liên kết, được tài trợ, bảo trợ hoặc xác nhận bởi HoYoverse, Genshin Impact hay bất kỳ công ty liên quan nào. 
+            Mọi nhãn hiệu, hình ảnh và tài sản trò chơi đều thuộc bản quyền của chủ sở hữu tương ứng.
+        </p>
+        <p style="color: var(--lp-text-muted); font-size: 12px;">&copy; 2026 NAMCUMZ. All rights reserved.</p>
+    </footer>
+
+    <!-- MASCOT -->
+    <div class="lp-mascot" id="mascot">
+        <div class="lp-mascot-bubble" id="mascotBubble">
+            <button class="lp-mascot-close" onclick="document.getElementById('mascotBubble').style.display='none'"><i class="fa-solid fa-xmark"></i></button>
+            <div style="font-size: 13px; font-weight: 600; margin-bottom: 10px;">Nhà Lữ Hành cần cày nội dung nào?</div>
+            <a href="#dich-vu" class="lp-btn-outline" style="display: block; text-align: center; border-color: var(--lp-gold); color: var(--lp-gold);" onclick="document.getElementById('mascotBubble').style.display='none'">Xem hướng dẫn</a>
+        </div>
+        <!-- Simulated chibi image, replace with a nice anime chibi avatar if available. Using a generic icon for now -->
+        <img src="/assets/images/logo.jpg" class="lp-mascot-img" alt="Mascot" onclick="document.getElementById('mascotBubble').classList.add('show'); document.getElementById('mascotBubble').style.display='block';" style="border-radius: 50%; width: 80px;">
+    </div>
+
+    <!-- MUSIC TOGGLE -->
+    <button class="lp-music-toggle" id="musicBtn" onclick="toggleMusic()">
+        <i class="fa-solid fa-music"></i> Nhạc: Tắt
+    </button>
+    <audio id="bgMusic" loop src=""></audio>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const menuToggle = document.getElementById('menuToggle');
-            const navLinks = document.getElementById('navLinks');
-            if (menuToggle && navLinks) {
-                menuToggle.addEventListener('click', () => { navLinks.classList.toggle('active'); });
-            }
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('lpHeader');
+            if(window.scrollY > 50) header.classList.add('scrolled');
+            else header.classList.remove('scrolled');
+        });
 
-            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-            if (isLoggedIn) {
-                // Change login link to dashboard
-                const accountBtn = document.getElementById('navAccountBtn');
-                if(accountBtn) {
-                    accountBtn.href = '/dashboard.html';
-                    accountBtn.innerHTML = '<i class="fa-solid fa-chart-line"></i> ' + (localStorage.getItem('username') || 'Tài khoản');
+        // Generate Fantasy Particles
+        const particlesContainer = document.getElementById('particles');
+        const isReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!isReduced && window.innerWidth > 768 && particlesContainer) {
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                const size = Math.random() * 4 + 1;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particle.style.animationDelay = (Math.random() * 5) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Intersection Observer for scroll animations
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    
+                    // Handle count-up if it's a metric
+                    const countUps = entry.target.querySelectorAll('.count-up');
+                    countUps.forEach(el => {
+                        if(el.dataset.counted) return;
+                        el.dataset.counted = 'true';
+                        const target = parseFloat(el.getAttribute('data-val'));
+                        const isDecimal = target % 1 !== 0;
+                        let start = 0;
+                        const duration = 1500;
+                        const startTime = performance.now();
+                        
+                        function update(currentTime) {
+                            const elapsed = currentTime - startTime;
+                            const progress = Math.min(elapsed / duration, 1);
+                            const easeOut = 1 - Math.pow(1 - progress, 3);
+                            let current = start + target * easeOut;
+                            
+                            if (isDecimal) {
+                                el.innerText = current.toFixed(1);
+                            } else {
+                                el.innerText = Math.floor(current).toLocaleString('vi-VN');
+                            }
+                            
+                            if (progress < 1) requestAnimationFrame(update);
+                            else el.innerText = isDecimal ? target.toFixed(1) : target.toLocaleString('vi-VN');
+                        }
+                        requestAnimationFrame(update);
+                    });
+                    
+                    obs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.observe').forEach(el => observer.observe(el));
+
+        // Show Mascot after 8 seconds
+        setTimeout(() => {
+            if(window.innerWidth > 480) {
+                const mascot = document.getElementById('mascot');
+                if (mascot) {
+                    mascot.classList.add('show');
+                    setTimeout(() => {
+                        const bubble = document.getElementById('mascotBubble');
+                        if (bubble) {
+                            bubble.classList.add('show');
+                            bubble.style.display = 'block';
+                        }
+                    }, 1000);
                 }
             }
-        });
+        }, 8000);
+
+        // Music Toggle
+        function toggleMusic() {
+            const btn = document.getElementById('musicBtn');
+            const audio = document.getElementById('bgMusic');
+            // Since we don't have a real audio file, we'll just toggle the UI state
+            if(btn.classList.contains('playing')) {
+                btn.classList.remove('playing');
+                btn.innerHTML = '<i class="fa-solid fa-music"></i> Nhạc: Tắt';
+                if (audio) audio.pause();
+            } else {
+                btn.classList.add('playing');
+                btn.innerHTML = '<i class="fa-solid fa-volume-high"></i> Nhạc: Bật';
+                if (audio) audio.play().catch(e => console.log('Audio play failed:', e));
+            }
+        }
     </script>
 </body>
 </html>
