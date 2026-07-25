@@ -1,4 +1,4 @@
-// 1. Initialize Supabase
+﻿// 1. Initialize Supabase
 const SUPABASE_URL = 'https://vqnuutdmcekqkbdvawlw.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxbnV1dGRtY2VrcWtiZHZhd2x3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTgwNjIsImV4cCI6MjEwMDM3NDA2Mn0.T8_AdJOWEmf68oVrOjv8G51IScykzqhBnfHIi5LK-G4';
 
@@ -13,6 +13,16 @@ let currentService = 'all';
 let currentSort = 'newest';
 
 // --- Helper Functions ---
+// --- AUTH IDENTITY HELPER ---
+function normalizeUsername(username) {
+    if (!username) return '';
+    return username.trim().toLowerCase();
+}
+function createInternalIdentity(username) {
+    return normalizeUsername(username) + '@namcumz.com';
+}
+// ----------------------------
+
 window.animateCountUp = function(element, target, duration = 1500) {
     if(!element) return;
     const isReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -45,19 +55,19 @@ function timeAgo(dateString) {
     const date = new Date(dateString);
     const now = new Date();
     const diff = Math.floor((now - date) / 1000);
-    if (diff < 60) return 'Vừa xong';
-    if (diff < 3600) return `${Math.floor(diff/60)} phút trước`;
-    if (diff < 86400) return `${Math.floor(diff/3600)} giờ trước`;
-    return `${Math.floor(diff/86400)} ngày trước`;
+    if (diff < 60) return 'Vá»«a xong';
+    if (diff < 3600) return `${Math.floor(diff/60)} phÃºt trÆ°á»›c`;
+    if (diff < 86400) return `${Math.floor(diff/3600)} giá» trÆ°á»›c`;
+    return `${Math.floor(diff/86400)} ngÃ y trÆ°á»›c`;
 }
 
 function getStatusDetails(status) {
     const s = {
-        'cho_xu_ly': { text: 'Chờ xử lý', color: 'status-cho-xu-ly', icon: 'fa-clock', colorVar: '#3b82f6' },
-        'dang_cay': { text: 'Đang cày', color: 'status-dang-cay', icon: 'fa-spinner fa-spin', colorVar: '#f59e0b' },
-        'cho_nghiem_thu': { text: 'Chờ nghiệm thu', color: 'status-cho-nghiem-thu', icon: 'fa-eye', colorVar: '#a855f7' },
-        'hoan_thanh': { text: 'Hoàn thành', color: 'status-hoan-thanh', icon: 'fa-check-circle', colorVar: '#22c55e' },
-        'tam_dung': { text: 'Tạm dừng', color: 'status-tam-dung', icon: 'fa-pause-circle', colorVar: '#ef4444' }
+        'cho_xu_ly': { text: 'Chá» xá»­ lÃ½', color: 'status-cho-xu-ly', icon: 'fa-clock', colorVar: '#3b82f6' },
+        'dang_cay': { text: 'Äang cÃ y', color: 'status-dang-cay', icon: 'fa-spinner fa-spin', colorVar: '#f59e0b' },
+        'cho_nghiem_thu': { text: 'Chá» nghiá»‡m thu', color: 'status-cho-nghiem-thu', icon: 'fa-eye', colorVar: '#a855f7' },
+        'hoan_thanh': { text: 'HoÃ n thÃ nh', color: 'status-hoan-thanh', icon: 'fa-check-circle', colorVar: '#22c55e' },
+        'tam_dung': { text: 'Táº¡m dá»«ng', color: 'status-tam-dung', icon: 'fa-pause-circle', colorVar: '#ef4444' }
     };
     return s[status] || s['cho_xu_ly'];
 }
@@ -100,9 +110,9 @@ window.fetchOrders = async function() {
         window.applyFilters();
         if(typeof window.updateDashboardStats === 'function') window.updateDashboardStats(allOrders);
     } catch (error) {
-        console.error("Lỗi tải đơn hàng:", error.message);
+        console.error("Lá»—i táº£i Ä‘Æ¡n hÃ ng:", error.message);
         const grid = document.getElementById('ordersGrid');
-        if(grid) grid.innerHTML = '<div style="color: var(--status-tam-dung); grid-column: 1/-1; text-align: center; padding: 20px;">Lỗi kết nối tới cơ sở dữ liệu. Vui lòng tải lại trang.</div>';
+        if(grid) grid.innerHTML = '<div style="color: var(--status-tam-dung); grid-column: 1/-1; text-align: center; padding: 20px;">Lá»—i káº¿t ná»‘i tá»›i cÆ¡ sá»Ÿ dá»¯ liá»‡u. Vui lÃ²ng táº£i láº¡i trang.</div>';
     }
 };
 
@@ -165,11 +175,11 @@ window.renderOrders = function(ordersToRender, containerId) {
         container.innerHTML = `
         <div style="grid-column: 1/-1; text-align: center; padding: 80px 20px; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px dashed rgba(255,255,255,0.1);">
             <img src="/assets/images/empty-paimon.png" alt="Empty" style="width: 120px; opacity: 0.7; margin-bottom: 20px; filter: grayscale(50%);" onerror="this.style.display='none'">
-            <h3 style="color: var(--text-light); font-size: 1.5rem; margin-bottom: 10px; font-weight: 700;">Chưa có đơn cày phù hợp</h3>
-            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px;">Không tìm thấy đơn hàng nào khớp với yêu cầu hiện tại của bạn. Hãy thử thay đổi bộ lọc hoặc tạo một yêu cầu mới.</p>
+            <h3 style="color: var(--text-light); font-size: 1.5rem; margin-bottom: 10px; font-weight: 700;">ChÆ°a cÃ³ Ä‘Æ¡n cÃ y phÃ¹ há»£p</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px;">KhÃ´ng tÃ¬m tháº¥y Ä‘Æ¡n hÃ ng nÃ o khá»›p vá»›i yÃªu cáº§u hiá»‡n táº¡i cá»§a báº¡n. HÃ£y thá»­ thay Ä‘á»•i bá»™ lá»c hoáº·c táº¡o má»™t yÃªu cáº§u má»›i.</p>
             <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                <button class="btn btn-primary" onclick="window.openCreateOrderModal()"><i class="fa-solid fa-plus"></i> Tạo đơn Genshin</button>
-                <button class="btn" style="background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1);" onclick="document.getElementById('searchInput').value=''; document.getElementById('filterService').value='all'; window.filterByTab('all');"><i class="fa-solid fa-filter-circle-xmark"></i> Xóa bộ lọc</button>
+                <button class="btn btn-primary" onclick="window.openCreateOrderModal()"><i class="fa-solid fa-plus"></i> Táº¡o Ä‘Æ¡n Genshin</button>
+                <button class="btn" style="background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1);" onclick="document.getElementById('searchInput').value=''; document.getElementById('filterService').value='all'; window.filterByTab('all');"><i class="fa-solid fa-filter-circle-xmark"></i> XÃ³a bá»™ lá»c</button>
             </div>
         </div>`;
         return;
@@ -186,12 +196,12 @@ window.renderOrders = function(ordersToRender, containerId) {
         let priceHtml = '';
         if (canViewPrivate) {
             if (order.price) {
-                priceHtml = `<span class="count-up-price" data-val="${parseInt(order.price)}">0</span> đ`;
+                priceHtml = `<span class="count-up-price" data-val="${parseInt(order.price)}">0</span> Ä‘`;
             } else {
-                priceHtml = 'Chưa báo giá';
+                priceHtml = 'ChÆ°a bÃ¡o giÃ¡';
             }
         } else {
-            priceHtml = `<span style="font-size: 14px;"><i class="fa-solid fa-lock"></i> Ẩn</span>`;
+            priceHtml = `<span style="font-size: 14px;"><i class="fa-solid fa-lock"></i> áº¨n</span>`;
         }
 
         let actionButtons = '';
@@ -199,27 +209,27 @@ window.renderOrders = function(ordersToRender, containerId) {
             if (isAdmin) {
                 actionButtons += `
                     <select onchange="changeOrderStatus('${order.id}', this.value, '${order.user_id}')" style="background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 12px; flex:1; outline: none; cursor: pointer;">
-                        <option value="cho_xu_ly" ${order.status === 'cho_xu_ly' ? 'selected' : ''}>Chờ xử lý</option>
-                        <option value="dang_cay" ${order.status === 'dang_cay' ? 'selected' : ''}>Đang cày</option>
-                        <option value="cho_nghiem_thu" ${order.status === 'cho_nghiem_thu' ? 'selected' : ''}>Chờ nghiệm thu</option>
-                        <option value="hoan_thanh" ${order.status === 'hoan_thanh' ? 'selected' : ''}>Hoàn thành</option>
-                        <option value="tam_dung" ${order.status === 'tam_dung' ? 'selected' : ''}>Tạm dừng</option>
+                        <option value="cho_xu_ly" ${order.status === 'cho_xu_ly' ? 'selected' : ''}>Chá» xá»­ lÃ½</option>
+                        <option value="dang_cay" ${order.status === 'dang_cay' ? 'selected' : ''}>Äang cÃ y</option>
+                        <option value="cho_nghiem_thu" ${order.status === 'cho_nghiem_thu' ? 'selected' : ''}>Chá» nghiá»‡m thu</option>
+                        <option value="hoan_thanh" ${order.status === 'hoan_thanh' ? 'selected' : ''}>HoÃ n thÃ nh</option>
+                        <option value="tam_dung" ${order.status === 'tam_dung' ? 'selected' : ''}>Táº¡m dá»«ng</option>
                     </select>
                 `;
             } else if (isBoosterRole) {
                 if (order.status === 'cho_xu_ly' && !order.booster_id) {
-                    actionButtons += `<button onclick="acceptOrder('${order.id}')" class="btn btn-primary" style="flex:1"><i class="fa-solid fa-handshake"></i> Nhận đơn</button>`;
+                    actionButtons += `<button onclick="acceptOrder('${order.id}')" class="btn btn-primary" style="flex:1"><i class="fa-solid fa-handshake"></i> Nháº­n Ä‘Æ¡n</button>`;
                 } else if (isAssignedBooster && order.status === 'dang_cay') {
-                    actionButtons += `<button onclick="changeOrderStatus('${order.id}', 'cho_nghiem_thu', '${order.user_id}')" class="btn" style="background: var(--status-cho-nghiem-thu); color: #000; flex:1"><i class="fa-solid fa-check"></i> Gửi kết quả</button>`;
+                    actionButtons += `<button onclick="changeOrderStatus('${order.id}', 'cho_nghiem_thu', '${order.user_id}')" class="btn" style="background: var(--status-cho-nghiem-thu); color: #000; flex:1"><i class="fa-solid fa-check"></i> Gá»­i káº¿t quáº£</button>`;
                 }
             } else if (isOwner) {
                 if (order.status === 'cho_nghiem_thu') {
-                    actionButtons += `<button onclick="changeOrderStatus('${order.id}', 'hoan_thanh', '${order.user_id}')" class="btn" style="background: var(--status-hoan-thanh); color: #fff; flex:1"><i class="fa-solid fa-clipboard-check"></i> Nghiệm thu</button>`;
+                    actionButtons += `<button onclick="changeOrderStatus('${order.id}', 'hoan_thanh', '${order.user_id}')" class="btn" style="background: var(--status-hoan-thanh); color: #fff; flex:1"><i class="fa-solid fa-clipboard-check"></i> Nghiá»‡m thu</button>`;
                 }
             }
 
             if (isOwner && order.status !== 'cho_xu_ly') {
-                actionButtons += `<button onclick="window.openTicketModal('${order.id}')" class="btn btn-outline" style="border: 1px solid var(--status-tam-dung); color: var(--status-tam-dung); flex: 0.5;"><i class="fa-solid fa-triangle-exclamation"></i> Báo cáo</button>`;
+                actionButtons += `<button onclick="window.openTicketModal('${order.id}')" class="btn btn-outline" style="border: 1px solid var(--status-tam-dung); color: var(--status-tam-dung); flex: 0.5;"><i class="fa-solid fa-triangle-exclamation"></i> BÃ¡o cÃ¡o</button>`;
             }
             if (canViewPrivate) {
                 actionButtons += `<button onclick="window.openChat('${order.id}', '${order.order_code}')" class="btn" style="background: var(--primary); color: #fff; flex: 1;"><i class="fa-solid fa-comments"></i> Chat</button>`;
@@ -239,13 +249,13 @@ window.renderOrders = function(ordersToRender, containerId) {
                 </div>
             `;
         } else if (order.status === 'hoan_thanh' && isOwner) {
-            actionButtons += `<button onclick="openRatingModal('${order.id}')" class="btn" style="background: var(--genshin-gold); color: #000; flex: 1;"><i class="fa-solid fa-star"></i> Đánh giá</button>`;
+            actionButtons += `<button onclick="openRatingModal('${order.id}')" class="btn" style="background: var(--genshin-gold); color: #000; flex: 1;"><i class="fa-solid fa-star"></i> ÄÃ¡nh giÃ¡</button>`;
         }
 
-        let displayTitle = 'Không có mô tả';
-        let server = 'Chưa xác định';
-        let serviceGroup = 'Khác';
-        let deadlineStr = 'Chưa rõ';
+        let displayTitle = 'KhÃ´ng cÃ³ mÃ´ táº£';
+        let server = 'ChÆ°a xÃ¡c Ä‘á»‹nh';
+        let serviceGroup = 'KhÃ¡c';
+        let deadlineStr = 'ChÆ°a rÃµ';
         let rawGoal = order.content || '';
         
         if (rawGoal.startsWith('[')) {
@@ -286,33 +296,33 @@ window.renderOrders = function(ordersToRender, containerId) {
                 
                 <div class="oc-body">
                     <div class="oc-row">
-                        <span class="oc-label">Dịch vụ</span>
+                        <span class="oc-label">Dá»‹ch vá»¥</span>
                         <span class="oc-value"><i class="fa-solid fa-gamepad" style="color: var(--primary-light)"></i> ${serviceGroup}</span>
                     </div>
                     <div class="oc-row">
-                        <span class="oc-label">Máy chủ</span>
+                        <span class="oc-label">MÃ¡y chá»§</span>
                         <span class="oc-value">${server}</span>
                     </div>
                     <div class="oc-row">
-                        <span class="oc-label">Người thuê</span>
-                        <span class="oc-value">${isAdmin ? (order.renter_name || 'Khách') : maskString(order.renter_name)}</span>
+                        <span class="oc-label">NgÆ°á»i thuÃª</span>
+                        <span class="oc-value">${isAdmin ? (order.renter_name || 'KhÃ¡ch') : maskString(order.renter_name)}</span>
                     </div>
                     <div class="oc-row">
                         <span class="oc-label">Booster</span>
-                        <span class="oc-value" style="color: var(--secondary)">${order.booster_name || 'Chưa nhận'}</span>
+                        <span class="oc-value" style="color: var(--secondary)">${order.booster_name || 'ChÆ°a nháº­n'}</span>
                     </div>
                     <div class="oc-row">
-                        <span class="oc-label">Thời hạn</span>
+                        <span class="oc-label">Thá»i háº¡n</span>
                         <span class="oc-value">${deadlineStr}</span>
                     </div>
                     <div class="oc-row" style="align-items: center; margin-top: 8px;">
-                        <span class="oc-label">Giá</span>
+                        <span class="oc-label">GiÃ¡</span>
                         <span class="oc-price">${priceHtml}</span>
                     </div>
                     ${calculatedProgress > 0 ? `
                     <div class="oc-progress-wrap">
                         <div class="oc-progress-bar"><div class="oc-progress-fill" style="width: ${calculatedProgress}%;"></div></div>
-                        <div class="oc-progress-text"><span>Tiến độ</span><span>${calculatedProgress}%</span></div>
+                        <div class="oc-progress-text"><span>Tiáº¿n Ä‘á»™</span><span>${calculatedProgress}%</span></div>
                     </div>` : ''}
                 </div>
                 
@@ -367,7 +377,7 @@ window.updateDashboardStats = function(orders) {
     let counts = { all: orders.length, cho_xu_ly: 0, dang_cay: 0, cho_nghiem_thu: 0, hoan_thanh: 0, tam_dung: 0 };
     orders.forEach(o => { if (counts[o.status] !== undefined) counts[o.status]++; });
     
-    document.getElementById('totalOrdersBadge').innerText = `${orders.length} đơn`;
+    document.getElementById('totalOrdersBadge').innerText = `${orders.length} Ä‘Æ¡n`;
     
     ['all', 'cho_xu_ly', 'dang_cay', 'cho_nghiem_thu', 'hoan_thanh'].forEach(status => {
         const el = document.getElementById('count-' + status);
@@ -387,21 +397,21 @@ window.updateDashboardStats = function(orders) {
         const revenue = orders.filter(o => o.status === 'hoan_thanh').reduce((sum, o) => sum + (o.price || 0), 0);
         html = `
         <div class="stats-card">
-            <h3 class="stats-title"><i class="fa-solid fa-crown" style="color: var(--genshin-gold)"></i> QUẢN TRỊ VIÊN</h3>
+            <h3 class="stats-title"><i class="fa-solid fa-crown" style="color: var(--genshin-gold)"></i> QUáº¢N TRá»Š VIÃŠN</h3>
             <div class="stat-item">
-                <span class="stat-label">Tổng đơn hệ thống</span>
+                <span class="stat-label">Tá»•ng Ä‘Æ¡n há»‡ thá»‘ng</span>
                 <span class="stat-value" id="stat-total" style="color: #fff">${orders.length}</span>
             </div>
             <div class="stat-item">
-                <span class="stat-label">Tổng doanh thu</span>
+                <span class="stat-label">Tá»•ng doanh thu</span>
                 <span class="stat-value count-up-price" data-val="${revenue}" style="color: var(--status-hoan-thanh)">0</span>
             </div>
             <div class="stat-item">
-                <span class="stat-label">Khiếu nại / Report</span>
+                <span class="stat-label">Khiáº¿u náº¡i / Report</span>
                 <span class="stat-value" id="stat-reports" style="color: var(--status-tam-dung)">0</span>
             </div>
             <div class="stat-item">
-                <span class="stat-label">Đơn quá hạn</span>
+                <span class="stat-label">ÄÆ¡n quÃ¡ háº¡n</span>
                 <span class="stat-value" style="color: #f43f5e">0</span>
             </div>
         </div>`;
@@ -411,21 +421,21 @@ window.updateDashboardStats = function(orders) {
         const active = myOrders.filter(o => o.status === 'dang_cay').length;
         html = `
         <div class="stats-card">
-            <h3 class="stats-title"><i class="fa-solid fa-bolt" style="color: var(--primary)"></i> THỐNG KÊ BOOSTER</h3>
+            <h3 class="stats-title"><i class="fa-solid fa-bolt" style="color: var(--primary)"></i> THá»NG KÃŠ BOOSTER</h3>
             <div class="stat-item">
-                <span class="stat-label">Đơn đang cày</span>
+                <span class="stat-label">ÄÆ¡n Ä‘ang cÃ y</span>
                 <span class="stat-value" id="stat-booster-active" style="color: var(--status-dang-cay)">${active}</span>
             </div>
             <div class="stat-item">
-                <span class="stat-label">Thu nhập ước tính</span>
+                <span class="stat-label">Thu nháº­p Æ°á»›c tÃ­nh</span>
                 <span class="stat-value count-up-price" data-val="${income}" style="color: var(--status-hoan-thanh)">0</span>
             </div>
             <div class="stat-item">
-                <span class="stat-label">Điểm đánh giá</span>
+                <span class="stat-label">Äiá»ƒm Ä‘Ã¡nh giÃ¡</span>
                 <span class="stat-value" style="color: var(--genshin-gold)"><i class="fa-solid fa-star"></i> 5.0</span>
             </div>
             <div class="stat-item">
-                <span class="stat-label">Tỷ lệ đúng hạn</span>
+                <span class="stat-label">Tá»· lá»‡ Ä‘Ãºng háº¡n</span>
                 <span class="stat-value" style="color: #10b981">100%</span>
             </div>
         </div>`;
@@ -436,17 +446,17 @@ window.updateDashboardStats = function(orders) {
         const waiting = myOrders.filter(o => o.status === 'cho_nghiem_thu').length;
         html = `
         <div class="stats-card">
-            <h3 class="stats-title"><i class="fa-solid fa-user" style="color: var(--secondary)"></i> THỐNG KÊ CỦA BẠN</h3>
+            <h3 class="stats-title"><i class="fa-solid fa-user" style="color: var(--secondary)"></i> THá»NG KÃŠ Cá»¦A Báº N</h3>
             <div class="stat-item">
-                <span class="stat-label">Đơn đang hoạt động</span>
+                <span class="stat-label">ÄÆ¡n Ä‘ang hoáº¡t Ä‘á»™ng</span>
                 <span class="stat-value" id="stat-customer-active" style="color: var(--status-dang-cay)">${active}</span>
             </div>
             <div class="stat-item">
-                <span class="stat-label">Chờ nghiệm thu</span>
+                <span class="stat-label">Chá» nghiá»‡m thu</span>
                 <span class="stat-value" id="stat-customer-waiting" style="color: var(--status-cho-nghiem-thu)">${waiting}</span>
             </div>
             <div class="stat-item">
-                <span class="stat-label">Tổng chi tiêu</span>
+                <span class="stat-label">Tá»•ng chi tiÃªu</span>
                 <span class="stat-value count-up-price" data-val="${spent}" style="color: var(--status-hoan-thanh)">0</span>
             </div>
         </div>`;
@@ -469,12 +479,12 @@ window.updateDashboardStats = function(orders) {
 };
 
 window.acceptOrder = async (orderId) => {
-    if(!confirm('Bạn chắc chắn muốn nhận đơn này?')) return;
+    if(!confirm('Báº¡n cháº¯c cháº¯n muá»‘n nháº­n Ä‘Æ¡n nÃ y?')) return;
     const { error } = await supabaseClient.from('orders').update({ booster_id: localStorage.getItem('userId'), booster_name: localStorage.getItem('username'), status: 'dang_cay' }).eq('id', orderId);
-    if(error) alert('Lỗi: ' + error.message);
+    if(error) alert('Lá»—i: ' + error.message);
     else { 
-        await window.logOrderAction(orderId, 'Đơn hàng đã được nhận bởi Booster ' + localStorage.getItem('username'));
-        alert('Nhận đơn thành công!'); 
+        await window.logOrderAction(orderId, 'ÄÆ¡n hÃ ng Ä‘Ã£ Ä‘Æ°á»£c nháº­n bá»Ÿi Booster ' + localStorage.getItem('username'));
+        alert('Nháº­n Ä‘Æ¡n thÃ nh cÃ´ng!'); 
         window.fetchOrders(); 
     }
 };
@@ -482,13 +492,13 @@ window.acceptOrder = async (orderId) => {
 window.changeOrderStatus = async (orderId, newStatus, customerId) => {
     const { error } = await supabaseClient.from('orders').update({ status: newStatus }).eq('id', orderId);
     if (error) {
-        alert("Lỗi cập nhật: " + error.message);
+        alert("Lá»—i cáº­p nháº­t: " + error.message);
     } else {
         if (customerId && customerId !== 'null') {
-            await supabaseClient.from('notifications').insert([{ user_id: customerId, title: "Cập nhật đơn hàng", content: `Đơn hàng của bạn đã chuyển sang trạng thái: ${getStatusDetails(newStatus).text}`, order_id: orderId }]);
+            await supabaseClient.from('notifications').insert([{ user_id: customerId, title: "Cáº­p nháº­t Ä‘Æ¡n hÃ ng", content: `ÄÆ¡n hÃ ng cá»§a báº¡n Ä‘Ã£ chuyá»ƒn sang tráº¡ng thÃ¡i: ${getStatusDetails(newStatus).text}`, order_id: orderId }]);
         }
-        await window.logOrderAction(orderId, 'Trạng thái đơn được cập nhật thành: ' + getStatusDetails(newStatus).text);
-        if(newStatus === 'hoan_thanh') window.sendTelegramNotification(`✅ Đơn #${orderId} đã hoàn thành!`);
+        await window.logOrderAction(orderId, 'Tráº¡ng thÃ¡i Ä‘Æ¡n Ä‘Æ°á»£c cáº­p nháº­t thÃ nh: ' + getStatusDetails(newStatus).text);
+        if(newStatus === 'hoan_thanh') window.sendTelegramNotification(`âœ… ÄÆ¡n #${orderId} Ä‘Ã£ hoÃ n thÃ nh!`);
         if (typeof window.fetchOrders === 'function') window.fetchOrders();
     }
 };
@@ -499,7 +509,7 @@ window.fetchLeaderboard = async function() {
     
     const { data, error } = await supabaseClient.from('user_roles').select('*').eq('role', 'booster').order('orders_completed', { ascending: false }).limit(5);
     if (error || !data || data.length === 0) {
-        list.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem;">Chưa có dữ liệu</div>';
+        list.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem;">ChÆ°a cÃ³ dá»¯ liá»‡u</div>';
         return;
     }
     
@@ -518,7 +528,7 @@ window.fetchLeaderboard = async function() {
                 <img src="${avatar}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
                 <div style="flex: 1;">
                     <div style="color: #fff; font-size: 0.9rem; font-weight: 600;">${b.username}</div>
-                    <div style="color: var(--text-muted); font-size: 0.75rem;">${b.orders_completed || 0} đơn</div>
+                    <div style="color: var(--text-muted); font-size: 0.75rem;">${b.orders_completed || 0} Ä‘Æ¡n</div>
                 </div>
                 <div style="color: ${badgeColor};"><i class="fa-solid ${badgeIcon}"></i></div>
             </div>`;
@@ -537,7 +547,7 @@ window.calculatePrice = function() {
     if (service === 'lahoan') {
         priceInput.value = 100000;
         extra.style.display = 'block';
-        extra.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 8px;">Giá tham khảo: 100,000 VNĐ (Tầng 9-12 full sao).</div>';
+        extra.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 8px;">GiÃ¡ tham kháº£o: 100,000 VNÄ (Táº§ng 9-12 full sao).</div>';
     } else if (service === 'khampha') {
         extra.style.display = 'block';
         extra.innerHTML = '<select id="calcRegion" class="form-control" onchange="window.updateKhamPhaPrice()" style="margin-top: 8px;"><option value="mond">Mondstadt (150k)</option><option value="liyue">Liyue (250k)</option><option value="sumeru">Sumeru (350k)</option><option value="natlan">Natlan (400k)</option></select>';
@@ -545,7 +555,7 @@ window.calculatePrice = function() {
     } else if (service === 'theluc') {
         priceInput.value = 20000;
         extra.style.display = 'block';
-        extra.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 8px;">Giá tham khảo: 20,000 VNĐ/Ngày (Xả nhựa + Ủy thác).</div>';
+        extra.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 8px;">GiÃ¡ tham kháº£o: 20,000 VNÄ/NgÃ y (Xáº£ nhá»±a + á»¦y thÃ¡c).</div>';
     } else {
         priceInput.value = '';
     }
@@ -574,14 +584,14 @@ window.openTicketModal = function(orderId) {
 
 window.submitTicket = async function() {
     const currentUserId = localStorage.getItem('userId');
-    if (!currentUserId) return alert('Vui lòng đăng nhập để khiếu nại!');
+    if (!currentUserId) return alert('Vui lÃ²ng Ä‘Äƒng nháº­p Ä‘á»ƒ khiáº¿u náº¡i!');
     const issue = document.getElementById('ticketIssueType').value;
     const desc = document.getElementById('ticketComment').value;
     
-    if(!desc.trim()) return alert('Vui lòng mô tả chi tiết sự cố!');
+    if(!desc.trim()) return alert('Vui lÃ²ng mÃ´ táº£ chi tiáº¿t sá»± cá»‘!');
     
     const btn = document.getElementById('submitTicketBtn');
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gửi...';
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Äang gá»­i...';
     btn.disabled = true;
     
     const { error } = await supabaseClient.from('support_tickets').insert([
@@ -589,14 +599,14 @@ window.submitTicket = async function() {
     ]);
     
     if (error) {
-        alert('Lỗi: ' + error.message);
+        alert('Lá»—i: ' + error.message);
     } else {
-        alert('Gửi khiếu nại thành công! Admin sẽ xử lý sớm nhất.');
+        alert('Gá»­i khiáº¿u náº¡i thÃ nh cÃ´ng! Admin sáº½ xá»­ lÃ½ sá»›m nháº¥t.');
         document.getElementById('ticketModal').classList.remove('active');
-        window.sendTelegramNotification(`🚨 KHIẾU NẠI MỚI - Đơn #${window.ticketOrderId}\nUser: ${currentUserId}\nLý do: ${issue}\nChi tiết: ${desc}`);
+        window.sendTelegramNotification(`ðŸš¨ KHIáº¾U Náº I Má»šI - ÄÆ¡n #${window.ticketOrderId}\nUser: ${currentUserId}\nLÃ½ do: ${issue}\nChi tiáº¿t: ${desc}`);
     }
     
-    btn.innerHTML = 'GỬI KHIẾU NẠI';
+    btn.innerHTML = 'Gá»¬I KHIáº¾U Náº I';
     btn.disabled = false;
 };
 
@@ -611,12 +621,12 @@ window.openChat = async function(orderId, orderCode) {
     window.switchChatTab('chat');
     
     const msgContainer = document.getElementById('chatMessages');
-    if(msgContainer) msgContainer.innerHTML = '<div style="text-align:center; color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải...</div>';
+    if(msgContainer) msgContainer.innerHTML = '<div style="text-align:center; color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Äang táº£i...</div>';
     
     const { data, error } = await supabaseClient.from('order_messages').select('*').eq('order_id', orderId).order('created_at', { ascending: true });
     
     if (error) {
-        if(msgContainer) msgContainer.innerHTML = '<div style="text-align:center; color:var(--status-tam-dung);">Lỗi tải tin nhắn.</div>';
+        if(msgContainer) msgContainer.innerHTML = '<div style="text-align:center; color:var(--status-tam-dung);">Lá»—i táº£i tin nháº¯n.</div>';
     } else {
         if(msgContainer) msgContainer.innerHTML = '';
         if(data) data.forEach(msg => appendMessage(msg));
@@ -670,7 +680,7 @@ window.sendMessage = async function(e) {
     if(input) input.value = '';
     
     const currentUserId = localStorage.getItem('userId');
-    const currentUsername = localStorage.getItem('username') || 'Ẩn danh';
+    const currentUsername = localStorage.getItem('username') || 'áº¨n danh';
     
     let newMsg = {
         order_id: currentChatOrderId,
@@ -693,13 +703,13 @@ window.sendMessage = async function(e) {
     
     const { error: dbError } = await supabaseClient.from('order_messages').insert([newMsg]);
     if (dbError) {
-        alert("Lỗi gửi tin nhắn: " + dbError.message);
+        alert("Lá»—i gá»­i tin nháº¯n: " + dbError.message);
     } else {
         const { data: orderData } = await supabaseClient.from('orders').select('user_id, booster_id').eq('id', currentChatOrderId).single();
         if (orderData) {
             const receiverId = currentUserId === orderData.user_id ? orderData.booster_id : orderData.user_id;
             if (receiverId) {
-                await supabaseClient.from('notifications').insert([{ user_id: receiverId, title: "Tin nhắn mới", content: `Bạn có tin nhắn mới từ ` + currentUsername, order_id: currentChatOrderId }]);
+                await supabaseClient.from('notifications').insert([{ user_id: receiverId, title: "Tin nháº¯n má»›i", content: `Báº¡n cÃ³ tin nháº¯n má»›i tá»« ` + currentUsername, order_id: currentChatOrderId }]);
             }
         }
     }
@@ -731,19 +741,19 @@ window.fetchOrderLogs = async function() {
     const container = document.getElementById('orderLogsContainer');
     if(!container) return;
     
-    container.innerHTML = '<div style="text-align: center; color: var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải...</div>';
+    container.innerHTML = '<div style="text-align: center; color: var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Äang táº£i...</div>';
     
     const { data, error } = await supabaseClient.from('order_logs').select('*, profiles:user_id(username, role)').eq('order_id', currentChatOrderId).order('created_at', { ascending: false });
         
     if (error || !data || data.length === 0) {
-        container.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem;">Chưa có nhật ký hoạt động.</div>';
+        container.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem;">ChÆ°a cÃ³ nháº­t kÃ½ hoáº¡t Ä‘á»™ng.</div>';
         return;
     }
     
     container.innerHTML = '';
     data.forEach(log => {
         const time = new Date(log.created_at).toLocaleString('vi-VN');
-        const username = log.profiles ? log.profiles.username : 'Hệ thống';
+        const username = log.profiles ? log.profiles.username : 'Há»‡ thá»‘ng';
         const role = log.profiles ? log.profiles.role : '';
         const roleBadge = role === 'booster' ? '<span class="badge badge-warning" style="font-size:0.6rem; padding: 2px 5px; background: var(--genshin-gold); color: #000; border-radius: 4px; margin-left: 5px;">Booster</span>' : '';
         
@@ -764,7 +774,7 @@ function setupNavbar() {
     const userRole = localStorage.getItem('userRole') || 'guest';
     let currentUsername = localStorage.getItem('username');
     if (!currentUsername || currentUsername === 'null' || currentUsername === 'undefined') {
-        currentUsername = 'Người dùng';
+        currentUsername = 'NgÆ°á»i dÃ¹ng';
         if (userRole === 'admin' || userRole === 'super_admin') currentUsername = 'Admin';
     }
     
@@ -778,7 +788,7 @@ function setupNavbar() {
         navAccountBtn.style.display = 'none';
         navUserProfile.style.display = 'flex';
         if (navUsername) navUsername.innerText = currentUsername;
-        if (navRole) navRole.innerText = userRole === 'admin' || userRole === 'super_admin' ? 'Quản trị viên' : (userRole === 'booster' ? 'Cày thuê' : 'Người dùng');
+        if (navRole) navRole.innerText = userRole === 'admin' || userRole === 'super_admin' ? 'Quáº£n trá»‹ viÃªn' : (userRole === 'booster' ? 'CÃ y thuÃª' : 'NgÆ°á»i dÃ¹ng');
         if (navAvatarInitials && currentUsername) navAvatarInitials.innerText = currentUsername.substring(0,2).toUpperCase();
     } else {
         if(navAccountBtn) navAccountBtn.style.display = 'block';
@@ -793,21 +803,21 @@ function injectDynamicModals() {
         <div class="modal-overlay" id="ticketModal">
             <div class="modal-content premium-modal" style="max-width: 500px;">
                 <button class="modal-close" onclick="document.getElementById('ticketModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
-                <h2 class="modal-title" style="color: var(--status-tam-dung);"><i class="fa-solid fa-triangle-exclamation"></i> KHIẾU NẠI / HỖ TRỢ</h2>
+                <h2 class="modal-title" style="color: var(--status-tam-dung);"><i class="fa-solid fa-triangle-exclamation"></i> KHIáº¾U Náº I / Há»– TRá»¢</h2>
                 <div class="form-group">
-                    <label class="form-label">Loại sự cố</label>
+                    <label class="form-label">Loáº¡i sá»± cá»‘</label>
                     <select id="ticketIssueType" class="form-control" style="background: rgba(0,0,0,0.5);">
-                        <option value="booster_khong_phoi_hop">Booster không phản hồi/phối hợp</option>
-                        <option value="lam_hong_acc">Làm hỏng/mất đồ trong tài khoản</option>
-                        <option value="cham_tien_do">Chậm tiến độ quá hạn</option>
-                        <option value="khac">Khác (Ghi chi tiết bên dưới)</option>
+                        <option value="booster_khong_phoi_hop">Booster khÃ´ng pháº£n há»“i/phá»‘i há»£p</option>
+                        <option value="lam_hong_acc">LÃ m há»ng/máº¥t Ä‘á»“ trong tÃ i khoáº£n</option>
+                        <option value="cham_tien_do">Cháº­m tiáº¿n Ä‘á»™ quÃ¡ háº¡n</option>
+                        <option value="khac">KhÃ¡c (Ghi chi tiáº¿t bÃªn dÆ°á»›i)</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Mô tả chi tiết</label>
-                    <textarea id="ticketComment" class="form-control" rows="4" placeholder="Vui lòng mô tả rõ sự việc để Admin xử lý..."></textarea>
+                    <label class="form-label">MÃ´ táº£ chi tiáº¿t</label>
+                    <textarea id="ticketComment" class="form-control" rows="4" placeholder="Vui lÃ²ng mÃ´ táº£ rÃµ sá»± viá»‡c Ä‘á»ƒ Admin xá»­ lÃ½..."></textarea>
                 </div>
-                <button id="submitTicketBtn" class="btn" style="width: 100%; background: var(--status-tam-dung); color: #fff;" onclick="window.submitTicket()">GỬI KHIẾU NẠI</button>
+                <button id="submitTicketBtn" class="btn" style="width: 100%; background: var(--status-tam-dung); color: #fff;" onclick="window.submitTicket()">Gá»¬I KHIáº¾U Náº I</button>
             </div>
         </div>`;
         document.body.insertAdjacentHTML('beforeend', ticketHTML);
@@ -822,7 +832,7 @@ function injectDynamicModals() {
             chatBody.outerHTML = `
             <div class="chat-tabs" style="display: flex; background: rgba(0,0,0,0.5); border-bottom: 1px solid var(--border-light);">
                 <button class="tab-btn active" onclick="window.switchChatTab('chat')" id="tabBtnChat" style="flex:1; padding: 12px; background:transparent; border:none; color:#fff; cursor:pointer; font-weight:bold; border-bottom: 2px solid var(--accent);">Chat</button>
-                <button class="tab-btn" onclick="window.switchChatTab('logs')" id="tabBtnLogs" style="flex:1; padding: 12px; background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-weight:bold; border-bottom: 2px solid transparent;">Nhật ký thao tác</button>
+                <button class="tab-btn" onclick="window.switchChatTab('logs')" id="tabBtnLogs" style="flex:1; padding: 12px; background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-weight:bold; border-bottom: 2px solid transparent;">Nháº­t kÃ½ thao tÃ¡c</button>
             </div>
             <div id="chatTabContent">${oldMessages}</div>
             <div id="logsTabContent" style="display: none; height: 350px; overflow-y: auto; background: rgba(0,0,0,0.2); padding: 15px;">
@@ -836,12 +846,12 @@ function injectDynamicModals() {
     if(priceGroup && !document.getElementById('calcService')) {
         const calcHTML = `
         <div class="form-group" style="background: rgba(101, 213, 195, 0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(101, 213, 195, 0.2); margin-bottom: 15px;">
-            <label class="form-label" style="color: var(--secondary);"><i class="fa-solid fa-calculator"></i> MÁY TÍNH BÁO GIÁ TỰ ĐỘNG</label>
+            <label class="form-label" style="color: var(--secondary);"><i class="fa-solid fa-calculator"></i> MÃY TÃNH BÃO GIÃ Tá»° Äá»˜NG</label>
             <select id="calcService" class="form-control" onchange="window.calculatePrice()" style="background: rgba(0,0,0,0.5);">
-                <option value="none">-- Tự nhập giá --</option>
-                <option value="lahoan">Cày La Hoàn Tầng 9-12 (Full sao)</option>
-                <option value="khampha">Khám phá bản đồ</option>
-                <option value="theluc">Xả nhựa / Ủy thác ngày</option>
+                <option value="none">-- Tá»± nháº­p giÃ¡ --</option>
+                <option value="lahoan">CÃ y La HoÃ n Táº§ng 9-12 (Full sao)</option>
+                <option value="khampha">KhÃ¡m phÃ¡ báº£n Ä‘á»“</option>
+                <option value="theluc">Xáº£ nhá»±a / á»¦y thÃ¡c ngÃ y</option>
             </select>
             <div id="calcExtraOptions" style="display: none;"></div>
         </div>`;
@@ -855,7 +865,7 @@ function injectDynamicModals() {
         <div class="sidebar-section" style="margin-top: 30px; border-top: 1px solid var(--border-light); padding-top: 20px;">
             <div class="section-title" style="color: var(--genshin-gold); font-weight: bold; margin-bottom: 15px;"><i class="fa-solid fa-trophy"></i> TOP BOOSTER</div>
             <div id="leaderboardList" style="display: flex; flex-direction: column; gap: 10px;">
-                <div style="text-align: center; color: var(--text-muted); font-size: 0.85rem;"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải...</div>
+                <div style="text-align: center; color: var(--text-muted); font-size: 0.85rem;"><i class="fa-solid fa-spinner fa-spin"></i> Äang táº£i...</div>
             </div>
         </div>`;
         sidebar.insertAdjacentHTML('beforeend', lbHTML);
@@ -892,24 +902,39 @@ function bindEvents() {
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if(!supabaseClient) return alert('Chưa tải xong kết nối, vui lòng thử lại.');
+            if(!supabaseClient) {
+                if(typeof showToast === 'function') showToast('ChÆ°a káº¿t ná»‘i dá»¯ liá»‡u, vui lÃ²ng thá»­ láº¡i.', 'error');
+                return;
+            }
             const btn = loginForm.querySelector('button');
             const user = document.getElementById('username').value.trim();
             const pass = document.getElementById('password').value;
-            const email = user + '@namcumz.com';
+            const normalizedUser = normalizeUsername(user);
+            const internalEmail = createInternalIdentity(normalizedUser);
             
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG ĐĂNG NHẬP...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ÄANG ÄÄ‚NG NHáº¬P...';
             btn.disabled = true;
 
-            const { data, error } = await supabaseClient.auth.signInWithPassword({ email: email, password: pass });
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email: internalEmail, password: pass });
             if (error) {
-                alert('Tên tài khoản hoặc mật khẩu không đúng!');
+                if (error.message.includes('Invalid login credentials')) {
+                    if(typeof showToast === 'function') showToast('TÃªn tÃ i khoáº£n hoáº·c máº­t kháº©u chÆ°a chÃ­nh xÃ¡c.', 'error');
+                } else if (error.message.includes('Email not confirmed')) {
+                    if(typeof showToast === 'function') showToast('TÃ i khoáº£n chÆ°a Ä‘Æ°á»£c xÃ¡c nháº­n.', 'error');
+                } else {
+                    if(typeof showToast === 'function') showToast('Lá»—i Ä‘Äƒng nháº­p: ' + error.message, 'error');
+                }
             } else {
                 const userId = data.user.id;
-                if (user.toLowerCase() === 'admin') await supabaseClient.from('user_roles').upsert({ id: userId, username: user, role: 'super_admin' });
-                setTimeout(() => { window.location.href = 'dashboard.html'; }, 500);
+                if (normalizedUser === 'admin') await supabaseClient.from('user_roles').upsert({ id: userId, username: normalizedUser, role: 'super_admin' });
+                
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (session) {
+                    if(typeof showToast === 'function') showToast('ÄÄƒng nháº­p thÃ nh cÃ´ng! Äang táº£i...', 'success');
+                    setTimeout(() => window.location.href = '/dashboard.html', 800);
+                }
             }
-            btn.innerHTML = 'ĐĂNG NHẬP';
+            btn.innerHTML = 'ÄÄ‚NG NHáº¬P';
             btn.disabled = false;
         });
     }
@@ -917,7 +942,7 @@ function bindEvents() {
     const googleLoginBtn = document.getElementById('googleLoginBtn');
     if (googleLoginBtn) {
         googleLoginBtn.addEventListener('click', async () => {
-            if(!supabaseClient) return alert('Chưa tải xong kết nối, vui lòng thử lại.');
+            if(!supabaseClient) return;
             googleLoginBtn.style.opacity = '0.7';
             googleLoginBtn.style.pointerEvents = 'none';
             const { data, error } = await supabaseClient.auth.signInWithOAuth({
@@ -927,7 +952,8 @@ function bindEvents() {
                 }
             });
             if(error) {
-                alert('Lỗi đăng nhập Google: ' + error.message);
+                if(typeof showToast === 'function') showToast('Lá»—i Ä‘Äƒng nháº­p Google: ' + error.message, 'error');
+                else alert('Lá»—i Ä‘Äƒng nháº­p Google: ' + error.message);
                 googleLoginBtn.style.opacity = '1';
                 googleLoginBtn.style.pointerEvents = 'auto';
             }
@@ -938,26 +964,49 @@ function bindEvents() {
     if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if(!supabaseClient) return alert('Chưa tải xong kết nối.');
+            if(!supabaseClient) return;
             const btn = registerForm.querySelector('button');
             const username = document.getElementById('regUsername').value.trim();
             const pass = document.getElementById('regPassword').value;
             const pass2 = document.getElementById('regPasswordConfirm').value;
+            const terms = document.getElementById('regTerms');
+            if (terms && !terms.checked) {
+                if(typeof showToast === 'function') showToast('Vui lòng đồng ý với Điều khoản sử dụng.', 'error');
+                return;
+            }
             const displayName = document.getElementById('regDisplayName').value.trim() || username;
             
-            if (pass !== pass2) return alert('Mật khẩu nhập lại không khớp!');
+            if (pass !== pass2) {
+                if(typeof showToast === 'function') showToast('Máº­t kháº©u nháº­p láº¡i khÃ´ng khá»›p!', 'warning');
+                return;
+            }
             
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG TẠO...';
+            const normalizedUser = normalizeUsername(username);
+            const internalEmail = createInternalIdentity(normalizedUser);
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ÄANG Táº O...';
             btn.disabled = true;
 
-            const { data, error } = await supabaseClient.auth.signUp({ email: username + '@namcumz.com', password: pass, options: { data: { display_name: displayName, role: 'customer' } } });
-            if (error) alert('Lỗi đăng ký: ' + error.message);
-            else if (data.user) {
-                await supabaseClient.from('user_roles').insert([{ id: data.user.id, username: username, role: 'customer' }]);
-                alert('Đăng ký thành công! Đang đăng nhập...');
-                setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
+            const { data, error } = await supabaseClient.auth.signUp({ 
+                email: internalEmail, 
+                password: pass, 
+                options: { data: { display_name: displayName, role: 'customer' } } 
+            });
+            
+            if (error) {
+                if (error.message.includes('User already registered') || error.message.includes('already exists')) {
+                    if(typeof showToast === 'function') showToast('TÃªn tÃ i khoáº£n nÃ y Ä‘Ã£ Ä‘Æ°á»£c sá»­ dá»¥ng. HÃ£y Ä‘Äƒng nháº­p hoáº·c chá»n tÃªn khÃ¡c.', 'error');
+                } else if (error.message.includes('weak_password') || error.message.includes('Password')) {
+                    if(typeof showToast === 'function') showToast('Máº­t kháº©u chÆ°a Ä‘Ã¡p á»©ng yÃªu cáº§u báº£o máº­t.', 'error');
+                } else {
+                    if(typeof showToast === 'function') showToast('Lá»—i Ä‘Äƒng kÃ½: ' + error.message, 'error');
+                }
             }
-            btn.innerHTML = 'ĐĂNG KÝ NGAY';
+            else if (data.user) {
+                if(typeof showToast === 'function') showToast('ÄÄƒng kÃ½ thÃ nh cÃ´ng! Äang chuyá»ƒn hÆ°á»›ng...', 'success');
+                setTimeout(() => window.location.href = '/dashboard.html', 1000);
+            }
+            btn.innerHTML = 'ÄÄ‚NG KÃ NGAY';
             btn.disabled = false;
         });
     }
@@ -965,7 +1014,7 @@ function bindEvents() {
     const logoutBtn = document.getElementById('navLogoutBtn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async () => {
-            if(confirm('Bạn muốn đăng xuất?') && supabaseClient) {
+            if(confirm('Báº¡n muá»‘n Ä‘Äƒng xuáº¥t?') && supabaseClient) {
                 await supabaseClient.auth.signOut();
                 window.location.href = 'index.html';
             }
@@ -981,8 +1030,8 @@ function bindEvents() {
             const isGuest = localStorage.getItem('isLoggedIn') !== 'true';
             
             const renterInput = document.getElementById('orderRenter').value.trim();
-            const renter = renterInput || localStorage.getItem('username') || 'Khách';
-            const price = 0; // Chờ admin báo giá
+            const renter = renterInput || localStorage.getItem('username') || 'KhÃ¡ch';
+            const price = 0; // Chá» admin bÃ¡o giÃ¡
             
             const server = document.getElementById('orderServer').value;
             const group = document.getElementById('orderServiceGroup').value;
@@ -990,9 +1039,9 @@ function bindEvents() {
             const deadline = document.getElementById('orderDeadline').value;
             const notes = document.getElementById('orderContent').value.trim();
             
-            const content = `[${server}] [${group}] ${goal}\nDeadline: ${deadline}\nGhi chú: ${notes}`;
+            const content = `[${server}] [${group}] ${goal}\nDeadline: ${deadline}\nGhi chÃº: ${notes}`;
             
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG TẠO...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ÄANG Táº O...';
             btn.disabled = true;
             
             let secretCode = null;
@@ -1009,19 +1058,19 @@ function bindEvents() {
             
             const { data, error } = await supabaseClient.from('orders').insert([orderData]).select();
             if (error) {
-                alert('Lỗi: ' + error.message);
+                alert('Lá»—i: ' + error.message);
             } else {
-                if(data && data[0]) window.logOrderAction(data[0].id, 'Đơn hàng mới được tạo.');
-                if(isGuest) alert(`Tạo đơn thành công!\n\nMã bảo mật: ${secretCode}\nHãy lưu lại mã này!`);
-                else alert('Tạo đơn hàng thành công!');
+                if(data && data[0]) window.logOrderAction(data[0].id, 'ÄÆ¡n hÃ ng má»›i Ä‘Æ°á»£c táº¡o.');
+                if(isGuest) alert(`Táº¡o Ä‘Æ¡n thÃ nh cÃ´ng!\n\nMÃ£ báº£o máº­t: ${secretCode}\nHÃ£y lÆ°u láº¡i mÃ£ nÃ y!`);
+                else alert('Táº¡o Ä‘Æ¡n hÃ ng thÃ nh cÃ´ng!');
                 
-                window.sendTelegramNotification(`🚨 ĐƠN MỚI TẠO - ${orderCode}\nKhách: ${renter}\nGiá: ${price}đ\nNội dung: ${content}`);
+                window.sendTelegramNotification(`ðŸš¨ ÄÆ N Má»šI Táº O - ${orderCode}\nKhÃ¡ch: ${renter}\nGiÃ¡: ${price}Ä‘\nNá»™i dung: ${content}`);
                 
                 document.getElementById('createOrderModal').classList.remove('active');
                 createOrderForm.reset();
                 if(typeof window.fetchOrders === 'function') window.fetchOrders();
             }
-            btn.innerHTML = 'Tạo đơn';
+            btn.innerHTML = 'Táº¡o Ä‘Æ¡n';
             btn.disabled = false;
         });
     }
@@ -1038,10 +1087,10 @@ function initDynamicSlogan() {
     if (isReduced) return; // Do not animate slogan if reduced motion
     
     const slogans = [
-        "Cày thuê Genshin minh bạch",
-        "Theo dõi tiến độ theo thời gian thực",
-        "Booster được xác minh",
-        "Nghiệm thu trước khi hoàn thành"
+        "CÃ y thuÃª Genshin minh báº¡ch",
+        "Theo dÃµi tiáº¿n Ä‘á»™ theo thá»i gian thá»±c",
+        "Booster Ä‘Æ°á»£c xÃ¡c minh",
+        "Nghiá»‡m thu trÆ°á»›c khi hoÃ n thÃ nh"
     ];
     let index = 0;
     
@@ -1079,17 +1128,32 @@ function initSupabaseLogic() {
             localStorage.setItem('isLoggedIn', 'true');
             localStorage.setItem('userId', session.user.id);
             currentUser = session.user;
-            setTimeout(async () => {
+            
+            // Retry fetching user_roles to handle Trigger delay
+            let retries = 3;
+            let roleData = null;
+            
+            while(retries > 0 && !roleData) {
                 const { data } = await supabaseClient.from('user_roles').select('username, role').eq('id', session.user.id).single();
-                if(data) { localStorage.setItem('username', data.username); localStorage.setItem('userRole', data.role); }
-                setupNavbar();
-                window.fetchOrders();
-            }, 500);
+                if (data) {
+                    roleData = data;
+                } else {
+                    retries--;
+                    await new Promise(r => setTimeout(r, 500));
+                }
+            }
+            
+            if(roleData) { 
+                localStorage.setItem('username', roleData.username || ''); 
+                localStorage.setItem('userRole', roleData.role || 'customer'); 
+            }
+            setupNavbar();
+            window.fetchOrders();
         } else if (event === 'SIGNED_OUT') {
             localStorage.removeItem('isLoggedIn');
             localStorage.removeItem('userId');
-            localStorage.removeItem('userRole');
             localStorage.removeItem('username');
+            localStorage.removeItem('userRole');
             currentUser = null;
             setupNavbar();
             window.fetchOrders();
@@ -1112,9 +1176,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (window.supabase) {
                 supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                 initSupabaseLogic();
-            } else { alert("Không thể kết nối Supabase (Mạng bị chặn CDN)."); }
+            } else { alert("KhÃ´ng thá»ƒ káº¿t ná»‘i Supabase (Máº¡ng bá»‹ cháº·n CDN)."); }
         };
-        script.onerror = () => { alert("Lỗi mạng nghiêm trọng: CDN bị chặn."); };
+        script.onerror = () => { alert("Lá»—i máº¡ng nghiÃªm trá»ng: CDN bá»‹ cháº·n."); };
         document.head.appendChild(script);
     }
 });

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -375,6 +375,7 @@
                             <div class="auth-switch">
                                 Chưa có tài khoản? <span class="auth-link" onclick="switchCustomerForm('register')">Tạo tài khoản</span>
                             </div>
+                            <div class="auth-switch" style="margin-top: 8px;">Không đăng nhập được? <span class="auth-link" onclick="openRecoveryModal()">Khôi phục tài khoản</span></div>
                         </div>
 
                         <!-- Register Form -->
@@ -526,6 +527,37 @@
     </div>
 
     <!-- Toast Notification -->
+        <!-- Recovery Modal -->
+    <div class="support-modal-overlay" id="recoveryModal" role="dialog" aria-modal="true" aria-labelledby="recoveryModalTitle">
+        <div class="support-modal">
+            <div class="support-modal-header">
+                <h3 class="support-modal-title" id="recoveryModalTitle"><i class="fa-solid fa-unlock-keyhole" style="color: var(--auth-purple)"></i> Khôi phục tài khoản</h3>
+                <button class="support-modal-close" onclick="closeRecoveryModal()" aria-label="Đóng"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="support-modal-body">
+                <p class="support-desc">Không thể đăng nhập? Hãy cung cấp thông tin để chúng tôi xác minh và khôi phục tài khoản của bạn.</p>
+                <form id="recoveryForm">
+                    <label class="form-label" for="recUsername">Tên tài khoản cần khôi phục *</label>
+                    <input type="text" class="form-control" id="recUsername" placeholder="Ví dụ: nguyenvana" required>
+
+                    <label class="form-label" for="recDisplayName">Tên hiển thị trước đây *</label>
+                    <input type="text" class="form-control" id="recDisplayName" placeholder="Tên hiển thị trong game/web" required>
+
+                    <label class="form-label" for="recOrderCode">Mã đơn gần nhất (nếu có)</label>
+                    <input type="text" class="form-control" id="recOrderCode" placeholder="Ví dụ: DH1234">
+
+                    <label class="form-label" for="recContact">Kênh liên hệ (Zalo/Email) *</label>
+                    <input type="text" class="form-control" id="recContact" placeholder="Để chúng tôi liên hệ lại" required>
+                </form>
+            </div>
+            <div class="support-modal-footer">
+                <button type="submit" form="recoveryForm" class="support-btn-submit" id="submitRecoveryBtn">
+                    <i class="fa-solid fa-paper-plane"></i> Gửi yêu cầu khôi phục
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div class="auth-toast" id="authToast"><i class="fa-solid fa-circle-check" id="toastIcon"></i> <span id="toastMsg"></span></div>
 
     <!-- Hack to prevent app.js from rendering the raw modal -->
@@ -879,6 +911,36 @@
             // focus trap
             setTimeout(() => document.getElementById('supportIssueType').focus(), 100);
         }
+        const recoveryModal = document.getElementById('recoveryModal');
+        function openRecoveryModal() { recoveryModal.classList.add('active'); document.body.style.overflow = 'hidden'; }
+        function closeRecoveryModal() { recoveryModal.classList.remove('active'); document.body.style.overflow = ''; }
+        recoveryModal.addEventListener('click', (e) => { if(e.target === recoveryModal) closeRecoveryModal(); });
+
+        const recoveryForm = document.getElementById('recoveryForm');
+        if(recoveryForm) {
+            recoveryForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('submitRecoveryBtn');
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gửi...'; btn.disabled = true;
+                const user = document.getElementById('recUsername').value.trim();
+                const displayName = document.getElementById('recDisplayName').value.trim();
+                const order = document.getElementById('recOrderCode').value.trim();
+                const contact = document.getElementById('recContact').value.trim();
+                const fullDesc = "YÊU CẦU KHÔI PHỤC TÀI KHOẢN\nTài khoản: " + user + "\nTên hiển thị: " + displayName + "\nMã đơn: " + order + "\nLiên hệ: " + contact;
+                try {
+                    const { error } = await supabaseClient.from('tickets').insert([{ issue_type: 'Khôi phục tài khoản', description: fullDesc, status: 'open' }]);
+                    if(error) throw error;
+                    showToast('Đã gửi yêu cầu khôi phục thành công! Chúng tôi sẽ liên hệ sớm nhất.', 'success');
+                    closeRecoveryModal();
+                    recoveryForm.reset();
+                } catch (err) {
+                    showToast('Lỗi gửi yêu cầu: ' + err.message, 'error');
+                }
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Gửi yêu cầu khôi phục'; btn.disabled = false;
+            });
+        }
+
+
 
         function closeSupportModal() {
             supportModal.classList.remove('active');
@@ -959,3 +1021,4 @@
     <script src="assets/js/app.js"></script>
 </body>
 </html>
+
