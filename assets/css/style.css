@@ -891,3 +891,17 @@ body { font-weight: 400; background-color: var(--bg-dark); }
     box-shadow: 0 8px 15px rgba(0,0,0,0.2);
     border-color: rgba(255,255,255,0.2);
 }
+
+@media (max-width: 768px) {
+    .mobile-filter-btn {
+        display: inline-flex !important;
+        margin-bottom: 10px;
+    }
+    #mobileFilters {
+        display: none;
+    }
+    #mobileFilters.active {
+        display: flex;
+        flex-direction: column;
+    }
+}

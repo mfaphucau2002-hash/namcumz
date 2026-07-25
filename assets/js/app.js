@@ -123,7 +123,8 @@ window.applyFilters = function() {
             const code = order.order_code ? order.order_code.toLowerCase() : '';
             const renter = order.renter_name ? order.renter_name.toLowerCase() : '';
             const content = order.content ? order.content.toLowerCase() : '';
-            if (!code.includes(currentSearch) && !renter.includes(currentSearch) && !content.includes(currentSearch)) {
+            const booster = order.booster_name ? order.booster_name.toLowerCase() : '';
+            if (!code.includes(currentSearch) && !renter.includes(currentSearch) && !content.includes(currentSearch) && !booster.includes(currentSearch)) {
                 return false;
             }
         }
@@ -161,7 +162,16 @@ window.renderOrders = function(ordersToRender, containerId) {
     container.innerHTML = '';
 
     if (!ordersToRender || ordersToRender.length === 0) {
-        container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 60px; background: rgba(255,255,255,0.02); border-radius: 14px;"><i class="fa-solid fa-box-open" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i><br>Không có đơn hàng nào khớp với tìm kiếm.</div>';
+        container.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; padding: 80px 20px; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px dashed rgba(255,255,255,0.1);">
+            <img src="/assets/images/empty-paimon.png" alt="Empty" style="width: 120px; opacity: 0.7; margin-bottom: 20px; filter: grayscale(50%);" onerror="this.style.display='none'">
+            <h3 style="color: var(--text-light); font-size: 1.5rem; margin-bottom: 10px; font-weight: 700;">Chưa có đơn cày phù hợp</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px;">Không tìm thấy đơn hàng nào khớp với yêu cầu hiện tại của bạn. Hãy thử thay đổi bộ lọc hoặc tạo một yêu cầu mới.</p>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="window.openCreateOrderModal()"><i class="fa-solid fa-plus"></i> Tạo đơn Genshin</button>
+                <button class="btn" style="background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1);" onclick="document.getElementById('searchInput').value=''; document.getElementById('filterService').value='all'; window.filterByTab('all');"><i class="fa-solid fa-filter-circle-xmark"></i> Xóa bộ lọc</button>
+            </div>
+        </div>`;
         return;
     }
 
@@ -186,19 +196,28 @@ window.renderOrders = function(ordersToRender, containerId) {
 
         let actionButtons = '';
         if (isLoggedIn) {
-            if (order.status === 'cho_xu_ly' && (isBoosterRole || isAdmin) && !order.booster_id) {
-                actionButtons += `<button onclick="acceptOrder('${order.id}')" class="btn btn-primary" style="flex:1"><i class="fa-solid fa-handshake"></i> Nhận đơn</button>`;
-            }
-            if (isAssignedBooster || isAdmin) {
+            if (isAdmin) {
                 actionButtons += `
                     <select onchange="changeOrderStatus('${order.id}', this.value, '${order.user_id}')" style="background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 12px; flex:1; outline: none; cursor: pointer;">
                         <option value="cho_xu_ly" ${order.status === 'cho_xu_ly' ? 'selected' : ''}>Chờ xử lý</option>
                         <option value="dang_cay" ${order.status === 'dang_cay' ? 'selected' : ''}>Đang cày</option>
+                        <option value="cho_nghiem_thu" ${order.status === 'cho_nghiem_thu' ? 'selected' : ''}>Chờ nghiệm thu</option>
                         <option value="hoan_thanh" ${order.status === 'hoan_thanh' ? 'selected' : ''}>Hoàn thành</option>
                         <option value="tam_dung" ${order.status === 'tam_dung' ? 'selected' : ''}>Tạm dừng</option>
                     </select>
                 `;
+            } else if (isBoosterRole) {
+                if (order.status === 'cho_xu_ly' && !order.booster_id) {
+                    actionButtons += `<button onclick="acceptOrder('${order.id}')" class="btn btn-primary" style="flex:1"><i class="fa-solid fa-handshake"></i> Nhận đơn</button>`;
+                } else if (isAssignedBooster && order.status === 'dang_cay') {
+                    actionButtons += `<button onclick="changeOrderStatus('${order.id}', 'cho_nghiem_thu', '${order.user_id}')" class="btn" style="background: var(--status-cho-nghiem-thu); color: #000; flex:1"><i class="fa-solid fa-check"></i> Gửi kết quả</button>`;
+                }
+            } else if (isOwner) {
+                if (order.status === 'cho_nghiem_thu') {
+                    actionButtons += `<button onclick="changeOrderStatus('${order.id}', 'hoan_thanh', '${order.user_id}')" class="btn" style="background: var(--status-hoan-thanh); color: #fff; flex:1"><i class="fa-solid fa-clipboard-check"></i> Nghiệm thu</button>`;
+                }
             }
+
             if (isOwner && order.status !== 'cho_xu_ly') {
                 actionButtons += `<button onclick="window.openTicketModal('${order.id}')" class="btn btn-outline" style="border: 1px solid var(--status-tam-dung); color: var(--status-tam-dung); flex: 0.5;"><i class="fa-solid fa-triangle-exclamation"></i> Báo cáo</button>`;
             }
@@ -223,12 +242,42 @@ window.renderOrders = function(ordersToRender, containerId) {
             actionButtons += `<button onclick="openRatingModal('${order.id}')" class="btn" style="background: var(--genshin-gold); color: #000; flex: 1;"><i class="fa-solid fa-star"></i> Đánh giá</button>`;
         }
 
+        let displayTitle = 'Không có mô tả';
+        let server = 'Chưa xác định';
+        let serviceGroup = 'Khác';
+        let deadlineStr = 'Chưa rõ';
+        let rawGoal = order.content || '';
+        
+        if (rawGoal.startsWith('[')) {
+            const serverMatch = rawGoal.match(/^\[(.*?)\]/);
+            const groupMatch = rawGoal.match(/^\[.*?\] \[([^\]]+)\]/);
+            const dlMatch = rawGoal.match(/Deadline:\s*([^\n]+)/);
+            
+            if (serverMatch) server = serverMatch[1];
+            if (groupMatch) serviceGroup = groupMatch[1];
+            if (dlMatch) deadlineStr = dlMatch[1];
+            
+            const firstLine = rawGoal.split('\n')[0];
+            const titleMatch = firstLine.match(/^\[.*?\] \[.*?\] (.*)/);
+            if (titleMatch) displayTitle = titleMatch[1];
+            else displayTitle = firstLine;
+        } else {
+            displayTitle = rawGoal.substring(0, 45) + (rawGoal.length > 45 ? '...' : '');
+        }
+        
+        let calculatedProgress = 0;
+        if (order.status === 'cho_xu_ly') calculatedProgress = 0;
+        else if (order.status === 'dang_cay') calculatedProgress = 40;
+        else if (order.status === 'cho_nghiem_thu') calculatedProgress = 90;
+        else if (order.status === 'hoan_thanh') calculatedProgress = 100;
+        else if (order.status === 'tam_dung') calculatedProgress = 30;
+
         const html = `
             <div class="card order-card-modern animate-on-load" style="animation-delay: ${0.1 + (index%10)*0.05}s;">
                 <div class="oc-header">
                     <div>
                         <div class="oc-id">${order.order_code || '#-----'}</div>
-                        <h3 class="oc-title">${order.content ? order.content.substring(0, 45) + (order.content.length > 45 ? '...' : '') : 'Không có mô tả'}</h3>
+                        <h3 class="oc-title">${displayTitle}</h3>
                     </div>
                     <div class="oc-status" style="background: ${statusInfo.colorVar}20; color: ${statusInfo.colorVar}; border: 1px solid ${statusInfo.colorVar}40;">
                         <i class="fa-solid ${statusInfo.icon}"></i> ${statusInfo.text}
@@ -237,8 +286,12 @@ window.renderOrders = function(ordersToRender, containerId) {
                 
                 <div class="oc-body">
                     <div class="oc-row">
-                        <span class="oc-label">Trò chơi</span>
-                        <span class="oc-value"><i class="fa-solid fa-gamepad" style="color: var(--primary-light)"></i> Genshin Impact</span>
+                        <span class="oc-label">Dịch vụ</span>
+                        <span class="oc-value"><i class="fa-solid fa-gamepad" style="color: var(--primary-light)"></i> ${serviceGroup}</span>
+                    </div>
+                    <div class="oc-row">
+                        <span class="oc-label">Máy chủ</span>
+                        <span class="oc-value">${server}</span>
                     </div>
                     <div class="oc-row">
                         <span class="oc-label">Người thuê</span>
@@ -248,14 +301,18 @@ window.renderOrders = function(ordersToRender, containerId) {
                         <span class="oc-label">Booster</span>
                         <span class="oc-value" style="color: var(--secondary)">${order.booster_name || 'Chưa nhận'}</span>
                     </div>
+                    <div class="oc-row">
+                        <span class="oc-label">Thời hạn</span>
+                        <span class="oc-value">${deadlineStr}</span>
+                    </div>
                     <div class="oc-row" style="align-items: center; margin-top: 8px;">
                         <span class="oc-label">Giá</span>
                         <span class="oc-price">${priceHtml}</span>
                     </div>
-                    ${order.status === 'dang_cay' ? `
+                    ${calculatedProgress > 0 ? `
                     <div class="oc-progress-wrap">
-                        <div class="oc-progress-bar"><div class="oc-progress-fill" style="width: 50%;"></div></div>
-                        <div class="oc-progress-text"><span>Tiến độ</span><span>50%</span></div>
+                        <div class="oc-progress-bar"><div class="oc-progress-fill" style="width: ${calculatedProgress}%;"></div></div>
+                        <div class="oc-progress-text"><span>Tiến độ</span><span>${calculatedProgress}%</span></div>
                     </div>` : ''}
                 </div>
                 
@@ -311,18 +368,104 @@ window.updateDashboardStats = function(orders) {
     orders.forEach(o => { if (counts[o.status] !== undefined) counts[o.status]++; });
     
     document.getElementById('totalOrdersBadge').innerText = `${orders.length} đơn`;
-    const pendingEl = document.getElementById('stat-pending');
-    const progEl = document.getElementById('stat-progress');
-    const compEl = document.getElementById('stat-completed');
-    
-    if(pendingEl) window.animateCountUp(pendingEl, counts.cho_xu_ly);
-    if(progEl) window.animateCountUp(progEl, counts.dang_cay);
-    if(compEl) window.animateCountUp(compEl, counts.hoan_thanh);
     
     ['all', 'cho_xu_ly', 'dang_cay', 'cho_nghiem_thu', 'hoan_thanh'].forEach(status => {
         const el = document.getElementById('count-' + status);
         if (el) window.animateCountUp(el, counts[status] || 0, 800);
     });
+
+    const sidebar = document.getElementById('dynamicSidebar');
+    if (!sidebar) return;
+
+    const userRole = localStorage.getItem('userRole') || 'guest';
+    const currentUserId = localStorage.getItem('userId');
+    const currentUsername = localStorage.getItem('username');
+
+    let html = '';
+
+    if (userRole === 'admin' || userRole === 'super_admin') {
+        const revenue = orders.filter(o => o.status === 'hoan_thanh').reduce((sum, o) => sum + (o.price || 0), 0);
+        html = `
+        <div class="stats-card">
+            <h3 class="stats-title"><i class="fa-solid fa-crown" style="color: var(--genshin-gold)"></i> QUẢN TRỊ VIÊN</h3>
+            <div class="stat-item">
+                <span class="stat-label">Tổng đơn hệ thống</span>
+                <span class="stat-value" id="stat-total" style="color: #fff">${orders.length}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Tổng doanh thu</span>
+                <span class="stat-value count-up-price" data-val="${revenue}" style="color: var(--status-hoan-thanh)">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Khiếu nại / Report</span>
+                <span class="stat-value" id="stat-reports" style="color: var(--status-tam-dung)">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Đơn quá hạn</span>
+                <span class="stat-value" style="color: #f43f5e">0</span>
+            </div>
+        </div>`;
+    } else if (userRole === 'booster') {
+        const myOrders = orders.filter(o => o.booster_id === currentUserId);
+        const income = myOrders.filter(o => o.status === 'hoan_thanh').reduce((sum, o) => sum + (o.price || 0), 0);
+        const active = myOrders.filter(o => o.status === 'dang_cay').length;
+        html = `
+        <div class="stats-card">
+            <h3 class="stats-title"><i class="fa-solid fa-bolt" style="color: var(--primary)"></i> THỐNG KÊ BOOSTER</h3>
+            <div class="stat-item">
+                <span class="stat-label">Đơn đang cày</span>
+                <span class="stat-value" id="stat-booster-active" style="color: var(--status-dang-cay)">${active}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Thu nhập ước tính</span>
+                <span class="stat-value count-up-price" data-val="${income}" style="color: var(--status-hoan-thanh)">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Điểm đánh giá</span>
+                <span class="stat-value" style="color: var(--genshin-gold)"><i class="fa-solid fa-star"></i> 5.0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Tỷ lệ đúng hạn</span>
+                <span class="stat-value" style="color: #10b981">100%</span>
+            </div>
+        </div>`;
+    } else {
+        const myOrders = orders.filter(o => (o.user_id === currentUserId) || (o.renter_name === currentUsername));
+        const spent = myOrders.filter(o => o.status === 'hoan_thanh').reduce((sum, o) => sum + (o.price || 0), 0);
+        const active = myOrders.filter(o => o.status === 'dang_cay').length;
+        const waiting = myOrders.filter(o => o.status === 'cho_nghiem_thu').length;
+        html = `
+        <div class="stats-card">
+            <h3 class="stats-title"><i class="fa-solid fa-user" style="color: var(--secondary)"></i> THỐNG KÊ CỦA BẠN</h3>
+            <div class="stat-item">
+                <span class="stat-label">Đơn đang hoạt động</span>
+                <span class="stat-value" id="stat-customer-active" style="color: var(--status-dang-cay)">${active}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Chờ nghiệm thu</span>
+                <span class="stat-value" id="stat-customer-waiting" style="color: var(--status-cho-nghiem-thu)">${waiting}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Tổng chi tiêu</span>
+                <span class="stat-value count-up-price" data-val="${spent}" style="color: var(--status-hoan-thanh)">0</span>
+            </div>
+        </div>`;
+    }
+
+    sidebar.innerHTML = html;
+
+    // Observe count up prices inside dynamic sidebar
+    const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const el = entry.target;
+                const targetVal = parseInt(el.getAttribute('data-val')) || 0;
+                window.animateCountUp(el, targetVal, 1000, true);
+                obs.unobserve(el);
+            }
+        });
+    }, { threshold: 0.1 });
+    sidebar.querySelectorAll('.count-up-price').forEach(price => observer.observe(price));
 };
 
 window.acceptOrder = async (orderId) => {
@@ -764,7 +907,7 @@ function bindEvents() {
             } else {
                 const userId = data.user.id;
                 if (user.toLowerCase() === 'admin') await supabaseClient.from('user_roles').upsert({ id: userId, username: user, role: 'super_admin' });
-                setTimeout(() => { window.location.href = 'index.html'; }, 500);
+                setTimeout(() => { window.location.href = 'dashboard.html'; }, 500);
             }
             btn.innerHTML = 'ĐĂNG NHẬP';
             btn.disabled = false;
@@ -780,7 +923,7 @@ function bindEvents() {
             const { data, error } = await supabaseClient.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: window.location.origin + '/index.html'
+                    redirectTo: window.location.origin + '/dashboard.html'
                 }
             });
             if(error) {
@@ -812,7 +955,7 @@ function bindEvents() {
             else if (data.user) {
                 await supabaseClient.from('user_roles').insert([{ id: data.user.id, username: username, role: 'customer' }]);
                 alert('Đăng ký thành công! Đang đăng nhập...');
-                setTimeout(() => { window.location.href = 'index.html'; }, 1000);
+                setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
             }
             btn.innerHTML = 'ĐĂNG KÝ NGAY';
             btn.disabled = false;
@@ -837,9 +980,17 @@ function bindEvents() {
             const btn = document.getElementById('submitOrderBtn');
             const isGuest = localStorage.getItem('isLoggedIn') !== 'true';
             
-            const renter = document.getElementById('orderRenter').value.trim();
-            const price = document.getElementById('orderPrice').value.trim();
-            const content = document.getElementById('orderContent').value.trim();
+            const renterInput = document.getElementById('orderRenter').value.trim();
+            const renter = renterInput || localStorage.getItem('username') || 'Khách';
+            const price = 0; // Chờ admin báo giá
+            
+            const server = document.getElementById('orderServer').value;
+            const group = document.getElementById('orderServiceGroup').value;
+            const goal = document.getElementById('orderGoal').value.trim();
+            const deadline = document.getElementById('orderDeadline').value;
+            const notes = document.getElementById('orderContent').value.trim();
+            
+            const content = `[${server}] [${group}] ${goal}\nDeadline: ${deadline}\nGhi chú: ${notes}`;
             
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG TẠO...';
             btn.disabled = true;

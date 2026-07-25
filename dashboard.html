@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAMCUMZ - Bảng Điều Khiển</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/jpeg" href="/assets/images/logo.jpg">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 550px;
+            padding: 30px;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .modal-close:hover {
+            color: var(--status-tam-dung);
+        }
+        .modal-title {
+            font-family: var(--font-heading);
+            color: #ffffff;
+            margin-bottom: 25px;
+            font-size: 1.25rem;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        /* Premium Modal Override */
+        .premium-modal {
+            background: #0f0f11 !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            box-shadow: 0 0 40px rgba(168, 85, 247, 0.2), inset 0 0 20px rgba(168, 85, 247, 0.05) !important;
+            border-radius: 16px !important;
+            max-width: 500px !important;
+        }
+        .premium-modal .form-label {
+            color: #a1a1aa;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .premium-modal .form-control {
+            background: #18181b;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border-radius: 8px;
+            padding: 14px 16px;
+        }
+        .premium-modal .form-control:focus {
+            border-color: rgba(168, 85, 247, 0.5);
+            box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
+        }
+        .price-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .price-input-wrapper input {
+            padding-right: 60px; /* space for VND */
+        }
+        .price-input-wrapper .currency {
+            position: absolute;
+            right: 16px;
+            color: #2dd4bf;
+            font-weight: 800;
+            font-size: 0.95rem;
+        }
+        .modal-notice {
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 0.85rem;
+            color: #a1a1aa;
+            margin-top: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .modal-notice i {
+            color: #c084fc;
+            margin-top: 2px;
+        }
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        .btn-cancel {
+            background: #27272a;
+            color: #d4d4d8;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-cancel:hover {
+            background: #3f3f46;
+        }
+        .btn-submit-premium {
+            background: #a855f7;
+            color: #fff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+        }
+        .btn-submit-premium:hover {
+            background: #c084fc;
+          .btn-save:hover { box-shadow: 0 0 25px rgba(192, 132, 252, 0.6); transform: translateY(-2px); background: #c084fc; }
+        /* Rating Stars */
+        .rating-stars { font-size: 2rem; color: #334155; display: flex; justify-content: center; gap: 10px; cursor: pointer; }
+        .rating-stars i.active, .rating-stars i:hover { color: #eab308; transition: 0.2s; }
+        .review-display { background: rgba(234, 179, 8, 0.1); padding: 10px; border-radius: 8px; margin-top: 10px; border: 1px solid rgba(234, 179, 8, 0.3); }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="app-container header-wrap" style="padding: 15px 0;">
+            <a href="/" class="logo-section" style="z-index: 1001;">
+                <img src="/assets/images/logo.jpg" alt="NAMCUMZ Logo" style="height: 35px; width: 35px; border-radius: 50%; object-fit: cover;"> <span class="logo-text" style="font-family: var(--font-main); font-weight: 800; letter-spacing: 2px;">NAMCUMZ</span>
+            </a>
+            
+            <button class="menu-toggle" id="menuToggle" style="z-index: 1001;"><i class="fa-solid fa-bars"></i></button>
+
+            <nav class="navigation" id="navLinks">
+                <a href="/index.html" class="nav-link">
+                    <i class="fa-solid fa-home"></i> Trang chủ
+                </a>
+                <a href="/dashboard.html" class="nav-link active">
+                    <i class="fa-solid fa-chart-line"></i> Bảng điều khiển
+                </a>
+                <a href="/checkscam" class="nav-link scam">
+                    <i class="fa-solid fa-shield-virus"></i> Check Scam
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fa-solid fa-gamepad"></i> Đơn của tôi
+                </a>
+                <a href="/login" class="nav-link" id="navAccountBtn">
+                    <i class="fa-solid fa-user"></i> Tài khoản
+                </a>
+                
+                <!-- Dynamic User Profile Area (Hidden by default, shown via JS) -->
+                <div id="navUserProfile" style="display: none; align-items: center; gap: 15px; margin-left: 20px;">
+                    <div style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); padding: 5px 15px 5px 5px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.05);">
+                        <div class="nav-avatar" id="navAvatarInitials" style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-gradient); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">A</div>
+                        <div style="display: flex; flex-direction: column; line-height: 1.2;">
+                            <span id="navUsername" style="font-weight: 700; font-size: 0.85rem; color: #fff;">Azrael</span>
+                            <span id="navRole" style="font-size: 0.65rem; font-weight: 800; color: var(--accent); letter-spacing: 0.5px;">BOOSTER</span>
+                        </div>
+                    </div>
+                                        <div class="notification-wrapper" style="position: relative;">
+                        <button id="notificationBtn" style="background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; transition: 0.2s; position: relative; margin-right: 10px;">
+                            <i class="fa-solid fa-bell"></i>
+                            <span id="notificationBadge" style="display: none; position: absolute; top: 6px; right: 8px; background: #ef4444; width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 5px #ef4444;"></span>
+                        </button>
+                        <div id="notificationDropdown" style="display: none; position: absolute; right: 0; top: calc(100% + 10px); background: #0f172a; width: 320px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1); z-index: 1000; overflow: hidden; flex-direction: column;">
+                            <div style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); font-weight: bold; font-size: 0.9rem; color: #fff; display: flex; justify-content: space-between; align-items: center;">
+                                Thông báo
+                                <button id="markAllReadBtn" style="background: transparent; border: none; color: var(--accent); font-size: 0.75rem; cursor: pointer;">Đánh dấu đã đọc</button>
+                            </div>
+                            <div id="notificationList" style="max-height: 350px; overflow-y: auto; padding: 0;">
+                                <div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">Không có thông báo</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="navLogoutBtn" style="background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; transition: 0.2s;">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-container" style="padding-top: 40px; min-height: 70vh;">
+        <!-- New Dashboard Header -->
+        <div class="dashboard-header-row animate-on-load" style="animation-delay: 0.1s;">
+            <div style="display: flex; flex-direction: column;">
+                <div class="dashboard-title-group">
+                    <h1 class="dashboard-title">CÁC ĐƠN CÀY</h1>
+                    <span class="order-count-badge" id="totalOrdersBadge">0 đơn</span>
+                </div>
+                <div style="height: 20px; overflow: hidden; position: relative; margin-top: 4px; padding-left: 4px;">
+                    <div id="dynamicSlogan" style="color: var(--text-muted); font-size: 13px; font-weight: 500; transition: opacity 450ms ease, transform 450ms ease; opacity: 1; transform: translateY(0); letter-spacing: 0.5px;">Cày thuê Genshin minh bạch</div>
+                </div>
+            </div>
+            <a href="javascript:void(0)" class="btn btn-primary" id="createOrderBtn" style="padding: 12px 24px;">
+                <i class="fa-solid fa-plus"></i> Tạo Đơn Mới
+            </a>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs-container animate-on-load" style="animation-delay: 0.2s;">
+            <button class="tab-btn active" onclick="window.filterByTab('all')" id="tab-all">Tất cả <span class="tab-count" id="count-all">0</span></button>
+            <button class="tab-btn" onclick="window.filterByTab('cho_xu_ly')" id="tab-cho_xu_ly">Chờ nhận <span class="tab-count" id="count-cho_xu_ly">0</span></button>
+            <button class="tab-btn" onclick="window.filterByTab('dang_cay')" id="tab-dang_cay">Đang cày <span class="tab-count" id="count-dang_cay">0</span></button>
+            <button class="tab-btn" onclick="window.filterByTab('cho_nghiem_thu')" id="tab-cho_nghiem_thu">Chờ nghiệm thu <span class="tab-count" id="count-cho_nghiem_thu">0</span></button>
+            <button class="tab-btn" onclick="window.filterByTab('hoan_thanh')" id="tab-hoan_thanh">Hoàn thành <span class="tab-count" id="count-hoan_thanh">0</span></button>
+        </div>
+
+        <!-- Filters -->
+        <div style="margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
+            <button class="btn btn-outline mobile-filter-btn" onclick="document.getElementById('mobileFilters').classList.toggle('active')" style="display: none;"><i class="fa-solid fa-filter"></i> Bộ lọc</button>
+        </div>
+        <div class="filters-row animate-on-load" id="mobileFilters" style="animation-delay: 0.3s;">
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
+                <input type="text" id="searchInput" placeholder="Tìm kiếm mã đơn, dịch vụ, người thuê..." onkeyup="window.applyFilters()">
+            </div>
+            <select class="filter-select" id="filterService" onchange="window.applyFilters()">
+                <option value="all">Tất cả dịch vụ</option>
+                <option value="La Hoàn">La Hoàn</option>
+                <option value="Khám Phá">Khám Phá</option>
+                <option value="Thám hiểm (Map)">Thám hiểm (Map)</option>
+                <option value="Nhiệm vụ">Nhiệm vụ</option>
+                <option value="Sự kiện">Sự kiện</option>
+                <option value="Nhựa/Ủy thác">Xả Nhựa / Ủy thác</option>
+            </select>
+            <select class="filter-select" id="filterSort" onchange="window.applyFilters()">
+                <option value="newest">Mới nhất</option>
+                <option value="oldest">Cũ nhất</option>
+                <option value="price_desc">Giá cao -> thấp</option>
+                <option value="price_asc">Giá thấp -> cao</option>
+            </select>
+        </div>
+
+        <!-- Dashboard Layout -->
+        <div class="dashboard-layout animate-on-load" style="display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start; animation-delay: 0.4s;">
+            
+            <!-- Left: Orders Grid -->
+            <div class="orders-grid" id="ordersGrid">
+                <!-- Order Cards will be generated by JS here -->
+            </div>
+            
+            <!-- Right: Stats Sidebar -->
+            <div class="sidebar-panel" id="dynamicSidebar">
+                <!-- Injected via JS -->
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer style="border-top: 1px solid var(--border-light); padding: 40px 0; margin-top: 60px; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+        <div class="app-container">
+            <p>&copy; 2026 NAMCUMZ. Hệ thống bảo mật thông tin khách hàng tuyệt đối.</p>
+        </div>
+    </footer>
+
+    <!-- Create Order Modal -->
+    <div class="modal-overlay" id="createOrderModal">
+        <div class="modal-content premium-modal">
+            <button class="modal-close" id="closeModalBtn" style="top: 25px;"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="modal-title">TẠO ĐƠN CÀY THUÊ MỚI</h2>
+            <form id="createOrderForm">
+                
+                <div class="form-group" style="display: none;">
+                    <label class="form-label">NGƯỜI THUÊ CÀY</label>
+                    <input type="text" id="orderRenter" class="form-control" placeholder="Tên khách hàng...">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">MÁY CHỦ (SERVER)</label>
+                        <select id="orderServer" class="form-control" required>
+                            <option value="Asia">Asia</option>
+                            <option value="America">America</option>
+                            <option value="Europe">Europe</option>
+                            <option value="TW/HK/MO">TW/HK/MO</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">NHÓM DỊCH VỤ</label>
+                        <select id="orderServiceGroup" class="form-control" required>
+                            <option value="Thám hiểm (Map)">Thám hiểm (Map)</option>
+                            <option value="Nhiệm vụ">Nhiệm vụ</option>
+                            <option value="La Hoàn">La Hoàn Thâm Cảnh</option>
+                            <option value="Sự kiện">Sự kiện (Event)</option>
+                            <option value="Nhựa/Ủy thác">Xả Nhựa / Ủy thác</option>
+                            <option value="Khác">Khác</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">GÓI CỤ THỂ / MỤC TIÊU</label>
+                    <input type="text" id="orderGoal" class="form-control" placeholder="Ví dụ: La hoàn tầng 12, Đảo Tsurumi 100%..." required>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">DEADLINE (THỜI HẠN)</label>
+                        <input type="date" id="orderDeadline" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">GIÁ TIỀN (ƯỚC TÍNH)</label>
+                        <div class="price-input-wrapper">
+                            <input type="text" id="orderPrice" class="form-control" value="Chờ Admin báo giá" readonly style="color: var(--status-cho-xu-ly); font-weight: bold; background: rgba(0,0,0,0.2); cursor: not-allowed;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">GHI CHÚ / THÔNG TIN ACC</label>
+                    <textarea id="orderContent" class="form-control" rows="3" placeholder="Nhập ghi chú hoặc thông tin cần thiết..." required style="resize: vertical;"></textarea>
+                </div>
+
+                <div class="modal-notice">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>Sau khi tạo, đơn hàng sẽ ở trạng thái "Chờ nhận". Admin sẽ xem xét và cập nhật giá chính thức. Vui lòng bảo mật thông tin tài khoản.</span>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" id="cancelModalBtn">Hủy</button>
+                    <button type="submit" class="btn-submit-premium" id="submitModalBtn">Tạo đơn</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Rating Modal -->
+    <div class="modal-overlay" id="ratingModal">
+        <div class="modal-content premium-modal" style="max-width: 500px;">
+            <button class="modal-close" onclick="document.getElementById('ratingModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="modal-title" style="color: var(--accent); margin-bottom: 20px;">ĐÁNH GIÁ BOOSTER</h2>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div class="rating-stars" id="ratingStars">
+                    <i class="fa-solid fa-star" data-value="1"></i>
+                    <i class="fa-solid fa-star" data-value="2"></i>
+                    <i class="fa-solid fa-star" data-value="3"></i>
+                    <i class="fa-solid fa-star" data-value="4"></i>
+                    <i class="fa-solid fa-star" data-value="5"></i>
+                </div>
+                <div id="ratingText" style="color: var(--primary-light); margin-top: 10px; font-weight: bold;">Chưa chọn</div>
+            </div>
+            <div class="form-group">
+                <textarea id="ratingComment" class="form-control" rows="3" placeholder="Chia sẻ cảm nhận của bạn về Booster này..."></textarea>
+            </div>
+            <button id="submitRatingBtn" class="btn btn-primary" style="width: 100%;">GỬI ĐÁNH GIÁ</button>
+        </div>
+    </div>
+    
+    <!-- Chat/Logs Modal -->
+    <div class="modal-overlay" id="chatModal">
+        <div class="modal-content premium-modal" style="max-width: 600px; padding: 0;">
+            <div style="background: rgba(15, 23, 42, 0.95); padding: 20px; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; border-radius: 16px 16px 0 0;">
+                <h3 style="color: var(--primary-light); margin: 0; font-size: 1.2rem;"><i class="fa-solid fa-folder-open"></i> ĐƠN HÀNG: <span id="chatOrderCode" style="color: var(--accent);"></span></h3>
+                <button class="modal-close" id="closeChatBtn" onclick="window.closeChat()" style="position: static; font-size: 1.5rem;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="chat-tabs" style="display: flex; background: rgba(0,0,0,0.5); border-bottom: 1px solid var(--border-light);">
+                <button class="tab-btn active" onclick="window.switchChatTab('chat')" id="tabBtnChat" style="flex:1; padding: 12px; background:transparent; border:none; color:#fff; cursor:pointer; font-weight:bold; border-bottom: 2px solid var(--accent);">Chat</button>
+                <button class="tab-btn" onclick="window.switchChatTab('logs')" id="tabBtnLogs" style="flex:1; padding: 12px; background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-weight:bold; border-bottom: 2px solid transparent;">Nhật ký thao tác</button>
+            </div>
+
+            <!-- Chat Tab -->
+            <div id="chatTabContent">
+                <div id="chatMessages" style="height: 350px; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; background: rgba(0,0,0,0.3);">
+                    <!-- Messages go here -->
+                </div>
+                
+                <div style="padding: 20px; border-top: 1px solid var(--border-light); display: flex; gap: 10px; background: rgba(15, 23, 42, 0.95); border-radius: 0 0 16px 16px;">
+                    <label for="chatImageInput" class="btn" style="padding: 0 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2);">
+                        <i class="fa-solid fa-image"></i>
+                    </label>
+                    <input type="file" id="chatImageInput" accept="image/*" style="display: none;" onchange="window.uploadChatImage(event)">
+                    <input type="text" id="chatInput" onkeydown="if(event.key === 'Enter') { event.preventDefault(); window.sendMessage(); }" class="form-control" placeholder="Nhập tin nhắn..." style="flex: 1;">
+                    <button id="sendChatBtn" onclick="window.sendMessage()" class="btn btn-primary" style="padding: 0 20px;"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </div>
+
+            <!-- Logs Tab -->
+            <div id="logsTabContent" style="display: none; height: 435px; overflow-y: auto; padding: 20px; background: rgba(0,0,0,0.3);">
+                <div id="orderLogsContainer" style="display: flex; flex-direction: column; gap: 10px;">
+                    <div style="text-align: center; color: var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải nhật ký...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ticket Modal -->
+    <div class="modal-overlay" id="ticketModal">
+        <div class="modal-content premium-modal" style="max-width: 500px;">
+            <button class="modal-close" onclick="document.getElementById('ticketModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="modal-title" style="color: #ef4444; margin-bottom: 20px;"><i class="fa-solid fa-triangle-exclamation"></i> BÁO CÁO SỰ CỐ</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Chúng tôi sẽ tiếp nhận và xử lý ngay lập tức để bảo vệ quyền lợi của bạn.</p>
+            <div class="form-group">
+                <label class="form-label">Vấn đề gặp phải</label>
+                <select id="ticketIssueType" class="form-control" style="margin-bottom: 15px;">
+                    <option value="booster_cham">Booster cày quá chậm</option>
+                    <option value="sai_yeu_cau">Cày sai yêu cầu / Hỏng tài nguyên</option>
+                    <option value="mat_ket_noi">Không liên lạc được với Booster</option>
+                    <option value="khac">Vấn đề khác</option>
+                </select>
+                <textarea id="ticketComment" class="form-control" rows="4" placeholder="Mô tả chi tiết sự cố của bạn..."></textarea>
+            </div>
+            <button id="submitTicketBtn" onclick="window.submitTicket()" class="btn btn-primary" style="width: 100%; background: #ef4444; color: #fff;">GỬI KHIẾU NẠI</button>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
+
+
+
+
+
+

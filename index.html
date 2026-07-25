@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ thống cày thuê NAMCUMZ</title>
+    <title>NAMCUMZ - Dịch Vụ Cày Thuê Genshin Impact Uy Tín</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="icon" type="image/jpeg" href="/assets/images/logo.jpg">
     <!-- FontAwesome -->
@@ -11,155 +11,96 @@
     <!-- CSS -->
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
-        /* Modal Styles */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            z-index: 1000;
-            display: none;
+        .hero-section {
+            min-height: 85vh;
+            display: flex;
+            align-items: center;
             justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .modal-overlay.active {
-            display: flex;
-            opacity: 1;
-        }
-        .modal-content {
-            background: var(--bg-card);
-            border: 1px solid var(--border-light);
-            border-radius: 16px;
-            width: 100%;
-            max-width: 550px;
-            padding: 30px;
+            text-align: center;
             position: relative;
-            transform: translateY(20px);
-            transition: transform 0.3s ease;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            overflow: hidden;
+            background: radial-gradient(circle at 50% 50%, rgba(152, 104, 248, 0.15) 0%, rgba(8, 11, 16, 1) 60%);
         }
-        .modal-overlay.active .modal-content {
-            transform: translateY(0);
+        .hero-content {
+            z-index: 2;
+            max-width: 800px;
+            padding: 0 20px;
         }
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: var(--transition);
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            background: linear-gradient(270deg, var(--primary), var(--secondary), var(--primary-light));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: smoothGradient 8s ease-in-out infinite;
         }
-        .modal-close:hover {
-            color: var(--status-tam-dung);
-        }
-        .modal-title {
-            font-family: var(--font-heading);
-            color: #ffffff;
-            margin-bottom: 25px;
+        .hero-subtitle {
             font-size: 1.25rem;
-            text-transform: uppercase;
-            font-weight: 800;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            line-height: 1.6;
         }
-
-        /* Premium Modal Override */
-        .premium-modal {
-            background: #0f0f11 !important;
-            border: 1px solid rgba(255, 255, 255, 0.05) !important;
-            box-shadow: 0 0 40px rgba(168, 85, 247, 0.2), inset 0 0 20px rgba(168, 85, 247, 0.05) !important;
-            border-radius: 16px !important;
-            max-width: 500px !important;
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
-        .premium-modal .form-label {
-            color: #a1a1aa;
-            font-size: 0.8rem;
+        .btn-hero {
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            border-radius: 12px;
             font-weight: 700;
-            margin-bottom: 8px;
-        }
-        .premium-modal .form-control {
-            background: #18181b;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            color: #fff;
-            border-radius: 8px;
-            padding: 14px 16px;
-        }
-        .premium-modal .form-control:focus {
-            border-color: rgba(168, 85, 247, 0.5);
-            box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
-        }
-        .price-input-wrapper {
-            position: relative;
             display: flex;
             align-items: center;
-        }
-        .price-input-wrapper input {
-            padding-right: 60px; /* space for VND */
-        }
-        .price-input-wrapper .currency {
-            position: absolute;
-            right: 16px;
-            color: #2dd4bf;
-            font-weight: 800;
-            font-size: 0.95rem;
-        }
-        .modal-notice {
-            background: rgba(168, 85, 247, 0.1);
-            border: 1px solid rgba(168, 85, 247, 0.2);
-            border-radius: 8px;
-            padding: 16px;
-            font-size: 0.85rem;
-            color: #a1a1aa;
-            margin-top: 20px;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: flex-start;
             gap: 10px;
         }
-        .modal-notice i {
-            color: #c084fc;
-            margin-top: 2px;
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-        }
-        .btn-cancel {
-            background: #27272a;
-            color: #d4d4d8;
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
             transition: var(--transition);
         }
-        .btn-cancel:hover {
-            background: #3f3f46;
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(152, 104, 248, 0.4);
+            box-shadow: 0 10px 30px rgba(152, 104, 248, 0.1);
         }
-        .btn-submit-premium {
-            background: #a855f7;
-            color: #fff;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
         }
-        .btn-submit-premium:hover {
-            background: #c084fc;
-          .btn-save:hover { box-shadow: 0 0 25px rgba(192, 132, 252, 0.6); transform: translateY(-2px); background: #c084fc; }
-        /* Rating Stars */
-        .rating-stars { font-size: 2rem; color: #334155; display: flex; justify-content: center; gap: 10px; cursor: pointer; }
-        .rating-stars i.active, .rating-stars i:hover { color: #eab308; transition: 0.2s; }
-        .review-display { background: rgba(234, 179, 8, 0.1); padding: 10px; border-radius: 8px; margin-top: 10px; border: 1px solid rgba(234, 179, 8, 0.3); }
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-light);
+        }
+        .feature-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .hero-subtitle { font-size: 1.1rem; }
+            .btn-hero { width: 100%; justify-content: center; }
+        }
     </style>
 </head>
 <body>
@@ -174,267 +115,87 @@
 
             <nav class="navigation" id="navLinks">
                 <a href="/" class="nav-link active">
-                    <i class="fa-solid fa-chart-line"></i> Các đơn cày
+                    <i class="fa-solid fa-home"></i> Trang chủ
+                </a>
+                <a href="/dashboard.html" class="nav-link">
+                    <i class="fa-solid fa-chart-line"></i> Bảng điều khiển
                 </a>
                 <a href="/checkscam" class="nav-link scam">
                     <i class="fa-solid fa-shield-virus"></i> Check Scam
                 </a>
-                <a href="#" class="nav-link">
-                    <i class="fa-solid fa-gamepad"></i> Đơn của tôi
+                <a href="/login.html" class="nav-link" id="navAccountBtn">
+                    <i class="fa-solid fa-user"></i> Đăng nhập
                 </a>
-                <a href="/login" class="nav-link" id="navAccountBtn">
-                    <i class="fa-solid fa-user"></i> Tài khoản
-                </a>
-                
-                <!-- Dynamic User Profile Area (Hidden by default, shown via JS) -->
-                <div id="navUserProfile" style="display: none; align-items: center; gap: 15px; margin-left: 20px;">
-                    <div style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); padding: 5px 15px 5px 5px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.05);">
-                        <div class="nav-avatar" id="navAvatarInitials" style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-gradient); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">A</div>
-                        <div style="display: flex; flex-direction: column; line-height: 1.2;">
-                            <span id="navUsername" style="font-weight: 700; font-size: 0.85rem; color: #fff;">Azrael</span>
-                            <span id="navRole" style="font-size: 0.65rem; font-weight: 800; color: var(--accent); letter-spacing: 0.5px;">BOOSTER</span>
-                        </div>
-                    </div>
-                                        <div class="notification-wrapper" style="position: relative;">
-                        <button id="notificationBtn" style="background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; transition: 0.2s; position: relative; margin-right: 10px;">
-                            <i class="fa-solid fa-bell"></i>
-                            <span id="notificationBadge" style="display: none; position: absolute; top: 6px; right: 8px; background: #ef4444; width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 5px #ef4444;"></span>
-                        </button>
-                        <div id="notificationDropdown" style="display: none; position: absolute; right: 0; top: calc(100% + 10px); background: #0f172a; width: 320px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1); z-index: 1000; overflow: hidden; flex-direction: column;">
-                            <div style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); font-weight: bold; font-size: 0.9rem; color: #fff; display: flex; justify-content: space-between; align-items: center;">
-                                Thông báo
-                                <button id="markAllReadBtn" style="background: transparent; border: none; color: var(--accent); font-size: 0.75rem; cursor: pointer;">Đánh dấu đã đọc</button>
-                            </div>
-                            <div id="notificationList" style="max-height: 350px; overflow-y: auto; padding: 0;">
-                                <div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">Không có thông báo</div>
-                            </div>
-                        </div>
-                    </div>
-                    <button id="navLogoutBtn" style="background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; transition: 0.2s;">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                    </button>
-                </div>
             </nav>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="app-container" style="padding-top: 40px; min-height: 70vh;">
-        <!-- New Dashboard Header -->
-        <div class="dashboard-header-row animate-on-load" style="animation-delay: 0.1s;">
-            <div style="display: flex; flex-direction: column;">
-                <div class="dashboard-title-group">
-                    <h1 class="dashboard-title">CÁC ĐƠN CÀY</h1>
-                    <span class="order-count-badge" id="totalOrdersBadge">0 đơn</span>
+    <main>
+        <section class="hero-section">
+            <div class="hero-content">
+                <div class="animate-on-load">
+                    <h1 class="hero-title">DỊCH VỤ CÀY THUÊ GENSHIN IMPACT CHUYÊN NGHIỆP</h1>
                 </div>
-                <div style="height: 20px; overflow: hidden; position: relative; margin-top: 4px; padding-left: 4px;">
-                    <div id="dynamicSlogan" style="color: var(--text-muted); font-size: 13px; font-weight: 500; transition: opacity 450ms ease, transform 450ms ease; opacity: 1; transform: translateY(0); letter-spacing: 0.5px;">Cày thuê Genshin minh bạch</div>
+                <div class="animate-on-load" style="animation-delay: 0.1s;">
+                    <p class="hero-subtitle">
+                        Nhanh chóng - An toàn - Bảo mật. Khám phá map 100%, vượt La Hoàn Thâm Cảnh, farm thánh di vật với đội ngũ Booster chuyên nghiệp, đã được xác minh danh tính.
+                    </p>
                 </div>
-            </div>
-            <a href="javascript:void(0)" class="btn btn-primary" id="createOrderBtn" style="padding: 12px 24px;">
-                <i class="fa-solid fa-plus"></i> Tạo Đơn Mới
-            </a>
-        </div>
-
-        <!-- Tabs -->
-        <div class="tabs-container animate-on-load" style="animation-delay: 0.2s;">
-            <button class="tab-btn active" onclick="window.filterByTab('all')" id="tab-all">Tất cả <span class="tab-count" id="count-all">0</span></button>
-            <button class="tab-btn" onclick="window.filterByTab('cho_xu_ly')" id="tab-cho_xu_ly">Chờ nhận <span class="tab-count" id="count-cho_xu_ly">0</span></button>
-            <button class="tab-btn" onclick="window.filterByTab('dang_cay')" id="tab-dang_cay">Đang cày <span class="tab-count" id="count-dang_cay">0</span></button>
-            <button class="tab-btn" onclick="window.filterByTab('cho_nghiem_thu')" id="tab-cho_nghiem_thu">Chờ nghiệm thu <span class="tab-count" id="count-cho_nghiem_thu">0</span></button>
-            <button class="tab-btn" onclick="window.filterByTab('hoan_thanh')" id="tab-hoan_thanh">Hoàn thành <span class="tab-count" id="count-hoan_thanh">0</span></button>
-        </div>
-
-        <!-- Filters -->
-        <div class="filters-row animate-on-load" style="animation-delay: 0.3s;">
-            <div class="search-bar">
-                <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
-                <input type="text" id="searchInput" placeholder="Tìm kiếm mã đơn, dịch vụ, người thuê..." onkeyup="window.applyFilters()">
-            </div>
-            <select class="filter-select" id="filterService" onchange="window.applyFilters()">
-                <option value="all">Tất cả dịch vụ</option>
-                <option value="La Hoàn">La Hoàn</option>
-                <option value="Khám Phá">Khám Phá</option>
-                <option value="Thể Lực">Thể Lực</option>
-                <option value="Nhiệm Vụ">Nhiệm Vụ</option>
-            </select>
-            <select class="filter-select" id="filterSort" onchange="window.applyFilters()">
-                <option value="newest">Mới nhất</option>
-                <option value="oldest">Cũ nhất</option>
-                <option value="price_desc">Giá cao -> thấp</option>
-                <option value="price_asc">Giá thấp -> cao</option>
-            </select>
-        </div>
-
-        <!-- Dashboard Layout -->
-        <div class="dashboard-layout animate-on-load" style="display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start; animation-delay: 0.4s;">
-            
-            <!-- Left: Orders Grid -->
-            <div class="orders-grid" id="ordersGrid">
-                <!-- Order Cards will be generated by JS here -->
-            </div>
-            
-            <!-- Right: Stats Sidebar -->
-            <div class="sidebar-panel">
-                <div class="stats-card">
-                    <h3 class="stats-title"><i class="fa-solid fa-chart-pie" style="color: var(--primary)"></i> THỐNG KÊ THÁNG NÀY</h3>
-                    <div class="stat-item">
-                        <span class="stat-label">Chờ nhận</span>
-                        <span class="stat-value" id="stat-pending" style="color: var(--status-cho-xu-ly)">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Đang thực hiện</span>
-                        <span class="stat-value" id="stat-progress" style="color: var(--status-dang-cay)">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Sắp quá hạn</span>
-                        <span class="stat-value" id="stat-warning" style="color: var(--status-tam-dung)">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Hoàn thành</span>
-                        <span class="stat-value" id="stat-completed" style="color: var(--status-hoan-thanh)">0</span>
-                    </div>
+                <div class="animate-on-load hero-buttons" style="animation-delay: 0.2s;">
+                    <a href="/dashboard.html" class="btn btn-primary btn-hero">
+                        <i class="fa-solid fa-rocket"></i> Đặt Đơn Ngay
+                    </a>
+                    <a href="/login.html" class="btn btn-hero" style="background: var(--card-bg); color: var(--text-light); border: 1px solid var(--border-light);">
+                        <i class="fa-brands fa-google"></i> Trở Thành Booster
+                    </a>
                 </div>
             </div>
+        </section>
 
-        </div>
+        <section class="features">
+            <div class="feature-card animate-on-load" style="animation-delay: 0.1s;">
+                <i class="fa-solid fa-shield-halved feature-icon"></i>
+                <h3 class="feature-title">An Toàn Tuyệt Đối</h3>
+                <p class="feature-desc">Mọi Booster đều phải đặt cọc và xác minh CCCD. Giao dịch trung gian an toàn qua NAMCUMZ, bảo vệ tài sản và thông tin tài khoản của bạn 100%.</p>
+            </div>
+            <div class="feature-card animate-on-load" style="animation-delay: 0.2s;">
+                <i class="fa-solid fa-bolt feature-icon"></i>
+                <h3 class="feature-title">Tiến Độ Thần Tốc</h3>
+                <p class="feature-desc">Đội ngũ cày thuê chuyên nghiệp, hoàn thành chỉ tiêu nhanh chóng theo đúng deadline đã cam kết, cập nhật tiến độ liên tục.</p>
+            </div>
+            <div class="feature-card animate-on-load" style="animation-delay: 0.3s;">
+                <i class="fa-solid fa-money-bill-wave feature-icon"></i>
+                <h3 class="feature-title">Giá Cả Cạnh Tranh</h3>
+                <p class="feature-desc">Bảng giá niêm yết rõ ràng, không phát sinh chi phí. Nhiều gói dịch vụ linh hoạt từ cày map, rương, ấn đến nhiệm vụ ma thần.</p>
+            </div>
+            <div class="feature-card animate-on-load" style="animation-delay: 0.4s;">
+                <i class="fa-solid fa-headset feature-icon"></i>
+                <h3 class="feature-title">Hỗ Trợ 24/7</h3>
+                <p class="feature-desc">Đội ngũ Admin và CSKH luôn sẵn sàng giải đáp thắc mắc, xử lý khiếu nại và hỗ trợ bạn trong suốt quá trình cày thuê.</p>
+            </div>
+        </section>
     </main>
 
-    <!-- Footer -->
-    <footer style="border-top: 1px solid var(--border-light); padding: 40px 0; margin-top: 60px; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
-        <div class="app-container">
-            <p>&copy; 2026 NAMCUMZ. Hệ thống bảo mật thông tin khách hàng tuyệt đối.</p>
-        </div>
-    </footer>
+    <!-- App Logic for checking login -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuToggle = document.getElementById('menuToggle');
+            const navLinks = document.getElementById('navLinks');
+            if (menuToggle && navLinks) {
+                menuToggle.addEventListener('click', () => { navLinks.classList.toggle('active'); });
+            }
 
-    <!-- Create Order Modal -->
-    <div class="modal-overlay" id="createOrderModal">
-        <div class="modal-content premium-modal">
-            <button class="modal-close" id="closeModalBtn" style="top: 25px;"><i class="fa-solid fa-xmark"></i></button>
-            <h2 class="modal-title">TẠO ĐƠN CÀY THUÊ MỚI</h2>
-            <form id="createOrderForm">
-                
-                
-
-                <div class="form-group">
-                    <label class="form-label">NGƯỜI THUÊ CÀY</label>
-                    <input type="text" id="orderRenter" class="form-control" placeholder="Nhập tên khách hàng/người thuê..." required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">GIÁ TIỀN</label>
-                    <div class="price-input-wrapper">
-                        <input type="number" id="orderPrice" class="form-control" style="width: 100%;" placeholder="Ví dụ: 150000" required>
-                        <span class="currency">VND</span>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">NỘI DUNG CÀY THUÊ (MÔ TẢ CHI TIẾT)</label>
-                    <textarea id="orderContent" class="form-control" rows="4" placeholder="Nhập mục tiêu cày rank, game, thời gian..." required style="resize: vertical;"></textarea>
-                </div>
-
-                <div class="modal-notice">
-                    <i class="fa-solid fa-clock"></i>
-                    <div>Đơn mới luôn ở trạng thái <strong style="color: #f43f5e;">Đã Nhận</strong> cho đến khi Bạn đổi trạng thái.</div>
-                </div>
-
-                <div class="modal-actions">
-                    <button type="button" class="btn-cancel" id="cancelModalBtn">Hủy</button>
-                    <button type="submit" class="btn-submit-premium" id="submitModalBtn">Tạo đơn</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Rating Modal -->
-    <div class="modal-overlay" id="ratingModal">
-        <div class="modal-content premium-modal" style="max-width: 500px;">
-            <button class="modal-close" onclick="document.getElementById('ratingModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
-            <h2 class="modal-title" style="color: var(--accent); margin-bottom: 20px;">ĐÁNH GIÁ BOOSTER</h2>
-            <div style="text-align: center; margin-bottom: 20px;">
-                <div class="rating-stars" id="ratingStars">
-                    <i class="fa-solid fa-star" data-value="1"></i>
-                    <i class="fa-solid fa-star" data-value="2"></i>
-                    <i class="fa-solid fa-star" data-value="3"></i>
-                    <i class="fa-solid fa-star" data-value="4"></i>
-                    <i class="fa-solid fa-star" data-value="5"></i>
-                </div>
-                <div id="ratingText" style="color: var(--primary-light); margin-top: 10px; font-weight: bold;">Chưa chọn</div>
-            </div>
-            <div class="form-group">
-                <textarea id="ratingComment" class="form-control" rows="3" placeholder="Chia sẻ cảm nhận của bạn về Booster này..."></textarea>
-            </div>
-            <button id="submitRatingBtn" class="btn btn-primary" style="width: 100%;">GỬI ĐÁNH GIÁ</button>
-        </div>
-    </div>
-    
-    <!-- Chat/Logs Modal -->
-    <div class="modal-overlay" id="chatModal">
-        <div class="modal-content premium-modal" style="max-width: 600px; padding: 0;">
-            <div style="background: rgba(15, 23, 42, 0.95); padding: 20px; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; border-radius: 16px 16px 0 0;">
-                <h3 style="color: var(--primary-light); margin: 0; font-size: 1.2rem;"><i class="fa-solid fa-folder-open"></i> ĐƠN HÀNG: <span id="chatOrderCode" style="color: var(--accent);"></span></h3>
-                <button class="modal-close" id="closeChatBtn" onclick="window.closeChat()" style="position: static; font-size: 1.5rem;"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            
-            <div class="chat-tabs" style="display: flex; background: rgba(0,0,0,0.5); border-bottom: 1px solid var(--border-light);">
-                <button class="tab-btn active" onclick="window.switchChatTab('chat')" id="tabBtnChat" style="flex:1; padding: 12px; background:transparent; border:none; color:#fff; cursor:pointer; font-weight:bold; border-bottom: 2px solid var(--accent);">Chat</button>
-                <button class="tab-btn" onclick="window.switchChatTab('logs')" id="tabBtnLogs" style="flex:1; padding: 12px; background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-weight:bold; border-bottom: 2px solid transparent;">Nhật ký thao tác</button>
-            </div>
-
-            <!-- Chat Tab -->
-            <div id="chatTabContent">
-                <div id="chatMessages" style="height: 350px; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; background: rgba(0,0,0,0.3);">
-                    <!-- Messages go here -->
-                </div>
-                
-                <div style="padding: 20px; border-top: 1px solid var(--border-light); display: flex; gap: 10px; background: rgba(15, 23, 42, 0.95); border-radius: 0 0 16px 16px;">
-                    <label for="chatImageInput" class="btn" style="padding: 0 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2);">
-                        <i class="fa-solid fa-image"></i>
-                    </label>
-                    <input type="file" id="chatImageInput" accept="image/*" style="display: none;" onchange="window.uploadChatImage(event)">
-                    <input type="text" id="chatInput" onkeydown="if(event.key === 'Enter') { event.preventDefault(); window.sendMessage(); }" class="form-control" placeholder="Nhập tin nhắn..." style="flex: 1;">
-                    <button id="sendChatBtn" onclick="window.sendMessage()" class="btn btn-primary" style="padding: 0 20px;"><i class="fa-solid fa-paper-plane"></i></button>
-                </div>
-            </div>
-
-            <!-- Logs Tab -->
-            <div id="logsTabContent" style="display: none; height: 435px; overflow-y: auto; padding: 20px; background: rgba(0,0,0,0.3);">
-                <div id="orderLogsContainer" style="display: flex; flex-direction: column; gap: 10px;">
-                    <div style="text-align: center; color: var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải nhật ký...</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Ticket Modal -->
-    <div class="modal-overlay" id="ticketModal">
-        <div class="modal-content premium-modal" style="max-width: 500px;">
-            <button class="modal-close" onclick="document.getElementById('ticketModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
-            <h2 class="modal-title" style="color: #ef4444; margin-bottom: 20px;"><i class="fa-solid fa-triangle-exclamation"></i> BÁO CÁO SỰ CỐ</h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Chúng tôi sẽ tiếp nhận và xử lý ngay lập tức để bảo vệ quyền lợi của bạn.</p>
-            <div class="form-group">
-                <label class="form-label">Vấn đề gặp phải</label>
-                <select id="ticketIssueType" class="form-control" style="margin-bottom: 15px;">
-                    <option value="booster_cham">Booster cày quá chậm</option>
-                    <option value="sai_yeu_cau">Cày sai yêu cầu / Hỏng tài nguyên</option>
-                    <option value="mat_ket_noi">Không liên lạc được với Booster</option>
-                    <option value="khac">Vấn đề khác</option>
-                </select>
-                <textarea id="ticketComment" class="form-control" rows="4" placeholder="Mô tả chi tiết sự cố của bạn..."></textarea>
-            </div>
-            <button id="submitTicketBtn" onclick="window.submitTicket()" class="btn btn-primary" style="width: 100%; background: #ef4444; color: #fff;">GỬI KHIẾU NẠI</button>
-        </div>
-    </div>
-
-    <!-- JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="assets/js/app.js"></script>
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (isLoggedIn) {
+                // Change login link to dashboard
+                const accountBtn = document.getElementById('navAccountBtn');
+                if(accountBtn) {
+                    accountBtn.href = '/dashboard.html';
+                    accountBtn.innerHTML = '<i class="fa-solid fa-chart-line"></i> ' + (localStorage.getItem('username') || 'Tài khoản');
+                }
+            }
+        });
+    </script>
 </body>
 </html>
-
-
-
-
-
-
