@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NAMCUMZ - Dịch Vụ Cày Thuê Genshin Impact</title>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Marcellus+SC&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&family=Be+Vietnam+Pro:wght@400;500;600;700&family=Nunito:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="icon" type="image/jpeg" href="/assets/images/logo.jpg">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -22,19 +22,22 @@
             --lp-teal: #68D5C1;
             --lp-text: #F7F3E8;
             --lp-text-muted: #AEB8CC;
-            --font-head: 'Marcellus SC', serif;
-            --font-body: 'Be Vietnam Pro', sans-serif;
+            --font-head: "Baloo 2", "Nunito", "Be Vietnam Pro", system-ui, sans-serif;
+            --font-body: "Nunito", "Be Vietnam Pro", system-ui, sans-serif;
+            --font-dash: "Be Vietnam Pro", system-ui, sans-serif;
         }
         body.landing-page {
             background-color: var(--lp-bg) !important;
             color: var(--lp-text) !important;
             font-family: var(--font-body) !important;
             font-weight: 400 !important;
+            font-size: 16px !important;
+            line-height: 1.6 !important;
             margin: 0 !important; padding: 0 !important;
             overflow-x: hidden !important;
         }
         .landing-page h1, .landing-page h2, .landing-page h3, .landing-page h4, .landing-page h5 {
-            font-family: var(--font-head); font-weight: 600; text-transform: none; color: var(--lp-text);
+            font-family: var(--font-head); font-weight: 700; text-transform: none; color: var(--lp-text); letter-spacing: normal;
         }
         .landing-page a { text-decoration: none; }
         
@@ -61,7 +64,9 @@
         .lp-btn-login { color: var(--lp-text); font-weight: 500; padding: 8px 16px; border-radius: 8px; transition: 0.2s; }
         .lp-btn-login:hover { background: rgba(255,255,255,0.05); }
         .lp-btn-primary { 
-            background: var(--lp-gold); color: #000; font-weight: 600; padding: 10px 24px; 
+            background: var(--lp-gold); color: #000; font-family: var(--font-body); font-weight: 800; padding: 10px 24px; 
+            border-radius: 8px; transition: 0.2s; position: relative; overflow: hidden; display: inline-block;
+            letter-spacing: normal; text-transform: none;
             border-radius: 8px; transition: 0.2s; position: relative; overflow: hidden; display: inline-block;
         }
         .lp-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(224, 194, 118, 0.3); }
@@ -89,15 +94,16 @@
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
             background: linear-gradient(180deg, rgba(7, 11, 21, 0.6) 0%, rgba(7, 11, 21, 0.9) 100%);
         }
-        .lp-hero-content { z-index: 1; max-width: 800px; padding: 0 20px; opacity: 0; animation: fadeUp 1s 0.2s forwards; }
-        .lp-eyebrow { color: var(--lp-gold); font-size: 14px; font-weight: 600; letter-spacing: 2px; margin-bottom: 16px; display: block; text-transform: uppercase; }
-        .lp-hero h1 { font-size: 3.5rem; margin-bottom: 24px; line-height: 1.2; background: linear-gradient(90deg, #F7F3E8, #E0C276); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .lp-hero p { font-size: 1.1rem; color: var(--lp-text-muted); margin-bottom: 40px; line-height: 1.6; }
+        .lp-hero-content { z-index: 1; max-width: 800px; padding: 0 20px; opacity: 0; animation: fadeUp 1s 0.2s forwards; margin: 0 auto; }
+        .lp-eyebrow { color: var(--lp-gold); font-family: var(--font-body); font-size: 14px; font-weight: 700; letter-spacing: 0.12em; margin-bottom: 16px; display: block; text-transform: uppercase; }
+        .lp-hero h1 { font-family: var(--font-head); font-weight: 700; font-size: clamp(46px, 5vw, 76px); margin-bottom: 24px; line-height: 1.06; letter-spacing: -0.025em; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .hero-gradient-text { background: linear-gradient(90deg, #F9E596, #D4A5ED); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% 200%; animation: gradientMove 8s ease infinite; }
+        .lp-hero p { font-family: var(--font-body); font-size: 18px; font-weight: 500; color: #D8E0ED; margin-bottom: 40px; line-height: 1.65; max-width: 680px; margin-left: auto; margin-right: auto; }
         .lp-hero-btns { display: flex; gap: 20px; justify-content: center; margin-bottom: 50px; }
-        .lp-btn-secondary { background: rgba(224, 194, 118, 0.1); border: 1px solid var(--lp-border); color: var(--lp-gold); padding: 10px 24px; border-radius: 8px; font-weight: 500; transition: 0.2s; backdrop-filter: blur(5px); display: inline-block; }
+        .lp-btn-secondary { background: rgba(224, 194, 118, 0.1); border: 1px solid var(--lp-border); color: var(--lp-gold); font-family: var(--font-body); font-weight: 800; padding: 10px 24px; border-radius: 8px; transition: 0.2s; backdrop-filter: blur(5px); display: inline-block; letter-spacing: normal; text-transform: none; }
         .lp-btn-secondary:hover { background: rgba(224, 194, 118, 0.2); }
         .lp-features { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
-        .lp-feature { display: flex; align-items: center; gap: 8px; color: var(--lp-text-muted); font-size: 14px; }
+        .lp-feature { display: flex; align-items: center; gap: 8px; font-family: var(--font-body); color: var(--lp-text-muted); font-size: 15px; font-weight: 500; }
         .lp-feature i { color: var(--lp-teal); }
         
         /* PARTICLES */
@@ -113,18 +119,18 @@
         /* SERVICES */
         .lp-section { padding: 80px 5%; max-width: 1200px; margin: 0 auto; }
         .lp-section-header { text-align: center; margin-bottom: 50px; }
-        .lp-section-header h2 { font-size: 2.5rem; margin-bottom: 16px; }
-        .lp-section-header p { color: var(--lp-text-muted); max-width: 600px; margin: 0 auto; }
+        .lp-section-header h2 { font-size: clamp(38px, 4vw, 46px); margin-bottom: 16px; }
+        .lp-section-header p { font-family: var(--font-body); color: var(--lp-text-muted); max-width: 600px; margin: 0 auto; font-size: 16px; }
         .lp-services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
         .lp-service-card { background: var(--lp-card); border: 1px solid var(--lp-border); border-radius: 16px; overflow: hidden; transition: 0.25s ease; position: relative; display: flex; flex-direction: column; }
         .lp-service-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.3), 0 0 15px rgba(224, 194, 118, 0.1); border-color: rgba(224, 194, 118, 0.6); }
         .lp-service-img { width: 100%; height: auto; object-fit: cover; transition: 0.3s ease; }
         .lp-service-card:hover .lp-service-img { transform: scale(1.03); }
-        .lp-service-badge { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); border: 1px solid var(--lp-gold); color: var(--lp-gold); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+        .lp-service-badge { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); border: 1px solid var(--lp-gold); color: var(--lp-gold); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; font-family: var(--font-body); }
         .lp-service-content { padding: 20px; flex: 1; display: flex; flex-direction: column; }
-        .lp-service-title { font-size: 1.25rem; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .lp-service-title { font-family: var(--font-body); font-weight: 800; font-size: 21px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
         .lp-service-title i { color: var(--lp-teal); }
-        .lp-service-desc { color: var(--lp-text-muted); font-size: 14px; margin-bottom: 20px; line-height: 1.5; flex: 1; }
+        .lp-service-desc { font-family: var(--font-body); color: var(--lp-text-muted); font-size: 15px; font-weight: 500; margin-bottom: 20px; line-height: 1.6; flex: 1; }
         .lp-service-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 16px; margin-top: auto; }
         .lp-service-price { color: var(--lp-gold); font-weight: 600; font-size: 1.1rem; }
         .lp-service-price span { font-size: 12px; color: var(--lp-text-muted); font-weight: 400; }
@@ -223,9 +229,10 @@
             .lp-nav, .lp-actions { display: none; }
             .hamburger { display: block; }
             .lp-hero { height: 620px; }
-            .lp-hero h1 { font-size: 2.5rem; }
+            .lp-hero h1 { font-size: clamp(38px, 6vw, 44px); }
             .lp-metrics { grid-template-columns: 1fr 1fr; }
             .lp-tv-side { grid-template-columns: 1fr; }
+            .lp-section-header h2 { font-size: clamp(30px, 5vw, 34px); }
         }
         @media (max-width: 480px) {
             .lp-metrics { grid-template-columns: 1fr; }
@@ -271,7 +278,7 @@
         
         <div class="lp-hero-content">
             <span class="lp-eyebrow">DỊCH VỤ DÀNH CHO NHÀ LỮ HÀNH</span>
-            <h1>Cày thuê Genshin Impact an toàn và minh bạch</h1>
+            <h1><span style="color: #F7F3E8;">Cày thuê Genshin Impact</span><br><span class="hero-gradient-text">An toàn và minh bạch</span></h1>
             <p>Theo dõi tiến độ, chat trực tiếp với Booster và nghiệm thu toàn bộ kết quả ngay trên hệ thống NAMCUMZ.</p>
             <div class="lp-hero-btns">
                 <a href="#dich-vu" class="lp-btn-primary">Khám phá dịch vụ</a>
