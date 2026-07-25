@@ -41,8 +41,8 @@
 }
 
 body {
-    background-color: var(--bg-main);
-    color: var(--text-main);
+    background-color: var(--bg-dark);
+    color: var(--text-light);
     font-family: var(--font-main);
     line-height: 1.6;
     min-height: 100vh;
@@ -132,7 +132,7 @@ header {
 }
 
 .nav-link:hover, .nav-link.active {
-    color: var(--text-main);
+    color: var(--text-light);
     background: rgba(255, 255, 255, 0.03);
     border-color: var(--border-hover);
 }
@@ -180,7 +180,7 @@ header {
 
 .btn-accent {
     background-color: var(--accent);
-    color: var(--bg-main);
+    color: var(--bg-dark);
     box-shadow: 0 4px 15px rgba(94, 234, 212, 0.2);
 }
 .btn-accent:hover {
@@ -192,7 +192,7 @@ header {
 .btn-secondary {
     background-color: var(--bg-card);
     border: 1px solid var(--border-light);
-    color: var(--text-main);
+    color: var(--text-light);
 }
 .btn-secondary:hover {
     background-color: var(--bg-secondary);
@@ -209,7 +209,7 @@ header {
     font-size: 2.8rem;
     font-weight: 900;
     margin-bottom: 15px;
-    color: var(--text-main);
+    color: var(--text-light);
     text-transform: uppercase;
     letter-spacing: 1px;
 }
@@ -506,7 +506,7 @@ header {
     width: 100%;
     background: var(--bg-card);
     border: 1px solid var(--border-light);
-    color: var(--text-main);
+    color: var(--text-light);
     padding: 14px 16px;
     border-radius: 8px;
     font-family: var(--font-main);
@@ -958,3 +958,5 @@ body { font-weight: 400; background-color: var(--bg-dark); }
     color: #fff;
     background: rgba(255,255,255,0.1);
 }
+
+
