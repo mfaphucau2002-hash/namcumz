@@ -771,6 +771,26 @@ function bindEvents() {
         });
     }
     
+    const googleLoginBtn = document.getElementById('googleLoginBtn');
+    if (googleLoginBtn) {
+        googleLoginBtn.addEventListener('click', async () => {
+            if(!supabaseClient) return alert('Chưa tải xong kết nối, vui lòng thử lại.');
+            googleLoginBtn.style.opacity = '0.7';
+            googleLoginBtn.style.pointerEvents = 'none';
+            const { data, error } = await supabaseClient.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: window.location.origin + '/index.html'
+                }
+            });
+            if(error) {
+                alert('Lỗi đăng nhập Google: ' + error.message);
+                googleLoginBtn.style.opacity = '1';
+                googleLoginBtn.style.pointerEvents = 'auto';
+            }
+        });
+    }
+    
     const registerForm = document.getElementById('registerForm');
     if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {

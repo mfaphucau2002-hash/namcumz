@@ -867,3 +867,27 @@ body { font-weight: 400; background-color: var(--bg-dark); }
         scroll-behavior: auto !important;
     }
 }
+
+/* --- Google Login Button --- */
+.google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 12px 24px;
+    background: #18181b;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    color: #f8fafc;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.google-btn:hover {
+    background: #27272a;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+    border-color: rgba(255,255,255,0.2);
+}
