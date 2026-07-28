@@ -696,6 +696,31 @@ async function uploadFileOrFallback(file, prefix = 'img') {
     return publicUrl;
 }
 
+window.openImageLightbox = function(src) {
+    let modal = document.getElementById('imageLightboxModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'imageLightboxModal';
+        modal.className = 'modal-overlay';
+        modal.style.zIndex = '999999';
+        modal.style.background = 'rgba(0, 0, 0, 0.9)';
+        modal.style.backdropFilter = 'blur(8px)';
+        modal.innerHTML = `
+            <div style="position: relative; max-width: 90vw; max-height: 90vh; display: flex; align-items: center; justify-content: center;">
+                <button class="modal-close" onclick="document.getElementById('imageLightboxModal').classList.remove('active')" style="top: -45px; right: 0; color: #fff; font-size: 22px; background: rgba(255,255,255,0.15); width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-xmark"></i></button>
+                <img id="lightboxImg" src="" style="max-width: 90vw; max-height: 85vh; border-radius: 12px; object-fit: contain; box-shadow: 0 10px 40px rgba(0,0,0,0.8);">
+            </div>
+        `;
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.classList.remove('active');
+        });
+        document.body.appendChild(modal);
+    }
+    const imgEl = document.getElementById('lightboxImg');
+    if (imgEl) imgEl.src = src;
+    modal.classList.add('active');
+};
+
 function appendMessage(msg) {
     const msgContainer = document.getElementById('chatMessages');
     if(!msgContainer) return;
@@ -709,9 +734,7 @@ function appendMessage(msg) {
         const imgUrl = parts[1].trim();
         contentHtml = `
             ${textPart ? `<div style="margin-bottom: 6px; font-weight: 500;">${textPart}</div>` : ''}
-            <a href="${imgUrl}" target="_blank" rel="noopener">
-                <img src="${imgUrl}" style="max-width:100%; max-height:260px; border-radius:8px; display:block; cursor:pointer;" alt="Ảnh tiến độ">
-            </a>
+            <img src="${imgUrl}" onclick="window.openImageLightbox(this.src)" style="max-width:100%; max-height:260px; border-radius:8px; display:block; cursor:pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'" alt="Ảnh tiến độ">
         `;
     }
     
