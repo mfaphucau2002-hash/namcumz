@@ -877,6 +877,25 @@ function bindEvents() {
         });
     });
 
+    function setupOrderPriceInput() {
+        const priceInput = document.getElementById('orderPrice');
+        const role = localStorage.getItem('userRole');
+        if (priceInput) {
+            if (role === 'admin' || role === 'super_admin') {
+                priceInput.removeAttribute('readonly');
+                priceInput.style.cursor = 'text';
+                priceInput.type = 'number';
+                priceInput.value = '';
+                priceInput.placeholder = 'Nhập giá...';
+            } else {
+                priceInput.setAttribute('readonly', 'true');
+                priceInput.style.cursor = 'not-allowed';
+                priceInput.type = 'text';
+                priceInput.value = 'Chờ Admin báo giá';
+            }
+        }
+    }
+
     const createOrderBtn = document.getElementById('createOrderBtn');
     const createOrderModal = document.getElementById('createOrderModal');
     if (createOrderBtn && createOrderModal) {
@@ -884,6 +903,7 @@ function bindEvents() {
             const form = document.getElementById('createOrderForm');
             if(form) form.reset();
             if(document.getElementById('calcExtraOptions')) document.getElementById('calcExtraOptions').style.display = 'none';
+            setupOrderPriceInput();
             createOrderModal.classList.add('active');
         });
     }
@@ -894,6 +914,7 @@ function bindEvents() {
         if (modal) {
             const form = document.getElementById('createOrderForm');
             if(form) form.reset();
+            setupOrderPriceInput();
             modal.classList.add('active');
         }
     };
@@ -1042,7 +1063,13 @@ function bindEvents() {
             
             const renterInput = document.getElementById('orderRenter').value.trim();
             const renter = renterInput || localStorage.getItem('username') || 'Khách';
-            const price = 0; // Chờ admin báo giá
+            
+            let price = 0;
+            const priceInput = document.getElementById('orderPrice');
+            if (priceInput) {
+                const parsed = parseFloat(priceInput.value);
+                if (!isNaN(parsed)) price = parsed;
+            }
             
             const server = document.getElementById('orderServer').value;
             const group = document.getElementById('orderServiceGroup').value;
