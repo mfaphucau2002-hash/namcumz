@@ -641,20 +641,84 @@ window.closeChat = function() {
     if(modal) modal.classList.remove('active');
 };
 
+function compressImage(file, maxWidth = 1000, maxHeight = 1000, quality = 0.7) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                let width = img.width;
+                let height = img.height;
+                if (width > maxWidth || height > maxHeight) {
+                    if (width > height) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    } else {
+                        width = Math.round((width * maxHeight) / height);
+                        height = maxHeight;
+                    }
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                resolve(canvas.toDataURL('image/jpeg', quality));
+            };
+            img.onerror = () => resolve(event.target.result);
+        };
+        reader.onerror = () => resolve(null);
+    });
+}
+
+async function uploadFileOrFallback(file, prefix = 'img') {
+    let publicUrl = null;
+    try {
+        if (supabaseClient && supabaseClient.storage) {
+            const ext = file.name.split('.').pop();
+            const fileName = `${prefix}_${Date.now()}.${ext}`;
+            const { error: uploadError } = await supabaseClient.storage.from('chat_images').upload(fileName, file);
+            if (!uploadError) {
+                const { data: publicData } = supabaseClient.storage.from('chat_images').getPublicUrl(fileName);
+                if (publicData && publicData.publicUrl) {
+                    publicUrl = publicData.publicUrl;
+                }
+            }
+        }
+    } catch (e) {
+        console.warn('Storage bucket upload failed, using Base64 fallback:', e);
+    }
+    if (!publicUrl) {
+        publicUrl = await compressImage(file);
+    }
+    return publicUrl;
+}
+
 function appendMessage(msg) {
     const msgContainer = document.getElementById('chatMessages');
     if(!msgContainer) return;
     
     const isMine = msg.sender_id === localStorage.getItem('userId');
-    let contentHtml = msg.message;
-    if (msg.message.startsWith('IMAGE:')) {
-        contentHtml = `<img src="${msg.message.replace('IMAGE:', '')}" style="max-width:200px; border-radius:8px;">`;
+    let contentHtml = msg.message || '';
+    
+    if (contentHtml.includes('IMAGE:')) {
+        const parts = contentHtml.split('IMAGE:');
+        const textPart = parts[0].trim();
+        const imgUrl = parts[1].trim();
+        contentHtml = `
+            ${textPart ? `<div style="margin-bottom: 6px; font-weight: 500;">${textPart}</div>` : ''}
+            <a href="${imgUrl}" target="_blank" rel="noopener">
+                <img src="${imgUrl}" style="max-width:100%; max-height:260px; border-radius:8px; display:block; cursor:pointer;" alt="Ảnh tiến độ">
+            </a>
+        `;
     }
     
     const html = `
-        <div style="display: flex; flex-direction: column; align-items: ${isMine ? 'flex-end' : 'flex-start'};">
+        <div style="display: flex; flex-direction: column; align-items: ${isMine ? 'flex-end' : 'flex-start'}; margin-bottom: 10px;">
             <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">${msg.sender_name}</div>
-            <div style="background: ${isMine ? 'var(--primary)' : 'rgba(255,255,255,0.05)'}; color: #fff; padding: 10px 15px; border-radius: 12px; max-width: 80%; word-break: break-word;">
+            <div style="background: ${isMine ? 'var(--primary)' : 'rgba(255,255,255,0.05)'}; color: #fff; padding: 10px 15px; border-radius: 12px; max-width: 85%; word-break: break-word;">
                 ${contentHtml}
             </div>
         </div>
@@ -686,12 +750,9 @@ window.sendMessage = async function(e) {
     
     if (imgInput && imgInput.files[0]) {
         const file = imgInput.files[0];
-        const ext = file.name.split('.').pop();
-        const fileName = `${Date.now()}.${ext}`;
-        const { error } = await supabaseClient.storage.from('chat_images').upload(fileName, file);
-        if (!error) {
-            const { data } = supabaseClient.storage.from('chat_images').getPublicUrl(fileName);
-            newMsg.message = `IMAGE:${data.publicUrl}`;
+        const imageUrl = await uploadFileOrFallback(file, 'chat');
+        if (imageUrl) {
+            newMsg.message = msgText ? `${msgText}\nIMAGE:${imageUrl}` : `IMAGE:${imageUrl}`;
         }
         imgInput.value = '';
     }
@@ -1261,17 +1322,12 @@ function bindEvents() {
             btn.disabled = true;
 
             try {
-                const ext = file.name.split('.').pop();
-                const fileName = `progress_${orderId}_${Date.now()}.${ext}`;
-                const { error: uploadError } = await supabaseClient.storage.from('chat_images').upload(fileName, file);
-                if (uploadError) throw uploadError;
-
-                const { data: publicData } = supabaseClient.storage.from('chat_images').getPublicUrl(fileName);
-                const publicUrl = publicData.publicUrl;
+                const imageUrl = await uploadFileOrFallback(file, `progress_${orderId}`);
+                if (!imageUrl) throw new Error('Không thể xử lý hình ảnh');
 
                 const currentUserId = localStorage.getItem('userId');
                 const currentUsername = localStorage.getItem('username') || 'Booster';
-                const messageText = caption ? `📸 [ẢNH TIẾN ĐỘ] ${caption}\nIMAGE:${publicUrl}` : `📸 [ẢNH TIẾN ĐỘ]\nIMAGE:${publicUrl}`;
+                const messageText = caption ? `📸 [ẢNH TIẾN ĐỘ] ${caption}\nIMAGE:${imageUrl}` : `📸 [ẢNH TIẾN ĐỘ]\nIMAGE:${imageUrl}`;
 
                 // Insert progress image into chat/order_messages table so customer & admin can view in real time
                 const { error: msgErr } = await supabaseClient.from('order_messages').insert([{
