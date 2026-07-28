@@ -958,8 +958,9 @@ function bindEvents() {
                 }
                 document.getElementById('editOrderServiceGroup').value = groupExists ? group : 'Khác';
                 
+                let deadlineVal = match ? match[4] : '';
                 document.getElementById('editOrderGoal').value = goal;
-                document.getElementById('editOrderDeadline').value = data.deadline ? data.deadline.substring(0, 10) : '';
+                document.getElementById('editOrderDeadline').value = deadlineVal;
                 document.getElementById('editOrderPrice').value = data.price || 0;
                 document.getElementById('editOrderContent').value = notes;
                 
@@ -1191,7 +1192,6 @@ function bindEvents() {
                 content: content,
                 price: price
             };
-            if (deadline) updateData.deadline = deadline;
             
             const { error } = await supabaseClient.from('orders').update(updateData).eq('id', orderId);
             
