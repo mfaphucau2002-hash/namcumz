@@ -888,6 +888,66 @@ function bindEvents() {
         });
     }
 
+    // Global function for empty-state button
+    window.openCreateOrderModal = function() {
+        const modal = document.getElementById('createOrderModal');
+        if (modal) {
+            const form = document.getElementById('createOrderForm');
+            if(form) form.reset();
+            modal.classList.add('active');
+        }
+    };
+
+    // Rating modal
+    window.openRatingModal = function(orderId) {
+        const modal = document.getElementById('ratingModal');
+        if (modal) {
+            modal.dataset.orderId = orderId;
+            modal.classList.add('active');
+            // Reset stars
+            document.querySelectorAll('#ratingStars i').forEach((star, idx) => {
+                star.style.color = 'var(--border-light)';
+                star.onclick = () => {
+                    modal.dataset.rating = idx + 1;
+                    document.querySelectorAll('#ratingStars i').forEach((s, i) => {
+                        s.style.color = i <= idx ? 'var(--genshin-gold)' : 'var(--border-light)';
+                    });
+                };
+            });
+        }
+    };
+
+    // Submit rating
+    const submitRatingBtn = document.getElementById('submitRatingBtn');
+    if (submitRatingBtn) {
+        submitRatingBtn.addEventListener('click', async () => {
+            const modal = document.getElementById('ratingModal');
+            if (!modal || !supabaseClient) return;
+            const orderId = modal.dataset.orderId;
+            const rating = parseInt(modal.dataset.rating) || 0;
+            const comment = document.getElementById('ratingComment')?.value?.trim() || '';
+            if (rating === 0) { alert('Vui lòng chọn số sao đánh giá!'); return; }
+            submitRatingBtn.disabled = true;
+            submitRatingBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gửi...';
+            const { error } = await supabaseClient.from('orders').update({ rating: rating, review_comment: comment }).eq('id', orderId);
+            if (error) { alert('Lỗi: ' + error.message); }
+            else { alert('Đánh giá thành công!'); modal.classList.remove('active'); window.fetchOrders(); }
+            submitRatingBtn.disabled = false;
+            submitRatingBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Gửi đánh giá';
+        });
+    }
+
+    // Notification bell toggle
+    const notifBtn = document.getElementById('notificationBtn');
+    const notifDropdown = document.getElementById('notificationDropdown');
+    if (notifBtn && notifDropdown) {
+        notifBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            notifDropdown.classList.toggle('show');
+        });
+        document.addEventListener('click', () => notifDropdown.classList.remove('show'));
+    }
+
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {

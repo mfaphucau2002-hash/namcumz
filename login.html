@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -928,7 +928,8 @@
                 const contact = document.getElementById('recContact').value.trim();
                 const fullDesc = "YÊU CẦU KHÔI PHỤC TÀI KHOẢN\nTài khoản: " + user + "\nTên hiển thị: " + displayName + "\nMã đơn: " + order + "\nLiên hệ: " + contact;
                 try {
-                    const { error } = await supabaseClient.from('tickets').insert([{ issue_type: 'Khôi phục tài khoản', description: fullDesc, status: 'open' }]);
+                    if (!supabaseClient) { showToast('Chưa kết nối được hệ thống, vui lòng tải lại trang.', 'error'); return; }
+                    const { error } = await supabaseClient.from('support_tickets').insert([{ issue_type: 'Khôi phục tài khoản', description: fullDesc, status: 'open' }]);
                     if(error) throw error;
                     showToast('Đã gửi yêu cầu khôi phục thành công! Chúng tôi sẽ liên hệ sớm nhất.', 'success');
                     closeRecoveryModal();
