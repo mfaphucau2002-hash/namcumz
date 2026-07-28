@@ -1064,7 +1064,8 @@ function bindEvents() {
             const orderCode = 'DH' + Math.floor(Math.random() * 10000);
             const orderData = {
                 order_code: orderCode, renter_name: renter, price: parseFloat(price) || 0,
-                content: content, status: 'cho_xu_ly', user_id: isGuest ? null : localStorage.getItem('userId'), secret_code: secretCode
+                content: content, status: 'cho_xu_ly', user_id: isGuest ? null : localStorage.getItem('userId'), secret_code: secretCode,
+                booster_name: 'Chưa nhận'
             };
             
             const { data, error } = await supabaseClient.from('orders').insert([orderData]).select();
