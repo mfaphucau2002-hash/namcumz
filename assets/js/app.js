@@ -465,7 +465,7 @@ window.updateDashboardStats = function(orders) {
             if (entry.isIntersecting) {
                 const el = entry.target;
                 const targetVal = parseInt(el.getAttribute('data-val')) || 0;
-                window.animateCountUp(el, targetVal, 1000, true);
+                window.animateCountUp(el, targetVal, 1000);
                 obs.unobserve(el);
             }
         });
@@ -794,6 +794,25 @@ window.sendMessage = async function(e) {
     }
 };
 
+// Handler for chat image input onchange
+window.uploadChatImage = async function(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file || !currentChatOrderId || !supabaseClient) return;
+    const currentUserId = localStorage.getItem('userId');
+    const currentUsername = localStorage.getItem('username') || 'Ẩn danh';
+    const imageUrl = await uploadFileOrFallback(file, 'chat');
+    event.target.value = '';
+    if (!imageUrl) return alert('Không thể xử lý ảnh, vui lòng thử lại!');
+    const newMsg = {
+        order_id: currentChatOrderId,
+        sender_id: currentUserId,
+        sender_name: currentUsername,
+        message: `IMAGE:${imageUrl}`
+    };
+    const { error: dbError } = await supabaseClient.from('order_messages').insert([newMsg]);
+    if (dbError) alert('Lỗi gửi ảnh: ' + dbError.message);
+};
+
 window.switchChatTab = function(tab) {
     const chatBtn = document.getElementById('tabBtnChat');
     const logsBtn = document.getElementById('tabBtnLogs');
@@ -1114,11 +1133,49 @@ function bindEvents() {
     const notifBtn = document.getElementById('notificationBtn');
     const notifDropdown = document.getElementById('notificationDropdown');
     if (notifBtn && notifDropdown) {
+        notifDropdown.style.display = 'none';
         notifBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            notifDropdown.classList.toggle('show');
+            const isVisible = notifDropdown.style.display === 'flex';
+            notifDropdown.style.display = isVisible ? 'none' : 'flex';
+            notifDropdown.style.flexDirection = 'column';
+            // Fetch notifications when opened
+            if (!isVisible && supabaseClient) {
+                const currentUserId = localStorage.getItem('userId');
+                if (currentUserId) {
+                    const listEl = document.getElementById('notificationList') || notifDropdown;
+                    supabaseClient.from('notifications').select('*').eq('user_id', currentUserId).order('created_at', { ascending: false }).limit(15)
+                        .then(({ data }) => {
+                            if (!data || data.length === 0) {
+                                listEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:0.85rem;">Không có thông báo mới</div>';
+                                return;
+                            }
+                            listEl.innerHTML = data.map(n => `
+                                <div class="notif-item ${!n.read_at ? 'unread' : ''}">
+                                    <div style="font-size:0.85rem;color:#fff;font-weight:600;">${n.title || 'Thông báo'}</div>
+                                    <div style="font-size:0.8rem;color:var(--text-muted);margin-top:3px;">${n.content || ''}</div>
+                                    <div class="notif-time">${new Date(n.created_at).toLocaleString('vi-VN')}</div>
+                                </div>`).join('');
+                        });
+                }
+            }
         });
-        document.addEventListener('click', () => notifDropdown.classList.remove('show'));
+        document.addEventListener('click', (e) => {
+            if (!notifBtn.contains(e.target) && !notifDropdown.contains(e.target)) {
+                notifDropdown.style.display = 'none';
+            }
+        });
+    }
+
+    const markAllReadBtn = document.getElementById('markAllReadBtn');
+    if (markAllReadBtn && supabaseClient) {
+        markAllReadBtn.addEventListener('click', async () => {
+            const currentUserId = localStorage.getItem('userId');
+            if (!currentUserId) return;
+            await supabaseClient.from('notifications').update({ read_at: new Date().toISOString() }).eq('user_id', currentUserId).is('read_at', null);
+            const listEl = document.getElementById('notificationList');
+            if (listEl) listEl.querySelectorAll('.notif-item.unread').forEach(el => el.classList.remove('unread'));
+        });
     }
 
     const loginForm = document.getElementById('loginForm');
