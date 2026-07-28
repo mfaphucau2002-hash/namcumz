@@ -198,6 +198,7 @@ window.renderOrders = function(ordersToRender, containerId) {
         if (isLoggedIn) {
             if (isAdmin) {
                 actionButtons += `
+                    <button onclick="window.openEditOrderModal('${order.id}')" class="btn btn-secondary" style="background: rgba(255,255,255,0.1); color: #fff; flex:0.5; border: 1px solid rgba(255,255,255,0.2);"><i class="fa-solid fa-pen"></i> Sửa</button>
                     <select onchange="changeOrderStatus('${order.id}', this.value, '${order.user_id}')" style="background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 12px; flex:1; outline: none; cursor: pointer;">
                         <option value="cho_xu_ly" ${order.status === 'cho_xu_ly' ? 'selected' : ''}>Chờ xử lý</option>
                         <option value="dang_cay" ${order.status === 'dang_cay' ? 'selected' : ''}>Đang cày</option>
@@ -919,6 +920,57 @@ function bindEvents() {
         }
     };
 
+    // Edit Order Modal
+    window.openEditOrderModal = async function(orderId) {
+        if (!supabaseClient) return;
+        const modal = document.getElementById('editOrderModal');
+        if (!modal) return;
+        
+        try {
+            const { data, error } = await supabaseClient.from('orders').select('*').eq('id', orderId).single();
+            if (error) throw error;
+            if (data) {
+                document.getElementById('editOrderId').value = data.id;
+                
+                // Parse server/group from content (e.g. "[Asia] [Nhiệm vụ] ...") if available
+                let contentStr = data.content || '';
+                let server = 'Asia', group = 'Khác', goal = '', notes = '';
+                
+                // Trích xuất server và group từ format cũ
+                const match = contentStr.match(/^\[(.*?)\]\s+\[(.*?)\]\s+(.*?)\nDeadline:\s+(.*?)\nGhi chú:\s+([\s\S]*)$/);
+                if (match) {
+                    server = match[1];
+                    group = match[2];
+                    goal = match[3];
+                    // match[4] is deadline string
+                    notes = match[5];
+                } else {
+                    notes = contentStr; // Fallback
+                }
+                
+                document.getElementById('editOrderServer').value = server;
+                
+                // Try to set group if it exists in the select options
+                const groupSelect = document.getElementById('editOrderServiceGroup');
+                let groupExists = false;
+                for (let i = 0; i < groupSelect.options.length; i++) {
+                    if (groupSelect.options[i].value === group) { groupExists = true; break; }
+                }
+                document.getElementById('editOrderServiceGroup').value = groupExists ? group : 'Khác';
+                
+                document.getElementById('editOrderGoal').value = goal;
+                document.getElementById('editOrderDeadline').value = data.deadline ? data.deadline.substring(0, 10) : '';
+                document.getElementById('editOrderPrice').value = data.price || 0;
+                document.getElementById('editOrderContent').value = notes;
+                
+                modal.classList.add('active');
+            }
+        } catch (e) {
+            alert('Lỗi tải dữ liệu đơn hàng: ' + e.message);
+        }
+    };
+
+
     // Rating modal
     window.openRatingModal = function(orderId) {
         const modal = document.getElementById('ratingModal');
@@ -1110,6 +1162,47 @@ function bindEvents() {
                 if(typeof window.fetchOrders === 'function') window.fetchOrders();
             }
             btn.innerHTML = 'Tạo đơn';
+            btn.disabled = false;
+        });
+    }
+    
+    // Edit Order Submit logic
+    const editOrderForm = document.getElementById('editOrderForm');
+    if (editOrderForm) {
+        editOrderForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if(!supabaseClient) return;
+            const btn = document.getElementById('submitEditOrderBtn');
+            const orderId = document.getElementById('editOrderId').value;
+            
+            const server = document.getElementById('editOrderServer').value;
+            const group = document.getElementById('editOrderServiceGroup').value;
+            const goal = document.getElementById('editOrderGoal').value.trim();
+            const deadline = document.getElementById('editOrderDeadline').value;
+            const notes = document.getElementById('editOrderContent').value.trim();
+            let price = parseFloat(document.getElementById('editOrderPrice').value) || 0;
+            
+            const content = `[${server}] [${group}] ${goal}\nDeadline: ${deadline}\nGhi chú: ${notes}`;
+            
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> LƯU...';
+            btn.disabled = true;
+            
+            const updateData = {
+                content: content,
+                price: price
+            };
+            if (deadline) updateData.deadline = deadline;
+            
+            const { error } = await supabaseClient.from('orders').update(updateData).eq('id', orderId);
+            
+            if (error) {
+                alert('Lỗi khi sửa đơn: ' + error.message);
+            } else {
+                alert('Đã cập nhật đơn hàng thành công!');
+                document.getElementById('editOrderModal').classList.remove('active');
+                if(typeof window.fetchOrders === 'function') window.fetchOrders();
+            }
+            btn.innerHTML = 'Lưu thay đổi';
             btn.disabled = false;
         });
     }

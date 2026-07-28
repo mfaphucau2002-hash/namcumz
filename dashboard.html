@@ -368,6 +368,65 @@
         </div>
     </div>
 
+    <!-- Edit Order Modal -->
+    <div class="modal-overlay" id="editOrderModal">
+        <div class="modal-content premium-modal">
+            <button class="modal-close" onclick="document.getElementById('editOrderModal').classList.remove('active')" style="top: 25px;"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="modal-title">SỬA ĐƠN HÀNG</h2>
+            <form id="editOrderForm">
+                <input type="hidden" id="editOrderId">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">MÁY CHỦ (SERVER)</label>
+                        <select id="editOrderServer" class="form-control" required>
+                            <option value="Asia">Asia</option>
+                            <option value="America">America</option>
+                            <option value="Europe">Europe</option>
+                            <option value="TW/HK/MO">TW/HK/MO</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">NHÓM DỊCH VỤ</label>
+                        <select id="editOrderServiceGroup" class="form-control" required>
+                            <option value="Thám hiểm (Map)">Thám hiểm (Map)</option>
+                            <option value="Nhiệm vụ">Nhiệm vụ</option>
+                            <option value="La Hoàn">La Hoàn Thâm Cảnh</option>
+                            <option value="Sự kiện">Sự kiện (Event)</option>
+                            <option value="Nhựa/Ủy thác">Xả Nhựa / Ủy thác</option>
+                            <option value="Khác">Khác</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">GÓI CỤ THỂ / MỤC TIÊU</label>
+                    <input type="text" id="editOrderGoal" class="form-control" required>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">DEADLINE (THỜI HẠN)</label>
+                        <input type="date" id="editOrderDeadline" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">GIÁ TIỀN</label>
+                        <input type="number" id="editOrderPrice" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">GHI CHÚ / THÔNG TIN ACC</label>
+                    <textarea id="editOrderContent" class="form-control" rows="3" required style="resize: vertical;"></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel modal-close" onclick="document.getElementById('editOrderModal').classList.remove('active')">Hủy</button>
+                    <button type="submit" class="btn-submit-premium" id="submitEditOrderBtn">Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Rating Modal -->
     <div class="modal-overlay" id="ratingModal">
         <div class="modal-content premium-modal" style="max-width: 500px;">
