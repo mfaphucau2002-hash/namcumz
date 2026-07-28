@@ -197,6 +197,9 @@ window.renderOrders = function(ordersToRender, containerId) {
         let actionButtons = '';
         if (isLoggedIn) {
             if (isAdmin) {
+                if (order.status === 'dang_cay') {
+                    actionButtons += `<button onclick="window.openProgressModal('${order.id}', '${order.user_id}')" class="btn" style="background: rgba(104, 213, 193, 0.15); color: var(--secondary); border: 1px solid rgba(104, 213, 193, 0.3); flex:0.6"><i class="fa-solid fa-camera"></i> Đăng ảnh</button>`;
+                }
                 actionButtons += `
                     <button onclick="window.openEditOrderModal('${order.id}')" class="btn btn-secondary" style="background: rgba(255,255,255,0.1); color: #fff; flex:0.5; border: 1px solid rgba(255,255,255,0.2);"><i class="fa-solid fa-pen"></i> Sửa</button>
                     <select onchange="changeOrderStatus('${order.id}', this.value, '${order.user_id}')" style="background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 12px; flex:1; outline: none; cursor: pointer;">
@@ -211,6 +214,7 @@ window.renderOrders = function(ordersToRender, containerId) {
                 if (order.status === 'cho_xu_ly' && !order.booster_id) {
                     actionButtons += `<button onclick="acceptOrder('${order.id}')" class="btn btn-primary" style="flex:1"><i class="fa-solid fa-handshake"></i> Nhận đơn</button>`;
                 } else if (isAssignedBooster && order.status === 'dang_cay') {
+                    actionButtons += `<button onclick="window.openProgressModal('${order.id}', '${order.user_id}')" class="btn" style="background: rgba(104, 213, 193, 0.15); color: var(--secondary); border: 1px solid rgba(104, 213, 193, 0.3); flex:1"><i class="fa-solid fa-camera"></i> Đăng ảnh tiến độ</button>`;
                     actionButtons += `<button onclick="changeOrderStatus('${order.id}', 'cho_nghiem_thu', '${order.user_id}')" class="btn" style="background: var(--status-cho-nghiem-thu); color: #000; flex:1"><i class="fa-solid fa-check"></i> Gửi kết quả</button>`;
                 }
             } else if (isOwner) {
@@ -971,6 +975,17 @@ function bindEvents() {
         }
     };
 
+    // Progress Image Upload Modal
+    window.openProgressModal = function(orderId, customerId) {
+        const modal = document.getElementById('progressModal');
+        if (!modal) return;
+        document.getElementById('progressOrderId').value = orderId || '';
+        document.getElementById('progressOrderCustomerId').value = customerId || '';
+        document.getElementById('progressForm').reset();
+        const preview = document.getElementById('progressPreview');
+        if (preview) preview.style.display = 'none';
+        modal.classList.add('active');
+    };
 
     // Rating modal
     window.openRatingModal = function(orderId) {
@@ -1204,6 +1219,93 @@ function bindEvents() {
             }
             btn.innerHTML = 'Lưu thay đổi';
             btn.disabled = false;
+        });
+    }
+
+    // Progress File Preview Listener
+    const progressFileInput = document.getElementById('progressFileInput');
+    if (progressFileInput) {
+        progressFileInput.addEventListener('change', function(e) {
+            const preview = document.getElementById('progressPreview');
+            const previewImg = document.getElementById('progressPreviewImg');
+            if (e.target.files && e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    previewImg.src = evt.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            } else {
+                if (preview) preview.style.display = 'none';
+            }
+        });
+    }
+
+    // Progress Form Submit Handler
+    const progressForm = document.getElementById('progressForm');
+    if (progressForm) {
+        progressForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!supabaseClient) return alert('Chưa kết nối Supabase, vui lòng tải lại trang!');
+            const btn = document.getElementById('submitProgressBtn');
+            const orderId = document.getElementById('progressOrderId').value;
+            const customerId = document.getElementById('progressOrderCustomerId').value;
+            const fileInput = document.getElementById('progressFileInput');
+            const captionInput = document.getElementById('progressCaptionInput');
+            
+            if (!fileInput || !fileInput.files[0]) return alert('Vui lòng chọn 1 hình ảnh tiến độ!');
+            
+            const file = fileInput.files[0];
+            const caption = captionInput ? captionInput.value.trim() : '';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG ĐĂNG...';
+            btn.disabled = true;
+
+            try {
+                const ext = file.name.split('.').pop();
+                const fileName = `progress_${orderId}_${Date.now()}.${ext}`;
+                const { error: uploadError } = await supabaseClient.storage.from('chat_images').upload(fileName, file);
+                if (uploadError) throw uploadError;
+
+                const { data: publicData } = supabaseClient.storage.from('chat_images').getPublicUrl(fileName);
+                const publicUrl = publicData.publicUrl;
+
+                const currentUserId = localStorage.getItem('userId');
+                const currentUsername = localStorage.getItem('username') || 'Booster';
+                const messageText = caption ? `📸 [ẢNH TIẾN ĐỘ] ${caption}\nIMAGE:${publicUrl}` : `📸 [ẢNH TIẾN ĐỘ]\nIMAGE:${publicUrl}`;
+
+                // Insert progress image into chat/order_messages table so customer & admin can view in real time
+                const { error: msgErr } = await supabaseClient.from('order_messages').insert([{
+                    order_id: orderId,
+                    sender_id: currentUserId,
+                    sender_name: currentUsername,
+                    message: messageText
+                }]);
+                if (msgErr) throw msgErr;
+
+                // Log action
+                if (typeof window.logOrderAction === 'function') {
+                    window.logOrderAction(orderId, `Booster ${currentUsername} đã cập nhật ảnh tiến độ mới.`);
+                }
+
+                // Send notification to customer if present
+                if (customerId && customerId !== 'null' && customerId !== 'undefined') {
+                    await supabaseClient.from('notifications').insert([{
+                        user_id: customerId,
+                        title: 'Ảnh tiến độ mới 📸',
+                        content: `Booster ${currentUsername} vừa tải lên ảnh tiến độ mới cho đơn hàng của bạn.`,
+                        order_id: orderId
+                    }]);
+                }
+
+                alert('Cập nhật ảnh tiến độ thành công!');
+                document.getElementById('progressModal').classList.remove('active');
+                if (typeof window.fetchOrders === 'function') window.fetchOrders();
+            } catch (err) {
+                alert('Lỗi đăng ảnh tiến độ: ' + err.message);
+            } finally {
+                btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Đăng ảnh tiến độ';
+                btn.disabled = false;
+            }
         });
     }
     

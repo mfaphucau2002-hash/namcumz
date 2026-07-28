@@ -427,6 +427,33 @@
         </div>
     </div>
 
+    <!-- Progress Image Modal -->
+    <div class="modal-overlay" id="progressModal">
+        <div class="modal-content premium-modal" style="max-width: 520px;">
+            <button class="modal-close" onclick="document.getElementById('progressModal').classList.remove('active')" style="top: 25px;"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="modal-title" style="color: var(--secondary); margin-bottom: 20px;"><i class="fa-solid fa-camera"></i> CẬP NHẬT ẢNH TIẾN ĐỘ</h2>
+            <form id="progressForm">
+                <input type="hidden" id="progressOrderId">
+                <input type="hidden" id="progressOrderCustomerId">
+                <div class="form-group">
+                    <label class="form-label">CHỌN HÌNH ẢNH (KẾT QUẢ / TIẾN ĐỘ CÀY)</label>
+                    <input type="file" id="progressFileInput" class="form-control" accept="image/*" required style="padding: 10px;">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">GHI CHÚ TIẾN ĐỘ (TÙY CHỌN)</label>
+                    <input type="text" id="progressCaptionInput" class="form-control" placeholder="Ví dụ: Đã xong nhiệm vụ thế giới, level 90...">
+                </div>
+                <div id="progressPreview" style="margin-bottom: 15px; text-align: center; display: none;">
+                    <img id="progressPreviewImg" src="" style="max-width: 100%; max-height: 200px; border-radius: 10px; border: 1px solid var(--border-light); object-fit: contain;">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel modal-close" onclick="document.getElementById('progressModal').classList.remove('active')">Hủy</button>
+                    <button type="submit" class="btn-submit-premium" id="submitProgressBtn" style="background: linear-gradient(135deg, var(--secondary), #45a090);"><i class="fa-solid fa-cloud-arrow-up"></i> Đăng ảnh tiến độ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Rating Modal -->
     <div class="modal-overlay" id="ratingModal">
         <div class="modal-content premium-modal" style="max-width: 500px;">
