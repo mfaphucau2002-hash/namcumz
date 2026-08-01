@@ -194,27 +194,29 @@ window.renderOrders = function(ordersToRender, containerId) {
             priceHtml = `<span style="font-size: 14px;"><i class="fa-solid fa-lock"></i> Ẩn</span>`;
         }
 
-        // Build action buttons — admin uses 2-row layout to avoid overflow
-        let adminRow1 = '';
-        let adminRow2 = '';
+        // Build action buttons — admin uses multi-row layout to avoid overflow
+        let adminRow1 = ''; // Đăng ảnh + Sửa + Xóa
+        let adminRow2 = ''; // Status select full-width
+        let adminRow3 = ''; // Chat full-width
         let normalButtons = '';
         if (isLoggedIn) {
             if (isAdmin) {
-                // Row 1: Đăng ảnh (if dang_cay) + Sửa
+                // Row 1: Đăng ảnh (if dang_cay) + Sửa + Xóa
                 if (order.status === 'dang_cay') {
-                    adminRow1 += `<button onclick="window.openProgressModal('${order.id}', '${order.user_id}')" class="btn" style="background: rgba(104,213,193,0.15); color: var(--secondary); border: 1px solid rgba(104,213,193,0.3); flex:1; padding: 8px 10px; font-size:13px;"><i class="fa-solid fa-camera"></i> Đăng ảnh</button>`;
+                    adminRow1 += `<button onclick="window.openProgressModal('${order.id}', '${order.user_id}')" class="btn" style="background: rgba(104,213,193,0.15); color: var(--secondary); border: 1px solid rgba(104,213,193,0.3); flex:1; padding: 8px 8px; font-size:12px;"><i class="fa-solid fa-camera"></i> Đăng ảnh</button>`;
                 }
-                adminRow1 += `<button onclick="window.openEditOrderModal('${order.id}')" class="btn" style="background: rgba(255,255,255,0.08); color: #fff; flex:1; border: 1px solid rgba(255,255,255,0.15); padding: 8px 10px; font-size:13px;"><i class="fa-solid fa-pen"></i> Sửa</button>`;
-                // Row 2: Status select (full width)
-                adminRow2 += `<select onchange="window.changeOrderStatus('${order.id}', this.value, '${order.user_id}')" style="background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 12px; width:100%; outline: none; cursor: pointer; font-family: var(--font-main); font-size: 13px;">
-                    <option value="cho_xu_ly" ${order.status === 'cho_xu_ly' ? 'selected' : ''}>Chờ xử lý</option>
-                    <option value="dang_cay" ${order.status === 'dang_cay' ? 'selected' : ''}>Đang cày</option>
-                    <option value="cho_nghiem_thu" ${order.status === 'cho_nghiem_thu' ? 'selected' : ''}>Chờ nghiệm thu</option>
-                    <option value="hoan_thanh" ${order.status === 'hoan_thanh' ? 'selected' : ''}>Hoàn thành</option>
-                    <option value="tam_dung" ${order.status === 'tam_dung' ? 'selected' : ''}>Tạm dừng</option>
+                adminRow1 += `<button onclick="window.openEditOrderModal('${order.id}')" class="btn" style="background: rgba(255,255,255,0.08); color: #fff; flex:1; border: 1px solid rgba(255,255,255,0.15); padding: 8px 8px; font-size:12px;"><i class="fa-solid fa-pen"></i> Sửa</button>`;
+                adminRow1 += `<button onclick="window.deleteOrder('${order.id}', '${order.order_code}')" class="btn" style="background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); flex:1; padding: 8px 8px; font-size:12px;"><i class="fa-solid fa-trash"></i> Xóa</button>`;
+                // Row 2: Status select — full width, standalone
+                adminRow2 = `<select onchange="window.changeOrderStatus('${order.id}', this.value, '${order.user_id}')" style="background: rgba(0,0,0,0.6); color: #fff; border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 12px; width:100%; outline: none; cursor: pointer; font-family: var(--font-main); font-size: 13px;">
+                    <option value="cho_xu_ly" ${order.status === 'cho_xu_ly' ? 'selected' : ''}>• Chờ xử lý</option>
+                    <option value="dang_cay" ${order.status === 'dang_cay' ? 'selected' : ''}>• Đang cày</option>
+                    <option value="cho_nghiem_thu" ${order.status === 'cho_nghiem_thu' ? 'selected' : ''}>• Chờ nghiệm thu</option>
+                    <option value="hoan_thanh" ${order.status === 'hoan_thanh' ? 'selected' : ''}>• Hoàn thành</option>
+                    <option value="tam_dung" ${order.status === 'tam_dung' ? 'selected' : ''}>• Tạm dừng</option>
                 </select>`;
-                // Row 3: Chat button
-                adminRow2 += `<button onclick="window.openChat('${order.id}', '${order.order_code}')" class="btn" style="background: var(--primary); color: #fff; flex:1; padding: 8px 10px; font-size:13px;"><i class="fa-solid fa-comments"></i> Chat</button>`;
+                // Row 3: Chat — full width
+                adminRow3 = `<button onclick="window.openChat('${order.id}', '${order.order_code}')" class="btn" style="background: var(--primary); color: #fff; width:100%; padding: 8px 10px; font-size:13px;"><i class="fa-solid fa-comments"></i> Chat với khách</button>`;
             } else if (isBoosterRole) {
                 if (order.status === 'cho_xu_ly' && !order.booster_id) {
                     normalButtons += `<button onclick="acceptOrder('${order.id}')" class="btn btn-primary" style="flex:1"><i class="fa-solid fa-handshake"></i> Nhận đơn</button>`;
@@ -237,7 +239,6 @@ window.renderOrders = function(ordersToRender, containerId) {
                 }
             }
         }
-        const actionButtons = isAdmin ? (adminRow1 || adminRow2 ? '__ADMIN__' : '') : normalButtons;
 
         let ratingHtml = '';
         if (order.rating) {
@@ -330,10 +331,11 @@ window.renderOrders = function(ordersToRender, containerId) {
                 </div>
                 
                 ${ratingHtml}
-                ${isAdmin && (adminRow1 || adminRow2) ? `
+                ${isAdmin ? `
                 <div class="oc-footer" style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px;">
-                    ${adminRow1 ? `<div style="display:flex; gap:8px;">${adminRow1}</div>` : ''}
-                    <div style="display:flex; gap:8px;">${adminRow2}</div>
+                    <div style="display:flex; gap:8px;">${adminRow1}</div>
+                    <div style="display:flex;">${adminRow2}</div>
+                    <div style="display:flex;">${adminRow3}</div>
                 </div>` : ''}
                 ${!isAdmin && normalButtons ? `<div class="oc-footer" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 15px;">${normalButtons}</div>` : ''}
             </div>
@@ -518,6 +520,32 @@ window.changeOrderStatus = async (orderId, newStatus, customerId) => {
         await window.logOrderAction(orderId, 'Trạng thái đơn được cập nhật thành: ' + getStatusDetails(newStatus).text);
         if(newStatus === 'hoan_thanh') window.sendTelegramNotification(`✅ Đơn #${orderId} đã hoàn thành!`);
         if (typeof window.fetchOrders === 'function') window.fetchOrders();
+    }
+};
+
+// Xóa đơn hàng (chỉ Admin)
+window.deleteOrder = async function(orderId, orderCode) {
+    const userRole = localStorage.getItem('userRole');
+    if (userRole !== 'admin' && userRole !== 'super_admin') return alert('Bạn không có quyền xóa đơn!');
+    
+    const confirmed = confirm(`❌ Bạn chắc chắn muốn XÓA đơn ${orderCode}?\n\nHành động này không thể hoàn tác!`);
+    if (!confirmed) return;
+    if (!supabaseClient) return;
+
+    try {
+        // Xóa tin nhắn liên quan
+        await supabaseClient.from('order_messages').delete().eq('order_id', orderId);
+        // Xóa log liên quan
+        await supabaseClient.from('order_logs').delete().eq('order_id', orderId);
+        // Xóa thông báo liên quan
+        await supabaseClient.from('notifications').delete().eq('order_id', orderId);
+        // Xóa đơn
+        const { error } = await supabaseClient.from('orders').delete().eq('id', orderId);
+        if (error) throw error;
+        alert(`✅ Đơn ${orderCode} đã được xóa thành công!`);
+        if (typeof window.fetchOrders === 'function') window.fetchOrders();
+    } catch (err) {
+        alert('Lỗi khi xóa đơn: ' + err.message);
     }
 };
 
