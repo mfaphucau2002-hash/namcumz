@@ -1,4 +1,4 @@
-﻿/* CSS Variables for Dark Mode Premium Theme - Gaming/Boosting Vibe */
+/* CSS Variables for Dark Mode Premium Theme - Gaming/Boosting Vibe */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800;900&display=swap');
 
 :root {
@@ -747,16 +747,17 @@ body { font-weight: 400; background-color: var(--bg-dark); }
 .oc-progress-fill { height: 100%; background: var(--secondary); border-radius: 10px; transition: width 0.3s ease; }
 .oc-progress-text { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); }
 
-.oc-footer { display: flex; gap: 8px; margin-top: auto; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.05); }
-.oc-footer .btn { flex: 1; padding: 8px 0; font-size: 13px; }
+.oc-footer { gap: 8px; margin-top: auto; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.05); }
+.oc-footer .btn { flex: 1; min-width: 0; padding: 8px 6px; font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.oc-footer select { min-width: 0; font-size: 12.5px; }
 
 /* Stats Sidebar */
 .stats-card { background: var(--card-bg); border-radius: 14px; border: 1px solid var(--border-light); padding: 20px; margin-bottom: 20px; }
 .stats-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; color: #fff; }
 .stat-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .stat-item:last-child { border-bottom: none; }
-.stat-label { color: var(--text-muted); font-size: 14px; }
-.stat-value { font-weight: 700; color: #fff; font-size: 16px; }
+.stat-label { color: var(--text-muted); font-size: 14px; max-width: 55%; }
+.stat-value { font-weight: 700; color: #fff; font-size: 15px; text-align: right; word-break: break-all; max-width: 45%; }
 
 /* Compact Notifications */
 .notification-dropdown { border-radius: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid var(--border-light); padding: 0; width: 320px; right: -10px; }

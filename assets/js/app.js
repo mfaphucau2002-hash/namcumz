@@ -194,42 +194,50 @@ window.renderOrders = function(ordersToRender, containerId) {
             priceHtml = `<span style="font-size: 14px;"><i class="fa-solid fa-lock"></i> Ẩn</span>`;
         }
 
-        let actionButtons = '';
+        // Build action buttons — admin uses 2-row layout to avoid overflow
+        let adminRow1 = '';
+        let adminRow2 = '';
+        let normalButtons = '';
         if (isLoggedIn) {
             if (isAdmin) {
+                // Row 1: Đăng ảnh (if dang_cay) + Sửa
                 if (order.status === 'dang_cay') {
-                    actionButtons += `<button onclick="window.openProgressModal('${order.id}', '${order.user_id}')" class="btn" style="background: rgba(104, 213, 193, 0.15); color: var(--secondary); border: 1px solid rgba(104, 213, 193, 0.3); flex:0.6"><i class="fa-solid fa-camera"></i> Đăng ảnh</button>`;
+                    adminRow1 += `<button onclick="window.openProgressModal('${order.id}', '${order.user_id}')" class="btn" style="background: rgba(104,213,193,0.15); color: var(--secondary); border: 1px solid rgba(104,213,193,0.3); flex:1; padding: 8px 10px; font-size:13px;"><i class="fa-solid fa-camera"></i> Đăng ảnh</button>`;
                 }
-                actionButtons += `
-                    <button onclick="window.openEditOrderModal('${order.id}')" class="btn btn-secondary" style="background: rgba(255,255,255,0.1); color: #fff; flex:0.5; border: 1px solid rgba(255,255,255,0.2);"><i class="fa-solid fa-pen"></i> Sửa</button>
-                    <select onchange="changeOrderStatus('${order.id}', this.value, '${order.user_id}')" style="background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 12px; flex:1; outline: none; cursor: pointer;">
-                        <option value="cho_xu_ly" ${order.status === 'cho_xu_ly' ? 'selected' : ''}>Chờ xử lý</option>
-                        <option value="dang_cay" ${order.status === 'dang_cay' ? 'selected' : ''}>Đang cày</option>
-                        <option value="cho_nghiem_thu" ${order.status === 'cho_nghiem_thu' ? 'selected' : ''}>Chờ nghiệm thu</option>
-                        <option value="hoan_thanh" ${order.status === 'hoan_thanh' ? 'selected' : ''}>Hoàn thành</option>
-                        <option value="tam_dung" ${order.status === 'tam_dung' ? 'selected' : ''}>Tạm dừng</option>
-                    </select>
-                `;
+                adminRow1 += `<button onclick="window.openEditOrderModal('${order.id}')" class="btn" style="background: rgba(255,255,255,0.08); color: #fff; flex:1; border: 1px solid rgba(255,255,255,0.15); padding: 8px 10px; font-size:13px;"><i class="fa-solid fa-pen"></i> Sửa</button>`;
+                // Row 2: Status select (full width)
+                adminRow2 += `<select onchange="window.changeOrderStatus('${order.id}', this.value, '${order.user_id}')" style="background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 12px; width:100%; outline: none; cursor: pointer; font-family: var(--font-main); font-size: 13px;">
+                    <option value="cho_xu_ly" ${order.status === 'cho_xu_ly' ? 'selected' : ''}>Chờ xử lý</option>
+                    <option value="dang_cay" ${order.status === 'dang_cay' ? 'selected' : ''}>Đang cày</option>
+                    <option value="cho_nghiem_thu" ${order.status === 'cho_nghiem_thu' ? 'selected' : ''}>Chờ nghiệm thu</option>
+                    <option value="hoan_thanh" ${order.status === 'hoan_thanh' ? 'selected' : ''}>Hoàn thành</option>
+                    <option value="tam_dung" ${order.status === 'tam_dung' ? 'selected' : ''}>Tạm dừng</option>
+                </select>`;
+                // Row 3: Chat button
+                adminRow2 += `<button onclick="window.openChat('${order.id}', '${order.order_code}')" class="btn" style="background: var(--primary); color: #fff; flex:1; padding: 8px 10px; font-size:13px;"><i class="fa-solid fa-comments"></i> Chat</button>`;
             } else if (isBoosterRole) {
                 if (order.status === 'cho_xu_ly' && !order.booster_id) {
-                    actionButtons += `<button onclick="acceptOrder('${order.id}')" class="btn btn-primary" style="flex:1"><i class="fa-solid fa-handshake"></i> Nhận đơn</button>`;
+                    normalButtons += `<button onclick="acceptOrder('${order.id}')" class="btn btn-primary" style="flex:1"><i class="fa-solid fa-handshake"></i> Nhận đơn</button>`;
                 } else if (isAssignedBooster && order.status === 'dang_cay') {
-                    actionButtons += `<button onclick="window.openProgressModal('${order.id}', '${order.user_id}')" class="btn" style="background: rgba(104, 213, 193, 0.15); color: var(--secondary); border: 1px solid rgba(104, 213, 193, 0.3); flex:1"><i class="fa-solid fa-camera"></i> Đăng ảnh tiến độ</button>`;
-                    actionButtons += `<button onclick="changeOrderStatus('${order.id}', 'cho_nghiem_thu', '${order.user_id}')" class="btn" style="background: var(--status-cho-nghiem-thu); color: #000; flex:1"><i class="fa-solid fa-check"></i> Gửi kết quả</button>`;
+                    normalButtons += `<button onclick="window.openProgressModal('${order.id}', '${order.user_id}')" class="btn" style="background: rgba(104,213,193,0.15); color: var(--secondary); border: 1px solid rgba(104,213,193,0.3); flex:1"><i class="fa-solid fa-camera"></i> Đăng ảnh</button>`;
+                    normalButtons += `<button onclick="window.changeOrderStatus('${order.id}', 'cho_nghiem_thu', '${order.user_id}')" class="btn" style="background: var(--status-cho-nghiem-thu); color: #000; flex:1"><i class="fa-solid fa-check"></i> Gửi kết quả</button>`;
                 }
             } else if (isOwner) {
                 if (order.status === 'cho_nghiem_thu') {
-                    actionButtons += `<button onclick="changeOrderStatus('${order.id}', 'hoan_thanh', '${order.user_id}')" class="btn" style="background: var(--status-hoan-thanh); color: #fff; flex:1"><i class="fa-solid fa-clipboard-check"></i> Nghiệm thu</button>`;
+                    normalButtons += `<button onclick="window.changeOrderStatus('${order.id}', 'hoan_thanh', '${order.user_id}')" class="btn" style="background: var(--status-hoan-thanh); color: #fff; flex:1"><i class="fa-solid fa-clipboard-check"></i> Nghiệm thu</button>`;
                 }
             }
 
-            if (isOwner && order.status !== 'cho_xu_ly') {
-                actionButtons += `<button onclick="window.openTicketModal('${order.id}')" class="btn btn-outline" style="border: 1px solid var(--status-tam-dung); color: var(--status-tam-dung); flex: 0.5;"><i class="fa-solid fa-triangle-exclamation"></i> Báo cáo</button>`;
-            }
-            if (canViewPrivate) {
-                actionButtons += `<button onclick="window.openChat('${order.id}', '${order.order_code}')" class="btn" style="background: var(--primary); color: #fff; flex: 1;"><i class="fa-solid fa-comments"></i> Chat</button>`;
+            if (!isAdmin) {
+                if (isOwner && order.status !== 'cho_xu_ly') {
+                    normalButtons += `<button onclick="window.openTicketModal('${order.id}')" class="btn btn-outline" style="border: 1px solid var(--status-tam-dung); color: var(--status-tam-dung); flex: 0.5; padding: 8px 10px;"><i class="fa-solid fa-triangle-exclamation"></i> Báo cáo</button>`;
+                }
+                if (canViewPrivate) {
+                    normalButtons += `<button onclick="window.openChat('${order.id}', '${order.order_code}')" class="btn" style="background: var(--primary); color: #fff; flex: 1;"><i class="fa-solid fa-comments"></i> Chat</button>`;
+                }
             }
         }
+        const actionButtons = isAdmin ? (adminRow1 || adminRow2 ? '__ADMIN__' : '') : normalButtons;
 
         let ratingHtml = '';
         if (order.rating) {
@@ -244,7 +252,7 @@ window.renderOrders = function(ordersToRender, containerId) {
                 </div>
             `;
         } else if (order.status === 'hoan_thanh' && isOwner) {
-            actionButtons += `<button onclick="openRatingModal('${order.id}')" class="btn" style="background: var(--genshin-gold); color: #000; flex: 1;"><i class="fa-solid fa-star"></i> Đánh giá</button>`;
+            normalButtons += `<button onclick="window.openRatingModal('${order.id}')" class="btn" style="background: var(--genshin-gold); color: #000; flex: 1;"><i class="fa-solid fa-star"></i> Đánh giá</button>`;
         }
 
         let displayTitle = 'Không có mô tả';
@@ -322,7 +330,12 @@ window.renderOrders = function(ordersToRender, containerId) {
                 </div>
                 
                 ${ratingHtml}
-                ${actionButtons ? `<div class="oc-footer" style="display: flex; gap: 10px; margin-top: 15px;">${actionButtons}</div>` : ''}
+                ${isAdmin && (adminRow1 || adminRow2) ? `
+                <div class="oc-footer" style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px;">
+                    ${adminRow1 ? `<div style="display:flex; gap:8px;">${adminRow1}</div>` : ''}
+                    <div style="display:flex; gap:8px;">${adminRow2}</div>
+                </div>` : ''}
+                ${!isAdmin && normalButtons ? `<div class="oc-footer" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 15px;">${normalButtons}</div>` : ''}
             </div>
         `;
         container.innerHTML += html;
@@ -389,7 +402,15 @@ window.updateDashboardStats = function(orders) {
     let html = '';
 
     if (userRole === 'admin' || userRole === 'super_admin') {
-        const revenue = orders.filter(o => o.status === 'hoan_thanh').reduce((sum, o) => sum + (o.price || 0), 0);
+        const revenue = orders.filter(o => o.status === 'hoan_thanh').reduce((sum, o) => sum + (Number(o.price) || 0), 0);
+        const revenueFormatted = revenue.toLocaleString('vi-VN') + ' đ';
+        const overdueCount = orders.filter(o => {
+            if (!o.content) return false;
+            const dlMatch = o.content.match(/Deadline:\s*([^\n]+)/);
+            if (!dlMatch) return false;
+            const dl = new Date(dlMatch[1]);
+            return !isNaN(dl) && dl < new Date() && o.status !== 'hoan_thanh';
+        }).length;
         html = `
         <div class="stats-card">
             <h3 class="stats-title"><i class="fa-solid fa-crown" style="color: var(--genshin-gold)"></i> QUẢN TRỊ VIÊN</h3>
@@ -399,7 +420,7 @@ window.updateDashboardStats = function(orders) {
             </div>
             <div class="stat-item">
                 <span class="stat-label">Tổng doanh thu</span>
-                <span class="stat-value count-up-price" data-val="${revenue}" style="color: var(--status-hoan-thanh)">0</span>
+                <span class="stat-value" style="color: var(--status-hoan-thanh); font-size: 14px;">${revenueFormatted}</span>
             </div>
             <div class="stat-item">
                 <span class="stat-label">Khiếu nại / Report</span>
@@ -407,12 +428,13 @@ window.updateDashboardStats = function(orders) {
             </div>
             <div class="stat-item">
                 <span class="stat-label">Đơn quá hạn</span>
-                <span class="stat-value" style="color: #f43f5e">0</span>
+                <span class="stat-value" style="color: #f43f5e">${overdueCount}</span>
             </div>
         </div>`;
     } else if (userRole === 'booster') {
         const myOrders = orders.filter(o => o.booster_id === currentUserId);
-        const income = myOrders.filter(o => o.status === 'hoan_thanh').reduce((sum, o) => sum + (o.price || 0), 0);
+        const income = myOrders.filter(o => o.status === 'hoan_thanh').reduce((sum, o) => sum + (Number(o.price) || 0), 0);
+        const incomeFormatted = income.toLocaleString('vi-VN') + ' đ';
         const active = myOrders.filter(o => o.status === 'dang_cay').length;
         html = `
         <div class="stats-card">
@@ -423,7 +445,7 @@ window.updateDashboardStats = function(orders) {
             </div>
             <div class="stat-item">
                 <span class="stat-label">Thu nhập ước tính</span>
-                <span class="stat-value count-up-price" data-val="${income}" style="color: var(--status-hoan-thanh)">0</span>
+                <span class="stat-value" style="color: var(--status-hoan-thanh); font-size: 14px;">${incomeFormatted}</span>
             </div>
             <div class="stat-item">
                 <span class="stat-label">Điểm đánh giá</span>
@@ -436,7 +458,8 @@ window.updateDashboardStats = function(orders) {
         </div>`;
     } else {
         const myOrders = orders.filter(o => (o.user_id === currentUserId) || (o.renter_name === currentUsername));
-        const spent = myOrders.filter(o => o.status === 'hoan_thanh').reduce((sum, o) => sum + (o.price || 0), 0);
+        const spent = myOrders.filter(o => o.status === 'hoan_thanh').reduce((sum, o) => sum + (Number(o.price) || 0), 0);
+        const spentFormatted = spent.toLocaleString('vi-VN') + ' đ';
         const active = myOrders.filter(o => o.status === 'dang_cay').length;
         const waiting = myOrders.filter(o => o.status === 'cho_nghiem_thu').length;
         html = `
@@ -452,7 +475,7 @@ window.updateDashboardStats = function(orders) {
             </div>
             <div class="stat-item">
                 <span class="stat-label">Tổng chi tiêu</span>
-                <span class="stat-value count-up-price" data-val="${spent}" style="color: var(--status-hoan-thanh)">0</span>
+                <span class="stat-value" style="color: var(--status-hoan-thanh); font-size: 14px;">${spentFormatted}</span>
             </div>
         </div>`;
     }
