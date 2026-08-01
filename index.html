@@ -251,12 +251,12 @@
     <!-- HEADER -->
     <header class="lp-header" id="lpHeader">
         <a href="/" class="lp-logo">
-            <!-- Icon is hardcoded for logo -->
             <img src="assets/images/logo.jpg" alt="Logo" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
             NAMCUMZ
         </a>
-        <nav class="lp-nav">
+        <nav class="lp-nav" id="lpNav">
             <a href="#dich-vu">Dịch vụ</a>
+            <a href="#bang-gia" onclick="openPriceTableModal(); return false;">Bảng giá</a>
             <a href="#quy-trinh">Quy trình</a>
             <a href="#booster">Booster</a>
             <a href="#tv">Teyvat TV</a>
@@ -265,8 +265,162 @@
             <a href="/login.html" class="lp-btn-login">Đăng nhập</a>
             <a href="/login.html" class="lp-btn-primary shimmer-btn">Tạo đơn ngay</a>
         </div>
-        <button class="hamburger" onclick="window.location.href='/login.html'"><i class="fa-solid fa-bars"></i></button>
+        <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
     </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileMenuOverlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); z-index:998; backdrop-filter:blur(4px);" onclick="closeMobileMenu()"></div>
+    <div id="mobileMenu" style="display:none; position:fixed; top:0; right:0; bottom:0; width:280px; background:#0D1424; z-index:999; border-left:1px solid rgba(224,194,118,0.2); padding:20px; flex-direction:column; gap:12px; overflow-y:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1);">
+            <span style="font-family:var(--font-head); font-weight:700; font-size:18px; background:linear-gradient(90deg,#9A74F5,#68D5C1); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">NAMCUMZ</span>
+            <button onclick="closeMobileMenu()" style="background:transparent; border:none; color:#fff; font-size:20px; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="mobileMenuLinks" style="display:flex; flex-direction:column; gap:8px;">
+            <a href="#dich-vu" onclick="closeMobileMenu()" style="color:#F7F3E8; padding:12px 16px; border-radius:8px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); font-weight:600; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-gamepad" style="color:#9A74F5;"></i> Dịch vụ</a>
+            <a href="#" onclick="openPriceTableModal(); closeMobileMenu(); return false;" style="color:#F7F3E8; padding:12px 16px; border-radius:8px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); font-weight:600; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-list-ol" style="color:#E0C276;"></i> Bảng giá</a>
+            <a href="#quy-trinh" onclick="closeMobileMenu()" style="color:#F7F3E8; padding:12px 16px; border-radius:8px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); font-weight:600; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-route" style="color:#68D5C1;"></i> Quy trình</a>
+            <a href="#booster" onclick="closeMobileMenu()" style="color:#F7F3E8; padding:12px 16px; border-radius:8px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); font-weight:600; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-bolt" style="color:#E0C276;"></i> Booster</a>
+            <a href="#tv" onclick="closeMobileMenu()" style="color:#F7F3E8; padding:12px 16px; border-radius:8px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); font-weight:600; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-tv" style="color:#9A74F5;"></i> Teyvat TV</a>
+        </div>
+        <div id="mobileMenuAuth" style="margin-top:auto; padding-top:20px; border-top:1px solid rgba(255,255,255,0.1); display:flex; flex-direction:column; gap:10px;">
+            <a href="/login.html" style="color:#F7F3E8; padding:12px 16px; border-radius:8px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); font-weight:600; text-align:center;">Đăng nhập</a>
+            <a href="/login.html" class="lp-btn-primary" style="text-align:center; padding:12px 16px; border-radius:8px; display:block;">Tạo đơn ngay</a>
+        </div>
+    </div>
+
+    <!-- SERVICE DETAIL MODAL -->
+    <div id="serviceDetailModal" style="display:none; position:fixed; inset:0; z-index:2000; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); overflow-y:auto; padding:20px;">
+        <div style="max-width:900px; margin:0 auto; background:#0D1424; border-radius:20px; border:1px solid rgba(224,194,118,0.3); overflow:hidden;">
+            <!-- Modal Header -->
+            <div style="background:linear-gradient(135deg, rgba(154,116,245,0.2), rgba(104,213,193,0.1)); padding:24px 28px; border-bottom:1px solid rgba(224,194,118,0.2); display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h2 id="serviceModalTitle" style="font-family:var(--font-head); font-size:1.6rem; margin:0; color:#E0C276;">Bảng Giá Dịch Vụ</h2>
+                    <p style="color:#AEB8CC; margin:4px 0 0; font-size:14px;">NAMCUMZ - Cày thuê Genshin Impact minh bạch</p>
+                </div>
+                <button onclick="closeServiceModal()" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); color:#fff; width:40px; height:40px; border-radius:50%; cursor:pointer; font-size:18px; transition:0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <!-- Price Table Content -->
+            <div style="padding:28px; display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:20px;">
+                <!-- RUSH MAP -->
+                <div style="background:rgba(154,116,245,0.08); border:1px solid rgba(154,116,245,0.25); border-radius:14px; padding:18px;">
+                    <h3 style="color:#9A74F5; font-size:1rem; margin:0 0 14px; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-map-location-dot"></i> RUSH MAP</h3>
+                    <table style="width:100%; font-size:13px; border-collapse:collapse;">
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Mondstadt</td><td style="text-align:right; color:#E0C276; font-weight:600;">120k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Long Tích Tuyết Sơn</td><td style="text-align:right; color:#E0C276; font-weight:600;">50k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Liyue</td><td style="text-align:right; color:#E0C276; font-weight:600;">150k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Trấm Ngọc Cốc</td><td style="text-align:right; color:#E0C276; font-weight:600;">90k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Vực Đá Sâu</td><td style="text-align:right; color:#E0C276; font-weight:600;">120k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Inazuma</td><td style="text-align:right; color:#E0C276; font-weight:600;">300k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Sumeru Rừng Mưa</td><td style="text-align:right; color:#E0C276; font-weight:600;">400k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Sumeru Sa Mạc</td><td style="text-align:right; color:#E0C276; font-weight:600;">450k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Fontaine</td><td style="text-align:right; color:#E0C276; font-weight:600;">450k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Biển Ký Nguyên Cũ</td><td style="text-align:right; color:#E0C276; font-weight:600;">150k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Enkanomiya</td><td style="text-align:right; color:#E0C276; font-weight:600;">150k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Nod-Krai</td><td style="text-align:right; color:#E0C276; font-weight:600;">450k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Núi Thánh Viễn Cổ</td><td style="text-align:right; color:#E0C276; font-weight:600;">150k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Thần Điện Không Gian</td><td style="text-align:right; color:#E0C276; font-weight:600;">150k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Sương Nguyệt</td><td style="text-align:right; color:#E0C276; font-weight:600;">250k</td></tr>
+                    </table>
+                </div>
+                <!-- ĐIỂM DỊCH CHUYỂN -->
+                <div style="background:rgba(104,213,193,0.08); border:1px solid rgba(104,213,193,0.25); border-radius:14px; padding:18px;">
+                    <h3 style="color:#68D5C1; font-size:1rem; margin:0 0 14px; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-location-dot"></i> ĐIỂM DỊCH CHUYỂN</h3>
+                    <table style="width:100%; font-size:13px; border-collapse:collapse;">
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Mondstadt</td><td style="text-align:right; color:#E0C276; font-weight:600;">25k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Liyue</td><td style="text-align:right; color:#E0C276; font-weight:600;">25k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Inazuma</td><td style="text-align:right; color:#E0C276; font-weight:600;">30k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Sumeru</td><td style="text-align:right; color:#E0C276; font-weight:600;">65k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Fontaine</td><td style="text-align:right; color:#E0C276; font-weight:600;">65k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Nod-Krai</td><td style="text-align:right; color:#E0C276; font-weight:600;">30k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Núi Thánh Viễn Cổ</td><td style="text-align:right; color:#E0C276; font-weight:600;">25k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Biển Ký Nguyên Cũ</td><td style="text-align:right; color:#E0C276; font-weight:600;">25k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Enkanomiya</td><td style="text-align:right; color:#E0C276; font-weight:600;">30k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Điểm full Teyvat</td><td style="text-align:right; color:#E0C276; font-weight:600;">200k</td></tr>
+                    </table>
+                </div>
+                <!-- THẦN ĐỒNG -->
+                <div style="background:rgba(224,194,118,0.08); border:1px solid rgba(224,194,118,0.25); border-radius:14px; padding:18px;">
+                    <h3 style="color:#E0C276; font-size:1rem; margin:0 0 14px; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-gem"></i> THẦN ĐỒNG</h3>
+                    <table style="width:100%; font-size:13px; border-collapse:collapse;">
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Phong</td><td style="text-align:right; color:#E0C276; font-weight:600;">30k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Nham</td><td style="text-align:right; color:#E0C276; font-weight:600;">50k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Lôi</td><td style="text-align:right; color:#E0C276; font-weight:600;">70k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Thảo</td><td style="text-align:right; color:#E0C276; font-weight:600;">140k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Thủy</td><td style="text-align:right; color:#E0C276; font-weight:600;">90k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Hỏa</td><td style="text-align:right; color:#E0C276; font-weight:600;">100k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Băng</td><td style="text-align:right; color:#E0C276; font-weight:600;">100k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Cá chép</td><td style="text-align:right; color:#E0C276; font-weight:600;">30k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Mã não</td><td style="text-align:right; color:#E0C276; font-weight:600;">30k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Lưu Minh Thạch</td><td style="text-align:right; color:#E0C276; font-weight:600;">30k</td></tr>
+                    </table>
+                </div>
+                <!-- THẺ THÁNG & PACK ĐÁ -->
+                <div style="background:rgba(248,113,113,0.08); border:1px solid rgba(248,113,113,0.25); border-radius:14px; padding:18px;">
+                    <h3 style="color:#f87171; font-size:1rem; margin:0 0 14px; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-credit-card"></i> THẺ THÁNG &amp; PACK ĐÁ</h3>
+                    <table style="width:100%; font-size:13px; border-collapse:collapse;">
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Không Nguyệt Chúc Phúc</td><td style="text-align:right; color:#E0C276; font-weight:600;">85k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">60 Đá Sáng Thế</td><td style="text-align:right; color:#E0C276; font-weight:600;">20k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">300+30 Đá Sáng Thế</td><td style="text-align:right; color:#E0C276; font-weight:600;">90k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">980+110 Đá Sáng Thế</td><td style="text-align:right; color:#E0C276; font-weight:600;">270k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">1980+260 Đá Sáng Thế</td><td style="text-align:right; color:#E0C276; font-weight:600;">570k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">3280+600 Đá Sáng Thế</td><td style="text-align:right; color:#E0C276; font-weight:600;">950k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">6480+1600 Đá Sáng Thế</td><td style="text-align:right; color:#E0C276; font-weight:600;">1.850k</td></tr>
+                        <tr style="border-top:1px solid rgba(255,255,255,0.1);"><td style="padding:8px 0 4px; color:#f87171; font-weight:700;">FULL PACK GENSHIN</td><td style="text-align:right; color:#f87171; font-weight:800;">3.800k</td></tr>
+                    </table>
+                </div>
+                <!-- CHAR -->
+                <div style="background:rgba(154,116,245,0.08); border:1px solid rgba(154,116,245,0.25); border-radius:14px; padding:18px;">
+                    <h3 style="color:#9A74F5; font-size:1rem; margin:0 0 14px; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-user-ninja"></i> CHAR</h3>
+                    <table style="width:100%; font-size:13px; border-collapse:collapse;">
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Up Lv90</td><td style="text-align:right; color:#E0C276; font-weight:600;">25k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Vũ Khí</td><td style="text-align:right; color:#E0C276; font-weight:600;">15k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Thiên Phú</td><td style="text-align:right; color:#E0C276; font-weight:600;">40k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Build Char xài tạm</td><td style="text-align:right; color:#E0C276; font-weight:600;">50k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Build Char ổn định</td><td style="text-align:right; color:#E0C276; font-weight:600;">150k</td></tr>
+                    </table>
+                </div>
+                <!-- CONTENT GAME -->
+                <div style="background:rgba(104,213,193,0.08); border:1px solid rgba(104,213,193,0.25); border-radius:14px; padding:18px;">
+                    <h3 style="color:#68D5C1; font-size:1rem; margin:0 0 14px; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-chess-rook"></i> CONTENT GAME</h3>
+                    <table style="width:100%; font-size:13px; border-collapse:collapse;">
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">La hoàn tầng 12</td><td style="text-align:right; color:#E0C276; font-weight:600;">30k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Nhà hát full 12 tầng</td><td style="text-align:right; color:#E0C276; font-weight:600;">80k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Áo Cánh Diff 6</td><td style="text-align:right; color:#E0C276; font-weight:600;">45k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Combo toàn bộ ở trên</td><td style="text-align:right; color:#E0C276; font-weight:600;">130k</td></tr>
+                    </table>
+                </div>
+                <!-- CHĂM ACC -->
+                <div style="background:rgba(224,194,118,0.08); border:1px solid rgba(224,194,118,0.25); border-radius:14px; padding:18px;">
+                    <h3 style="color:#E0C276; font-size:1rem; margin:0 0 14px; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-bolt"></i> CHĂM ACC</h3>
+                    <table style="width:100%; font-size:13px; border-collapse:collapse;">
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Daily xã nhựa</td><td style="text-align:right; color:#E0C276; font-weight:600;">140k/tháng</td></tr>
+                    </table>
+                </div>
+                <!-- QUEST -->
+                <div style="background:rgba(248,113,113,0.08); border:1px solid rgba(248,113,113,0.25); border-radius:14px; padding:18px;">
+                    <h3 style="color:#f87171; font-size:1rem; margin:0 0 14px; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-scroll"></i> QUEST</h3>
+                    <table style="width:100%; font-size:13px; border-collapse:collapse;">
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Ma Thần (Trước Natlan)</td><td style="text-align:right; color:#E0C276; font-weight:600;">20k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Ma Thần (Từ Natlan)</td><td style="text-align:right; color:#E0C276; font-weight:600;">25k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Truyền Thuyết</td><td style="text-align:right; color:#E0C276; font-weight:600;">10-15k/màn</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Nhiệm vụ đồng hành</td><td style="text-align:right; color:#E0C276; font-weight:600;">5k/màn</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Nhiệm vụ thế giới</td><td style="text-align:right; color:#E0C276; font-weight:600;">5-10k/quest</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">Aranyaka (full)</td><td style="text-align:right; color:#E0C276; font-weight:600;">140k</td></tr>
+                        <tr><td style="padding:4px 0; color:#AEB8CC;">76 Aranara</td><td style="text-align:right; color:#E0C276; font-weight:600;">35k</td></tr>
+                    </table>
+                </div>
+            </div>
+            <!-- CTA Footer -->
+            <div style="padding:20px 28px; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                <p style="color:#AEB8CC; font-size:13px; margin:0;"><i class="fa-solid fa-circle-info" style="color:#68D5C1;"></i> Giá có thể thay đổi tùy điều kiện tài khoản. Liên hệ để được báo giá chính xác.</p>
+                <div style="display:flex; gap:10px;">
+                    <button onclick="closeServiceModal()" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); color:#fff; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:600;">Đóng</button>
+                    <a id="modalActionBtn" href="/dashboard.html" class="lp-btn-primary" style="padding:10px 24px; border-radius:8px; font-weight:700;">Tạo đơn ngay</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- HERO -->
     <section class="lp-hero">
@@ -331,7 +485,7 @@
                     <p class="lp-service-desc">Clear 36 sao La Hoàn an toàn bằng kỹ năng thực sự. Nhận ngay tối đa Nguyên Thạch mỗi kỳ.</p>
                     <div class="lp-service-footer">
                         <div class="lp-service-price">Từ 50.000đ <span>/ kỳ</span></div>
-                        <button class="lp-btn-outline" onclick="window.location.href='/login.html'">Xem chi tiết</button>
+                <button class="lp-btn-outline" onclick="handleServiceBtn(this, '/dashboard.html')">Xem chi tiết</button>
                     </div>
                 </div>
             </div>
@@ -346,7 +500,7 @@
                     <p class="lp-service-desc">Đạt 100% tiến độ khám phá, thu thập rương, nhặt Thần Đồng nhanh chóng và an toàn.</p>
                     <div class="lp-service-footer">
                         <div class="lp-service-price">Từ 100.000đ <span>/ vùng</span></div>
-                        <button class="lp-btn-outline" onclick="window.location.href='/login.html'">Xem chi tiết</button>
+                <button class="lp-btn-outline" onclick="handleServiceBtn(this, '/dashboard.html')">Xem chi tiết</button>
                     </div>
                 </div>
             </div>
@@ -360,7 +514,7 @@
                     <p class="lp-service-desc">Ủy thác hàng ngày, xả nhựa farm vật liệu/thánh di vật. Duy trì tài khoản đều đặn.</p>
                     <div class="lp-service-footer">
                         <div class="lp-service-price">Từ 15.000đ <span>/ ngày</span></div>
-                        <button class="lp-btn-outline" onclick="window.location.href='/login.html'">Xem chi tiết</button>
+                <button class="lp-btn-outline" onclick="handleServiceBtn(this, '/dashboard.html')">Xem chi tiết</button>
                     </div>
                 </div>
             </div>
@@ -374,7 +528,7 @@
                     <p class="lp-service-desc">Farm nguyên liệu đột phá, thiên phú và cày cấp độ nhân vật/vũ khí nhanh nhất.</p>
                     <div class="lp-service-footer">
                         <div class="lp-service-price">Tùy chọn</div>
-                        <button class="lp-btn-outline" onclick="window.location.href='/login.html'">Xem chi tiết</button>
+                <button class="lp-btn-outline" onclick="handleServiceBtn(this, '/dashboard.html')">Xem chi tiết</button>
                     </div>
                 </div>
             </div>
@@ -389,7 +543,7 @@
                     <p class="lp-service-desc">Vượt ải Nhà Hát Giả Tưởng chế độ Khó/Hỗn Kháng. Đội hình được tư vấn tối ưu.</p>
                     <div class="lp-service-footer">
                         <div class="lp-service-price">Từ 80.000đ <span>/ kỳ</span></div>
-                        <button class="lp-btn-outline" onclick="window.location.href='/login.html'">Xem chi tiết</button>
+                <button class="lp-btn-outline" onclick="handleServiceBtn(this, '/dashboard.html')">Xem chi tiết</button>
                     </div>
                 </div>
             </div>
@@ -403,7 +557,7 @@
                     <p class="lp-service-desc">Cày sự kiện, câu cá, đánh boss ẩn hoặc bất cứ yêu cầu nào khác từ bạn.</p>
                     <div class="lp-service-footer">
                         <div class="lp-service-price">Liên hệ</div>
-                        <button class="lp-btn-outline" onclick="window.location.href='/login.html'">Xem chi tiết</button>
+                <button class="lp-btn-outline" onclick="handleServiceBtn(this, '/dashboard.html')">Xem chi tiết</button>
                     </div>
                 </div>
             </div>
@@ -875,8 +1029,63 @@
                     <a href="/dashboard.html" class="lp-btn-primary shimmer-btn">Bảng điều khiển</a>
                 `;
             }
-            if (hamburger) {
-                hamburger.setAttribute('onclick', "window.location.href='/dashboard.html'");
+            // Update mobile menu auth section
+            const mobileAuth = document.getElementById('mobileMenuAuth');
+            if (mobileAuth) {
+                mobileAuth.innerHTML = `
+                    <a href="/dashboard.html" style="color:#F7F3E8; padding:12px 16px; border-radius:8px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); font-weight:600; display:flex; align-items:center; gap:10px;">
+                        <div style="width:32px;height:32px;background:linear-gradient(135deg,#9A74F5,#68D5C1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:#fff;">${initials}</div>
+                        <div><div style="font-weight:700;">${username}</div><div style="color:${roleColor};font-size:11px;">${roleLabel}</div></div>
+                    </a>
+                    <a href="/dashboard.html" class="lp-btn-primary" style="text-align:center; padding:12px 16px; border-radius:8px; display:block;">Bảng điều khiển</a>
+                `;
+            }
+            // Update modal action button
+            const modalBtn = document.getElementById('modalActionBtn');
+            if (modalBtn) { modalBtn.href = '/dashboard.html'; modalBtn.innerText = 'Tạo đơn ngay'; }
+        }
+
+        // ── Mobile Menu ──
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const overlay = document.getElementById('mobileMenuOverlay');
+            const isOpen = menu.style.display === 'flex';
+            menu.style.display = isOpen ? 'none' : 'flex';
+            overlay.style.display = isOpen ? 'none' : 'block';
+            document.body.style.overflow = isOpen ? '' : 'hidden';
+        }
+        function closeMobileMenu() {
+            document.getElementById('mobileMenu').style.display = 'none';
+            document.getElementById('mobileMenuOverlay').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        // ── Service / Price Table Modal ──
+        function openPriceTableModal() {
+            document.getElementById('serviceDetailModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        function closeServiceModal() {
+            document.getElementById('serviceDetailModal').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+        // Close on backdrop click
+        document.getElementById('serviceDetailModal').addEventListener('click', function(e) {
+            if (e.target === this) closeServiceModal();
+        });
+        // Close on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') { closeServiceModal(); closeMobileMenu(); }
+        });
+
+        // ── Smart Service Button ──
+        // If logged in → open price table modal; if not → go to login
+        function handleServiceBtn(btn, dashUrl) {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (isLoggedIn) {
+                openPriceTableModal();
+            } else {
+                window.location.href = '/login.html';
             }
         }
     </script>
