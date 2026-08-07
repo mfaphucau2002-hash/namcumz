@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết Nạp Game - NAMCUMZ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/napgame.css">
+</head>
+<body class="ng-page">
+
+    <!-- HEADER (Kế thừa) -->
+    <header class="lp-header" id="lpHeader">
+        <a href="/" class="lp-logo">
+            <img src="assets/images/logo.jpg" alt="Logo" style="width: 32px; height: 32px; border-radius: 50%;">
+            NAMCUMZ
+        </a>
+        <nav class="lp-nav" id="lpNav">
+            <a href="/index.html#dich-vu">Dịch vụ Cày Thuê</a>
+            <a href="napgame.html" style="color: var(--lp-gold);">Nạp Game</a>
+        </nav>
+        <div class="lp-actions">
+            <a href="dashboard.html" class="lp-btn-primary shimmer-btn">Đăng nhập</a>
+        </div>
+    </header>
+
+    <div class="ng-detail-container">
+        
+        <!-- HEADER CHI TIẾT GAME -->
+        <div class="ng-detail-header">
+            <img src="assets/images/games/genshin_icon.webp" alt="Game Icon" class="ng-detail-icon" onerror="this.src='assets/images/logo.jpg'" id="detailGameIcon">
+            <div class="ng-detail-title">
+                <h1 id="detailGameName">Đang tải...</h1>
+                <div class="ng-detail-rating">
+                    <span class="ng-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                    <span id="detailRating">5.0</span>
+                    <span id="detailSold">-- đã bán</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="ng-detail-layout">
+            
+            <!-- CỘT TRÁI: CHỌN GÓI & FORM -->
+            <div class="ng-col-left">
+                
+                <!-- Bảng giá nạp -->
+                <div class="ng-detail-block">
+                    <div class="ng-block-title">Chọn gói nạp</div>
+                    
+                    <div class="ng-pkg-tabs">
+                        <button class="ng-tab-btn active">Tất cả</button>
+                        <button class="ng-tab-btn">Thẻ tháng/Pack đá</button>
+                        <button class="ng-tab-btn">Battle Pass</button>
+                        <button class="ng-tab-btn">Bundle pack</button>
+                    </div>
+
+                    <div class="ng-pkg-grid" id="pkgGrid">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+
+                <!-- Form thông tin -->
+                <div class="ng-detail-block">
+                    <div class="ng-block-title">Thông tin đơn hàng</div>
+                    
+                    <div class="ng-form-grid">
+                        <div class="ng-form-group">
+                            <label>SĐT Zalo liên hệ</label>
+                            <input type="text" id="formPhone" placeholder="Nhập SĐT Zalo liên hệ">
+                        </div>
+                        
+                        <div class="ng-form-group" id="formGroupServer">
+                            <label>Máy chủ</label>
+                            <select id="formServer">
+                                <option value="Vui lòng chọn máy chủ">Vui lòng chọn máy chủ</option>
+                                <option value="Asia">Asia</option>
+                                <option value="America">America</option>
+                                <option value="Europe">Europe</option>
+                                <option value="TW/HK/MO">TW, HK, MO</option>
+                            </select>
+                        </div>
+                        
+                        <div class="ng-form-group" id="formGroupUid">
+                            <label>UID</label>
+                            <input type="text" id="formUid" placeholder="Nhập UID">
+                        </div>
+                        
+                        <!-- Dùng cho Nạp Login -->
+                        <div class="ng-form-group" id="formGroupUsername" style="display: none;">
+                            <label>Tên đăng nhập</label>
+                            <input type="text" id="formUsername" placeholder="Nhập tên đăng nhập">
+                        </div>
+                        <div class="ng-form-group" id="formGroupPassword" style="display: none;">
+                            <label>Mật khẩu</label>
+                            <input type="password" id="formPassword" placeholder="Nhập mật khẩu">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mô tả -->
+                <div class="ng-detail-block">
+                    <div class="ng-block-title">Mô tả</div>
+                    <div style="font-size: 14px; color: #a1a1aa; line-height: 1.6;">
+                        <strong style="color: #fff;"><i class="fa-solid fa-gamepad"></i> Hỗ trợ Top-Up an toàn, nhanh chóng.</strong><br><br>
+                        NAMCUMZ cam kết mang đến dịch vụ nạp game với giá rẻ nhất thị trường.<br>
+                        - Xử lý đơn trong vòng 5 phút.<br>
+                        - 100% có bill hóa đơn rõ ràng.<br>
+                        - Hỗ trợ đổi trả, bảo hành nếu có lỗi từ hệ thống.<br><br>
+                        <strong style="color: #fff;"><i class="fa-solid fa-mobile-screen-button"></i> Nền tảng hỗ trợ:</strong><br>
+                        - Mobile & PC<br>
+                        - Không hỗ trợ PlayStation (PS4/PS5).
+                    </div>
+                </div>
+            </div>
+
+            <!-- CỘT PHẢI: STICKY CART -->
+            <div class="ng-col-right">
+                <div class="ng-summary-card">
+                    <div class="ng-block-title" style="margin-bottom: 20px;">
+                        <i class="fa-solid fa-file-invoice"></i> Thông tin đơn hàng
+                    </div>
+                    
+                    <div id="emptyCart" class="ng-summary-empty">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <p>Giỏ hàng trống<br><span style="font-size: 12px;">Chọn gói nạp để thêm vào giỏ hàng</span></p>
+                    </div>
+
+                    <div id="filledCart" style="display: none;">
+                        <div class="ng-summary-item">
+                            <img src="assets/images/logo.jpg" class="ng-summary-item-img">
+                            <div class="ng-summary-item-info">
+                                <div class="ng-summary-item-name" id="cartPkgName">--</div>
+                                <div class="ng-summary-item-price" id="cartPkgPrice">0 đ</div>
+                            </div>
+                        </div>
+
+                        <div class="ng-total-row">
+                            <span class="ng-total-label">Tổng cộng</span>
+                            <span class="ng-total-price" id="cartTotalPrice">0 đ</span>
+                        </div>
+
+                        <button class="ng-btn-checkout" id="btnSubmitOrder" onclick="submitDetailOrder()" disabled>Thanh toán</button>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/authMediaConfig.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/napgame.js"></script>
+</body>
+</html>
