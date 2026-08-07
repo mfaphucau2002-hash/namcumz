@@ -529,6 +529,136 @@
     50% { border-color: var(--lp-gold); }
 }
 
+/* ==========================================
+ * 5. NẠP GAME DRAWER (FORM)
+ * ========================================== */
+.ng-drawer-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
+    z-index: 1200; opacity: 0; visibility: hidden;
+    transition: 0.3s ease;
+}
+.ng-drawer-overlay.open { opacity: 1; visibility: visible; }
+
+.ng-drawer {
+    position: fixed; top: 0; right: 0; bottom: 0;
+    width: 100%; max-width: 480px;
+    background: var(--ng-glass); backdrop-filter: blur(25px);
+    border-left: 1px solid rgba(154,116,245,0.3);
+    z-index: 1201; transform: translateX(100%);
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex; flex-direction: column;
+}
+.ng-drawer.open { transform: translateX(0); }
+
+.ng-drawer-close {
+    position: absolute; top: 20px; right: 20px;
+    background: rgba(255,255,255,0.1); border: none;
+    color: var(--lp-text-muted); width: 32px; height: 32px;
+    border-radius: 50%; cursor: pointer; transition: 0.2s;
+    display: flex; align-items: center; justify-content: center;
+}
+.ng-drawer-close:hover { background: rgba(255,255,255,0.2); color: #fff; }
+
+.ng-drawer-header {
+    padding: 30px 24px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex; align-items: center; gap: 16px;
+}
+.ng-drawer-logo {
+    width: 56px; height: 56px; border-radius: 12px;
+    object-fit: cover; border: 2px solid rgba(154,116,245,0.5);
+}
+.ng-drawer-header h2 { font-size: 24px; margin: 0; }
+
+.ng-drawer-body {
+    padding: 24px; overflow-y: auto; flex: 1;
+}
+
+.ng-step-title {
+    font-size: 16px; font-weight: 700; color: var(--lp-gold);
+    margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+}
+.ng-step-title span {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: rgba(224,194,118,0.2); color: var(--lp-gold);
+    font-size: 13px; font-weight: 800;
+}
+
+.ng-packages-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+}
+.ng-package {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px; padding: 12px; cursor: pointer;
+    transition: 0.2s; position: relative; text-align: center;
+}
+.ng-package:hover { background: rgba(255,255,255,0.08); }
+.ng-package.selected {
+    background: var(--ng-selected); border-color: var(--lp-purple);
+    box-shadow: 0 0 15px rgba(154,116,245,0.2);
+}
+.ng-pkg-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; display: block;}
+.ng-pkg-price { font-size: 13px; color: var(--lp-gold); font-weight: 700; }
+.ng-pkg-badge {
+    position: absolute; top: -8px; right: -8px;
+    background: var(--ng-hot); color: #fff; font-size: 10px;
+    padding: 2px 6px; border-radius: 10px; font-weight: 800;
+}
+
+.ng-form-group { margin-bottom: 16px; }
+.ng-form-group label {
+    display: block; font-size: 13px; color: var(--lp-text-muted);
+    margin-bottom: 8px; font-weight: 600;
+}
+.ng-form-group .required { color: var(--ng-hot); }
+.ng-form-group input, .ng-form-group select, .ng-form-group textarea {
+    width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; padding: 12px; color: var(--lp-text);
+    font-family: var(--font-body); font-size: 14px; transition: 0.3s;
+}
+.ng-form-group input:focus, .ng-form-group select:focus, .ng-form-group textarea:focus {
+    outline: none; border-color: var(--lp-purple); background: rgba(0,0,0,0.5);
+}
+.ng-form-group select option { background: #0D1424; color: #fff; }
+
+.ng-order-summary {
+    background: rgba(0,0,0,0.4); border-radius: 12px;
+    padding: 16px; margin: 24px 0; border: 1px dashed rgba(224,194,118,0.3);
+}
+.ng-summary-row {
+    display: flex; justify-content: space-between; align-items: center;
+}
+.ng-summary-row .price {
+    font-size: 20px; font-weight: 800; color: var(--lp-gold);
+    font-family: 'Baloo 2', sans-serif;
+}
+
+.ng-drawer-actions { display: flex; gap: 12px; margin-bottom: 20px; }
+.ng-btn-contact {
+    background: rgba(255,255,255,0.05); color: var(--lp-text);
+    border: 1px solid rgba(255,255,255,0.1); padding: 12px;
+    border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; gap: 8px; flex: 1;
+}
+.ng-btn-contact:hover { background: rgba(255,255,255,0.1); }
+.ng-btn-submit {
+    background: linear-gradient(135deg, var(--lp-purple), var(--lp-teal));
+    color: #fff; border: none; padding: 12px;
+    border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; gap: 8px; flex: 2;
+}
+.ng-btn-submit:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(154,116,245,0.3); }
+.ng-btn-submit:disabled { opacity: 0.7; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.ng-drawer-trust {
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--lp-text-muted);
+}
+.ng-drawer-trust span { display: flex; align-items: center; gap: 4px; }
+.ng-drawer-trust i { color: var(--lp-teal); }
+
 /* Skeleton Loading (for grid) */
 .ng-skeleton {
     background: var(--lp-card);

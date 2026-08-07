@@ -133,7 +133,77 @@
         </div>
     </div>
 
+    <!-- NẠP GAME DRAWER (FORM) -->
+    <div id="ngDrawerOverlay" class="ng-drawer-overlay" onclick="closeNapGameDrawer()"></div>
+    <div id="ngDrawer" class="ng-drawer">
+        <button class="ng-drawer-close" onclick="closeNapGameDrawer()"><i class="fa-solid fa-xmark"></i></button>
+        
+        <div class="ng-drawer-header">
+            <img id="ngDrawerGameImg" src="" alt="Game" class="ng-drawer-logo">
+            <h2 id="ngDrawerGameName">Nạp Game</h2>
+        </div>
+
+        <div class="ng-drawer-body">
+            <div class="ng-step-title"><span>1</span> Chọn gói nạp</div>
+            <div class="ng-packages-grid" id="ngPackagesGrid">
+                <!-- Packages injected via JS -->
+            </div>
+
+            <div class="ng-step-title" style="margin-top: 30px;"><span>2</span> Thông tin tài khoản</div>
+            <div class="ng-form-group">
+                <label>UID trong game <span class="required">*</span></label>
+                <input type="text" id="ngFormUid" placeholder="Nhập UID của bạn..." required>
+            </div>
+            <div class="ng-form-group">
+                <label>Máy chủ (Server) <span class="required">*</span></label>
+                <select id="ngFormServer">
+                    <option value="Asia">Asia (Châu Á)</option>
+                    <option value="America">America (Châu Mỹ)</option>
+                    <option value="Europe">Europe (Châu Âu)</option>
+                    <option value="TW/HK/MO">TW, HK, MO</option>
+                </select>
+            </div>
+            <div class="ng-form-group">
+                <label>Số điện thoại / Zalo <span class="required">*</span></label>
+                <input type="text" id="ngFormPhone" placeholder="Nhập SĐT để nhận thông báo..." required>
+            </div>
+            <div class="ng-form-group">
+                <label>Tên liên hệ (không bắt buộc)</label>
+                <input type="text" id="ngFormName" placeholder="Tên của bạn...">
+            </div>
+            <div class="ng-form-group">
+                <label>Ghi chú thêm</label>
+                <textarea id="ngFormNote" rows="2" placeholder="VD: Nạp vào buổi tối..."></textarea>
+            </div>
+
+            <div class="ng-order-summary">
+                <div class="ng-summary-row">
+                    <span id="ngSummaryPkg">Chưa chọn gói</span>
+                    <span id="ngSummaryPrice" class="price">0đ</span>
+                </div>
+            </div>
+
+            <div class="ng-drawer-actions">
+                <button class="ng-btn-contact" onclick="window.open('https://zalo.me/', '_blank')">
+                    <i class="fa-solid fa-comment-dots"></i> Nhắn Zalo
+                </button>
+                <button class="ng-btn-submit shimmer-btn" id="ngSubmitBtn" onclick="submitNapGameOrder()">
+                    <i class="fa-solid fa-check"></i> Đặt hàng ngay
+                </button>
+            </div>
+            
+            <div class="ng-drawer-trust">
+                <span><i class="fa-solid fa-shield-halved"></i> An toàn</span>
+                <span><i class="fa-solid fa-file-invoice"></i> Có bill</span>
+                <span><i class="fa-solid fa-bolt"></i> Xử lý 5 phút</span>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/authMediaConfig.js"></script>
+    <script src="assets/js/app.js"></script>
     <script src="assets/js/napgame.js"></script>
 </body>
 </html>

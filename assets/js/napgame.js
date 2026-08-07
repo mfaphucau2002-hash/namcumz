@@ -207,10 +207,294 @@ function toggleMusic() {
 }
 
 // ==========================================
+// 5. PACKAGE DATA (MOCK FOR NOW)
+// ==========================================
+const GAME_PACKAGES = {
+    'genshin': [
+        { id: 'genshin-60', name: '60 Đá Sáng Thế', price: 20000, badge: '' },
+        { id: 'genshin-300', name: '300+30 Đá Sáng Thế', price: 90000, badge: 'BEST' },
+        { id: 'genshin-980', name: '980+110 Đá Sáng Thế', price: 270000, badge: 'HOT' },
+        { id: 'genshin-1980', name: '1980+260 Đá', price: 570000, badge: '' },
+        { id: 'genshin-3280', name: '3280+600 Đá', price: 950000, badge: '' },
+        { id: 'genshin-6480', name: '6480+1600 Đá', price: 1850000, badge: '' },
+        { id: 'genshin-welkin', name: 'Không Nguyệt Chúc Phúc', price: 90000, badge: 'HOT' }
+    ],
+    'hsr': [
+        { id: 'hsr-60', name: '60 Mộng Cảnh', price: 20000, badge: '' },
+        { id: 'hsr-300', name: '300+30 Mộng Cảnh', price: 90000, badge: 'BEST' },
+        { id: 'hsr-980', name: '980+110 Mộng Cảnh', price: 270000, badge: 'HOT' },
+        { id: 'hsr-pass', name: 'Thẻ Tháng', price: 90000, badge: 'HOT' }
+    ],
+    'default': [
+        { id: 'def-1', name: 'Gói Nạp Cơ Bản 1', price: 20000, badge: '' },
+        { id: 'def-2', name: 'Gói Nạp Cơ Bản 2', price: 50000, badge: '' },
+        { id: 'def-3', name: 'Gói Nạp Cao Cấp', price: 100000, badge: 'HOT' }
+    ]
+};
+
+// ==========================================
+// 6. RENDER & FILTER GAMES
+// ==========================================
+function renderGames(filter = 'all', searchQuery = '') {
+    const grid = document.getElementById('gameGrid');
+    if (!grid) return;
+    
+    grid.innerHTML = '';
+    
+    let filtered = GAMES_DATA.filter(g => {
+        const matchFilter = filter === 'all' || 
+                            g.category.includes(filter) || 
+                            (filter === 'hot' && g.badge === 'HOT');
+        const matchSearch = g.name.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchFilter && matchSearch;
+    });
+
+    if (filtered.length === 0) {
+        grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--lp-text-muted); padding: 40px;">
+                            <i class="fa-solid fa-ghost" style="font-size: 32px; margin-bottom: 16px; opacity: 0.5;"></i>
+                            <br>Không tìm thấy game phù hợp
+                          </div>`;
+        return;
+    }
+
+    filtered.forEach(g => {
+        const viewers = Math.floor(Math.random() * 30) + 5;
+        const badgeHTML = g.badge ? `<div class="ng-card-ribbon ${g.badgeClass}">${g.badge}</div>` : '';
+        
+        const cardHTML = `
+            <div class="ng-card" onclick="openNapGameDrawer('${g.id}')">
+                ${badgeHTML}
+                <div class="ng-card-viewers"><i class="fa-solid fa-eye"></i> ${viewers}</div>
+                <div class="ng-card-img-wrap">
+                    <img src="${g.image}" alt="${g.name}" class="ng-card-img" onerror="this.src='assets/images/logo.jpg'">
+                    <div class="ng-card-overlay" style="background: ${g.gradient}"></div>
+                </div>
+                <div class="ng-card-content">
+                    <div class="ng-card-title">${g.name}</div>
+                    <div class="ng-card-price">
+                        Bắt đầu từ <b>${g.minPrice}</b>
+                    </div>
+                </div>
+            </div>
+        `;
+        grid.innerHTML += cardHTML;
+    });
+}
+
+function setupFilters() {
+    const filterBtns = document.querySelectorAll('.ng-filter-btn');
+    const searchInput = document.querySelector('.ng-search-input');
+    
+    let currentFilter = 'all';
+    
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+            
+            const text = e.currentTarget.innerText.toLowerCase();
+            if (text.includes('tất cả')) currentFilter = 'all';
+            else if (text.includes('mobile')) currentFilter = 'mobile';
+            else if (text.includes('pc')) currentFilter = 'pc';
+            else if (text.includes('hot')) currentFilter = 'hot';
+            
+            renderGames(currentFilter, searchInput ? searchInput.value : '');
+        });
+    });
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            renderGames(currentFilter, e.target.value);
+        });
+    }
+}
+
+// ==========================================
+// 7. DRAWER LOGIC
+// ==========================================
+let currentSelectedGame = null;
+let currentSelectedPackage = null;
+
+function openNapGameDrawer(gameId) {
+    const game = GAMES_DATA.find(g => g.id === gameId);
+    if (!game) return;
+    
+    currentSelectedGame = game;
+    currentSelectedPackage = null;
+    
+    // Update Header
+    document.getElementById('ngDrawerGameName').innerText = `Nạp ${game.name}`;
+    document.getElementById('ngDrawerGameImg').src = game.image;
+    document.getElementById('ngDrawerGameImg').onerror = function() { this.src='assets/images/logo.jpg'; };
+    
+    // Render Packages
+    const pkgs = GAME_PACKAGES[gameId] || GAME_PACKAGES['default'];
+    const grid = document.getElementById('ngPackagesGrid');
+    grid.innerHTML = '';
+    
+    pkgs.forEach(pkg => {
+        const badgeHTML = pkg.badge ? `<div class="ng-pkg-badge">${pkg.badge}</div>` : '';
+        const priceStr = pkg.price.toLocaleString('vi-VN') + 'đ';
+        
+        const pkgDiv = document.createElement('div');
+        pkgDiv.className = 'ng-package';
+        pkgDiv.innerHTML = `
+            ${badgeHTML}
+            <span class="ng-pkg-name">${pkg.name}</span>
+            <span class="ng-pkg-price">${priceStr}</span>
+        `;
+        pkgDiv.onclick = () => selectPackage(pkg, pkgDiv);
+        grid.appendChild(pkgDiv);
+    });
+    
+    // Reset Form & Summary
+    document.getElementById('ngFormUid').value = '';
+    document.getElementById('ngFormNote').value = '';
+    
+    // Keep Phone/Name if logged in
+    if (window.currentUser) {
+        if(!document.getElementById('ngFormPhone').value) document.getElementById('ngFormPhone').value = window.currentUser.phone || '';
+    }
+    
+    updateSummary();
+    
+    // Show drawer
+    document.getElementById('ngDrawerOverlay').classList.add('open');
+    document.getElementById('ngDrawer').classList.add('open');
+    document.body.style.overflow = 'hidden'; // prevent bg scroll
+}
+
+function closeNapGameDrawer() {
+    document.getElementById('ngDrawerOverlay').classList.remove('open');
+    document.getElementById('ngDrawer').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+function selectPackage(pkg, element) {
+    currentSelectedPackage = pkg;
+    
+    // Update active class
+    document.querySelectorAll('.ng-package').forEach(el => el.classList.remove('selected'));
+    element.classList.add('selected');
+    
+    updateSummary();
+}
+
+function updateSummary() {
+    const pkgEl = document.getElementById('ngSummaryPkg');
+    const priceEl = document.getElementById('ngSummaryPrice');
+    
+    if (currentSelectedPackage) {
+        pkgEl.innerText = currentSelectedPackage.name;
+        // Count-up animation
+        window.animateCountUp(priceEl, currentSelectedPackage.price, 400);
+        priceEl.innerText = currentSelectedPackage.price.toLocaleString('vi-VN') + 'đ';
+    } else {
+        pkgEl.innerText = 'Chưa chọn gói';
+        priceEl.innerText = '0đ';
+    }
+}
+
+// Count up utility specific to Napgame
+if (!window.animateCountUp) {
+    window.animateCountUp = function(element, target, duration = 1500) {
+        if(!element) return;
+        const start = parseInt(element.innerText.replace(/\D/g, '')) || 0;
+        const diff = target - start;
+        if (diff === 0) return;
+        const startTime = performance.now();
+        function update(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+            const current = Math.floor(start + diff * easeOutQuart);
+            element.innerText = current.toLocaleString('vi-VN') + 'đ';
+            if (progress < 1) requestAnimationFrame(update);
+            else element.innerText = target.toLocaleString('vi-VN') + 'đ';
+        }
+        requestAnimationFrame(update);
+    }
+}
+
+// ==========================================
+// 8. SUBMIT LOGIC -> SUPABASE
+// ==========================================
+async function submitNapGameOrder() {
+    if (!currentSelectedGame || !currentSelectedPackage) {
+        alert('Vui lòng chọn 1 gói nạp!');
+        return;
+    }
+    
+    const uid = document.getElementById('ngFormUid').value.trim();
+    const server = document.getElementById('ngFormServer').value;
+    const phone = document.getElementById('ngFormPhone').value.trim();
+    const name = document.getElementById('ngFormName').value.trim();
+    const note = document.getElementById('ngFormNote').value.trim();
+    
+    if (!uid) { alert('Vui lòng nhập UID trong game!'); return; }
+    if (!phone) { alert('Vui lòng nhập số điện thoại hoặc Zalo liên hệ!'); return; }
+    
+    const btn = document.getElementById('ngSubmitBtn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...';
+    btn.disabled = true;
+    
+    try {
+        const orderData = {
+            user_id: window.currentUser ? window.currentUser.id : null,
+            customer_name: name || (window.currentUser ? window.currentUser.email : 'Khách vãng lai'),
+            customer_phone: phone,
+            game_id: currentSelectedGame.id,
+            game_name: currentSelectedGame.name,
+            package_id: currentSelectedPackage.id,
+            package_name: currentSelectedPackage.name,
+            price: currentSelectedPackage.price,
+            uid_ingame: uid,
+            server: server,
+            note: note,
+            status: 'pending',
+            payment_method: 'manual',
+            is_public: true
+        };
+        
+        const { data, error } = await supabaseClient
+            .from('napgame_orders')
+            .insert([orderData]);
+            
+        if (error) throw error;
+        
+        // Success
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Đặt thành công!';
+        btn.style.background = 'var(--ng-new)';
+        
+        setTimeout(() => {
+            alert('Đặt hàng nạp game thành công! Admin sẽ liên hệ qua SĐT/Zalo của bạn trong ít phút.');
+            closeNapGameDrawer();
+            btn.innerHTML = originalText;
+            btn.style.background = '';
+            btn.disabled = false;
+        }, 1500);
+        
+    } catch (err) {
+        console.error('Lỗi khi đặt nạp game:', err);
+        alert('Có lỗi xảy ra khi tạo đơn hàng. Vui lòng thử lại hoặc liên hệ Zalo trực tiếp.');
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
+// ==========================================
 // INIT
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
     initTicker();
+    
+    // Small delay to show skeleton before rendering real games
+    setTimeout(() => {
+        renderGames();
+        setupFilters();
+    }, 500);
+    
     setTimeout(typeWriter, 1000);
     
     // Create random particles
@@ -220,10 +504,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const p = document.createElement('div');
             p.className = 'ng-particle';
             
-            // Random properties
-            const size = Math.random() * 8 + 4; // 4px to 12px
-            const left = Math.random() * 100; // 0 to 100%
-            const duration = Math.random() * 10 + 10; // 10s to 20s
+            const size = Math.random() * 8 + 4;
+            const left = Math.random() * 100;
+            const duration = Math.random() * 10 + 10;
             const delay = Math.random() * 5;
             
             p.style.width = `${size}px`;
@@ -236,3 +519,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
