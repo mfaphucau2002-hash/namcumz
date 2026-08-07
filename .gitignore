@@ -1,19 +1,29 @@
-# Backup files (sensitive data - do not push to GitHub)
-BACKUP_*.json
-backup_*.json
+# ─── Backup & Sensitive Data ───────────────────────────────
+_backup/BACKUP_*.json
+_backup/backup_*.json
 
-# Dump files
+# ─── Dump files (one-off exports) ──────────────────────────
 *_dump.json
 *_dump_*.json
 
-# Environment / secrets
+# ─── Environment / Secrets ─────────────────────────────────
 .env
 .env.local
+.env.*.local
 *.key
+*.pem
 
-# Node
+# ─── Node ──────────────────────────────────────────────────
 node_modules/
+dist/
+.next/
 
-# OS
+# ─── OS junk ───────────────────────────────────────────────
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# ─── Editor ────────────────────────────────────────────────
+.vscode/settings.json
+*.swp
+*.swo
