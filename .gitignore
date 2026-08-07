@@ -1,0 +1,19 @@
+# Backup files (sensitive data - do not push to GitHub)
+BACKUP_*.json
+backup_*.json
+
+# Dump files
+*_dump.json
+*_dump_*.json
+
+# Environment / secrets
+.env
+.env.local
+*.key
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -7,7 +7,44 @@
 
 ---
 
+## 🛡️ BACKUP DATABASE — TRƯỚC KHI BUILD
+
+> [!CAUTION]
+> **Nếu bạn không hài lòng với bất kỳ thay đổi nào và muốn khôi phục lại:**  
+> Báo AI: *"Restore lại từ backup ngày 2026-08-07"* — AI sẽ dùng file backup bên dưới để import lại toàn bộ dữ liệu cũ.
+
+### 📦 Snapshot trạng thái trước khi build napgame
+
+| Thông tin | Chi tiết |
+|-----------|---------|
+| **Thời điểm backup** | 2026-08-07 22:39:11 (+07:00) |
+| **File backup** | `BACKUP_20260807_223911.json` |
+| **Vị trí local** | `d:\Projects\namcumz\BACKUP_20260807_223911.json` (797 KB) |
+| **Script tái sử dụng** | `d:\Projects\namcumz\backup_supabase.ps1` |
+
+### 📊 Nội dung backup
+
+| Bảng | Số dòng | Nội dung |
+|------|---------|---------|
+| `orders` | **20 rows** | Toàn bộ đơn cày thuê hiện có |
+| `order_messages` | **64 rows** | Toàn bộ tin nhắn chat các đơn |
+| `user_roles` | **8 rows** | Tài khoản: 1 super_admin, 1 admin, 6 customer |
+| `notifications` | **56 rows** | Thông báo hệ thống |
+| **Tổng** | **148 rows** | — |
+
+### ♻️ Tạo backup mới bất cứ lúc nào
+```powershell
+# Chạy trong d:\Projects\namcumz
+.\backup_supabase.ps1
+```
+
+> [!NOTE]
+> Backup lưu LOCAL — không push GitHub (đã thêm `BACKUP_*.json` vào `.gitignore`).
+
+---
+
 ## 🔍 TỰ ĐÁNH GIÁ BẢN KẾ HOẠCH v1.0
+
 
 ### ✅ Những điểm đã đúng với brand NAMCUMZ
 | Điểm | Đánh giá |
