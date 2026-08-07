@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nạp Game Giá Tốt - Minh Bạch - Có Bill | NAMCUMZ</title>
+    <meta name="description" content="Dịch vụ nạp game giá rẻ, an toàn, xử lý nhanh trong 5 phút. Hỗ trợ nạp Genshin Impact, Honkai Star Rail, Wuthering Waves, Mobile Legends...">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/napgame.css">
+</head>
+<body class="landing-page">
+
+    <!-- HEADER (Kế thừa từ index.html) -->
+    <header class="lp-header" id="lpHeader">
+        <a href="/" class="lp-logo">
+            <img src="assets/images/logo.jpg" alt="Logo" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+            NAMCUMZ
+        </a>
+        <nav class="lp-nav" id="lpNav">
+            <a href="/index.html#dich-vu">Dịch vụ Cày Thuê</a>
+            <a href="napgame.html" style="color: var(--lp-gold);">Nạp Game</a>
+        </nav>
+        <div class="lp-actions">
+            <a href="dashboard.html" class="lp-btn-primary shimmer-btn" id="headerLoginBtn">
+                Đăng nhập
+            </a>
+        </div>
+    </header>
+
+    <!-- TICKER: PURCHASE NOTIFICATIONS -->
+    <div class="ng-ticker-wrap">
+        <div class="ng-ticker-live">
+            <div class="ng-ticker-dot"></div> LIVE
+        </div>
+        <div class="ng-ticker-content">
+            <div class="ng-ticker-track" id="tickerTrack">
+                <!-- Data will be populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section class="ng-hero">
+        <div class="ng-hero-bg"></div>
+        <div class="ng-particles" id="heroParticles"></div>
+        
+        <div class="ng-hero-content">
+            <span class="ng-eyebrow">⚡ DỊCH VỤ NẠP GAME UY TÍN</span>
+            <h1><span class="hero-gradient-text">Nạp Game</span> Giá Tốt<br>Minh Bạch — Có Bill</h1>
+            
+            <div class="ng-typewriter-wrap">
+                <div class="ng-typewriter" id="heroSlogan"></div>
+            </div>
+            
+            <div class="ng-search-box">
+                <i class="fa-solid fa-magnifying-glass ng-search-icon"></i>
+                <input type="text" class="ng-search-input" placeholder="Tìm tên game bạn muốn nạp...">
+            </div>
+            
+            <div class="ng-hero-trust">
+                <div class="ng-trust-badge"><i class="fa-solid fa-bolt"></i> Dưới 5 phút</div>
+                <div class="ng-trust-badge"><i class="fa-solid fa-file-invoice"></i> Có bill 100%</div>
+                <div class="ng-trust-badge"><i class="fa-solid fa-shield-halved"></i> Bảo mật UID</div>
+                <div class="ng-trust-badge"><i class="fa-solid fa-hand-holding-dollar"></i> Hoàn tiền nếu lỗi</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GAME GRID SECTION (Placeholder for Phase 1B) -->
+    <section class="ng-section">
+        <div class="ng-filters">
+            <button class="ng-filter-btn active">Tất cả (10)</button>
+            <button class="ng-filter-btn"><i class="fa-solid fa-mobile-screen-button"></i> Mobile (6)</button>
+            <button class="ng-filter-btn"><i class="fa-solid fa-desktop"></i> PC (4)</button>
+            <button class="ng-filter-btn" style="color: var(--ng-hot); border-color: rgba(239, 68, 68, 0.3);"><i class="fa-solid fa-fire"></i> Hot</button>
+        </div>
+        
+        <div class="ng-grid" id="gameGrid">
+            <!-- Skeleton items for loading state -->
+            <div class="ng-skeleton"></div>
+            <div class="ng-skeleton"></div>
+            <div class="ng-skeleton"></div>
+            <div class="ng-skeleton"></div>
+            <div class="ng-skeleton"></div>
+            <div class="ng-skeleton"></div>
+            <div class="ng-skeleton"></div>
+            <div class="ng-skeleton"></div>
+        </div>
+    </section>
+
+    <!-- FOOTER (Kế thừa) -->
+    <footer class="lp-footer">
+        <p class="lp-footer-disclaimer">
+            NAMCUMZ không liên kết với HoYoverse, Tencent, Riot Games hay bất kỳ nhà phát hành game nào. 
+            Tất cả giao dịch đều có hóa đơn (bill) rõ ràng.
+        </p>
+        <p style="color: var(--lp-text-muted); font-size: 14px;">© 2026 NAMCUMZ. All rights reserved.</p>
+    </footer>
+
+    <!-- CSKH FLOATING WIDGET -->
+    <div id="cskhWidget" class="cskh-widget">
+        <button class="cskh-toggle" onclick="toggleCSKH()">
+            <i class="fa-solid fa-chevron-left" id="cskhArrow"></i>
+        </button>
+        <div class="cskh-panel" id="cskhPanel">
+            <a href="#" class="cskh-item" target="_blank">
+                <div class="cskh-icon"><i class="fa-solid fa-comment-dots"></i></div>
+                <span>Hỗ trợ Zalo</span>
+            </a>
+            <a href="#" class="cskh-item" target="_blank">
+                <div class="cskh-icon"><i class="fa-solid fa-users"></i></div>
+                <span>Zalo Group</span>
+            </a>
+            <a href="napgame.html" class="cskh-item">
+                <div class="cskh-icon"><i class="fa-solid fa-gamepad"></i></div>
+                <span style="color: var(--lp-gold);">Nạp Game</span>
+            </a>
+            <button class="cskh-item" onclick="toggleMusic()">
+                <div class="cskh-icon"><i class="fa-solid fa-volume-xmark"></i></div>
+                <span id="musicLabel">Nhạc: Tắt</span>
+            </button>
+            <a href="#" class="cskh-main-btn" target="_blank">
+                <i class="fa-solid fa-headset"></i> Chat với Admin
+            </a>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/napgame.js"></script>
+</body>
+</html>

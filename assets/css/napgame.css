@@ -1,0 +1,559 @@
+/* 
+ * NẠP GAME CSS - NAMCUMZ
+ * Uses variables from style.css (--lp-bg, --lp-gold, etc.)
+ */
+
+:root {
+    --ng-hot: #ef4444;
+    --ng-new: #68D5C1;
+    --ng-sale: #f59e0b;
+    --ng-selected: rgba(154,116,245,0.25);
+    --ng-glass: rgba(13, 20, 36, 0.85);
+}
+
+/* ==========================================
+ * 1. LIVE NOTIFICATION TICKER
+ * ========================================== */
+.ng-ticker-wrap {
+    position: sticky;
+    top: 60px; /* Under the header */
+    z-index: 900;
+    background: rgba(7, 11, 21, 0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(154, 116, 245, 0.2);
+    height: 44px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    font-size: 13px;
+}
+
+.ng-ticker-live {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 16px;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    font-weight: 700;
+    color: var(--ng-hot);
+    flex-shrink: 0;
+    background: var(--lp-bg);
+    height: 100%;
+}
+
+.ng-ticker-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--ng-hot);
+    border-radius: 50%;
+    animation: pulseDot 1.5s ease-in-out infinite;
+}
+
+.ng-ticker-content {
+    overflow: hidden;
+    flex: 1;
+    white-space: nowrap;
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.ng-ticker-track {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    animation: tickerScroll 40s linear infinite;
+    padding-left: 100%; /* Start off-screen */
+}
+
+.ng-ticker-track:hover {
+    animation-play-state: paused;
+}
+
+.ticker-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--lp-text-muted);
+}
+
+.ticker-item b {
+    color: var(--lp-text);
+}
+
+.ticker-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--lp-purple), var(--lp-teal));
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.ticker-price {
+    color: var(--lp-gold);
+    font-weight: 700;
+}
+
+.ticker-time {
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+}
+
+.ticker-sep {
+    margin: 0 24px;
+    color: rgba(255,255,255,0.2);
+}
+
+/* ==========================================
+ * 2. HERO SECTION & PARTICLES
+ * ========================================== */
+.ng-hero {
+    position: relative;
+    padding: 120px 5% 60px;
+    text-align: center;
+    overflow: hidden;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.ng-hero-bg {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle at center, rgba(154,116,245,0.15) 0%, var(--lp-bg) 60%);
+    z-index: 0;
+    animation: radialPulse 6s ease-in-out infinite alternate;
+}
+
+.ng-particles {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.ng-particle {
+    position: absolute;
+    background: rgba(154,116,245,0.4);
+    border-radius: 50%;
+    animation: floatBubble 15s infinite linear;
+}
+
+.ng-hero-content {
+    position: relative;
+    z-index: 10;
+    max-width: 800px;
+}
+
+.ng-eyebrow {
+    color: var(--lp-gold);
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-size: 13px;
+    margin-bottom: 16px;
+    display: block;
+}
+
+.ng-hero h1 {
+    font-size: clamp(36px, 5vw, 64px);
+    margin-bottom: 24px;
+    line-height: 1.1;
+}
+
+.ng-typewriter-wrap {
+    height: 30px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ng-typewriter {
+    font-size: 18px;
+    color: var(--lp-text-muted);
+    border-right: 2px solid var(--lp-gold);
+    padding-right: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    animation: blinkCursor 0.75s step-end infinite;
+}
+
+.ng-search-box {
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto 40px;
+}
+
+.ng-search-input {
+    width: 100%;
+    background: var(--lp-card);
+    border: 1px solid var(--lp-border);
+    border-radius: 30px;
+    padding: 16px 24px 16px 50px;
+    color: var(--lp-text);
+    font-size: 16px;
+    font-family: var(--font-body);
+    outline: none;
+    transition: 0.3s;
+    backdrop-filter: blur(10px);
+}
+
+.ng-search-input:focus {
+    border-color: var(--lp-purple);
+    box-shadow: 0 0 20px rgba(154,116,245,0.2);
+}
+
+.ng-search-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--lp-text-muted);
+    font-size: 18px;
+}
+
+.ng-hero-trust {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.ng-trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--lp-text-muted);
+    background: rgba(255,255,255,0.03);
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.ng-trust-badge i {
+    color: var(--lp-teal);
+}
+
+/* ==========================================
+ * 3. GAME GRID & CARDS
+ * ========================================== */
+.ng-section {
+    padding: 60px 5%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.ng-filters {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.ng-filter-btn {
+    background: transparent;
+    border: 1px solid var(--lp-border);
+    color: var(--lp-text-muted);
+    padding: 10px 24px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.ng-filter-btn:hover, .ng-filter-btn.active {
+    background: var(--lp-gold);
+    color: #000;
+    border-color: var(--lp-gold);
+}
+
+.ng-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 24px;
+}
+
+.ng-card {
+    background: var(--lp-card);
+    border: 1px solid var(--lp-border);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-style: preserve-3d;
+    perspective: 1000px;
+}
+
+.ng-card:hover {
+    transform: translateY(-8px) rotateX(2deg) rotateY(-2deg);
+    border-color: var(--lp-purple);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.5), 0 0 20px rgba(154,116,245,0.2);
+}
+
+.ng-card-img-wrap {
+    position: relative;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+}
+
+.ng-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: 0.5s;
+}
+
+.ng-card:hover .ng-card-img {
+    transform: scale(1.05);
+}
+
+.ng-card-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to top, rgba(7,11,21,1) 0%, rgba(7,11,21,0.2) 100%);
+}
+
+.ng-card-ribbon {
+    position: absolute;
+    top: 12px; right: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    z-index: 2;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.ribbon-hot { background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; }
+.ribbon-new { background: linear-gradient(135deg, #10b981, #059669); color: #fff; }
+.ribbon-sale { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; }
+
+.ng-card-content {
+    position: relative;
+    padding: 0 20px 20px;
+    margin-top: -30px;
+    z-index: 2;
+}
+
+.ng-card-title {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.ng-card-price {
+    color: var(--lp-text-muted);
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ng-card-price b {
+    color: var(--lp-gold);
+    font-size: 16px;
+    font-family: 'Baloo 2', sans-serif;
+}
+
+.ng-card-viewers {
+    position: absolute;
+    top: 12px; left: 12px;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    opacity: 0;
+    transition: 0.3s;
+}
+
+.ng-card:hover .ng-card-viewers {
+    opacity: 1;
+}
+
+/* ==========================================
+ * 4. CSKH FLOATING WIDGET
+ * ========================================== */
+.cskh-widget {
+    position: fixed;
+    right: 0;
+    top: 60%;
+    transform: translateY(-50%);
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+}
+
+.cskh-toggle {
+    width: 36px;
+    height: 70px;
+    background: linear-gradient(135deg, var(--lp-purple), var(--lp-teal));
+    border-radius: 10px 0 0 10px;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+}
+
+.cskh-panel {
+    background: var(--ng-glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(154,116,245,0.3);
+    border-right: none;
+    border-radius: 16px 0 0 16px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transform: translateX(100%);
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: absolute;
+    right: 36px; /* Width of toggle */
+    width: max-content;
+}
+
+.cskh-widget.open .cskh-panel {
+    transform: translateX(0);
+}
+
+.cskh-widget.open .cskh-toggle i {
+    transform: rotate(180deg);
+}
+
+.cskh-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--lp-text);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 6px 12px 6px 6px;
+    border-radius: 30px;
+    transition: 0.2s;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-body);
+}
+
+.cskh-item:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+.cskh-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(154,116,245,.2), rgba(104,213,193,.2));
+    border: 1px solid rgba(154,116,245,.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--lp-purple);
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.cskh-item:hover .cskh-icon {
+    background: linear-gradient(135deg, var(--lp-purple), var(--lp-teal));
+    color: #fff;
+    box-shadow: 0 0 15px rgba(154,116,245,.5);
+}
+
+.cskh-main-btn {
+    background: linear-gradient(135deg, var(--lp-purple), var(--lp-teal));
+    color: #000;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: 800;
+    text-align: center;
+    margin-top: 8px;
+    transition: 0.2s;
+    text-decoration: none;
+    display: block;
+}
+
+.cskh-main-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(154,116,245,.4);
+    color: #000;
+}
+
+/* ==========================================
+ * ANIMATIONS
+ * ========================================== */
+@keyframes pulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+@keyframes tickerScroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+
+@keyframes radialPulse {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(1.2); opacity: 1; }
+}
+
+@keyframes floatBubble {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateY(-100px) scale(1); opacity: 0; }
+}
+
+@keyframes blinkCursor {
+    0%, 100% { border-color: transparent; }
+    50% { border-color: var(--lp-gold); }
+}
+
+/* Skeleton Loading (for grid) */
+.ng-skeleton {
+    background: var(--lp-card);
+    border: 1px solid var(--lp-border);
+    border-radius: 16px;
+    height: 300px;
+    position: relative;
+    overflow: hidden;
+}
+.ng-skeleton::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+    animation: shimmerSlide 1.5s infinite;
+}
+@keyframes shimmerSlide {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .ng-hero { padding-top: 100px; min-height: 400px; }
+    .ng-hero h1 { font-size: 32px; }
+    .cskh-widget { top: auto; bottom: 80px; transform: none; }
+    .ng-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+}
