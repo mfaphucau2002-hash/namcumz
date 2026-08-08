@@ -236,7 +236,6 @@ function showSocialProof() {
 function initCatalogPage() {
     startSlider();
     renderPortrait(GAMES_CATALOG.featured);
-    renderHorizontal(GAMES_CATALOG.uid,   'gridUid',   'uid');
     renderHorizontal(GAMES_CATALOG.login, 'gridLogin', 'login');
 
     // Update all Zalo links
@@ -248,22 +247,16 @@ function initCatalogPage() {
             document.querySelectorAll('.ng-cat-tab').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             const f = btn.dataset.filter;
-            const uidSec   = document.getElementById('sectionUid');
             const loginSec = document.getElementById('sectionLogin');
             const featSec  = document.getElementById('sectionFeatured');
             if (f === 'all') {
-                [uidSec, loginSec, featSec].forEach(s => s && (s.style.display = ''));
-            } else if (f === 'uid') {
-                uidSec && (uidSec.style.display = '');
-                loginSec && (loginSec.style.display = 'none');
-                featSec && (featSec.style.display = 'none');
+                [loginSec, featSec].forEach(s => s && (s.style.display = ''));
             } else if (f === 'login') {
-                uidSec && (uidSec.style.display = 'none');
                 loginSec && (loginSec.style.display = '');
                 featSec && (featSec.style.display = 'none');
             } else if (f === 'hot') {
                 renderPortrait(GAMES_CATALOG.featured.filter(g => g.badge === 'HOT'));
-                [uidSec, loginSec].forEach(s => s && (s.style.display = 'none'));
+                loginSec && (loginSec.style.display = 'none');
                 featSec && (featSec.style.display = '');
             }
         });
@@ -361,17 +354,7 @@ function initDetailPage() {
         badgeEl.className = `ng-detail-type-badge ${gameInfo.type === 'login' ? 'ng-type-login' : 'ng-type-uid'}`;
     }
 
-    // Toggle form fields
-    const isLogin = gameInfo.type === 'login';
-    const show = id => { const el = document.getElementById(id); if(el) el.style.display = ''; };
-    const hide = id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; };
-    if (isLogin) {
-        hide('formGroupUid'); hide('formGroupServer');
-        show('formGroupUsername'); show('formGroupPassword');
-    } else {
-        show('formGroupUid'); show('formGroupServer');
-        hide('formGroupUsername'); hide('formGroupPassword');
-    }
+    // No toggle needed since it's login only now
 
     // Pre-fill phone if logged in
     if (window.currentUser) {
@@ -494,18 +477,10 @@ async function submitDetailOrder() {
     const isLogin  = gameInfo.type === 'login';
     const phone    = (document.getElementById('formPhone') || {}).value?.trim();
     if (!phone) return alert('Vui long nhap SDT Zalo lien he!');
-    let uid = 'login', server = 'login', note = '';
-    if (isLogin) {
-        const user = (document.getElementById('formUsername') || {}).value?.trim();
-        const pass = (document.getElementById('formPassword') || {}).value?.trim();
-        if (!user || !pass) return alert('Vui long nhap Ten dang nhap va Mat khau!');
-        note = 'Login: ' + user + ' | Pass: ' + pass;
-    } else {
-        uid    = (document.getElementById('formUid')    || {}).value?.trim();
-        server = (document.getElementById('formServer') || {}).value;
-        if (!uid)    return alert('Vui long nhap UID trong game!');
-        if (!server) return alert('Vui long chon may chu!');
-    }
+    const user = (document.getElementById('formUsername') || {}).value?.trim();
+    const pass = (document.getElementById('formPassword') || {}).value?.trim();
+    if (!user || !pass) return alert('Vui lòng nhập Tên đăng nhập và Mật khẩu!');
+    const note = 'Login: ' + user + ' | Pass: ' + pass;
     const btnIds = ['btnSubmitOrder', 'mobileBarBtn'];
     const originals = {};
     btnIds.forEach(id => {
@@ -522,8 +497,8 @@ async function submitDetailOrder() {
             package_id: currentSelectedPackage.id,
             package_name: currentSelectedPackage.name,
             price: currentSelectedPackage.price,
-            uid_ingame: uid,
-            server: server,
+            uid_ingame: 'login',
+            server: 'login',
             note: note,
             status: 'pending',
             payment_method: 'manual',
