@@ -3,127 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh Mục Nạp Game - NAMCUMZ</title>
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>Nạp Game Giá Rẻ, Uy Tín - Xử Lý 5 Phút | NAMCUMZ</title>
+    <meta name="description" content="Dịch vụ nạp game giá rẻ hơn 10-30% thị trường. Hỗ trợ Genshin Impact, Honkai Star Rail, MLBB, Valorant... Có bill, an toàn, xử lý trong 5 phút.">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/napgame.css">
 </head>
 <body class="ng-page">
 
-    <!-- HEADER (Kế thừa) -->
+    <!-- HEADER -->
     <header class="lp-header" id="lpHeader">
         <a href="/" class="lp-logo">
             <img src="assets/images/logo.jpg" alt="Logo" style="width: 32px; height: 32px; border-radius: 50%;">
             NAMCUMZ
         </a>
         <nav class="lp-nav" id="lpNav">
-            <a href="/index.html#dich-vu">Dịch vụ Cày Thuê</a>
-            <a href="napgame.html" style="color: var(--lp-gold);">Nạp Game</a>
+            <a href="/index.html">Trang chủ</a>
+            <a href="/index.html#dich-vu">Cày Thuê</a>
+            <a href="napgame.html" style="color: var(--lp-gold); font-weight: 700;">Nạp Game</a>
         </nav>
         <div class="lp-actions">
-            <a href="dashboard.html" class="lp-btn-primary shimmer-btn">Đăng nhập</a>
+            <a href="dashboard.html" class="lp-btn-primary">
+                <i class="fa-solid fa-user"></i> Đăng nhập
+            </a>
         </div>
     </header>
 
     <!-- 1. HERO SLIDER -->
-    <div class="ng-slider-container">
-        <div class="ng-slider-track" id="sliderTrack">
-            <div class="ng-slide"><img src="assets/images/games/hsr_banner.jpg" alt="Banner 1" onerror="this.src='assets/images/logo.jpg'"></div>
-            <div class="ng-slide"><img src="assets/images/games/genshin_banner.jpg" alt="Banner 2" onerror="this.src='assets/images/logo.jpg'"></div>
-            <div class="ng-slide"><img src="assets/images/games/zzz_banner.jpg" alt="Banner 3" onerror="this.src='assets/images/logo.jpg'"></div>
-        </div>
-        <div class="ng-slider-dots">
-            <div class="ng-dot active"></div>
-            <div class="ng-dot"></div>
-            <div class="ng-dot"></div>
+    <div class="ng-slider-wrapper">
+        <div class="ng-slider-container">
+            <div class="ng-slider-track" id="sliderTrack">
+                <!-- Slide 1: HSR -->
+                <div class="ng-slide">
+                    <img src="assets/images/games/hsr_banner.jpg" alt="Honkai Star Rail" onerror="this.src='assets/images/logo.jpg'">
+                    <div class="ng-slide-overlay"></div>
+                    <div class="ng-slide-text">
+                        <h2>Honkai<br>Star Rail</h2>
+                        <p>Nạp rẻ hơn 20% — Có bill đầy đủ</p>
+                        <a href="napgame-detail.html?game=hsr" class="ng-slide-btn">
+                            <i class="fa-solid fa-bolt"></i> Lên Đơn Ngay
+                        </a>
+                    </div>
+                </div>
+                <!-- Slide 2: Genshin -->
+                <div class="ng-slide">
+                    <img src="assets/images/games/genshin_banner.jpg" alt="Genshin Impact" onerror="this.src='assets/images/logo.jpg'">
+                    <div class="ng-slide-overlay"></div>
+                    <div class="ng-slide-text">
+                        <h2>Genshin<br>Impact</h2>
+                        <p>Nạp Login rẻ hơn UID đến 15%</p>
+                        <a href="napgame-detail.html?game=genshin" class="ng-slide-btn">
+                            <i class="fa-solid fa-bolt"></i> Lên Đơn Ngay
+                        </a>
+                    </div>
+                </div>
+                <!-- Slide 3: ZZZ -->
+                <div class="ng-slide">
+                    <img src="assets/images/games/zzz_banner.jpg" alt="Zenless Zone Zero" onerror="this.src='assets/images/logo.jpg'">
+                    <div class="ng-slide-overlay"></div>
+                    <div class="ng-slide-text">
+                        <h2>Zenless<br>Zone Zero</h2>
+                        <p>Ather nạp nhanh — Không cần cung cấp pass</p>
+                        <a href="napgame-detail.html?game=zzz" class="ng-slide-btn">
+                            <i class="fa-solid fa-bolt"></i> Lên Đơn Ngay
+                        </a>
+                    </div>
+                </div>
+                <!-- Slide 4: WuWa -->
+                <div class="ng-slide">
+                    <img src="assets/images/games/wuwa_banner.jpg" alt="Wuthering Waves" onerror="this.src='assets/images/logo.jpg'">
+                    <div class="ng-slide-overlay"></div>
+                    <div class="ng-slide-text">
+                        <h2>Wuthering<br>Waves</h2>
+                        <p>Astrite nạp rẻ, xử lý 1-5 phút</p>
+                        <a href="napgame-detail.html?game=wuwa" class="ng-slide-btn">
+                            <i class="fa-solid fa-bolt"></i> Lên Đơn Ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <button class="ng-slider-nav ng-slider-prev" onclick="slideTo(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="ng-slider-nav ng-slider-next" onclick="slideTo(1)"><i class="fa-solid fa-chevron-right"></i></button>
+            <div class="ng-slider-dots">
+                <button class="ng-dot active" onclick="goSlide(0)"></button>
+                <button class="ng-dot" onclick="goSlide(1)"></button>
+                <button class="ng-dot" onclick="goSlide(2)"></button>
+                <button class="ng-dot" onclick="goSlide(3)"></button>
+            </div>
         </div>
     </div>
 
     <!-- 2. LIVE TICKER -->
     <div class="ng-ticker-wrap">
-        <div class="ng-ticker-live">
-            <div class="ng-ticker-dot"></div> LIVE
-        </div>
+        <div class="ng-ticker-live"><div class="ng-ticker-dot"></div> LIVE</div>
         <div class="ng-ticker-content">
-            <div class="ng-ticker-track" id="tickerTrack">
-                <!-- Data populated by JS -->
-            </div>
+            <div class="ng-ticker-track" id="tickerTrack"><!-- JS --></div>
         </div>
     </div>
 
-    <!-- 3. ƯU ĐÃI ĐỘC QUYỀN (Featured) -->
-    <section class="ng-section">
-        <h2 class="ng-sec-title">Ưu Đãi Độc Quyền</h2>
-        <div class="ng-grid-portrait" id="gridFeatured">
-            <!-- Populated by JS -->
-        </div>
-    </section>
+    <!-- 3. CATALOG CONTENT -->
+    <div class="ng-catalog-wrap">
 
-    <!-- 4. NẠP QUA UID -->
-    <section class="ng-section">
-        <h2 class="ng-sec-title">Nạp 1s Chỉ Qua UID (Tự Động)</h2>
-        <p class="ng-sec-desc">Mọi giao dịch sẽ cộng vào thẳng acc hay các game khác, logic gửi nhanh sử dụng API & Seg mua acc!!</p>
-        <div class="ng-grid-horizontal" id="gridUid">
-            <!-- Populated by JS -->
+        <!-- Search + Filter Tabs -->
+        <div class="ng-search-bar">
+            <div class="ng-search-input-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" class="ng-search-input" id="gameSearch" placeholder="Tìm game bạn muốn nạp...">
+            </div>
+            <div class="ng-catalog-tabs">
+                <button class="ng-cat-tab active" data-filter="all">Tất cả</button>
+                <button class="ng-cat-tab" data-filter="uid">Nạp UID</button>
+                <button class="ng-cat-tab" data-filter="login">Nạp Login</button>
+                <button class="ng-cat-tab" data-filter="hot">🔥 Hot</button>
+            </div>
         </div>
-    </section>
 
-    <!-- 5. NẠP LOGIN -->
-    <section class="ng-section">
-        <h2 class="ng-sec-title">Nạp Login (Có Thể Cần Lấy Code)</h2>
-        <p class="ng-sec-desc">Mọi giao dịch sẽ cộng vào thẳng acc hay các game khác, logic gửi nhanh sử dụng API & Seg mua acc!!</p>
-        <div class="ng-grid-horizontal" id="gridLogin">
-            <!-- Populated by JS -->
+        <!-- Section 1: Ưu đãi Độc Quyền -->
+        <div class="ng-section" id="sectionFeatured">
+            <div class="ng-sec-header">
+                <div class="ng-sec-title">Ưu Đãi Độc Quyền</div>
+                <span class="ng-sec-sub">NẠP LOGIN RẺ HƠN UID • XỬ LÝ NHANH</span>
+            </div>
+            <div class="ng-grid-portrait" id="gridFeatured"><!-- JS --></div>
         </div>
-    </section>
 
-    <!-- 6. PROFILE SECTION -->
-    <section class="ng-section">
-        <div class="ng-profile-box">
-            <img src="assets/images/logo.jpg" alt="Admin" class="ng-profile-img">
-            <div class="ng-profile-content">
-                <div style="color: var(--lp-gold); font-weight: 700; margin-bottom: 8px;">#ADMIN</div>
-                <h2>Chào, mình là <span>NAMCUMZ</span></h2>
-                <div style="font-weight: 600; color: #fff; margin-bottom: 12px; font-size: 14px;">HOTLINE: 0348731338</div>
-                <p class="ng-profile-desc">
-                    Có mong muốn hỗ trợ anh em & đem lại trải nghiệm dịch vụ nạp game tốt nhất, uy tín, nhanh chóng với mức giá chiết khấu đặc biệt cho cộng đồng.
-                </p>
-                <div class="ng-profile-stats">
-                    <div class="ng-stat-card">
-                        <div class="ng-stat-icon"><i class="fa-solid fa-shield-halved"></i></div>
-                        <div class="ng-stat-info">
-                            <h4>100%</h4><p>Uy tín tuyệt đối</p>
+        <!-- Section 2: Nạp UID -->
+        <div class="ng-section" id="sectionUid">
+            <div class="ng-sec-header">
+                <div class="ng-sec-title">Nạp 1s Qua UID (Tự Động)</div>
+                <span class="ng-sec-sub">XỬ LÝ TỐC ĐỘ 1s • QUA NHÀ PHÁT HÀNH CHÍNH THỨC</span>
+            </div>
+            <div class="ng-grid-horizontal" id="gridUid"><!-- JS --></div>
+        </div>
+
+        <!-- Section 3: Nạp Login -->
+        <div class="ng-section" id="sectionLogin">
+            <div class="ng-sec-header">
+                <div class="ng-sec-title">Nạp Login (Có Thể Cần Lấy Code)</div>
+                <span class="ng-sec-sub">NẠP LOGIN RẺ HƠN UID • XỬ LÝ QUA NHÀ PH CHÍNH THỨC</span>
+            </div>
+            <div class="ng-grid-horizontal" id="gridLogin"><!-- JS --></div>
+        </div>
+
+        <!-- Section 4: Profile -->
+        <div class="ng-section">
+            <div class="ng-profile-box">
+                <div class="ng-profile-img-wrap">
+                    <img src="assets/images/logo.jpg" alt="NAMCUMZ Admin" class="ng-profile-img">
+                </div>
+                <div class="ng-profile-content">
+                    <div class="ng-profile-tag">#ADMIN • NAMCUMZ</div>
+                    <h2>Chào, mình là <span>NAMCUMZ</span></h2>
+                    <div class="ng-profile-phone"><i class="fa-solid fa-phone"></i> 0348 731 338</div>
+                    <p class="ng-profile-desc">
+                        Có mong muốn hỗ trợ anh em & đem lại trải nghiệm dịch vụ nạp game tốt nhất, uy tín, nhanh chóng với mức giá chiết khấu đặc biệt cho cộng đồng.
+                    </p>
+                    <div class="ng-profile-stats">
+                        <div class="ng-stat-card">
+                            <div class="ng-stat-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                            <div class="ng-stat-info"><h4>100%</h4><p>Uy tín, có bill</p></div>
                         </div>
-                    </div>
-                    <div class="ng-stat-card">
-                        <div class="ng-stat-icon"><i class="fa-solid fa-bolt"></i></div>
-                        <div class="ng-stat-info">
-                            <h4>< 5 Phút</h4><p>Xử lý đơn hàng</p>
+                        <div class="ng-stat-card">
+                            <div class="ng-stat-icon"><i class="fa-solid fa-bolt"></i></div>
+                            <div class="ng-stat-info"><h4>&lt; 5 Phút</h4><p>Xử lý đơn hàng</p></div>
                         </div>
-                    </div>
-                    <div class="ng-stat-card">
-                        <div class="ng-stat-icon"><i class="fa-solid fa-gamepad"></i></div>
-                        <div class="ng-stat-info">
-                            <h4>15+ Game</h4><p>Hỗ trợ nạp giá rẻ</p>
+                        <div class="ng-stat-card">
+                            <div class="ng-stat-icon"><i class="fa-solid fa-gamepad"></i></div>
+                            <div class="ng-stat-info"><h4>15+ Game</h4><p>Hỗ trợ nạp giá rẻ</p></div>
                         </div>
-                    </div>
-                    <div class="ng-stat-card">
-                        <div class="ng-stat-icon"><i class="fa-solid fa-clock"></i></div>
-                        <div class="ng-stat-info">
-                            <h4>8:00 - 23:00</h4><p>Khung giờ hỗ trợ</p>
+                        <div class="ng-stat-card">
+                            <div class="ng-stat-icon"><i class="fa-regular fa-clock"></i></div>
+                            <div class="ng-stat-info"><h4>8:00 – 23:00</h4><p>Khung giờ hỗ trợ</p></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- FOOTER (Kế thừa) -->
+    </div><!-- end ng-catalog-wrap -->
+
+    <!-- FOOTER -->
     <footer class="lp-footer">
-        <p class="lp-footer-disclaimer">NAMCUMZ không liên kết với các nhà phát hành. Tất cả giao dịch đều có hóa đơn (bill).</p>
-        <p style="color: #666; font-size: 14px;">© 2026 NAMCUMZ. All rights reserved.</p>
+        <p class="lp-footer-disclaimer">NAMCUMZ không liên kết với HoYoverse, Tencent, Riot hay bất kỳ nhà phát hành game nào. Tất cả giao dịch đều có hóa đơn rõ ràng.</p>
+        <p style="color: #444; font-size: 13px; margin-top: 8px;">© 2026 NAMCUMZ. All rights reserved.</p>
     </footer>
+
+    <!-- SOCIAL PROOF POPUP (injected by JS) -->
+    <div id="socialProofContainer"></div>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

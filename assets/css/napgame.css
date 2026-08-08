@@ -1,6 +1,5 @@
 /* 
- * NẠP GAME CSS - NAMCUMZ (V2 - 2 Page Architecture)
- * Uses variables from style.css
+ * NẠP GAME CSS - NAMCUMZ (V3 - Scaled Up + Full Features)
  */
 
 :root {
@@ -8,28 +7,40 @@
     --ng-new: #68D5C1;
     --ng-sale: #f59e0b;
     --ng-blue: #3b82f6;
-    --ng-selected: rgba(59, 130, 246, 0.15);
-    --ng-glass: rgba(20, 20, 20, 0.9);
-    --ng-card-bg: #1a1a1a;
+    --ng-blue-light: #60a5fa;
+    --ng-selected: rgba(59, 130, 246, 0.18);
+    --ng-glass: rgba(20, 20, 20, 0.92);
+    --ng-card-bg: #1c1c1e;
     --ng-border: rgba(255, 255, 255, 0.1);
+    --ng-section-max: 1280px;
 }
 
 body.ng-page {
-    background-color: #111111;
+    background-color: #111;
     color: #e5e5e5;
+    font-size: 15px;
+    font-family: 'Be Vietnam Pro', 'Nunito', sans-serif;
 }
 
 /* ==========================================
  * 1. HERO SLIDER
  * ========================================== */
+.ng-slider-wrapper {
+    width: 100%;
+    background: #000;
+    position: relative;
+    overflow: hidden;
+    margin-top: 64px; /* Under header */
+}
 .ng-slider-container {
-    width: 100%; max-width: 1200px;
-    margin: 90px auto 20px; /* Below header */
-    border-radius: 20px; overflow: hidden;
-    position: relative; aspect-ratio: 21/9;
+    max-width: var(--ng-section-max);
+    margin: 0 auto;
+    position: relative;
+    aspect-ratio: 16/6;
+    overflow: hidden;
 }
 .ng-slider-track {
-    display: flex; height: 100%; transition: transform 0.5s ease-in-out;
+    display: flex; height: 100%; transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 .ng-slide {
     min-width: 100%; height: 100%; position: relative;
@@ -37,29 +48,56 @@ body.ng-page {
 .ng-slide img {
     width: 100%; height: 100%; object-fit: cover;
 }
+.ng-slide-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to right, rgba(0,0,0,0.6) 0%, transparent 50%, rgba(0,0,0,0.2) 100%);
+}
+.ng-slide-text {
+    position: absolute; left: 8%; top: 50%; transform: translateY(-50%);
+    z-index: 5;
+}
+.ng-slide-text h2 { font-size: 42px; font-weight: 900; line-height: 1.1; margin-bottom: 12px; }
+.ng-slide-text p { font-size: 18px; color: rgba(255,255,255,0.75); margin-bottom: 20px; }
+.ng-slide-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--ng-blue); color: #fff; padding: 12px 28px;
+    border-radius: 8px; font-weight: 700; font-size: 15px; text-decoration: none; transition: 0.2s;
+}
+.ng-slide-btn:hover { background: #2563eb; transform: translateY(-2px); color: #fff; }
+
+.ng-slider-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2);
+    color: #fff; width: 44px; height: 44px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 10; transition: 0.2s; font-size: 14px;
+}
+.ng-slider-nav:hover { background: rgba(255,255,255,0.2); }
+.ng-slider-prev { left: 20px; }
+.ng-slider-next { right: 20px; }
+
 .ng-slider-dots {
-    position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+    position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
     display: flex; gap: 8px; z-index: 10;
 }
 .ng-dot {
-    width: 10px; height: 10px; border-radius: 50%;
-    background: rgba(255,255,255,0.4); cursor: pointer; transition: 0.3s;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(255,255,255,0.35); cursor: pointer; transition: 0.3s; border: none;
 }
-.ng-dot.active { background: #fff; width: 20px; border-radius: 10px; }
+.ng-dot.active { background: #fff; width: 24px; border-radius: 10px; }
 
 /* ==========================================
  * 2. LIVE TICKER
  * ========================================== */
 .ng-ticker-wrap {
-    width: 100%; max-width: 1200px; margin: 0 auto 40px;
-    background: var(--ng-card-bg); border-radius: 12px;
-    border: 1px solid var(--ng-border);
-    height: 44px; display: flex; align-items: center; overflow: hidden; font-size: 13px;
+    width: 100%; background: #1a1a1a; border-top: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    height: 48px; display: flex; align-items: center; overflow: hidden; font-size: 13.5px;
 }
 .ng-ticker-live {
-    display: flex; align-items: center; gap: 8px; padding: 0 16px;
-    border-right: 1px solid var(--ng-border); font-weight: 700; color: var(--ng-hot);
-    background: rgba(255,255,255,0.02); height: 100%; flex-shrink: 0;
+    display: flex; align-items: center; gap: 8px; padding: 0 20px;
+    border-right: 1px solid rgba(255,255,255,0.1); font-weight: 700; color: var(--ng-hot);
+    height: 100%; flex-shrink: 0; background: rgba(239,68,68,0.05); min-width: 72px; justify-content: center;
 }
 .ng-ticker-dot {
     width: 8px; height: 8px; background: var(--ng-hot); border-radius: 50%;
@@ -70,251 +108,476 @@ body.ng-page {
 }
 .ng-ticker-track {
     display: inline-flex; align-items: center; gap: 0;
-    animation: tickerScroll 40s linear infinite; padding-left: 100%;
+    animation: tickerScroll 50s linear infinite; padding-left: 100%;
 }
+.ng-ticker-track:hover { animation-play-state: paused; }
 .ticker-item {
-    display: inline-flex; align-items: center; gap: 8px; color: #a1a1aa;
+    display: inline-flex; align-items: center; gap: 8px; color: #a1a1aa; padding-right: 8px;
 }
-.ticker-item b { color: #fff; }
+.ticker-item b { color: #e5e5e5; }
 .ticker-avatar {
-    width: 20px; height: 20px; border-radius: 50%;
+    width: 22px; height: 22px; border-radius: 50%;
     background: var(--ng-blue); color: #fff;
     display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700;
 }
 .ticker-price { color: var(--ng-sale); font-weight: 700; }
-.ticker-sep { margin: 0 24px; color: rgba(255,255,255,0.2); }
+.ticker-time { font-size: 11px; color: #555; }
+.ticker-sep { margin: 0 20px; color: rgba(255,255,255,0.15); }
 
 /* ==========================================
- * 3. CATALOG SECTIONS
+ * 3. CATALOG LAYOUT
  * ========================================== */
-.ng-section {
-    max-width: 1200px; margin: 0 auto 50px; padding: 0 5%;
-}
-.ng-sec-title {
-    font-size: 24px; font-weight: 800; text-transform: uppercase;
-    text-align: center; margin-bottom: 24px; letter-spacing: 1px; color: #fff;
-}
-.ng-sec-desc {
-    text-align: center; font-size: 14px; color: #a1a1aa; margin-top: -16px; margin-bottom: 30px;
+.ng-catalog-wrap {
+    max-width: var(--ng-section-max);
+    margin: 0 auto;
+    padding: 40px 24px;
 }
 
-/* Portrait Cards (Ưu đãi) */
-.ng-grid-portrait {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;
+/* Search + Filter Bar */
+.ng-search-bar {
+    display: flex; gap: 12px; margin-bottom: 40px; align-items: center;
 }
+.ng-search-input-wrap {
+    position: relative; flex: 1; max-width: 480px;
+}
+.ng-search-input-wrap i {
+    position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #666; font-size: 15px;
+}
+.ng-search-input {
+    width: 100%; background: var(--ng-card-bg); border: 1px solid var(--ng-border);
+    border-radius: 10px; padding: 12px 16px 12px 44px; color: #fff; font-size: 14px;
+    font-family: 'Be Vietnam Pro', sans-serif; transition: 0.3s;
+}
+.ng-search-input:focus { outline: none; border-color: var(--ng-blue); }
+.ng-catalog-tabs {
+    display: flex; gap: 8px;
+}
+.ng-cat-tab {
+    background: var(--ng-card-bg); border: 1px solid var(--ng-border);
+    color: #a1a1aa; padding: 10px 20px; border-radius: 8px; font-size: 14px;
+    font-weight: 600; cursor: pointer; transition: 0.2s; font-family: 'Be Vietnam Pro', sans-serif;
+}
+.ng-cat-tab.active, .ng-cat-tab:hover {
+    background: var(--ng-blue); border-color: var(--ng-blue); color: #fff;
+}
+
+/* Section title */
+.ng-section { margin-bottom: 48px; }
+.ng-sec-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+}
+.ng-sec-title {
+    font-size: 20px; font-weight: 800; color: #fff; text-transform: uppercase;
+    display: flex; align-items: center; gap: 10px;
+}
+.ng-sec-title::before, .ng-sec-title::after {
+    content: '🔥'; font-size: 18px;
+}
+.ng-sec-sub {
+    font-size: 12.5px; color: var(--ng-sale); font-weight: 600; 
+    background: rgba(245,158,11,0.1); padding: 3px 10px; border-radius: 20px;
+    border: 1px solid rgba(245,158,11,0.2);
+}
+
+/* Portrait Cards (Ưu đãi) — Larger */
+.ng-grid-portrait {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+}
+@media (max-width: 1024px) { .ng-grid-portrait { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .ng-grid-portrait { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+
 .ng-card-portrait {
-    position: relative; aspect-ratio: 3/4; border-radius: 16px; overflow: hidden;
-    cursor: pointer; transition: 0.3s;
+    position: relative; aspect-ratio: 2/3; border-radius: 16px; overflow: hidden;
+    cursor: pointer; transition: 0.3s; text-decoration: none;
 }
 .ng-card-portrait img {
     width: 100%; height: 100%; object-fit: cover; transition: 0.5s;
 }
-.ng-card-portrait:hover img { transform: scale(1.05); }
+.ng-card-portrait:hover img { transform: scale(1.06); }
 .ng-card-portrait::after {
     content: ''; position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 60%);
+    background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.1) 55%);
 }
 .ng-card-portrait-info {
-    position: absolute; bottom: 20px; left: 20px; right: 20px; z-index: 2; text-align: left;
+    position: absolute; bottom: 0; left: 0; right: 0; z-index: 2; padding: 20px 16px;
 }
-.ng-card-portrait-title { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+.ng-card-portrait-badge {
+    display: inline-block; font-size: 10px; font-weight: 800; padding: 3px 8px;
+    border-radius: 4px; margin-bottom: 8px; text-transform: uppercase;
+}
+.badge-hot { background: var(--ng-hot); color: #fff; }
+.badge-new { background: #16a34a; color: #fff; }
+.ng-card-portrait-title { font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 10px; }
 .ng-card-portrait-btn {
-    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-    color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;
-    backdrop-filter: blur(4px); display: inline-block;
+    display: inline-block; background: var(--ng-blue); color: #fff;
+    padding: 8px 20px; border-radius: 6px; font-size: 13px; font-weight: 700; transition: 0.2s;
 }
-.ng-card-portrait:hover .ng-card-portrait-btn { background: #fff; color: #000; }
+.ng-card-portrait:hover .ng-card-portrait-btn { background: #2563eb; }
 
-/* Horizontal Cards (UID / Login) */
+/* Horizontal Small Cards (UID / Login) — Compact */
 .ng-grid-horizontal {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+    gap: 12px;
 }
 .ng-card-hz {
     background: var(--ng-card-bg); border: 1px solid var(--ng-border);
-    border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 12px;
-    cursor: pointer; transition: 0.3s; text-decoration: none;
+    border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; gap: 12px;
+    cursor: pointer; transition: 0.25s; text-decoration: none; position: relative; overflow: hidden;
 }
+.ng-card-hz::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(59,130,246,0.06) 0%, transparent 60%);
+    opacity: 0; transition: 0.3s;
+}
+.ng-card-hz:hover::before { opacity: 1; }
 .ng-card-hz:hover {
-    border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.05);
-    transform: translateY(-2px);
+    border-color: rgba(59,130,246,0.4); transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
 }
 .ng-card-hz-icon {
-    width: 48px; height: 48px; border-radius: 10px; object-fit: cover;
+    width: 52px; height: 52px; border-radius: 10px; object-fit: cover; flex-shrink: 0;
 }
-.ng-card-hz-info { flex: 1; }
-.ng-card-hz-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 2px; }
-.ng-card-hz-sub { font-size: 11px; color: #a1a1aa; }
+.ng-card-hz-info { flex: 1; min-width: 0; }
+.ng-card-hz-title { font-size: 13px; font-weight: 700; color: #e5e5e5; margin-bottom: 4px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ng-card-hz-sub { font-size: 11px; color: #71717a; margin-bottom: 4px; }
+.ng-card-hz-badges { display: flex; gap: 4px; flex-wrap: wrap; }
 .ng-card-hz-badge {
-    background: #16a34a; color: #fff; font-size: 10px; font-weight: 700;
-    padding: 2px 6px; border-radius: 6px;
+    font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px;
 }
+.badge-login { background: rgba(59,130,246,0.2); color: var(--ng-blue-light); border: 1px solid rgba(59,130,246,0.3); }
+.badge-uid   { background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
 .ng-card-hz-discount {
-    background: rgba(255,255,255,0.1); color: #fff; font-size: 11px;
-    padding: 4px 8px; border-radius: 6px; font-weight: 600;
+    font-size: 12px; font-weight: 800; color: var(--ng-hot); flex-shrink: 0;
 }
 
 /* Profile Section */
 .ng-profile-box {
     background: var(--ng-card-bg); border: 1px solid var(--ng-border);
-    border-radius: 20px; padding: 30px; display: flex; flex-wrap: wrap; gap: 40px; align-items: center;
+    border-radius: 20px; padding: 40px; display: flex; flex-wrap: wrap; gap: 48px; align-items: center;
 }
-.ng-profile-img {
-    width: 250px; height: 250px; object-fit: contain; border-radius: 16px;
-    background: #000; /* Placeholder for anime girl img */
+.ng-profile-img-wrap {
+    width: 280px; height: 280px; flex-shrink: 0;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border-radius: 20px; overflow: hidden; border: 1px solid var(--ng-border);
+    display: flex; align-items: center; justify-content: center;
 }
-.ng-profile-content { flex: 1; min-width: 300px; }
-.ng-profile-content h2 { font-size: 28px; margin-bottom: 8px; color: #fff; }
-.ng-profile-content h2 span { color: var(--lp-gold); }
-.ng-profile-desc { font-size: 14px; color: #a1a1aa; margin-bottom: 20px; line-height: 1.5; }
-.ng-profile-stats {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
-}
+.ng-profile-img { width: 100%; height: 100%; object-fit: cover; }
+.ng-profile-content { flex: 1; min-width: 280px; }
+.ng-profile-tag { color: var(--ng-blue-light); font-size: 12px; font-weight: 700; letter-spacing: 1.5px; margin-bottom: 10px; }
+.ng-profile-content h2 { font-size: 32px; font-weight: 900; color: #fff; margin-bottom: 6px; }
+.ng-profile-content h2 span { color: #f59e0b; }
+.ng-profile-phone { font-size: 15px; color: #a1a1aa; margin-bottom: 16px; }
+.ng-profile-desc { font-size: 14px; color: #71717a; margin-bottom: 28px; line-height: 1.7; }
+.ng-profile-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .ng-stat-card {
-    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
-    padding: 16px; border-radius: 12px; display: flex; align-items: center; gap: 12px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    padding: 16px 18px; border-radius: 12px; display: flex; align-items: center; gap: 14px; transition: 0.2s;
 }
+.ng-stat-card:hover { border-color: rgba(59,130,246,0.3); background: rgba(59,130,246,0.05); }
 .ng-stat-icon {
-    width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 10px;
-    display: flex; align-items: center; justify-content: center; font-size: 18px;
+    width: 42px; height: 42px; background: rgba(59,130,246,0.15); border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--ng-blue-light);
+    flex-shrink: 0;
 }
-.ng-stat-info h4 { font-size: 16px; margin: 0 0 4px; color: #fff; }
-.ng-stat-info p { font-size: 12px; color: #a1a1aa; margin: 0; }
+.ng-stat-info h4 { font-size: 17px; font-weight: 800; margin: 0 0 2px; color: #fff; }
+.ng-stat-info p  { font-size: 12px; color: #71717a; margin: 0; }
+
+/* Social Proof Popup */
+.ng-social-popup {
+    position: fixed; bottom: 24px; left: 24px; z-index: 999;
+    background: #1c1c1e; border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 14px; padding: 14px 18px; display: flex; align-items: center; gap: 14px;
+    max-width: 320px; box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    animation: slideInLeft 0.5s ease forwards;
+}
+.ng-social-popup-avatar {
+    width: 44px; height: 44px; border-radius: 50%; background: var(--ng-blue);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 18px; flex-shrink: 0;
+}
+.ng-social-popup-text { font-size: 13px; line-height: 1.5; }
+.ng-social-popup-text strong { color: #fff; }
+.ng-social-popup-text span { color: #a1a1aa; }
+.ng-social-popup-price { font-weight: 800; color: var(--ng-sale); }
+.ng-social-popup-close {
+    position: absolute; top: 8px; right: 10px; background: none; border: none;
+    color: #555; cursor: pointer; font-size: 12px; line-height: 1;
+}
 
 /* ==========================================
  * 4. DETAIL PAGE (2 COLUMNS)
  * ========================================== */
 .ng-detail-container {
-    max-width: 1200px; margin: 100px auto 50px; padding: 0 5%;
+    max-width: var(--ng-section-max); margin: 0 auto; padding: 24px 24px 60px;
+    margin-top: 64px;
 }
+
+/* Breadcrumb */
+.ng-breadcrumb {
+    display: flex; align-items: center; gap: 8px; font-size: 13px;
+    color: #555; margin-bottom: 20px;
+}
+.ng-breadcrumb a { color: #71717a; text-decoration: none; transition: 0.2s; }
+.ng-breadcrumb a:hover { color: var(--ng-blue-light); }
+.ng-breadcrumb i { font-size: 10px; }
+.ng-breadcrumb span { color: #e5e5e5; }
+
+/* Game Header */
 .ng-detail-header {
     display: flex; align-items: center; gap: 20px; background: var(--ng-card-bg);
-    padding: 24px; border-radius: 16px; margin-bottom: 24px; border: 1px solid var(--ng-border);
+    padding: 24px 28px; border-radius: 14px; margin-bottom: 24px; border: 1px solid var(--ng-border);
 }
 .ng-detail-icon {
-    width: 80px; height: 80px; border-radius: 16px; object-fit: cover;
+    width: 88px; height: 88px; border-radius: 18px; object-fit: cover;
+    border: 2px solid rgba(255,255,255,0.1);
 }
-.ng-detail-title h1 { font-size: 24px; margin-bottom: 8px; color: #fff; }
-.ng-detail-rating {
-    display: flex; align-items: center; gap: 8px; font-size: 14px; color: #a1a1aa;
+.ng-detail-title h1 { font-size: 22px; font-weight: 800; margin-bottom: 10px; color: #fff; line-height: 1.3; }
+.ng-detail-meta {
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
 }
+.ng-detail-rating { display: flex; align-items: center; gap: 6px; font-size: 14px; }
 .ng-stars { color: #eab308; }
+.ng-sold { font-size: 13px; color: #71717a; }
+.ng-detail-type-badge {
+    font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px;
+}
+.ng-type-uid { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+.ng-type-login { background: rgba(59,130,246,0.15); color: var(--ng-blue-light); border: 1px solid rgba(59,130,246,0.3); }
 
-.ng-detail-layout {
-    display: flex; gap: 24px; align-items: flex-start;
-}
-.ng-col-left {
-    flex: 1; display: flex; flex-direction: column; gap: 24px;
-}
-.ng-col-right {
-    width: 320px; position: sticky; top: 100px;
-}
+/* 2-column layout */
+.ng-detail-layout { display: flex; gap: 24px; align-items: flex-start; }
+.ng-col-left { flex: 1; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.ng-col-right { width: 360px; position: sticky; top: 84px; flex-shrink: 0; }
 
-/* Detail Blocks */
+/* Detail blocks */
 .ng-detail-block {
     background: var(--ng-card-bg); border: 1px solid var(--ng-border);
-    border-radius: 16px; padding: 24px;
+    border-radius: 14px; padding: 24px;
 }
 .ng-block-title {
-    font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 20px;
-    display: flex; align-items: center; gap: 8px;
+    font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 18px;
+    display: flex; align-items: center; gap: 8px; padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 .ng-block-title i { color: var(--ng-blue); }
 
-/* Package Tabs */
-.ng-pkg-tabs {
-    display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
-}
+/* Package tabs */
+.ng-pkg-tabs { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
 .ng-tab-btn {
-    background: transparent; border: 1px solid var(--ng-border); color: #a1a1aa;
-    padding: 8px 16px; border-radius: 20px; font-size: 13px; cursor: pointer; transition: 0.2s;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--ng-border); color: #a1a1aa;
+    padding: 8px 18px; border-radius: 8px; font-size: 13px; cursor: pointer; transition: 0.2s;
+    font-family: 'Be Vietnam Pro', sans-serif;
 }
-.ng-tab-btn.active, .ng-tab-btn:hover {
-    background: var(--ng-blue); color: #fff; border-color: var(--ng-blue);
-}
+.ng-tab-btn.active, .ng-tab-btn:hover { background: var(--ng-blue); color: #fff; border-color: var(--ng-blue); }
 
-/* Package Grid in Detail */
+/* Package grid */
 .ng-pkg-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 12px;
 }
 .ng-pkg-card {
-    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 12px; padding: 16px 12px; text-align: center; cursor: pointer;
-    transition: 0.2s; position: relative;
+    background: rgba(255,255,255,0.03); border: 1.5px solid rgba(255,255,255,0.08);
+    border-radius: 12px; padding: 16px 12px; text-align: center; cursor: pointer; transition: 0.2s;
+    position: relative;
 }
-.ng-pkg-card:hover { border-color: rgba(255,255,255,0.3); }
-.ng-pkg-card.selected {
-    background: var(--ng-selected); border-color: var(--ng-blue);
-}
-.ng-pkg-img {
-    width: 60px; height: 60px; object-fit: contain; margin: 0 auto 12px; display: block;
-}
-.ng-pkg-name {
-    font-size: 13px; font-weight: 700; color: #e5e5e5; display: block; margin-bottom: 8px;
-    height: 38px; overflow: hidden; /* Fix height for alignment */
-}
-.ng-pkg-price {
-    font-size: 14px; font-weight: 800; color: var(--ng-blue);
+.ng-pkg-card:hover { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.05); }
+.ng-pkg-card.selected { background: var(--ng-selected); border-color: var(--ng-blue); box-shadow: 0 0 0 1px var(--ng-blue); }
+.ng-pkg-img { width: 72px; height: 72px; object-fit: contain; margin: 0 auto 10px; display: block; }
+.ng-pkg-name { font-size: 13px; font-weight: 700; color: #d4d4d8; display: block; margin-bottom: 8px; min-height: 36px; }
+.ng-pkg-price { font-size: 15px; font-weight: 800; color: var(--ng-blue-light); }
+.ng-pkg-badge {
+    position: absolute; top: -8px; right: -8px;
+    background: var(--ng-hot); color: #fff; font-size: 10px; padding: 2px 6px;
+    border-radius: 10px; font-weight: 800;
 }
 
-/* Detail Form */
-.ng-form-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
-}
-.ng-form-group label {
-    display: block; font-size: 13px; color: #a1a1aa; margin-bottom: 8px; font-weight: 600;
-}
+/* Detail form */
+.ng-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.ng-form-group { display: flex; flex-direction: column; }
+.ng-form-group label { font-size: 13px; color: #71717a; margin-bottom: 8px; font-weight: 600; }
+.ng-form-group label .required { color: var(--ng-hot); }
 .ng-form-group input, .ng-form-group select {
-    width: 100%; background: #0f0f0f; border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 8px; padding: 12px; color: #fff; font-size: 14px; transition: 0.3s;
+    background: #111; border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: 8px; padding: 11px 14px; color: #fff; font-size: 14px;
+    font-family: 'Be Vietnam Pro', sans-serif; transition: 0.3s;
 }
 .ng-form-group input:focus, .ng-form-group select:focus {
-    border-color: var(--ng-blue); outline: none; box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
+    border-color: var(--ng-blue); outline: none; background: #0d0d0d;
+}
+.ng-form-group select option { background: #1c1c1e; }
+.ng-uid-hint { display: flex; gap: 6px; align-items: center; }
+.ng-uid-hint input { flex: 1; }
+.ng-uid-help-btn {
+    background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3);
+    color: var(--ng-blue-light); width: 38px; height: 38px; border-radius: 8px;
+    cursor: pointer; font-size: 14px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    transition: 0.2s;
+}
+.ng-uid-help-btn:hover { background: rgba(59,130,246,0.3); }
+
+/* Payment methods block */
+.ng-payment-methods { display: flex; gap: 10px; flex-wrap: wrap; }
+.ng-pm-badge {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 700; color: #e5e5e5;
+    display: flex; align-items: center; gap: 6px;
 }
 
-/* Sticky Summary Card */
+/* Description block */
+.ng-desc-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.ng-desc-list li { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; color: #a1a1aa; line-height: 1.5; }
+.ng-desc-list li i { color: var(--ng-blue-light); flex-shrink: 0; margin-top: 2px; }
+
+/* Reviews block */
+.ng-reviews { display: flex; flex-direction: column; gap: 16px; }
+.ng-review-item {
+    display: flex; gap: 14px; padding: 16px;
+    background: rgba(255,255,255,0.02); border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);
+}
+.ng-review-avatar {
+    width: 40px; height: 40px; border-radius: 50%; background: var(--ng-blue);
+    display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px;
+    flex-shrink: 0;
+}
+.ng-review-content { flex: 1; }
+.ng-review-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.ng-review-name { font-size: 14px; font-weight: 700; color: #fff; }
+.ng-review-date { font-size: 12px; color: #555; }
+.ng-review-stars { color: #eab308; font-size: 13px; margin-bottom: 6px; }
+.ng-review-text { font-size: 13px; color: #a1a1aa; line-height: 1.5; }
+
+/* Sticky Cart (Right column) */
 .ng-summary-card {
     background: var(--ng-card-bg); border: 1px solid var(--ng-border);
-    border-radius: 16px; padding: 24px;
+    border-radius: 14px; overflow: hidden;
 }
+.ng-summary-head {
+    padding: 18px 22px; border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px;
+}
+.ng-summary-head i { color: var(--ng-blue); }
+.ng-summary-body { padding: 20px 22px; }
 .ng-summary-empty {
-    text-align: center; color: #a1a1aa; padding: 40px 0;
+    text-align: center; color: #3f3f46; padding: 40px 0;
 }
-.ng-summary-empty i { font-size: 32px; margin-bottom: 12px; opacity: 0.5; }
-.ng-summary-item {
-    display: flex; gap: 16px; align-items: center; margin-bottom: 24px;
-}
+.ng-summary-empty i { font-size: 36px; margin-bottom: 12px; display: block; }
+.ng-summary-empty p { font-size: 13px; }
+
+.ng-summary-item { display: flex; gap: 14px; align-items: center; margin-bottom: 20px; }
 .ng-summary-item-img {
-    width: 48px; height: 48px; border-radius: 8px; background: rgba(255,255,255,0.05); padding: 4px;
+    width: 52px; height: 52px; border-radius: 10px;
+    background: rgba(255,255,255,0.05); padding: 6px; object-fit: contain;
 }
 .ng-summary-item-info { flex: 1; }
-.ng-summary-item-name { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px; }
-.ng-summary-item-price { font-size: 16px; font-weight: 800; color: var(--ng-blue); }
-.ng-total-row {
-    display: flex; justify-content: space-between; padding-top: 16px;
-    border-top: 1px dashed rgba(255,255,255,0.1); margin-bottom: 24px;
+.ng-summary-item-name { font-size: 14px; font-weight: 700; color: #e5e5e5; margin-bottom: 4px; }
+.ng-summary-item-price { font-size: 16px; font-weight: 800; color: var(--ng-blue-light); }
+
+/* Promo code input */
+.ng-promo-row {
+    display: flex; gap: 8px; margin-bottom: 16px;
 }
-.ng-total-label { font-size: 16px; color: #a1a1aa; }
-.ng-total-price { font-size: 20px; font-weight: 800; color: var(--ng-hot); }
+.ng-promo-input {
+    flex: 1; background: #111; border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; padding: 10px 14px; color: #fff; font-size: 13px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+}
+.ng-promo-input:focus { outline: none; border-color: var(--ng-blue); }
+.ng-promo-btn {
+    background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3);
+    color: var(--ng-blue-light); padding: 10px 14px; border-radius: 8px;
+    font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s; white-space: nowrap;
+}
+.ng-promo-btn:hover { background: rgba(59,130,246,0.3); }
+
+.ng-total-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 0; border-top: 1px dashed rgba(255,255,255,0.08); margin-bottom: 16px;
+}
+.ng-total-label { font-size: 15px; color: #a1a1aa; }
+.ng-total-price { font-size: 22px; font-weight: 900; color: var(--ng-hot); }
 
 .ng-btn-checkout {
-    width: 100%; background: var(--ng-blue); color: #fff;
-    border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: 700;
-    cursor: pointer; transition: 0.2s;
+    width: 100%; background: var(--ng-blue); color: #fff; border: none;
+    padding: 15px; border-radius: 10px; font-size: 16px; font-weight: 800;
+    cursor: pointer; transition: 0.25s; letter-spacing: 0.3px;
+    font-family: 'Be Vietnam Pro', sans-serif;
 }
-.ng-btn-checkout:hover { background: #2563eb; transform: translateY(-2px); }
-.ng-btn-checkout:disabled { background: #3f3f46; color: #a1a1aa; cursor: not-allowed; transform: none; }
+.ng-btn-checkout:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59,130,246,0.4); }
+.ng-btn-checkout:disabled { background: #27272a; color: #3f3f46; cursor: not-allowed; transform: none; box-shadow: none; }
+.ng-btn-zalo {
+    width: 100%; background: transparent; color: #a1a1aa;
+    border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 10px;
+    font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 10px;
+    font-family: 'Be Vietnam Pro', sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.ng-btn-zalo:hover { border-color: rgba(255,255,255,0.3); color: #fff; }
+.ng-summary-trust {
+    display: flex; justify-content: space-around; padding: 14px 0 0;
+    border-top: 1px solid rgba(255,255,255,0.05); margin-top: 14px;
+    font-size: 11.5px; color: #555;
+}
+.ng-summary-trust span { display: flex; align-items: center; gap: 4px; }
+.ng-summary-trust i { color: #34d399; }
 
-/* Responsive */
+/* Mobile sticky bottom bar */
+.ng-mobile-bar {
+    display: none;
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 800;
+    background: #1c1c1e; border-top: 1px solid rgba(255,255,255,0.1);
+    padding: 12px 20px; gap: 12px; align-items: center;
+}
+.ng-mobile-bar-price {
+    flex: 1;
+}
+.ng-mobile-bar-price .label { font-size: 12px; color: #71717a; }
+.ng-mobile-bar-price .amount { font-size: 18px; font-weight: 800; color: var(--ng-hot); }
+.ng-mobile-bar-btn {
+    background: var(--ng-blue); color: #fff; border: none; padding: 12px 24px;
+    border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer;
+}
+
+/* ==========================================
+ * ANIMATIONS
+ * ========================================== */
+@keyframes pulseDot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.75)} }
+@keyframes tickerScroll { 0%{transform:translateX(0)} 100%{transform:translateX(-100%)} }
+@keyframes slideInLeft {
+    from { transform: translateX(-120%); opacity: 0; }
+    to   { transform: translateX(0); opacity: 1; }
+}
+@keyframes fadeOut {
+    from { opacity: 1; } to { opacity: 0; transform: translateX(-20px); }
+}
+
+/* ==========================================
+ * RESPONSIVE
+ * ========================================== */
+@media (max-width: 1100px) {
+    .ng-col-right { width: 300px; }
+}
 @media (max-width: 992px) {
     .ng-detail-layout { flex-direction: column; }
-    .ng-col-right { width: 100%; position: static; }
+    .ng-col-right { width: 100%; position: static; display: none; } /* Hide on mobile, use bottom bar */
+    .ng-mobile-bar { display: flex; }
+    body { padding-bottom: 72px; } /* Space for mobile bar */
 }
 @media (max-width: 768px) {
+    .ng-slider-container { aspect-ratio: 16/7; }
+    .ng-slide-text h2 { font-size: 26px; }
+    .ng-slide-text p { font-size: 14px; }
+    .ng-catalog-wrap { padding: 24px 16px; }
     .ng-form-grid { grid-template-columns: 1fr; }
-    .ng-slider-container { aspect-ratio: 16/9; margin-top: 70px; }
-    .ng-profile-box { flex-direction: column; text-align: center; }
-    .ng-profile-stats { grid-template-columns: 1fr; }
+    .ng-profile-box { flex-direction: column; gap: 24px; padding: 24px; }
+    .ng-profile-img-wrap { width: 100%; height: 200px; }
+    .ng-profile-stats { grid-template-columns: 1fr 1fr; }
+    .ng-search-bar { flex-direction: column; align-items: stretch; }
+    .ng-catalog-tabs { overflow-x: auto; padding-bottom: 4px; }
+    .ng-grid-portrait { grid-template-columns: repeat(2, 1fr); }
+    .ng-pkg-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+    .ng-detail-container { padding: 16px; }
 }
-
-@keyframes pulseDot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-@keyframes tickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+@media (max-width: 480px) {
+    .ng-grid-horizontal { grid-template-columns: 1fr 1fr; }
+    .ng-social-popup { max-width: calc(100vw - 48px); bottom: 80px; }
+}
