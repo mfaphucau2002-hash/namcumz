@@ -151,17 +151,55 @@ const FAKE_ORDERS = [
 // ==========================================
 // 2. TICKER
 // ==========================================
-function initTicker() {
+async function initTicker() {
     const track = document.getElementById('tickerTrack');
     if (!track) return;
-    const html = FAKE_ORDERS.map(o => `
+
+    let ordersList = FAKE_ORDERS;
+    if (typeof supabaseClient !== 'undefined' && supabaseClient) {
+        try {
+            const { data, error } = await supabaseClient.from('orders')
+                .select('*')
+                .ilike('content', '%[Nạp Game]%')
+                .order('created_at', { ascending: false })
+                .limit(10);
+            
+            if (!error && data && data.length > 0) {
+                ordersList = data.map(o => {
+                    const renter = o.renter_name || 'Khách';
+                    const parts = o.content ? o.content.split('\n') : [];
+                    let pkg = 'Gói nạp';
+                    if (parts[0]) {
+                        const m = parts[0].match(/\]\s+\[Nạp Game\]\s+(.*)/i);
+                        if (m) pkg = m[1];
+                    }
+                    let game = 'Game';
+                    if (parts[1] && parts[1].includes('Game:')) {
+                        game = parts[1].replace('Game:', '').trim();
+                    }
+                    return {
+                        user: renter.length > 3 ? renter.substring(0,2) + '***' + renter.slice(-1) : renter + '***',
+                        game: game,
+                        pkg: pkg,
+                        price: (o.price ? parseInt(o.price).toLocaleString('vi-VN') : '0') + ' đ',
+                        time: typeof timeAgo === 'function' ? timeAgo(o.created_at) : 'Vừa xong'
+                    };
+                });
+            }
+        } catch (err) {
+            console.error('Ticker err:', err);
+        }
+    }
+
+    const html = ordersList.map(o => `
         <span class="ticker-item">
-            <span class="ticker-avatar">${o.user[0]}</span>
-            <b>${o.user}</b> vua nap <b>${o.game}</b> \u00b7 ${o.pkg}
-            <span class="ticker-price">${o.price}</span>
+            <span class="ticker-avatar">${o.user[0].toUpperCase()}</span>
+            <b>${o.user}</b> vừa nạp <b>${o.game}</b> \u00b7 ${o.pkg}
+            <span class="ticker-price" style="color:var(--ng-hot); font-weight:bold; margin-left:8px;">${o.price}</span>
             <span class="ticker-time">${o.time}</span>
         </span>
     `).join('<span class="ticker-sep">\u2022</span>');
+    
     track.innerHTML = html + '<span class="ticker-sep">\u2022</span>' + html;
 }
 
@@ -504,23 +542,19 @@ async function submitDetailOrder() {
         if (el) { originals[id] = el.innerHTML; el.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Dang xu ly...'; el.disabled = true; }
     });
     try {
+        const server = (document.getElementById('formServer') || {}).value || 'Khác';
+        const orderCode = 'NG' + Math.floor(Math.random() * 9000 + 1000); // VD: NG5291
+        
         const orderData = {
+            order_code: orderCode,
             user_id: window.currentUser?.id || null,
-            customer_name: window.currentUser?.email || 'Khach vang lai',
-            customer_phone: phone,
-            game_id: currentGameId,
-            game_name: gameInfo.name,
-            package_id: currentSelectedPackage.id,
-            package_name: currentSelectedPackage.name,
+            renter_name: window.currentUser?.username || 'Khách Nạp Game',
+            content: `[${server}] [Nạp Game] ${currentSelectedPackage.name}\nGame: ${gameInfo.name}\nSĐT Zalo: ${phone}\nLogin: ${user} / ${pass}`,
             price: currentSelectedPackage.price,
-            uid_ingame: 'login',
-            server: 'login',
-            note: note,
-            status: 'pending',
-            payment_method: 'manual',
-            is_public: true
+            status: 'cho_xu_ly',
+            booster_name: 'Chưa nhận'
         };
-        const { error } = await supabaseClient.from('napgame_orders').insert([orderData]);
+        const { error } = await supabaseClient.from('orders').insert([orderData]);
         if (error) throw error;
         btnIds.forEach(id => {
             const el = document.getElementById(id);
