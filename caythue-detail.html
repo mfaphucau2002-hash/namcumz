@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Tiết Cày Thuê | NAMCUMZ</title>
+    <meta name="description" content="Chi tiết bảng giá dịch vụ cày thuê. Chọn nhiều mục để nhận báo giá.">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/napgame.css">
+    <style>
+        .ng-page { background-color: #080a11; }
+        
+        /* Checkbox list cho cày thuê */
+        .ct-pkg-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 10px 0;
+        }
+        .ct-pkg-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .ct-pkg-item:hover {
+            background: rgba(16, 185, 129, 0.05);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+        .ct-pkg-item.selected {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: #10b981;
+        }
+        .ct-pkg-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .ct-checkbox {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: transparent;
+            transition: 0.2s;
+        }
+        .ct-pkg-item.selected .ct-checkbox {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+        .ct-pkg-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .ct-pkg-price {
+            font-size: 15px;
+            font-weight: 700;
+            color: #10b981;
+        }
+        .ct-cart-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed rgba(255,255,255,0.1);
+        }
+        .ct-cart-item-name { color: #ddd; }
+        .ct-cart-item-price { color: #10b981; font-weight: 600; }
+        .ng-btn-checkout { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+    </style>
+</head>
+<body class="ng-page">
+
+    <header class="lp-header" id="lpHeader">
+        <a href="/" class="lp-logo">
+            <img src="assets/images/logo.jpg" alt="Logo" style="width: 32px; height: 32px; border-radius: 50%;">
+            NAMCUMZ
+        </a>
+        <nav class="lp-nav" id="lpNav">
+            <a href="/index.html">Trang chủ</a>
+            <a href="caythue.html" style="color: #10b981; font-weight: 700;">Cày Thuê</a>
+            <a href="napgame.html">Nạp Game</a>
+        </nav>
+        <div class="lp-actions">
+            <a href="dashboard.html" class="lp-btn-primary"><i class="fa-solid fa-user"></i> Đăng nhập</a>
+        </div>
+    </header>
+
+    <div class="ng-breadcrumb">
+        <a href="/">Trang chủ</a>
+        <i class="fa-solid fa-chevron-right"></i>
+        <a href="caythue.html">Cày Thuê</a>
+        <i class="fa-solid fa-chevron-right"></i>
+        <span id="breadcrumbGame">...</span>
+    </div>
+
+    <div class="ng-detail-container">
+        <!-- HEADER -->
+        <div class="ng-detail-header">
+            <img src="assets/images/logo.jpg" alt="Game Icon" class="ng-detail-icon" id="detailGameIcon">
+            <div class="ng-detail-info">
+                <h1 id="detailGameName">Cày Thuê ...</h1>
+                <div class="ng-detail-meta">
+                    <div class="ng-rating">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        <span id="detailRating">5.0</span>
+                    </div>
+                    <span class="ng-sold" id="detailSold">-- đã thuê</span>
+                    <span class="ng-detail-type-badge ng-type-uid" style="background:#10b981;" id="detailTypeBadge">Dịch Vụ Cày Thuê</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="ng-detail-layout">
+            <!-- LEFT COLUMN -->
+            <div class="ng-col-left">
+
+                <!-- Tabs & Dịch vụ -->
+                <div class="ng-detail-block">
+                    <div class="ng-block-title"><i class="fa-solid fa-layer-group"></i> Chọn bảng giá</div>
+                    <div class="ng-pkg-tabs" id="ctTabs">
+                        <!-- JS renders tabs here -->
+                    </div>
+                    <div class="ct-pkg-list" id="pkgList">
+                        <!-- JS renders items here -->
+                    </div>
+                </div>
+
+                <!-- Thông tin đơn hàng -->
+                <div class="ng-detail-block">
+                    <div class="ng-block-title"><i class="fa-solid fa-circle-info"></i> Thông tin Account</div>
+                    <div class="ng-form-grid">
+                        <div class="ng-form-group">
+                            <label>SĐT Zalo liên hệ <span class="required">*</span></label>
+                            <input type="text" id="formPhone" placeholder="Nhập SĐT Zalo">
+                        </div>
+                        <div class="ng-form-group">
+                            <label>Máy chủ <span class="required">*</span></label>
+                            <select id="formServer">
+                                <option value="">Vui lòng chọn máy chủ</option>
+                                <option value="Asia">Asia (Châu Á)</option>
+                                <option value="America">America</option>
+                                <option value="Europe">Europe</option>
+                                <option value="TW/HK/MO">TW, HK, MO</option>
+                            </select>
+                        </div>
+                        <div class="ng-form-group" style="grid-column: 1 / -1;">
+                            <label>Tên đăng nhập (Email / Username) <span class="required">*</span></label>
+                            <input type="text" id="formUsername" placeholder="Email / Username tài khoản game">
+                        </div>
+                        <div class="ng-form-group" style="grid-column: 1 / -1;">
+                            <label>Mật khẩu <span class="required">*</span></label>
+                            <input type="password" id="formPassword" placeholder="Nhập mật khẩu">
+                        </div>
+                        <div class="ng-form-group" style="grid-column: 1 / -1;">
+                            <label>Ghi chú khung giờ rảnh (Để admin tránh vào nhầm)</label>
+                            <input type="text" id="formNote" placeholder="Ví dụ: Rảnh từ 18h đến 22h...">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mô tả -->
+                <div class="ng-detail-block">
+                    <div class="ng-block-title"><i class="fa-solid fa-file-lines"></i> Cam kết dịch vụ</div>
+                    <ul class="ng-desc-list">
+                        <li><i class="fa-solid fa-shield-halved"></i> Không sử dụng phần mềm thứ 3, tool, hack, cheat. 100% cày tay an toàn.</li>
+                        <li><i class="fa-solid fa-lock"></i> Bảo mật tài khoản tuyệt đối. Đền bù 100% nếu có sự cố do bên mình.</li>
+                        <li><i class="fa-solid fa-clock"></i> Thời gian hoàn thành nhanh chóng tùy gói dịch vụ (Cập nhật tiến độ qua Zalo).</li>
+                    </ul>
+                </div>
+
+            </div><!-- end ng-col-left -->
+
+            <!-- RIGHT COLUMN (Sticky Cart) -->
+            <div class="ng-col-right">
+                <div class="ng-summary-card">
+                    <div class="ng-summary-head" style="background:#059669;"><i class="fa-solid fa-bag-shopping"></i> Giỏ hàng Cày Thuê</div>
+                    <div class="ng-summary-body">
+                        <div id="emptyCart" class="ng-summary-empty">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                            <p>Chưa chọn mục nào<br><span style="font-size:12px; color:#3f3f46;">Chọn dịch vụ ở bên trái</span></p>
+                        </div>
+                        <div id="filledCart" style="display:none;">
+                            <div id="cartItemsList" style="margin-bottom:15px; max-height: 250px; overflow-y: auto;">
+                                <!-- JS items here -->
+                            </div>
+                            <div class="ng-total-row">
+                                <span class="ng-total-label">Tổng cộng</span>
+                                <span class="ng-total-price" id="cartTotalPrice">0 đ</span>
+                            </div>
+                            <button class="ng-btn-checkout" id="btnSubmitOrder" onclick="submitBoostingOrder()">
+                                <i class="fa-solid fa-paper-plane"></i> Gửi Yêu Cầu
+                            </button>
+                            <button class="ng-btn-zalo" onclick="window.open('https://zalo.me/0763550673','_blank')">
+                                <i class="fa-solid fa-comment-dots"></i> Liên hệ Zalo hỗ trợ
+                            </button>
+                        </div>
+                        <div class="ng-summary-trust">
+                            <span><i class="fa-solid fa-shield-halved"></i> An toàn</span>
+                            <span><i class="fa-solid fa-handshake"></i> Uy tín</span>
+                            <span><i class="fa-solid fa-bolt"></i> Siêu tốc</span>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- end ng-col-right -->
+
+        </div>
+    </div>
+
+    <!-- MOBILE BOTTOM BAR -->
+    <div class="ng-mobile-bar" id="mobileBar" style="background: rgba(16, 185, 129, 0.1);">
+        <div class="ng-mobile-bar-price">
+            <div class="label">Tổng cộng</div>
+            <div class="amount" id="mobileBarPrice" style="color:#10b981;">0 đ</div>
+        </div>
+        <button class="ng-mobile-bar-btn" id="mobileBarBtn" style="background:#10b981;" onclick="submitBoostingOrder()">
+            Gửi yêu cầu
+        </button>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/authMediaConfig.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/caythue.js"></script>
+</body>
+</html>

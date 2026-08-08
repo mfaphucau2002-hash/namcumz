@@ -551,6 +551,41 @@ body.ng-page {
 }
 
 /* ==========================================
+ * FAQ ACCORDION
+ * ========================================== */
+.ng-faq-list {
+    display: flex; flex-direction: column; gap: 10px;
+}
+.ng-faq-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    overflow: hidden;
+}
+.ng-faq-question {
+    width: 100%; text-align: left; background: none; border: none;
+    color: #fff; font-size: 15px; font-weight: 600; font-family: var(--font-body);
+    padding: 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+}
+.ng-faq-question::after {
+    content: '\f078'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+    transition: 0.3s; color: #888;
+}
+.ng-faq-question.active::after {
+    transform: rotate(180deg); color: var(--ng-blue);
+}
+.ng-faq-answer {
+    max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out;
+    background: rgba(0, 0, 0, 0.2);
+}
+.ng-faq-question.active + .ng-faq-answer {
+    max-height: 200px;
+}
+.ng-faq-answer p {
+    padding: 16px; margin: 0; font-size: 14px; color: #ccc; line-height: 1.6;
+}
+
+/* ==========================================
  * RESPONSIVE
  * ========================================== */
 @media (max-width: 1100px) {
@@ -581,3 +616,5 @@ body.ng-page {
     .ng-grid-horizontal { grid-template-columns: 1fr 1fr; }
     .ng-social-popup { max-width: calc(100vw - 48px); bottom: 80px; }
 }
+ 
+ 

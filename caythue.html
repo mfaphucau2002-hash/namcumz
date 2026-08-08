@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cày Thuê Uy Tín, Nhanh Chóng | NAMCUMZ</title>
+    <meta name="description" content="Dịch vụ cày thuê game uy tín, an toàn, bảo mật. Đội ngũ tay to, xử lý nhanh chóng các dịch vụ Rush Map, Thần Đồng, La Hoàn...">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/napgame.css">
+    <style>
+        .ng-page {
+            /* Tông màu tối hơn một chút cho Cày Thuê để khác biệt với Nạp Game */
+            background-color: #080a11; 
+        }
+        .ng-slide-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+        .ng-slide-btn:hover {
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+        }
+    </style>
+</head>
+<body class="ng-page">
+
+    <!-- HEADER -->
+    <header class="lp-header" id="lpHeader">
+        <a href="/" class="lp-logo">
+            <img src="assets/images/logo.jpg" alt="Logo" style="width: 32px; height: 32px; border-radius: 50%;">
+            NAMCUMZ
+        </a>
+        <nav class="lp-nav" id="lpNav">
+            <a href="/index.html">Trang chủ</a>
+            <a href="caythue.html" style="color: #10b981; font-weight: 700;">Cày Thuê</a>
+            <a href="napgame.html">Nạp Game</a>
+        </nav>
+        <div class="lp-actions">
+            <a href="dashboard.html" class="lp-btn-primary">
+                <i class="fa-solid fa-user"></i> Đăng nhập
+            </a>
+        </div>
+    </header>
+
+    <!-- 1. HERO SLIDER -->
+    <div class="ng-slider-wrapper">
+        <div class="ng-slider-container">
+            <div class="ng-slider-track" id="sliderTrack">
+                <!-- Slide 1: Genshin -->
+                <div class="ng-slide">
+                    <img src="assets/images/games/genshin_banner.jpg" alt="Genshin Impact" onerror="this.src='assets/images/logo.jpg'">
+                    <div class="ng-slide-overlay"></div>
+                    <div class="ng-slide-text">
+                        <h2>Cày Thuê<br>Genshin Impact</h2>
+                        <p>Rush Map, Thần Đồng, La Hoàn 12 Tầng Siêu Tốc</p>
+                        <a href="caythue-detail.html?game=genshin" class="ng-slide-btn">
+                            <i class="fa-solid fa-bolt"></i> Chọn Dịch Vụ
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <button class="ng-slider-nav ng-slider-prev" onclick="slideTo(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="ng-slider-nav ng-slider-next" onclick="slideTo(1)"><i class="fa-solid fa-chevron-right"></i></button>
+            <div class="ng-slider-dots">
+                <button class="ng-dot active" onclick="goSlide(0)"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. LIVE TICKER (Boosting) -->
+    <div class="ng-ticker-wrap">
+        <div class="ng-ticker-live"><div class="ng-ticker-dot" style="background:#10b981; box-shadow: 0 0 10px #10b981;"></div> LIVE</div>
+        <div class="ng-ticker-content">
+            <div class="ng-ticker-track" id="tickerTrack"><!-- JS --></div>
+        </div>
+    </div>
+
+    <!-- 3. CATALOG CONTENT -->
+    <div class="ng-catalog-wrap">
+
+        <!-- Search -->
+        <div class="ng-search-bar">
+            <div class="ng-search-input-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" class="ng-search-input" id="gameSearch" placeholder="Tìm game cày thuê...">
+            </div>
+            <div class="ng-catalog-tabs">
+                <button class="ng-cat-tab active" data-filter="all">Tất cả</button>
+                <button class="ng-cat-tab" data-filter="hot">🔥 Hot</button>
+            </div>
+        </div>
+
+        <!-- Section: Game Cày Thuê -->
+        <div class="ng-section" id="sectionFeatured">
+            <div class="ng-sec-header">
+                <div class="ng-sec-title">Dịch Vụ Cày Thuê Nổi Bật</div>
+                <span class="ng-sec-sub">BẢO MẬT TUYỆT ĐỐI • ĐỘI NGŨ CHUYÊN NGHIỆP</span>
+            </div>
+            <div class="ng-grid-portrait" id="gridFeatured"><!-- JS --></div>
+        </div>
+
+    </div><!-- end ng-catalog-wrap -->
+
+    <!-- FOOTER -->
+    <footer class="lp-footer">
+        <p class="lp-footer-disclaimer">Dịch vụ Cày Thuê được thực hiện thủ công 100%, an toàn, bảo mật thông tin.</p>
+        <p style="color: #444; font-size: 13px; margin-top: 8px;">© 2026 NAMCUMZ. All rights reserved.</p>
+    </footer>
+
+    <!-- SOCIAL PROOF POPUP -->
+    <div id="socialProofContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/authMediaConfig.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/caythue.js"></script>
+</body>
+</html>

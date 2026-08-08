@@ -290,6 +290,10 @@ function renderPortrait(data) {
                 ${g.badge ? `<div class="ng-card-portrait-badge ${g.badgeCls}">${g.badge}</div>` : ''}
                 <div class="ng-card-portrait-title">${g.name}</div>
                 <div class="ng-card-portrait-btn">Nap Ngay</div>
+                <div style="color:#aaa; font-size:12px; margin-top:8px; display:flex; justify-content:space-between;">
+                    <span><i class="fa-solid fa-star" style="color:#eab308;"></i> ${g.rating || '5.0'}</span>
+                    <span>Đã bán: ${g.sold || '2.3K'}</span>
+                </div>
             </div>
         </a>
     `).join('');
@@ -308,6 +312,7 @@ function renderHorizontal(data, containerId, type) {
                 <div class="ng-card-hz-sub">${g.sub}</div>
                 <div class="ng-card-hz-badges">
                     <span class="ng-card-hz-badge ${badgeCls}">${badgeTxt}</span>
+                    <span class="ng-card-hz-badge" style="background:rgba(255,255,255,0.05); color:#999; border:none;">Đã bán: ${g.sold || '1.1K'}</span>
                 </div>
             </div>
             <div class="ng-card-hz-discount">${g.discount}</div>
@@ -376,6 +381,17 @@ function initDetailPage() {
     // Zalo buttons
     document.querySelectorAll('.ng-btn-zalo').forEach(btn => {
         btn.onclick = () => window.open(ZALO_LINK, '_blank');
+    });
+
+    // FAQ Accordion
+    document.querySelectorAll('.ng-faq-question').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const isActive = btn.classList.contains('active');
+            // Close all
+            document.querySelectorAll('.ng-faq-question').forEach(b => b.classList.remove('active'));
+            // Open clicked if not already active
+            if (!isActive) btn.classList.add('active');
+        });
     });
 
     renderReviews();
@@ -530,5 +546,35 @@ async function submitDetailOrder() {
 document.addEventListener('DOMContentLoaded', () => {
     initTicker();
     if (document.getElementById('sliderTrack')) initCatalogPage();
-    if (document.getElementById('pkgGrid'))     initDetailPage();
+    if (document.getElementById('pkgGrid')) initDetailPage();
+    initZaloWidget();
 });
+
+// ==========================================
+// 8. FLOATING ZALO WIDGET
+// ==========================================
+function initZaloWidget() {
+    const div = document.createElement('div');
+    div.innerHTML = `
+        <a href="https://zalo.me/0763550673" target="_blank" style="
+            position: fixed; bottom: 90px; right: 20px; z-index: 9999;
+            background: #0068ff; color: white; border-radius: 50%;
+            width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,104,255,0.4); font-size: 30px;
+            animation: bounceZalo 2s infinite; text-decoration: none;
+        ">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1200px-Icon_of_Zalo.svg.png" style="width:35px; height:35px;" alt="Zalo">
+        </a>
+        <style>
+            @keyframes bounceZalo { 
+                0%, 100% { transform: translateY(0); } 
+                50% { transform: translateY(-10px); } 
+            }
+            @media (min-width: 993px) {
+                /* Fix bottom position for desktop where no bottom bar exists */
+                a[href*="zalo.me/0763550673"] { bottom: 20px !important; }
+            }
+        </style>
+    `;
+    document.body.appendChild(div);
+}
