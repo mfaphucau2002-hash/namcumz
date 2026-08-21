@@ -548,7 +548,7 @@ async function submitDetailOrder() {
         const orderData = {
             order_code: orderCode,
             user_id: window.currentUser?.id || null,
-            renter_name: window.currentUser?.username || 'Khách Nạp Game',
+            renter_name: localStorage.getItem('username') || 'Khách Nạp Game',
             content: `[${server}] [Nạp Game] ${currentSelectedPackage.name}\nGame: ${gameInfo.name}\nSĐT Zalo: ${phone}\nLogin: ${user} / ${pass}`,
             price: currentSelectedPackage.price,
             status: 'cho_xu_ly',
