@@ -37,23 +37,35 @@ window.saveGeminiKey = function() {
     }
 };
 
-window.openAiCopilot = function(orderId, orderCode, orderContent, aiPlan) {
-    currentAiOrder = { id: orderId, code: orderCode, content: orderContent, aiPlan: aiPlan };
+window.openAiCopilot = function(orderId) {
+    let order = null;
+    if (window.ordersList) {
+        order = window.ordersList.find(o => o.id === orderId);
+    } else if (window.allOrders) {
+        order = window.allOrders.find(o => o.id === orderId);
+    }
     
-    document.getElementById('aiOrderCode').innerText = orderCode;
+    if (!order) {
+        alert('Không tìm thấy thông tin đơn hàng!');
+        return;
+    }
+
+    currentAiOrder = { id: order.id, code: order.order_code, content: order.content || '', aiPlan: order.ai_plan };
+    
+    document.getElementById('aiOrderCode').innerText = order.order_code;
     document.getElementById('aiCopilotModal').classList.add('active');
     document.getElementById('aiSettingsBlock').style.display = 'none';
     
     const key = localStorage.getItem('gemini_api_key');
-    if (!key && !aiPlan) {
+    if (!key && !order.ai_plan) {
         document.getElementById('aiSettingsBlock').style.display = 'block';
         document.getElementById('aiLoading').style.display = 'none';
         document.getElementById('aiResultContent').style.display = 'none';
         return;
     }
 
-    if (aiPlan) {
-        showAiResult(aiPlan);
+    if (order.ai_plan) {
+        showAiResult(order.ai_plan);
     } else {
         window.analyzeOrderWithAI(false);
     }
@@ -110,11 +122,15 @@ Không cần chào hỏi, đi thẳng vào nội dung phân tích.;
                 .eq('id', currentAiOrder.id);
                 
             if (error) {
-                console.warn("Không thể lưu ai_plan vào DB (Có thể do chưa có cột ai_plan hoặc lỗi quyền):", error);
+                console.warn("Không thể lưu ai_plan vào DB:", error);
             } else {
-                if (typeof window.fetchOrders === 'function') {
-                    const orderInList = window.ordersList?.find(o => o.id === currentAiOrder.id);
+                if (window.ordersList) {
+                    const orderInList = window.ordersList.find(o => o.id === currentAiOrder.id);
                     if (orderInList) orderInList.ai_plan = aiText;
+                }
+                if (window.allOrders) {
+                    const orderInAll = window.allOrders.find(o => o.id === currentAiOrder.id);
+                    if (orderInAll) orderInAll.ai_plan = aiText;
                 }
             }
         }
