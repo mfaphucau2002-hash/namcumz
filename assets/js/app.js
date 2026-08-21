@@ -215,8 +215,9 @@ window.renderOrders = function(ordersToRender, containerId) {
                     <option value="hoan_thanh" ${order.status === 'hoan_thanh' ? 'selected' : ''}>• Hoàn thành</option>
                     <option value="tam_dung" ${order.status === 'tam_dung' ? 'selected' : ''}>• Tạm dừng</option>
                 </select>`;
-                // Row 3: Chat — full width
-                adminRow3 = `<button onclick="window.openChat('${order.id}', '${order.order_code}')" class="btn" style="background: var(--primary); color: #fff; width:100%; padding: 8px 10px; font-size:13px;"><i class="fa-solid fa-comments"></i> Chat với khách</button>`;
+                // Row 3: Chat + AI — full width
+                adminRow3 = `<button onclick="window.openChat('${order.id}', '${order.order_code}')" class="btn" style="background: var(--primary); color: #fff; width:100%; padding: 8px 10px; font-size:13px; margin-bottom: 8px;"><i class="fa-solid fa-comments"></i> Chat với khách</button>`;
+                adminRow3 += `<button onclick="window.openAiCopilot('${order.id}', '${order.order_code}', \`${order.content.replace(/`/g, '\\`')}\`, \`${(order.ai_plan || '').replace(/`/g, '\\`')}\`)" class="btn" style="background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: #fff; width:100%; padding: 8px 10px; font-size:13px;"><i class="fa-solid fa-robot"></i> AI Phân tích</button>`;
             } else if (isBoosterRole) {
                 if (order.status === 'cho_xu_ly' && !order.booster_id) {
                     normalButtons += `<button onclick="acceptOrder('${order.id}')" class="btn btn-primary" style="flex:1"><i class="fa-solid fa-handshake"></i> Nhận đơn</button>`;
@@ -224,6 +225,7 @@ window.renderOrders = function(ordersToRender, containerId) {
                     normalButtons += `<button onclick="window.openProgressModal('${order.id}', '${order.user_id}')" class="btn" style="background: rgba(104,213,193,0.15); color: var(--secondary); border: 1px solid rgba(104,213,193,0.3); flex:1"><i class="fa-solid fa-camera"></i> Đăng ảnh</button>`;
                     normalButtons += `<button onclick="window.changeOrderStatus('${order.id}', 'cho_nghiem_thu', '${order.user_id}')" class="btn" style="background: var(--status-cho-nghiem-thu); color: #000; flex:1"><i class="fa-solid fa-check"></i> Gửi kết quả</button>`;
                 }
+                normalButtons += `<button onclick="window.openAiCopilot('${order.id}', '${order.order_code}', \`${order.content.replace(/`/g, '\\`')}\`, \`${(order.ai_plan || '').replace(/`/g, '\\`')}\`)" class="btn" style="background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: #fff; flex:1"><i class="fa-solid fa-robot"></i> AI Trợ Lý</button>`;
             } else if (isOwner) {
                 if (order.status === 'cho_nghiem_thu') {
                     normalButtons += `<button onclick="window.changeOrderStatus('${order.id}', 'hoan_thanh', '${order.user_id}')" class="btn" style="background: var(--status-hoan-thanh); color: #fff; flex:1"><i class="fa-solid fa-clipboard-check"></i> Nghiệm thu</button>`;

@@ -535,9 +535,50 @@
         </div>
     </div>
 
+    <!-- AI Copilot Modal -->
+    <div class="modal-overlay" id="aiCopilotModal">
+        <div class="modal-content premium-modal" style="max-width: 700px;">
+            <button class="modal-close" onclick="document.getElementById('aiCopilotModal').classList.remove('active')" style="top: 25px;"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="modal-title" style="color: #60a5fa; margin-bottom: 10px;"><i class="fa-solid fa-robot"></i> AI TRỢ LÝ CÀY THUÊ</h2>
+            <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border-light);">
+                Mã đơn: <strong id="aiOrderCode" style="color: #fff;"></strong>
+            </div>
+            
+            <!-- Settings Block for API Key -->
+            <div id="aiSettingsBlock" style="display: none; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #3f3f46;">
+                <p style="margin: 0 0 10px 0; font-size: 0.9rem; color: #a1a1aa;">Vui lòng nhập <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#60a5fa;">Google Gemini API Key</a> để sử dụng tính năng này.</p>
+                <div style="display: flex; gap: 10px;">
+                    <input type="password" id="geminiApiKey" class="form-control" placeholder="AIzaSy..." style="flex: 1;">
+                    <button class="btn btn-primary" onclick="window.saveGeminiKey()">Lưu Key</button>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="aiLoading" style="display: none; text-align: center; padding: 40px 0; color: #60a5fa;">
+                <i class="fa-solid fa-circle-notch fa-spin fa-2x" style="margin-bottom: 15px;"></i>
+                <p>AI đang phân tích yêu cầu đơn hàng và lập kế hoạch...</p>
+            </div>
+
+            <!-- Content State -->
+            <div id="aiResultContent" style="display: none; max-height: 400px; overflow-y: auto; padding-right: 10px; font-size: 0.95rem; line-height: 1.6; color: #e4e4e7;">
+                <!-- AI output injected here -->
+            </div>
+
+            <div class="modal-actions" style="margin-top: 20px; justify-content: space-between;">
+                <button type="button" class="btn" style="background: transparent; color: var(--text-muted); border: 1px solid var(--border-light); font-size: 0.85rem; padding: 8px 12px;" onclick="window.toggleAiSettings()"><i class="fa-solid fa-gear"></i> Cấu hình Key</button>
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" class="btn-cancel modal-close" onclick="document.getElementById('aiCopilotModal').classList.remove('active')">Đóng</button>
+                    <button type="button" class="btn-submit-premium" id="btnReanalyze" onclick="window.analyzeOrderWithAI(true)" style="background: linear-gradient(135deg, #3b82f6, #2563eb);"><i class="fa-solid fa-arrows-rotate"></i> Phân tích lại</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="assets/js/app.js"></script>
+    <script src="assets/js/ai-copilot.js"></script>
 </body>
 </html>
 
