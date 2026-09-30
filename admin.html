@@ -175,7 +175,8 @@
                 <a href="/" class="logo-text" style="font-size: 1.5rem;"><img src="/assets/images/logo.jpg" alt="NAMCUMZ Logo" style="height: 35px; width: 35px; border-radius: 50%; object-fit: cover;">  NAMCUMZ</a>
             </div>
             <nav class="sidebar-nav">
-                <a class="sidebar-link active" onclick="switchTab('orders', this)"><i class="fa-solid fa-list-check"></i> Quản lý đơn cày</a>
+                <a class="sidebar-link active" onclick="switchTab('orders', this)"><i class="fa-solid fa-list-check"></i> Quản lý đơn</a>
+                <a class="sidebar-link" id="ticketsTabLink" onclick="switchTab('tickets', this)"><i class="fa-solid fa-headset"></i> Hỗ trợ & Khiếu nại</a>
                 <a class="sidebar-link" id="staffTabLink" onclick="switchTab('staff', this)" style="display: none;"><i class="fa-solid fa-users-gear"></i> Quản lý nhân sự</a>
                 <a href="/checkscam" class="sidebar-link"><i class="fa-solid fa-shield-virus"></i> Check Scam</a>
                 <a href="/" class="sidebar-link"><i class="fa-solid fa-house"></i> Về trang chủ</a>
@@ -224,11 +225,11 @@
                         <thead>
                             <tr>
                                 <th>Mã Đơn</th>
+                                <th>Loại</th>
                                 <th>Khách Hàng</th>
-                                <th>Mã Nhận Đơn</th>
-                                <th>Người Cày</th>
-                                <th>Nội dung</th>
-                                <th>Giá</th>
+                                <th>Người Thực Hiện</th>
+                                <th>Nội Dung</th>
+                                <th>Giá / Đã Thu</th>
                                 <th>Trạng Thái</th>
                                 <th>Hành Động</th>
                             </tr>
@@ -262,6 +263,36 @@
                         </thead>
                         <tbody id="staffTableBody">
                             <tr><td colspan="4" style="text-align: center;">Đang tải dữ liệu...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        
+            <!-- TAB: HỖ TRỢ & KHIẾU NẠI -->
+            <div id="tab-tickets" class="tab-content">
+                <div class="admin-topbar animate-on-load">
+                    <div class="admin-title">
+                        <h1>Hỗ Trợ & Khiếu Nại</h1>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Tiếp nhận và phản hồi yêu cầu hỗ trợ từ khách hàng</p>
+                    </div>
+                </div>
+
+                <div class="table-container animate-on-load" style="animation-delay: 0.1s;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Thời Gian</th>
+                                <th>Mã Đơn</th>
+                                <th>Khách Hàng</th>
+                                <th>Vấn Đề</th>
+                                <th>Nội Dung Chi Tiết</th>
+                                <th>Trạng Thái</th>
+                                <th>Phản Hồi Admin</th>
+                                <th>Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ticketsTableBody">
+                            <tr><td colspan="8" style="text-align: center;">Đang tải dữ liệu...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -317,8 +348,37 @@
         </div>
     </div>
 
+    
+    <!-- Credentials Modal for Admin -->
+    <div class="modal-overlay" id="credModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <button class="modal-close" onclick="document.getElementById('credModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="modal-title" style="color: #f59e0b; margin-bottom: 20px;"><i class="fa-solid fa-key"></i> THÔNG TIN TÀI KHOẢN NẠP</h2>
+            <div id="credModalBody">Đang tải...</div>
+        </div>
+    </div>
+
+    <!-- Respond Ticket Modal -->
+    <div class="modal-overlay" id="respondTicketModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <button class="modal-close" onclick="document.getElementById('respondTicketModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="modal-title" style="color: var(--accent); margin-bottom: 20px;"><i class="fa-solid fa-reply"></i> PHẢN HỒI KHIẾU NẠI</h2>
+            <input type="hidden" id="respondTicketId">
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label class="form-label" style="color: #a1a1aa; margin-bottom: 6px; font-weight:700;">Nội dung phản hồi khách hàng:</label>
+                <textarea id="respondTicketText" class="form-control" rows="4" placeholder="Nhập câu trả lời hoặc hướng xử lý..."></textarea>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button class="btn btn-secondary" onclick="document.getElementById('respondTicketModal').classList.remove('active')">Đóng</button>
+                <button class="btn btn-primary" onclick="submitTicketResponse()">Gửi & Giải quyết</button>
+            </div>
+        </div>
+    </div>
+
     <!-- JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/runtime-config.js"></script>
+    <script src="assets/js/order-api.js"></script>
     <script src="assets/js/app.js"></script>
     <script>
         // Tab switching logic
@@ -382,39 +442,46 @@
             });
 
             // Fetch and render Admin Table
+            const adminOrdersMap = new Map();
+            const esc = typeof escapeHtml === 'function' ? escapeHtml : str => String(str ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
             window.loadAdminTable = async () => {
                 const { data, error } = await supabaseClient.from('orders').select('*').order('created_at', { ascending: false });
                 if(error) return;
 
+                adminOrdersMap.clear();
                 const tbody = document.getElementById('adminTableBody');
                 tbody.innerHTML = '';
                 
                 let pending = 0, playing = 0, done = 0;
 
                 data.forEach(order => {
+                    adminOrdersMap.set(order.id, order);
                     if(order.status === 'cho_xu_ly') pending++;
                     if(order.status === 'dang_cay') playing++;
                     if(order.status === 'hoan_thanh') done++;
 
                     let statusText = order.status;
                     let color = '#fff';
-                    if(order.status === 'cho_xu_ly') { statusText = 'Chờ xử lý'; color = '#a855f7'; }
-                    if(order.status === 'dang_cay') { statusText = 'Đang cày'; color = 'var(--status-dang-cay)'; }
-                    if(order.status === 'hoan_thanh') { statusText = 'Hoàn thành'; color = 'var(--status-hoan-thanh)'; }
-                    if(order.status === 'tam_dung') { statusText = 'Tạm dừng'; color = 'var(--status-tam-dung)'; }
+                    if(order.cancelled) { statusText = 'Đã hủy'; color = '#ef4444'; }
+                    else if(order.status === 'cho_xu_ly') { statusText = 'Chờ xử lý'; color = '#a855f7'; }
+                    else if(order.status === 'dang_cay') { statusText = 'Đang cày'; color = 'var(--status-dang-cay)'; }
+                    else if(order.status === 'cho_nghiem_thu') { statusText = 'Chờ nghiệm thu'; color = '#38bdf8'; }
+                    else if(order.status === 'hoan_thanh') { statusText = 'Hoàn thành'; color = 'var(--status-hoan-thanh)'; }
+                    else if(order.status === 'tam_dung') { statusText = 'Tạm dừng'; color = 'var(--status-tam-dung)'; }
 
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td><strong>${order.order_code}</strong></td>
-                        <td style="color: var(--accent);">${order.renter_name}</td>
-                        <td style="color: var(--status-dang-cay); font-family: monospace;">${order.secret_code || '-'}</td>
-                        <td>${order.booster_name || '-'}</td>
-                        <td><div style="max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${order.content}</div></td>
-                        <td style="color: var(--status-dang-cay); font-weight:bold;">${order.price || '-'}</td>
+                        <td><strong>${esc(order.order_code)}</strong></td>
+                        <td style="color: var(--accent);">${esc(order.renter_name || 'Khách')}</td>
+                        <td style="color: var(--status-dang-cay); font-family: monospace;">${esc(order.secret_code || '-')}</td>
+                        <td>${esc(order.booster_name || '-')}</td>
+                        <td><div style="max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${esc(order.content)}</div></td>
+                        <td style="color: var(--status-dang-cay); font-weight:bold;">${esc(order.price || '-')}</td>
                         <td style="color: ${color}; font-weight: 600;">${statusText}</td>
                         <td class="action-btns">
-                            <button class="btn-sm btn-edit" onclick="editOrder('${order.id}')"><i class="fa-solid fa-pen"></i></button>
-                            <button class="btn-sm btn-delete" onclick="deleteOrder('${order.id}')"><i class="fa-solid fa-trash"></i></button>
+                            <button class="btn-sm btn-edit" onclick="editOrder('${esc(order.id)}')"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn-sm btn-delete" onclick="deleteOrder('${esc(order.id)}')"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     `;
                     tbody.appendChild(tr);
@@ -441,6 +508,23 @@
             };
 
             window.deleteOrder = async (id) => {
+                if (['staging', 'production'].includes(window.NAMCUMZ_CONFIG?.environment)) {
+                    const order = adminOrdersMap.get(id);
+                    if (!order) { alert('Không tìm thấy thông tin đơn hàng.'); return; }
+                    if (order.cancelled) { alert('Đơn hàng này đã được hủy trước đó.'); return; }
+                    if (!confirm('Đơn hàng không bị xóa vĩnh viễn nhằm đảm bảo lịch sử đối soát và tài chính. Bạn có muốn HỦY đơn này không?')) return;
+                    const reason = prompt('Nhập lý do hủy đơn (bắt buộc cho kiểm toán):', 'Admin hủy đơn');
+                    if (!reason || !reason.trim()) return;
+                    const actorId = window.currentUser?.id || localStorage.getItem('userId');
+                    try {
+                        await window.OrderAPI.action(supabaseClient, actorId, order, 'cancel', { reason: reason.trim() });
+                        alert('Đã hủy đơn hàng thành công!');
+                        loadAdminTable();
+                    } catch (err) {
+                        alert('Lỗi hủy đơn: ' + (err.message || err));
+                    }
+                    return;
+                }
                 if(confirm('Bạn có chắc chắn muốn xóa đơn này không?')) {
                     const { error } = await supabaseClient.from('orders').delete().eq('id', id);
                     if(!error) loadAdminTable();
@@ -463,16 +547,18 @@
                     let roleColor = '';
                     if(user.role === 'super_admin') { roleDisplay = 'Trùm Cuối'; roleColor = 'var(--status-tam-dung)'; }
                     else if(user.role === 'admin') { roleDisplay = 'Quản trị viên'; roleColor = 'var(--status-dang-cay)'; }
+                    else if(user.role === 'booster') { roleDisplay = 'Booster'; roleColor = 'var(--accent)'; }
                     else { roleDisplay = 'Khách hàng'; roleColor = 'var(--text-muted)'; }
 
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td><strong style="color: var(--accent);">${user.username || 'Không xác định'}</strong></td>
-                        <td style="font-size: 0.8rem; color: var(--text-muted);">${user.id}</td>
+                        <td><strong style="color: var(--accent);">${esc(user.username || 'Không xác định')}</strong></td>
+                        <td style="font-size: 0.8rem; color: var(--text-muted);">${esc(user.id)}</td>
                         <td style="color: ${roleColor}; font-weight: bold;">${roleDisplay}</td>
                         <td>
-                            <select onchange="updateUserRole('${user.id}', this.value)" class="form-control" style="padding: 4px; width: auto; font-size: 0.8rem; background: var(--bg-secondary);">
+                            <select onchange="updateUserRole('${esc(user.id)}', this.value)" class="form-control" style="padding: 4px; width: auto; font-size: 0.8rem; background: var(--bg-secondary);">
                                 <option value="customer" ${user.role === 'customer' ? 'selected' : ''}>Khách hàng</option>
+                                <option value="booster" ${user.role === 'booster' ? 'selected' : ''}>Booster</option>
                                 <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Quản trị viên (Admin)</option>
                                 <option value="super_admin" ${user.role === 'super_admin' ? 'selected' : ''}>Trùm Cuối (Super Admin)</option>
                             </select>
@@ -483,6 +569,31 @@
             };
 
             window.updateUserRole = async (id, newRole) => {
+                if (['staging', 'production'].includes(window.NAMCUMZ_CONFIG?.environment)) {
+                    if (confirm(`Bạn có chắc chắn muốn đổi quyền của tài khoản này thành "${newRole}" không?`)) {
+                        const reason = prompt('Nhập lý do thay đổi quyền (bắt buộc cho lưu vết kiểm toán):', 'Cập nhật phân quyền nhân sự');
+                        if (!reason || !reason.trim()) {
+                            loadStaffTable();
+                            return;
+                        }
+                        const { error } = await supabaseClient.rpc('set_user_role', {
+                            p_target: id,
+                            p_role: newRole,
+                            p_active: true,
+                            p_reason: reason.trim()
+                        });
+                        if (error) {
+                            alert("Lỗi cập nhật quyền: " + error.message);
+                            loadStaffTable();
+                        } else {
+                            alert("Cập nhật quyền thành công!");
+                            loadStaffTable();
+                        }
+                    } else {
+                        loadStaffTable();
+                    }
+                    return;
+                }
                 if(confirm(`Bạn có chắc chắn muốn đổi quyền của người này thành ${newRole} không?`)) {
                     const { error } = await supabaseClient.from('user_roles').update({ role: newRole }).eq('id', id);
                     if(error) {
@@ -508,6 +619,31 @@
                     status: document.getElementById('adminStatus').value
                 };
 
+                if (['staging', 'production'].includes(window.NAMCUMZ_CONFIG?.environment)) {
+                    if (id) {
+                        alert('Trạng thái và giá đơn tuân theo quy trình kiểm soát nghiệp vụ (Báo giá, Xác nhận tiền, Điều phối). Vui lòng sử dụng các thao tác nghiệp vụ tại Dashboard.');
+                        modal.classList.remove('active');
+                        return;
+                    }
+                    const actorId = window.currentUser?.id || localStorage.getItem('userId');
+                    if (!actorId) {
+                        alert('Vui lòng đăng nhập tài khoản admin trước khi tạo đơn.');
+                        return;
+                    }
+                    const fullContent = `[${payload.status}] ${payload.content}\nKhách hàng: ${payload.renter_name}`;
+                    try {
+                        const newOrder = await window.OrderAPI.create(supabaseClient, actorId, fullContent, 'Asia');
+                        if (newOrder) {
+                            alert('Đã tạo đơn thành công qua RPC!');
+                            modal.classList.remove('active');
+                            loadAdminTable();
+                        }
+                    } catch (err) {
+                        alert(err.message || 'Lỗi tạo đơn.');
+                    }
+                    return;
+                }
+
                 if(id) {
                     // Update
                     const { error } = await supabaseClient.from('orders').update(payload).eq('id', id);
@@ -527,6 +663,142 @@
                     } else alert(error.message);
                 }
             });
+
+            
+            // View credentials securely (Admin only via RLS)
+            window.viewAdminCredentials = async (orderId) => {
+                const credModal = document.getElementById('credModal');
+                const credBody = document.getElementById('credModalBody');
+                credBody.innerHTML = '<div style="text-align:center; padding:20px; color:#a1a1aa;"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải thông tin tài khoản...</div>';
+                credModal.classList.add('active');
+                const { data, error } = await supabaseClient.from('order_credentials').select('*').eq('order_id', orderId).single();
+                if (error || !data) {
+                    credBody.innerHTML = '<div style="color:#ef4444; padding:20px;">Không thể tải thông tin đăng nhập: ' + esc(error?.message || 'Không có dữ liệu') + '</div>';
+                    return;
+                }
+                credBody.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:12px;">
+                        <div>
+                            <span style="color:#a1a1aa; font-size:12px;">Phương thức đăng nhập:</span>
+                            <div style="font-weight:700; color:#fff;">${esc(data.login_method || 'Hoyoverse')}</div>
+                        </div>
+                        <div>
+                            <span style="color:#a1a1aa; font-size:12px;">Tên tài khoản / Email:</span>
+                            <div style="display:flex; gap:8px; align-items:center; margin-top:4px;">
+                                <input type="text" readonly value="${esc(data.account_username)}" class="form-control" style="background:#1c1c1e; flex:1;" id="credAcc">
+                                <button class="btn-sm btn-edit" onclick="navigator.clipboard.writeText('${esc(data.account_username)}'); alert('Đã sao chép tài khoản!')" title="Sao chép"><i class="fa-solid fa-copy"></i></button>
+                            </div>
+                        </div>
+                        <div>
+                            <span style="color:#a1a1aa; font-size:12px;">Mật khẩu:</span>
+                            <div style="display:flex; gap:8px; align-items:center; margin-top:4px;">
+                                <input type="password" readonly value="${esc(data.account_password)}" class="form-control" style="background:#1c1c1e; flex:1;" id="credPass">
+                                <button class="btn-sm btn-edit" onclick="const p=document.getElementById('credPass'); p.type = p.type === 'password' ? 'text' : 'password';" title="Ẩn/Hiện"><i class="fa-solid fa-eye"></i></button>
+                                <button class="btn-sm btn-edit" onclick="navigator.clipboard.writeText('${esc(data.account_password)}'); alert('Đã sao chép mật khẩu!')" title="Sao chép"><i class="fa-solid fa-copy"></i></button>
+                            </div>
+                        </div>
+                        <div>
+                            <span style="color:#a1a1aa; font-size:12px;">SĐT Zalo liên hệ:</span>
+                            <div style="display:flex; gap:8px; align-items:center; margin-top:4px;">
+                                <span style="font-weight:700; color:#38bdf8; font-size:14px;">${esc(data.contact_phone)}</span>
+                                <a href="https://zalo.me/${encodeURIComponent(data.contact_phone)}" target="_blank" class="btn-sm btn-edit" style="text-decoration:none;"><i class="fa-solid fa-comment-dots"></i> Mở Zalo</a>
+                            </div>
+                        </div>
+                        ${data.notes ? `
+                        <div>
+                            <span style="color:#a1a1aa; font-size:12px;">Ghi chú của khách:</span>
+                            <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:6px; color:#ddd; font-size:13px; margin-top:4px;">${esc(data.notes)}</div>
+                        </div>` : ''}
+                    </div>
+                `;
+            };
+
+            // Record payment for an order via RPC
+            window.adminRecordPayment = async (orderId) => {
+                const order = adminOrdersMap.get(orderId);
+                if (!order) return alert('Không tìm thấy đơn hàng.');
+                const defaultAmount = (order.price || 0) - (order.paid_amount || 0);
+                const amountStr = prompt('Xác nhận số tiền khách đã chuyển (VND):', defaultAmount > 0 ? defaultAmount : 0);
+                if (!amountStr) return;
+                const amount = parseInt(amountStr);
+                if (isNaN(amount) || amount <= 0) return alert('Số tiền không hợp lệ.');
+                const reason = prompt('Nhập mã giao dịch ngân hàng / tham chiếu bill (bắt buộc):', 'CK ngân hàng');
+                if (!reason || !reason.trim()) return alert('Bắt buộc nhập mã tham chiếu hoặc lý do.');
+                const actorId = window.currentUser?.id || localStorage.getItem('userId');
+                try {
+                    await window.OrderAPI.action(supabaseClient, actorId, order, 'payment', {
+                        amount: amount,
+                        reason: reason.trim()
+                    });
+                    alert('Ghi nhận thanh toán thành công!');
+                    loadAdminTable();
+                } catch (err) {
+                    alert('Lỗi ghi nhận thanh toán: ' + (err.message || err));
+                }
+            };
+
+            // Support Tickets logic
+            window.loadTicketsTable = async () => {
+                const tbody = document.getElementById('ticketsTableBody');
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Đang tải dữ liệu...</td></tr>';
+                const { data, error } = await supabaseClient.from('support_tickets').select('*').order('created_at', { ascending: false });
+                if (error) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #ef4444;">Lỗi tải tickets: ' + esc(error.message) + '</td></tr>';
+                    return;
+                }
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #a1a1aa; padding: 24px;">Hiện không có khiếu nại nào.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = data.map(t => {
+                    const isResolved = t.status === 'resolved';
+                    const statusHtml = isResolved 
+                        ? '<span style="color:#10b981; font-weight:700;">Đã xử lý</span>' 
+                        : '<span style="color:#f59e0b; font-weight:700;">Đang chờ</span>';
+                    const dateStr = t.created_at ? new Date(t.created_at).toLocaleString('vi-VN') : '-';
+                    return `
+                        <tr>
+                            <td style="font-size: 0.8rem; color: #a1a1aa;">${esc(dateStr)}</td>
+                            <td style="font-family: monospace; font-size: 0.8rem;">${esc(t.order_id ? t.order_id.slice(0,8) + '...' : '-')}</td>
+                            <td style="font-size: 0.8rem; color: #a1a1aa;">${esc(t.user_id ? t.user_id.slice(0,8) + '...' : '-')}</td>
+                            <td><strong style="color:#fff;">${esc(t.issue_type || 'Hỗ trợ')}</strong></td>
+                            <td><div style="max-width:240px; white-space:pre-wrap; font-size:0.85rem; color:#d4d4d8;">${esc(t.description || '')}</div></td>
+                            <td>${statusHtml}</td>
+                            <td><div style="max-width:200px; white-space:pre-wrap; font-size:0.85rem; color:#38bdf8;">${esc(t.response || 'Chưa phản hồi')}</div></td>
+                            <td>
+                                <button class="btn-sm btn-edit" onclick="openRespondModal('${esc(t.id)}', '${esc(t.response || '')}')">
+                                    <i class="fa-solid fa-reply"></i> ${isResolved ? 'Sửa' : 'Trả lời'}
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            };
+
+            window.openRespondModal = (ticketId, currentResponse) => {
+                document.getElementById('respondTicketId').value = ticketId;
+                document.getElementById('respondTicketText').value = currentResponse || '';
+                document.getElementById('respondTicketModal').classList.add('active');
+            };
+
+            window.submitTicketResponse = async () => {
+                const ticketId = document.getElementById('respondTicketId').value;
+                const responseText = document.getElementById('respondTicketText').value.trim();
+                if (!responseText) return alert('Vui lòng nhập nội dung phản hồi.');
+                try {
+                    const { error } = await supabaseClient.rpc('respond_ticket', {
+                        p_id: ticketId,
+                        p_status: 'resolved',
+                        p_response: responseText
+                    });
+                    if (error) throw error;
+                    alert('Đã phản hồi khiếu nại thành công!');
+                    document.getElementById('respondTicketModal').classList.remove('active');
+                    loadTicketsTable();
+                } catch (err) {
+                    alert('Lỗi phản hồi: ' + (err.message || err));
+                }
+            };
 
             // Initial Load
             loadAdminTable();

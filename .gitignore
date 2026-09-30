@@ -27,3 +27,6 @@ desktop.ini
 .vscode/settings.json
 *.swp
 *.swo
+
+# Local source snapshots
+_backup/source_*/

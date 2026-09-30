@@ -616,5 +616,3 @@ body.ng-page {
     .ng-grid-horizontal { grid-template-columns: 1fr 1fr; }
     .ng-social-popup { max-width: calc(100vw - 48px); bottom: 80px; }
 }
- 
- 

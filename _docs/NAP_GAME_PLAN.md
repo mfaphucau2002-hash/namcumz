@@ -626,3 +626,12 @@ CSS:
 ---
 
 *File này được cập nhật sau mỗi session build. Đọc bảng tiến độ để tiếp tục từ đúng chỗ.*
+
+
+## 30/09/2026 — Snapshot trước đợt nâng cấp
+
+Đã lưu mã nguồn vào `_backup/source_20260930_initial`, kèm manifest SHA256 và Git HEAD/status. Đây là snapshot nguồn, KHÔNG phải backup Supabase. Chưa chạy script backup DB cũ vì chưa kiểm chứng độ đầy đủ/khôi phục. Đơn nạp tạm ngừng gửi để loại đường lưu mật khẩu plaintext; theo dõi `_docs/IMPLEMENTATION_PROGRESS.md`.
+
+## 30/09 — Snapshot trước nối RPC dashboard
+
+Nguồn app.js và dashboard.html được sao lưu tại `_backup/source_before_rpc_dashboard`; không phải backup DB. Tiến độ và giới hạn staging xem IMPLEMENTATION_PROGRESS.md.

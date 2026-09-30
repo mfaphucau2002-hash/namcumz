@@ -1,0 +1,17 @@
+{
+  "name": "namcumz",
+  "private": true,
+  "version": "0.2.0",
+  "scripts": {
+    "build": "node _tools/build.cjs",
+    "test": "node --test _tools/*.test.mjs",
+    "check": "node _tools/check.cjs",
+    "preview": "node _tools/preview.cjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.117.2"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.8"
+  }
+}

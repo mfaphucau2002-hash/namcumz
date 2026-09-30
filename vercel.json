@@ -1,4 +1,6 @@
 {
+  "buildCommand": "node _tools/check.cjs && node _tools/build.cjs",
+  "outputDirectory": "dist",
   "cleanUrls": true,
   "trailingSlash": false
 }

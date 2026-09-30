@@ -12,6 +12,116 @@ let currentSearch = '';
 let currentService = 'all';
 let currentSort = 'newest';
 
+// Verified session exposed read-only for other page scripts.
+Object.defineProperty(window, 'currentUser', { get: () => currentUser });
+let verifiedRole = 'guest';
+const usesOrderRPC = () => ['staging', 'production'].includes(window.NAMCUMZ_CONFIG?.environment);
+let orderFetchSequence = 0;
+const busyOrders = new Set();
+let sendingChat = false;
+const renderedMessages = new Set();
+const stagedUploads = new WeakMap();
+
+// Stage attachments in the private order bucket; never fall back to public/base64.
+async function stageOrderAttachment(file, orderId, actor) {
+    if (!file) return null;
+    const extensions = {'image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
+    if (!extensions[file.type] || file.size > 5242880) throw new Error('Chỉ nhận JPG, PNG, WebP tối đa 5 MB.');
+    let uploads = stagedUploads.get(file);
+    if (!uploads) { uploads = new Map(); stagedUploads.set(file, uploads); }
+    const key = orderId + '/' + actor;
+    if (uploads.has(key)) return uploads.get(key);
+    const path = key + '/' + crypto.randomUUID() + '.' + extensions[file.type];
+    const {error} = await supabaseClient.storage.from('order-files').upload(path, file, {contentType:file.type,upsert:false});
+    if (error) throw error;
+    uploads.set(key,path);
+    return path;
+}
+
+// Keep draft text/file until the RPC confirms success and ignore stale chat responses.
+async function sendStagingChat(file, text, input, fileInput) {
+    if (sendingChat || !currentUser?.id || !currentChatOrderId) return;
+    const actor = currentUser.id, orderId = currentChatOrderId;
+    sendingChat = true;
+    try {
+        const attachment = await stageOrderAttachment(file,orderId,actor);
+        const row = await window.OrderAPI.message(supabaseClient,actor,orderId,text,attachment);
+        if (currentUser?.id === actor && currentChatOrderId === orderId) {
+            if (input && input.value.trim() === text) input.value = '';
+            if (fileInput && fileInput.files[0] === file) fileInput.value = '';
+            await appendPrivateMessage(row,orderId,actor);
+        }
+    } catch (error) { alert('Chưa gửi được tin nhắn: ' + error.message); }
+    finally { sendingChat = false; }
+}
+
+// Resolve private image URLs only for the active authorized conversation.
+async function appendPrivateMessage(msg, orderId, actor) {
+    if (currentChatOrderId !== orderId || currentUser?.id !== actor || renderedMessages.has(msg.id)) return;
+    renderedMessages.add(msg.id);
+    let signedUrl = null;
+    if (msg.attachment_path) {
+        try {
+            const {data,error} = await supabaseClient.storage.from('order-files').createSignedUrl(msg.attachment_path,300);
+            if (!error) signedUrl = data?.signedUrl;
+        } catch (_) { /* Render a retry hint instead of dropping the message. */ }
+    }
+    if (currentChatOrderId !== orderId || currentUser?.id !== actor) return;
+    appendMessage({...msg, privateImageUrl:signedUrl, privateAttachmentUnavailable:msg.attachment_path && !signedUrl});
+}
+
+// Submit only versioned RPC actions; audit and notifications belong to the server.
+window.runOrderAction = async function(id, action, suppliedData) {
+    if (busyOrders.has(id)) return false;
+    const order = allOrders.find(o => o.id === id);
+    if (!order || !currentUser?.id) { alert('Vui lòng đăng nhập và tải lại đơn.'); return false; }
+    let data = suppliedData || {};
+    if (!suppliedData) {
+        if (action === 'quote') {
+            const price = prompt('Giá báo cho khách (VND):'); if (price === null) return false;
+            const minimum = prompt('Số tiền phải thu trước khi giao đơn (VND):'); if (minimum === null) return false;
+            data = {price: Number(price), required_amount: Number(minimum)};
+            if (!Number.isSafeInteger(data.price) || !Number.isSafeInteger(data.required_amount) || data.price <= 0 || data.required_amount <= 0 || data.required_amount > data.price) return alert('Số tiền không hợp lệ.');
+        }
+        if (action === 'payment') {
+            const amount = prompt('Số tiền vừa nhận thêm (VND):'); if (amount === null) return false;
+            data.amount = Number(amount);
+            if (!Number.isSafeInteger(data.amount) || data.amount <= 0) return alert('Số tiền không hợp lệ.');
+        }
+        if (action === 'progress') {
+            const value = prompt('Tiến độ thực tế từ 0 đến 99 (%):'); if (value === null) return false;
+            data.progress = Number(value);
+            if (!Number.isInteger(data.progress) || data.progress < 0 || data.progress > 99) return alert('Tiến độ không hợp lệ.');
+        }
+        if (['quote','payment','progress','submit','rework','pause','resume','cancel'].includes(action)) {
+            const reason = prompt('Ghi chú / lý do (thanh toán cần mã đối soát):');
+            if (!reason?.trim()) return false;
+            data.reason = reason.trim();
+        }
+        if (action === 'approve_quote' && !confirm('Chấp thuận giá ' + Number(order.price).toLocaleString('vi-VN') + ' đ?')) return false;
+        if (action === 'complete' && !confirm('Xác nhận đã kiểm tra và nghiệm thu kết quả?')) return false;
+        if (action === 'claim' && !confirm('Nhận thực hiện đơn này?')) return false;
+    }
+    busyOrders.add(id);
+    const actor = currentUser.id;
+    try {
+        const updated = await window.OrderAPI.action(supabaseClient, currentUser.id, order, action, data);
+        if (currentUser?.id !== actor) return false;
+        if (currentUser?.id) allOrders = allOrders.map(o => o.id === id ? updated : o);
+        await window.fetchOrders();
+        return true;
+    } catch (error) {
+        alert(error.message);
+        if (error.message.includes('Đơn đã thay đổi')) await window.fetchOrders();
+        return false;
+    } finally { busyOrders.delete(id); }
+};
+
+// Encode untrusted text before inserting into HTML templates.
+function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
 // --- Helper Functions ---
 window.animateCountUp = function(element, target, duration = 1500) {
     if(!element) return;
@@ -92,13 +202,29 @@ window.logOrderAction = async function(orderId, actionText) {
 
 window.fetchOrders = async function() {
     if (!supabaseClient) return;
+    // Private orders are never requested before a session is available.
+    if (!currentUser?.id) {
+        allOrders = [];
+        window.applyFilters();
+        return;
+    }
+    const sequence = ++orderFetchSequence;
+    const actor = currentUser.id;
     try {
         const { data, error } = await supabaseClient.from('orders').select('*').order('created_at', { ascending: false });
         if (error) throw error;
-        allOrders = data || [];
+        let queue = [];
+        if (usesOrderRPC() && verifiedRole === 'booster') {
+            const result = await supabaseClient.rpc('claim_queue');
+            if (result.error) throw result.error;
+            queue = (result.data || []).map(o => ({...o, status:'cho_xu_ly', queue_only:true, content:'Đơn đủ điều kiện nhận'}));
+        }
+        if (sequence !== orderFetchSequence || currentUser?.id !== actor) return;
+        allOrders = [...(data || []), ...queue.filter(q => !(data || []).some(o => o.id === q.id))];
+        window.getOrderById = function(id) { return allOrders.find(o => o.id === id); };
         
         window.applyFilters();
-        if(typeof window.updateDashboardStats === 'function') window.updateDashboardStats(allOrders);
+        if(typeof window.updateDashboardStats === 'function') window.updateDashboardStats(allOrders.filter(o => !o.queue_only));
     } catch (error) {
         console.error("Lỗi tải đơn hàng:", error.message);
         const grid = document.getElementById('ordersGrid');
@@ -154,10 +280,9 @@ window.renderOrders = function(ordersToRender, containerId) {
     const container = document.getElementById(containerId);
     if(!container) return;
 
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    const userRole = localStorage.getItem('userRole') || 'guest';
-    const currentUsername = localStorage.getItem('username');
-    const currentUserId = localStorage.getItem('userId');
+    const isLoggedIn = Boolean(currentUser?.id);
+    const userRole = verifiedRole;
+    const currentUserId = currentUser?.id || null;
 
     container.innerHTML = '';
 
@@ -176,9 +301,9 @@ window.renderOrders = function(ordersToRender, containerId) {
     }
 
     ordersToRender.forEach((order, index) => {
-        const statusInfo = getStatusDetails(order.status);
-        const isOwner = (order.user_id === currentUserId) || (order.renter_name === currentUsername);
-        const isAssignedBooster = order.booster_id === currentUserId;
+        const statusInfo = order.cancelled ? {text:'Đã hủy', colorVar:'#64748b', icon:'fa-ban'} : getStatusDetails(order.status);
+        const isOwner = Boolean(currentUserId && order.user_id === currentUserId);
+        const isAssignedBooster = Boolean(currentUserId && order.booster_id === currentUserId);
         const isAdmin = userRole === 'admin' || userRole === 'super_admin';
         const isBoosterRole = userRole === 'booster';
         const canViewPrivate = isAdmin || isOwner || isAssignedBooster;
@@ -251,15 +376,45 @@ window.renderOrders = function(ordersToRender, containerId) {
             ratingHtml = `
                 <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 10px; margin-top: 12px;">
                     <div>${stars}</div>
-                    <div style="color: var(--text-light); font-size: 12px; margin-top: 4px;"><i>"${order.review_comment || ''}"</i></div>
+                    <div style="color: var(--text-light); font-size: 12px; margin-top: 4px;"><i>"${escapeHtml(order.review_comment || '')}"</i></div>
                 </div>
             `;
         } else if (order.status === 'hoan_thanh' && isOwner) {
             normalButtons += `<button onclick="window.openRatingModal('${order.id}')" class="btn" style="background: var(--genshin-gold); color: #000; flex: 1;"><i class="fa-solid fa-star"></i> Đánh giá</button>`;
         }
 
+        if (usesOrderRPC()) {
+            const button = (action, label) => '<button class="btn btn-primary" onclick="window.runOrderAction(&quot;' + escapeHtml(order.id) + '&quot;,&quot;' + action + '&quot;)">' + label + '</button>';
+            let actions = '';
+            if (!order.cancelled) {
+                if (order.queue_only && isBoosterRole) actions += button('claim','Nhận đơn');
+                if (isAdmin && order.status === 'cho_xu_ly') {
+                    if (order.kind === 'boost' && !order.paid_amount) actions += button('quote','Báo giá');
+                    if (order.quote_accepted && order.paid_amount < order.price) actions += button('payment','Xác nhận tiền');
+                    if (!order.paid_amount) actions += button('cancel','Hủy đơn');
+                }
+                if (isOwner && order.status === 'cho_xu_ly' && order.price > 0 && !order.quote_accepted) actions += button('approve_quote','Chấp thuận giá');
+                if ((isAdmin || isAssignedBooster) && order.status === 'dang_cay') {
+                    actions += button('progress','Cập nhật tiến độ') + button('submit','Gửi nghiệm thu') + button('pause','Tạm dừng');
+                }
+                if (isAdmin && order.status === 'tam_dung') actions += button('resume','Tiếp tục');
+                if (isOwner && order.status === 'cho_nghiem_thu') actions += button('complete','Nghiệm thu') + button('rework','Yêu cầu làm lại');
+                if (isOwner && order.status === 'hoan_thanh' && !order.rating) actions += '<button class="btn" onclick="window.openRatingModal(&quot;' + escapeHtml(order.id) + '&quot;)">Đánh giá</button>';
+            }
+            const summary = canViewPrivate ? '<p>Đã thu: ' + Number(order.paid_amount || 0).toLocaleString('vi-VN') + ' đ / Cần thu trước khi giao: ' + Number(order.required_amount || 0).toLocaleString('vi-VN') + ' đ</p><p>' + escapeHtml(order.result_note || '') + '</p>' : '';
+            if (canViewPrivate) {
+                if (order.kind === 'topup') {
+                    actions += '<button class="btn" style="background:#f59e0b;color:#000;font-weight:700;" onclick="window.viewOrderCredentials(&quot;' + escapeHtml(order.id) + '&quot;)"><i class=\"fa-solid fa-key\"></i> Xem TK game</button>';
+                }
+                actions += '<button class="btn" onclick="window.openChat(&quot;' + escapeHtml(order.id) + '&quot;,&quot;' + escapeHtml(order.order_code) + '&quot;)">Chat / ảnh</button>';
+                actions += '<button class="btn" onclick="window.openTicketModal(&quot;' + escapeHtml(order.id) + '&quot;)">Hỗ trợ</button>';
+            }
+            normalButtons = '<div style="width:100%">' + summary + '<div style="display:flex;gap:8px;flex-wrap:wrap">' + actions + '</div></div>';
+            adminRow1 = normalButtons; adminRow2 = ''; adminRow3 = '';
+        }
+
         let displayTitle = 'Không có mô tả';
-        let server = 'Chưa xác định';
+        let server = order.game_server || 'Chưa xác định';
         let serviceGroup = 'Khác';
         let deadlineStr = 'Chưa rõ';
         let rawGoal = order.content || '';
@@ -288,12 +443,13 @@ window.renderOrders = function(ordersToRender, containerId) {
         else if (order.status === 'hoan_thanh') calculatedProgress = 100;
         else if (order.status === 'tam_dung') calculatedProgress = 30;
 
+        if (usesOrderRPC()) calculatedProgress = Math.min(100, Math.max(0, Number(order.progress) || 0));
         const html = `
             <div class="card order-card-modern animate-on-load" style="animation-delay: ${0.1 + (index%10)*0.05}s;">
                 <div class="oc-header">
                     <div>
-                        <div class="oc-id">${order.order_code || '#-----'}</div>
-                        <h3 class="oc-title">${displayTitle}</h3>
+                        <div class="oc-id">${escapeHtml(order.order_code || '#-----')}${order.kind === 'topup' ? ' <span style=\"background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;\"><i class=\"fa-solid fa-bolt\"></i> Nạp Game</span>' : ''}</div>
+                        <h3 class="oc-title">${escapeHtml(displayTitle)}</h3>
                     </div>
                     <div class="oc-status" style="background: ${statusInfo.colorVar}20; color: ${statusInfo.colorVar}; border: 1px solid ${statusInfo.colorVar}40;">
                         <i class="fa-solid ${statusInfo.icon}"></i> ${statusInfo.text}
@@ -303,23 +459,23 @@ window.renderOrders = function(ordersToRender, containerId) {
                 <div class="oc-body">
                     <div class="oc-row">
                         <span class="oc-label">Dịch vụ</span>
-                        <span class="oc-value"><i class="fa-solid fa-gamepad" style="color: var(--primary-light)"></i> ${serviceGroup}</span>
+                        <span class="oc-value"><i class="fa-solid fa-gamepad" style="color: var(--primary-light)"></i> ${escapeHtml(serviceGroup)}</span>
                     </div>
                     <div class="oc-row">
                         <span class="oc-label">Máy chủ</span>
-                        <span class="oc-value">${server}</span>
+                        <span class="oc-value">${escapeHtml(server)}</span>
                     </div>
                     <div class="oc-row">
                         <span class="oc-label">Người thuê</span>
-                        <span class="oc-value">${isAdmin ? (order.renter_name || 'Khách') : maskString(order.renter_name)}</span>
+                        <span class="oc-value">${escapeHtml(isAdmin ? (order.renter_name || 'Khách') : maskString(order.renter_name))}</span>
                     </div>
                     <div class="oc-row">
                         <span class="oc-label">Booster</span>
-                        <span class="oc-value" style="color: var(--secondary)">${order.booster_name || 'Chưa nhận'}</span>
+                        <span class="oc-value" style="color: var(--secondary)">${escapeHtml(order.booster_name || 'Chưa nhận')}</span>
                     </div>
                     <div class="oc-row">
                         <span class="oc-label">Thời hạn</span>
-                        <span class="oc-value">${deadlineStr}</span>
+                        <span class="oc-value">${escapeHtml(deadlineStr)}</span>
                     </div>
                     <div class="oc-row" style="align-items: center; margin-top: 8px;">
                         <span class="oc-label">Giá</span>
@@ -501,6 +657,7 @@ window.updateDashboardStats = function(orders) {
 };
 
 window.acceptOrder = async (orderId) => {
+    if (usesOrderRPC()) return window.runOrderAction(orderId, 'claim');
     if(!confirm('Bạn chắc chắn muốn nhận đơn này?')) return;
     const { error } = await supabaseClient.from('orders').update({ booster_id: localStorage.getItem('userId'), booster_name: localStorage.getItem('username'), status: 'dang_cay' }).eq('id', orderId);
     if(error) alert('Lỗi: ' + error.message);
@@ -512,6 +669,11 @@ window.acceptOrder = async (orderId) => {
 };
 
 window.changeOrderStatus = async (orderId, newStatus, customerId) => {
+    if (usesOrderRPC()) {
+        const action = {cho_nghiem_thu:'submit',hoan_thanh:'complete',tam_dung:'pause',dang_cay:'resume'}[newStatus];
+        if (action) return window.runOrderAction(orderId, action);
+        return alert('Hãy dùng thao tác theo vòng đời đơn.');
+    }
     const { error } = await supabaseClient.from('orders').update({ status: newStatus }).eq('id', orderId);
     if (error) {
         alert("Lỗi cập nhật: " + error.message);
@@ -527,6 +689,7 @@ window.changeOrderStatus = async (orderId, newStatus, customerId) => {
 
 // Xóa đơn hàng (chỉ Admin)
 window.deleteOrder = async function(orderId, orderCode) {
+    if (usesOrderRPC()) return window.runOrderAction(orderId, 'cancel');
     const userRole = localStorage.getItem('userRole');
     if (userRole !== 'admin' && userRole !== 'super_admin') return alert('Bạn không có quyền xóa đơn!');
     
@@ -631,6 +794,21 @@ window.openTicketModal = function(orderId) {
 };
 
 window.submitTicket = async function() {
+    if (usesOrderRPC()) {
+        const button = document.getElementById('submitTicketBtn');
+        if (!currentUser?.id || button.disabled) return;
+        const issue = document.getElementById('ticketIssueType').value;
+        const description = document.getElementById('ticketComment').value.trim();
+        if (!description) return alert('Vui lòng mô tả sự cố.');
+        button.disabled = true;
+        try {
+            await window.OrderAPI.ticket(supabaseClient,currentUser.id,window.ticketOrderId,issue,description);
+            document.getElementById('ticketModal').classList.remove('active');
+            alert('Đã gửi yêu cầu hỗ trợ.');
+        } catch (error) { alert(error.message); }
+        finally { button.disabled = false; }
+        return;
+    }
     const currentUserId = localStorage.getItem('userId');
     if (!currentUserId) return alert('Vui lòng đăng nhập để khiếu nại!');
     const issue = document.getElementById('ticketIssueType').value;
@@ -661,6 +839,8 @@ window.submitTicket = async function() {
 // -- Chat System --
 window.openChat = async function(orderId, orderCode) {
     currentChatOrderId = orderId;
+    renderedMessages.clear();
+    const chatActor = currentUser?.id;
     const codeEl = document.getElementById('chatOrderCode');
     if(codeEl) codeEl.innerText = orderCode;
     const modal = document.getElementById('chatModal');
@@ -673,17 +853,26 @@ window.openChat = async function(orderId, orderCode) {
     
     const { data, error } = await supabaseClient.from('order_messages').select('*').eq('order_id', orderId).order('created_at', { ascending: true });
     
+    if (currentChatOrderId !== orderId || currentUser?.id !== chatActor) return;
     if (error) {
         if(msgContainer) msgContainer.innerHTML = '<div style="text-align:center; color:var(--status-tam-dung);">Lỗi tải tin nhắn.</div>';
     } else {
         if(msgContainer) msgContainer.innerHTML = '';
-        if(data) data.forEach(msg => appendMessage(msg));
+        if(data) {
+            for (const msg of data) {
+                if (usesOrderRPC()) await appendPrivateMessage(msg,orderId,chatActor);
+                else appendMessage(msg);
+            }
+        }
     }
     
+    if (currentChatOrderId !== orderId || currentUser?.id !== chatActor) return;
     if(currentChatSub) await supabaseClient.removeChannel(currentChatSub);
     currentChatSub = supabaseClient.channel('chat_'+orderId)
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'order_messages', filter: 'order_id=eq.'+orderId }, payload => {
-            appendMessage(payload.new);
+            if (currentChatOrderId !== orderId || currentUser?.id !== chatActor) return;
+            if (usesOrderRPC()) appendPrivateMessage(payload.new,orderId,chatActor).catch(() => {});
+            else appendMessage(payload.new);
         }).subscribe();
 };
 
@@ -779,21 +968,25 @@ function appendMessage(msg) {
     if(!msgContainer) return;
     
     const isMine = msg.sender_id === localStorage.getItem('userId');
-    let contentHtml = msg.message || '';
+    let contentHtml = escapeHtml(msg.message || '');
     
-    if (contentHtml.includes('IMAGE:')) {
+    if (!usesOrderRPC() && contentHtml.includes('IMAGE:')) {
         const parts = contentHtml.split('IMAGE:');
         const textPart = parts[0].trim();
-        const imgUrl = parts[1].trim();
+        const candidate = (msg.message || '').split('IMAGE:')[1].trim();
+        const imgUrl = escapeHtml(/^https:\/\//i.test(candidate) ? candidate : '');
         contentHtml = `
             ${textPart ? `<div style="margin-bottom: 6px; font-weight: 500;">${textPart}</div>` : ''}
             <img src="${imgUrl}" onclick="window.openImageLightbox(this.src)" style="max-width:100%; max-height:260px; border-radius:8px; display:block; cursor:pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'" alt="Ảnh tiến độ">
         `;
     }
     
+    if (usesOrderRPC() && /^https:\/\//i.test(msg.privateImageUrl || '')) {
+        contentHtml += '<img src="' + escapeHtml(msg.privateImageUrl) + '" alt="Ảnh đính kèm" style="max-width:100%;max-height:260px" onclick="window.openImageLightbox(this.src)">';
+    } else if (msg.privateAttachmentUnavailable) contentHtml += '<p>Không tải được ảnh. Mở lại cuộc trò chuyện để thử lại.</p>';
     const html = `
         <div style="display: flex; flex-direction: column; align-items: ${isMine ? 'flex-end' : 'flex-start'}; margin-bottom: 10px;">
-            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">${msg.sender_name}</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">${escapeHtml(msg.sender_name)}</div>
             <div style="background: ${isMine ? 'var(--primary)' : 'rgba(255,255,255,0.05)'}; color: #fff; padding: 10px 15px; border-radius: 12px; max-width: 85%; word-break: break-word;">
                 ${contentHtml}
             </div>
@@ -812,6 +1005,7 @@ window.sendMessage = async function(e) {
     const imgInput = document.getElementById('chatImageInput');
     
     if (!msgText && (!imgInput || !imgInput.files[0])) return;
+    if (usesOrderRPC()) return sendStagingChat(imgInput?.files[0],msgText,input,imgInput);
     if(input) input.value = '';
     
     const currentUserId = localStorage.getItem('userId');
@@ -851,6 +1045,7 @@ window.sendMessage = async function(e) {
 window.uploadChatImage = async function(event) {
     const file = event.target.files && event.target.files[0];
     if (!file || !currentChatOrderId || !supabaseClient) return;
+    if (usesOrderRPC()) return sendStagingChat(file,'',null,event.target);
     const currentUserId = localStorage.getItem('userId');
     const currentUsername = localStorage.getItem('username') || 'Ẩn danh';
     const imageUrl = await uploadFileOrFallback(file, 'chat');
@@ -1148,6 +1343,9 @@ function bindEvents() {
         const modal = document.getElementById('ratingModal');
         if (modal) {
             modal.dataset.orderId = orderId;
+            modal.dataset.rating = '0';
+            const comment = document.getElementById('ratingComment');
+            if (comment) comment.value = '';
             modal.classList.add('active');
             // Reset stars
             document.querySelectorAll('#ratingStars i').forEach((star, idx) => {
@@ -1172,6 +1370,12 @@ function bindEvents() {
             const rating = parseInt(modal.dataset.rating) || 0;
             const comment = document.getElementById('ratingComment')?.value?.trim() || '';
             if (rating === 0) { alert('Vui lòng chọn số sao đánh giá!'); return; }
+            if (usesOrderRPC()) {
+                submitRatingBtn.disabled = true;
+                try { if (await window.runOrderAction(orderId, 'review', {rating, comment})) modal.classList.remove('active'); }
+                finally { submitRatingBtn.disabled = false; }
+                return;
+            }
             submitRatingBtn.disabled = true;
             submitRatingBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gửi...';
             const { error } = await supabaseClient.from('orders').update({ rating: rating, review_comment: comment }).eq('id', orderId);
@@ -1205,8 +1409,8 @@ function bindEvents() {
                             }
                             listEl.innerHTML = data.map(n => `
                                 <div class="notif-item ${!n.read_at ? 'unread' : ''}">
-                                    <div style="font-size:0.85rem;color:#fff;font-weight:600;">${n.title || 'Thông báo'}</div>
-                                    <div style="font-size:0.8rem;color:var(--text-muted);margin-top:3px;">${n.content || ''}</div>
+                                    <div style="font-size:0.85rem;color:#fff;font-weight:600;">${escapeHtml(n.title || 'Thông báo')}</div>
+                                    <div style="font-size:0.8rem;color:var(--text-muted);margin-top:3px;">${escapeHtml(n.content || '')}</div>
                                     <div class="notif-time">${new Date(n.created_at).toLocaleString('vi-VN')}</div>
                                 </div>`).join('');
                         });
@@ -1234,9 +1438,11 @@ function bindEvents() {
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
+            if (e.defaultPrevented || !loginForm.checkValidity()) return;
             e.preventDefault();
             if(!supabaseClient) return alert('Chưa tải xong kết nối, vui lòng thử lại.');
-            const btn = loginForm.querySelector('button');
+            const btn = loginForm.querySelector('button[type="submit"]');
+            if (!btn || btn.disabled) return;
             const user = document.getElementById('username').value.trim();
             const pass = document.getElementById('password').value;
             const email = user + '@namcumz.com';
@@ -1248,8 +1454,6 @@ function bindEvents() {
             if (error) {
                 alert('Tên tài khoản hoặc mật khẩu không đúng!');
             } else {
-                const userId = data.user.id;
-                if (user.toLowerCase() === 'admin') await supabaseClient.from('user_roles').upsert({ id: userId, username: user, role: 'super_admin' });
                 setTimeout(() => { window.location.href = 'dashboard.html'; }, 500);
             }
             btn.innerHTML = 'ĐĂNG NHẬP';
@@ -1280,9 +1484,11 @@ function bindEvents() {
     const registerForm = document.getElementById('registerForm');
     if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
+            if (e.defaultPrevented || !registerForm.checkValidity()) return;
             e.preventDefault();
             if(!supabaseClient) return alert('Chưa tải xong kết nối.');
-            const btn = registerForm.querySelector('button');
+            const btn = registerForm.querySelector('button[type="submit"]');
+            if (!btn || btn.disabled) return;
             const username = document.getElementById('regUsername').value.trim();
             const pass = document.getElementById('regPassword').value;
             const pass2 = document.getElementById('regPasswordConfirm').value;
@@ -1293,15 +1499,32 @@ function bindEvents() {
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG TẠO...';
             btn.disabled = true;
 
-            const { data, error } = await supabaseClient.auth.signUp({ email: username + '@namcumz.com', password: pass, options: { data: { display_name: displayName, role: 'customer' } } });
-            if (error) alert('Lỗi đăng ký: ' + error.message);
-            else if (data.user) {
-                await supabaseClient.from('user_roles').insert([{ id: data.user.id, username: username, role: 'customer' }]);
-                alert('Đăng ký thành công! Đang đăng nhập...');
-                setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
+            try {
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email: username + '@namcumz.com', password: pass,
+                    options: { data: { display_name: displayName } }
+                });
+                if (error) throw error;
+                if (!data?.user) throw new Error('Chưa nhận được kết quả đăng ký. Vui lòng thử lại.');
+                // Server provisions profiles through Auth trigger on staging & production, never from browser.
+                if (!['staging', 'production'].includes(window.NAMCUMZ_CONFIG?.environment)) {
+                    const { error: profileError } = await supabaseClient.from('user_roles').insert([
+                        { id: data.user.id, username: username, role: 'customer' }
+                    ]);
+                    if (profileError) throw new Error('Tài khoản đã được tạo nhưng hồ sơ chưa hoàn tất. Vui lòng liên hệ hỗ trợ.');
+                }
+                if (data.session) {
+                    alert('Đăng ký thành công! Đang đăng nhập...');
+                    setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
+                } else {
+                    alert('Chưa có phiên đăng nhập. Hệ thống yêu cầu xác minh email; luồng tài khoản hiện tại cần được cấu hình trước khi đăng nhập.');
+                }
+            } catch (error) {
+                alert('Không thể hoàn tất đăng ký: ' + (error.message || 'Vui lòng thử lại.'));
+            } finally {
+                btn.innerHTML = 'ĐĂNG KÝ NGAY';
+                btn.disabled = false;
             }
-            btn.innerHTML = 'ĐĂNG KÝ NGAY';
-            btn.disabled = false;
         });
     }
     
@@ -1321,7 +1544,25 @@ function bindEvents() {
             e.preventDefault();
             if(!supabaseClient) return;
             const btn = document.getElementById('submitOrderBtn');
-            const isGuest = localStorage.getItem('isLoggedIn') !== 'true';
+            if (!currentUser?.id) return alert('Vui lòng đăng nhập trước khi tạo đơn.');
+            if (btn.disabled) return;
+            if (usesOrderRPC()) {
+                if (!createOrderForm.reportValidity()) return;
+                const value = id => document.getElementById(id).value.trim();
+                const content = '[' + value('orderServer') + '] [' + value('orderServiceGroup') + '] ' + value('orderGoal') + '\nDeadline: ' + value('orderDeadline') + '\nGhi chú: ' + value('orderContent');
+                btn.disabled = true;
+                btn.textContent = 'Đang tạo...';
+                try {
+                    await window.OrderAPI.create(supabaseClient, currentUser.id, content, value('orderServer'));
+                    createOrderForm.reset();
+                    document.getElementById('createOrderModal').classList.remove('active');
+                    await window.fetchOrders();
+                    alert('Đã tạo đơn, chờ shop báo giá.');
+                } catch (error) { alert(error.message); }
+                finally { btn.disabled = false; btn.textContent = 'Tạo đơn'; }
+                return;
+            }
+            const isGuest = false;
             
             const renterInput = document.getElementById('orderRenter').value.trim();
             const renter = renterInput || localStorage.getItem('username') || 'Khách';
@@ -1353,7 +1594,7 @@ function bindEvents() {
             const orderCode = 'DH' + Math.floor(Math.random() * 10000);
             const orderData = {
                 order_code: orderCode, renter_name: renter, price: parseFloat(price) || 0,
-                content: content, status: 'cho_xu_ly', user_id: isGuest ? null : localStorage.getItem('userId'), secret_code: secretCode,
+                content: content, status: 'cho_xu_ly', user_id: currentUser.id, secret_code: secretCode,
                 booster_name: 'Chưa nhận'
             };
             
@@ -1551,12 +1792,15 @@ function initSupabaseLogic() {
             localStorage.setItem('isLoggedIn', 'true');
             localStorage.setItem('userId', session.user.id);
             currentUser = session.user;
+            verifiedRole = 'customer';
+            localStorage.setItem('userRole', 'customer');
             
             try {
                 const { data } = await supabaseClient.from('user_roles').select('username, role').eq('id', session.user.id).single();
                 if (data) {
                     localStorage.setItem('username', data.username || '');
-                    localStorage.setItem('userRole', data.role || 'customer');
+                    verifiedRole = data.role || 'customer';
+                    localStorage.setItem('userRole', verifiedRole);
                 }
             } catch (e) {
                 console.error("Lỗi lấy thông tin user_roles:", e);
@@ -1569,6 +1813,7 @@ function initSupabaseLogic() {
             localStorage.removeItem('userRole');
             localStorage.removeItem('username');
             currentUser = null;
+            verifiedRole = 'guest';
             setupNavbar();
             if (typeof window.fetchOrders === 'function') window.fetchOrders();
         }
@@ -1579,8 +1824,22 @@ function initSupabaseLogic() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    const config = window.NAMCUMZ_CONFIG || {};
+    const localHost = ['localhost', '127.0.0.1', '[::1]', ''].includes(location.hostname);
+    const configuredStaging = config.environment === 'staging' && /^https:\/\/[^/]+\.supabase\.co$/.test(config.supabaseUrl || '') && config.supabaseAnonKey && config.supabaseUrl !== SUPABASE_URL;
+    const configuredProd = config.environment === 'production' && /^https:\/\/[^/]+\.supabase\.co$/.test(config.supabaseUrl || '') && config.supabaseAnonKey;
+    const configured = configuredStaging || configuredProd;
+    if ((localHost || config.environment === 'staging') && !configured) {
+        const notice = document.createElement('p');
+        notice.setAttribute('role', 'alert');
+        notice.textContent = 'Chưa cấu hình Supabase staging. Kết nối dữ liệu đang tắt để bảo vệ production. Cấu hình assets/js/runtime-config.js rồi tải lại.';
+        document.body.prepend(notice);
+        return;
+    }
+    const databaseUrl = configured ? config.supabaseUrl : SUPABASE_URL;
+    const databaseKey = configured ? config.supabaseAnonKey : SUPABASE_ANON_KEY;
     if (window.supabase) {
-        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        supabaseClient = window.supabase.createClient(databaseUrl, databaseKey);
         initSupabaseLogic();
     } else {
         console.warn("Supabase CDN blocked/failed! Trying unpkg fallback...");
@@ -1588,7 +1847,7 @@ document.addEventListener('DOMContentLoaded', () => {
         script.src = 'https://unpkg.com/@supabase/supabase-js@2';
         script.onload = () => {
             if (window.supabase) {
-                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                supabaseClient = window.supabase.createClient(databaseUrl, databaseKey);
                 initSupabaseLogic();
             } else { alert("Không thể kết nối Supabase (Mạng bị chặn CDN)."); }
         };
@@ -1596,3 +1855,66 @@ document.addEventListener('DOMContentLoaded', () => {
         document.head.appendChild(script);
     }
 });
+
+// Securely view credentials for Topup Orders (Protected by RLS)
+window.viewOrderCredentials = async function(orderId) {
+    let modal = document.getElementById('viewCredModal');
+    if (!modal) {
+        const mHtml = `
+            <div class="modal-overlay" id="viewCredModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;">
+                <div class="modal-content" style="background:#18181b;border:1px solid #3f3f46;border-radius:14px;max-width:480px;width:90%;padding:24px;position:relative;color:#fff;">
+                    <button class="modal-close" onclick="document.getElementById('viewCredModal').style.display='none'" style="position:absolute;top:16px;right:16px;background:none;border:none;color:#a1a1aa;font-size:20px;cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+                    <h3 style="margin-top:0;margin-bottom:16px;color:#f59e0b;display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-key"></i> Thông Tin Tài Khoản Nạp</h3>
+                    <div id="viewCredModalBody">Đang tải...</div>
+                </div>
+            </div>`;
+        document.body.insertAdjacentHTML('beforeend', mHtml);
+        modal = document.getElementById('viewCredModal');
+    }
+    const body = document.getElementById('viewCredModalBody');
+    body.innerHTML = '<div style="text-align:center;padding:20px;color:#a1a1aa;"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải thông tin bảo mật...</div>';
+    modal.style.display = 'flex';
+    try {
+        const { data, error } = await supabaseClient.from('order_credentials').select('*').eq('order_id', orderId).single();
+        if (error || !data) throw error || new Error('Không tìm thấy thông tin đăng nhập hoặc bạn không có quyền xem.');
+        body.innerHTML = `
+            <div style="display:flex;flex-direction:column;gap:14px;">
+                <div style="background:#27272a;padding:12px;border-radius:8px;">
+                    <div style="font-size:12px;color:#a1a1aa;margin-bottom:4px;">Phương thức đăng nhập</div>
+                    <div style="font-weight:700;color:#fff;">${escapeHtml(data.login_method || 'Hoyoverse')}</div>
+                </div>
+                <div style="background:#27272a;padding:12px;border-radius:8px;">
+                    <div style="font-size:12px;color:#a1a1aa;margin-bottom:4px;">Tên tài khoản / Email</div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <span style="font-weight:700;color:#fff;font-family:monospace;word-break:break-all;">${escapeHtml(data.account_username)}</span>
+                        <button class="btn btn-outline" style="padding:4px 10px;font-size:12px;" onclick="navigator.clipboard.writeText('${escapeHtml(data.account_username)}');alert('Đã sao chép tài khoản!');"><i class="fa-solid fa-copy"></i></button>
+                    </div>
+                </div>
+                <div style="background:#27272a;padding:12px;border-radius:8px;">
+                    <div style="font-size:12px;color:#a1a1aa;margin-bottom:4px;">Mật khẩu</div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <input type="password" id="viewCredPassField" readonly value="${escapeHtml(data.account_password)}" style="background:none;border:none;color:#fff;font-weight:700;font-family:monospace;font-size:15px;outline:none;width:70%;">
+                        <div style="display:flex;gap:6px;">
+                            <button class="btn btn-outline" style="padding:4px 10px;font-size:12px;" onclick="const f=document.getElementById('viewCredPassField');f.type=f.type==='password'?'text':'password';"><i class="fa-solid fa-eye"></i></button>
+                            <button class="btn btn-outline" style="padding:4px 10px;font-size:12px;" onclick="navigator.clipboard.writeText('${escapeHtml(data.account_password)}');alert('Đã sao chép mật khẩu!');"><i class="fa-solid fa-copy"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div style="background:#27272a;padding:12px;border-radius:8px;">
+                    <div style="font-size:12px;color:#a1a1aa;margin-bottom:4px;">SĐT Zalo liên hệ</div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <span style="font-weight:700;color:#38bdf8;">${escapeHtml(data.contact_phone)}</span>
+                        <a href="https://zalo.me/${encodeURIComponent(data.contact_phone)}" target="_blank" class="btn btn-outline" style="padding:4px 10px;font-size:12px;text-decoration:none;"><i class="fa-solid fa-comment-dots"></i> Zalo</a>
+                    </div>
+                </div>
+                ${data.notes ? `
+                <div style="background:#27272a;padding:12px;border-radius:8px;">
+                    <div style="font-size:12px;color:#a1a1aa;margin-bottom:4px;">Ghi chú</div>
+                    <div style="font-size:13px;color:#ddd;white-space:pre-wrap;">${escapeHtml(data.notes)}</div>
+                </div>` : ''}
+            </div>
+        `;
+    } catch (err) {
+        body.innerHTML = '<div style="color:#ef4444;padding:16px;">' + escapeHtml(err.message || 'Lỗi khi tải thông tin đăng nhập') + '</div>';
+    }
+};

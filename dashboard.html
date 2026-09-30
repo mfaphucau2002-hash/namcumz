@@ -176,6 +176,9 @@
                 <a href="/index.html" class="nav-link">
                     <i class="fa-solid fa-home"></i> Trang chủ
                 </a>
+                <a href="/napgame.html" class="nav-link" style="color: #f59e0b; font-weight: 700;">
+                    <i class="fa-solid fa-bolt"></i> Nạp Game
+                </a>
                 <a href="/dashboard.html" class="nav-link active">
                     <i class="fa-solid fa-chart-line"></i> Bảng điều khiển
                 </a>
@@ -234,9 +237,14 @@
                     <div id="dynamicSlogan" style="color: var(--text-muted); font-size: 13px; font-weight: 500; transition: opacity 450ms ease, transform 450ms ease; opacity: 1; transform: translateY(0); letter-spacing: 0.5px;">Cày thuê Genshin minh bạch</div>
                 </div>
             </div>
-            <a href="javascript:void(0)" class="btn btn-primary" id="createOrderBtn" style="padding: 12px 24px;">
-                <i class="fa-solid fa-plus"></i> Tạo Đơn Mới
-            </a>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <a href="/napgame.html" class="btn btn-outline" style="border-color: #f59e0b; color: #f59e0b; padding: 12px 20px; font-weight: 700;">
+                    <i class="fa-solid fa-bolt"></i> Nạp Game
+                </a>
+                <a href="javascript:void(0)" class="btn btn-primary" id="createOrderBtn" style="padding: 12px 24px;">
+                    <i class="fa-solid fa-plus"></i> Tạo Đơn Mới
+                </a>
+            </div>
         </div>
 
         <!-- Tabs -->
@@ -352,13 +360,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">GHI CHÚ / THÔNG TIN ACC</label>
-                    <textarea id="orderContent" class="form-control" rows="3" placeholder="Nhập ghi chú hoặc thông tin cần thiết..." required style="resize: vertical;"></textarea>
+                    <label class="form-label">GHI CHÚ YÊU CẦU</label>
+                    <textarea id="orderContent" class="form-control" rows="3" placeholder="Mô tả yêu cầu; không nhập mật khẩu, OTP hoặc mã khôi phục." required style="resize: vertical;"></textarea>
                 </div>
 
                 <div class="modal-notice">
                     <i class="fa-solid fa-circle-info"></i>
-                    <span>Sau khi tạo, đơn hàng sẽ ở trạng thái "Chờ nhận". Admin sẽ xem xét và cập nhật giá chính thức. Vui lòng bảo mật thông tin tài khoản.</span>
+                    <span>Đơn mới chờ shop báo giá. Bạn chấp thuận giá trước khi shop xác nhận thanh toán và giao đơn. Không gửi mật khẩu hoặc OTP trong ghi chú.</span>
                 </div>
                 
                 <div class="modal-actions">
@@ -577,6 +585,8 @@
     <!-- JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="assets/js/runtime-config.js"></script>
+    <script src="assets/js/order-api.js"></script>
     <script src="assets/js/app.js"></script>
     <script src="assets/js/ai-copilot.js"></script>
 </body>
