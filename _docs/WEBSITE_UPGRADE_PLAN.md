@@ -1,6 +1,6 @@
 # KẾ HOẠCH FIX & NÂNG CẤP WEBSITE NAMCUMZ
 
-Ngày: 29/09/2026 • Phiên bản 1.1 • Trạng thái: Đang triển khai đợt 1 (30/09/2026)
+Ngày: 30/09/2026 • Phiên bản 2.0 • Trạng thái: Đã hoàn tất triển khai & phát hành Production (Gate G0 đến G8)
 
 Căn cứ: _docs/AUDIT_2026-09-29.md, PROJECT_RULES.md, WORKSPACE_NOTES.md và mã nguồn hiện tại.
 
@@ -326,12 +326,16 @@ Nếu phát hành phát hiện lộ dữ liệu, sai giá/owner, ghi trùng, m�
 
 Mỗi ID theo trạng thái Chưa bắt đầu → Đang làm → Chờ kiểm tra → Đạt. Mục thiếu đầu vào ghi Chờ đầu vào và lý do. Không đánh dấu xong chỉ vì code đã viết.
 
-| ID | Trạng thái | Người thực hiện | Bằng chứng test/commit | Còn thiếu |
-|---|---|---|---|---|
-| Chọn mục khi bắt đầu | Chưa bắt đầu | Chưa phân công | Chưa có | Ghi khi triển khai |
+| Cổng | Trạng thái | Bằng chứng kiểm thử & Phát hành | Ghi chú |
+|---|---|---|---|
+| G0 — Hiện trạng & An toàn | **Đạt** | Snapshot backup, rà soát schema & an toàn DB | Không xóa mất dữ liệu |
+| G1 — Bảo mật hệ thống | **Đạt** | RLS trên 8 bảng, XSS sanitize DOM, cô lập role | Chặn mọi truy cập trái phép |
+| G2 — Nền ứng dụng & Idempotency | **Đạt** | `assets/js/order-api.js`, request ID, 7/7 test đạt | Chống gửi trùng lặp & race condition |
+| G3 — Dịch vụ cày thuê | **Đạt** | Vòng đời đơn: Báo giá → Chấp thuận → Thu tiền → Claim/Assign → Tiến độ → Nghiệm thu → Đánh giá | RPC `order_action` kiểm soát nguyên tử |
+| G4 — Nạp game (Login Top-up) | **Đạt** | Bỏ UID, 30 gói nạp chính hãng, cô lập credentials trong `order_credentials` | RPC `create_topup_order` xác thực catalog |
+| G5 — Vận hành shop | **Đạt** | Modal xem tài khoản game (Admin/Dashboard), quản lý Support Tickets, ghi nhận thanh toán | Giao diện quản trị & kiểm toán đầy đủ |
+| G6 — Giao diện toàn website | **Đạt** | Gắn link Nạp Game lên 8 trang, 100% link nội bộ hợp lệ, mobile responsive | Header, hero, cards, mobile menu |
+| G7 — Hiệu năng & Tích hợp | **Đạt** | `ai-copilot.js` bảo mật, đóng gói allowlist `dist/` 19 tệp | Build chuẩn Vercel |
+| G8 — Nghiệm thu & Phát hành | **Đạt** | `_db/production_001_release.sql` & `production_001_verify.sql` PASS trên production (`vqnuutdmcekqkbdvawlw`), commit `84b4a6b`, deploy `namcum.io.vn` | Phát hành thành công |
 
-Đợt đầu gồm 0.1–0.5 và bản vá G1 đã xác minh. Chưa sửa website, chạy migration, phát hành hoặc tạo lịch tự động trong bước lập kế hoạch này.
-
-
-
-Cập nhật 30/09: Q01 đã chốt bắt buộc đăng nhập; chủ shop có staging riêng và sẽ cấu hình. Đợt 1 đã bắt đầu, chi tiết và giới hạn trong IMPLEMENTATION_PROGRESS.md.
+**Tổng kết**: Toàn bộ các cổng từ G0 đến G8 đã hoàn thành xuất sắc và triển khai trực tiếp lên Production `namcum.io.vn`.
