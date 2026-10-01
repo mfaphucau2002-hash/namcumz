@@ -427,7 +427,7 @@ window.fetchOrders = async function() {
     } catch (error) {
         console.error("Lỗi tải đơn hàng:", error.message);
         const grid = document.getElementById('ordersGrid');
-        if(grid) grid.innerHTML = '<div style="color: var(--status-tam-dung); grid-column: 1/-1; text-align: center; padding: 20px;">Lỗi kết nối tới cơ sở dữ liệu. Vui lòng tải lại trang.</div>';
+        if(grid) grid.innerHTML = '<div class="ui-inline-error" role="alert"><span>Chưa tải được đơn. Vui lòng thử lại.</span><button class="btn btn-outline" onclick="window.fetchOrders()">Thử lại</button></div>';
     }
 };
 
@@ -492,15 +492,15 @@ window.renderOrders = function(ordersToRender, containerId) {
 
     if (!ordersToRender || ordersToRender.length === 0) {
         container.innerHTML = `
-        <div style="grid-column: 1/-1; text-align: center; padding: 80px 20px; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px dashed rgba(255,255,255,0.1);">
-            <img src="/assets/images/empty-paimon.png" alt="Empty" style="width: 120px; opacity: 0.7; margin-bottom: 20px; filter: grayscale(50%);" onerror="this.style.display='none'">
-            <h3 style="color: var(--text-light); font-size: 1.5rem; margin-bottom: 10px; font-weight: 700;">${currentTab === 'cancelled' ? 'Chưa có đơn đã hủy' : 'Chưa có đơn cày phù hợp'}</h3>
-            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px;">${currentTab === 'cancelled' ? 'Đơn đã hủy sẽ được lưu ở đây để tiện tra cứu lịch sử.' : 'Không tìm thấy đơn nào khớp bộ lọc. Hãy thử thay đổi điều kiện tìm kiếm.'}</p>
-            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                <button class="btn btn-primary" onclick="window.openCreateOrderModal()"><i class="fa-solid fa-plus"></i> Tạo đơn Genshin</button>
-                <button class="btn" style="background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1);" onclick="document.getElementById('searchInput').value=''; document.getElementById('filterService').value='all'; window.filterByTab('all');"><i class="fa-solid fa-filter-circle-xmark"></i> Xóa bộ lọc</button>
+        <section class="ui-empty">
+            <i class="fa-regular fa-folder-open" aria-hidden="true"></i>
+            <h3>${currentTab === 'cancelled' ? 'Chưa có đơn đã hủy' : 'Chưa có đơn phù hợp'}</h3>
+            <p>${currentTab === 'cancelled' ? 'Đơn đã hủy sẽ được lưu tại đây để tra cứu lịch sử.' : 'Thay đổi bộ lọc để tìm đơn, hoặc tạo yêu cầu mới để shop báo giá.'}</p>
+            <div class="ui-empty-actions">
+                <button class="btn btn-primary" onclick="window.openCreateOrderModal()"><i class="fa-solid fa-plus" aria-hidden="true"></i> Tạo đơn Genshin</button>
+                <button class="btn btn-outline" onclick="document.getElementById('searchInput').value=''; document.getElementById('filterService').value='all'; window.filterByTab('all');">Xóa bộ lọc</button>
             </div>
-        </div>`;
+        </section>`;
         return;
     }
 
@@ -515,7 +515,7 @@ window.renderOrders = function(ordersToRender, containerId) {
         let priceHtml = '';
         if (canViewPrivate) {
             if (order.price) {
-                priceHtml = `<span class="count-up-price" data-val="${parseInt(order.price)}">0</span> đ`;
+                priceHtml = `<span class="oc-amount" data-val="${parseInt(order.price)}">${Number(order.price).toLocaleString('vi-VN')}</span> đ`;
             } else {
                 priceHtml = 'Chưa báo giá';
             }
@@ -588,7 +588,7 @@ window.renderOrders = function(ordersToRender, containerId) {
         }
 
         if (usesOrderRPC()) {
-            const button = (action, label) => '<button class="btn btn-primary" onclick="window.runOrderAction(&quot;' + escapeHtml(order.id) + '&quot;,&quot;' + action + '&quot;)">' + label + '</button>';
+            const button = (action, label) => '<button class="btn ' + (action === 'cancel' ? 'btn-danger' : ['pause','rework','progress'].includes(action) ? 'btn-outline' : 'btn-primary') + '" onclick="window.runOrderAction(&quot;' + escapeHtml(order.id) + '&quot;,&quot;' + action + '&quot;)">' + label + '</button>';
             let actions = '';
             if (!order.cancelled) {
                 if (order.queue_only && isBoosterRole) actions += button('claim','Nhận đơn');
@@ -605,15 +605,15 @@ window.renderOrders = function(ordersToRender, containerId) {
                 if (isOwner && order.status === 'cho_nghiem_thu') actions += button('complete','Nghiệm thu') + button('rework','Yêu cầu làm lại');
                 if (isOwner && order.status === 'hoan_thanh' && !order.rating) actions += '<button class="btn" onclick="window.openRatingModal(&quot;' + escapeHtml(order.id) + '&quot;)">Đánh giá</button>';
             }
-            const summary = canViewPrivate ? '<p>Đã thu: ' + Number(order.paid_amount || 0).toLocaleString('vi-VN') + ' đ / Cần thu trước khi giao: ' + Number(order.required_amount || 0).toLocaleString('vi-VN') + ' đ</p><p>' + escapeHtml(order.result_note || '') + '</p>' : '';
+            const summary = canViewPrivate ? '<div class="oc-settlement"><span>Đã thu: ' + Number(order.paid_amount || 0).toLocaleString('vi-VN') + ' đ</span><span>Cần thu trước khi giao: ' + Number(order.required_amount || 0).toLocaleString('vi-VN') + ' đ</span></div>' + (order.result_note ? '<p class="oc-result">' + escapeHtml(order.result_note) + '</p>' : '') : '';
             if (canViewPrivate) {
                 if (order.kind === 'topup') {
-                    actions += '<button class="btn" style="background:#f59e0b;color:#000;font-weight:700;" onclick="window.viewOrderCredentials(&quot;' + escapeHtml(order.id) + '&quot;)"><i class=\"fa-solid fa-key\"></i> Xem TK game</button>';
+                    actions += '<button class="btn btn-outline" onclick="window.viewOrderCredentials(&quot;' + escapeHtml(order.id) + '&quot;)"><i class=\"fa-solid fa-key\"></i> Xem TK game</button>';
                 }
                 actions += '<button class="btn" onclick="window.openChat(&quot;' + escapeHtml(order.id) + '&quot;,&quot;' + escapeHtml(order.order_code) + '&quot;)">Chat / ảnh</button>';
                 actions += '<button class="btn" onclick="window.openTicketModal(&quot;' + escapeHtml(order.id) + '&quot;)">Hỗ trợ</button>';
             }
-            normalButtons = '<div style="width:100%">' + summary + '<div style="display:flex;gap:8px;flex-wrap:wrap">' + actions + '</div></div>';
+            normalButtons = '<div class="oc-action-group">' + summary + '<div class="oc-actions">' + actions + '</div></div>';
             adminRow1 = normalButtons; adminRow2 = ''; adminRow3 = '';
         }
 
@@ -649,7 +649,7 @@ window.renderOrders = function(ordersToRender, containerId) {
 
         if (usesOrderRPC()) calculatedProgress = Math.min(100, Math.max(0, Number(order.progress) || 0));
         const html = `
-            <div class="card order-card-modern animate-on-load" style="animation-delay: ${0.1 + (index%10)*0.05}s;">
+            <article class="card order-card-modern">
                 <div class="oc-header">
                     <div>
                         <div class="oc-id">${escapeHtml(order.order_code || '#-----')}${order.kind === 'topup' ? ' <span style=\"background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;\"><i class=\"fa-solid fa-bolt\"></i> Nạp Game</span>' : ''}</div>
@@ -700,7 +700,7 @@ window.renderOrders = function(ordersToRender, containerId) {
                     <div style="display:flex;">${adminRow3}</div>
                 </div>` : ''}
                 ${!isAdmin && normalButtons ? `<div class="oc-footer" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 15px;">${normalButtons}</div>` : ''}
-            </div>
+            </article>
         `;
         container.innerHTML += html;
     });
@@ -802,7 +802,9 @@ window.updateDashboardStats = function(orders) {
         const myOrders = orders.filter(o => o.booster_id === currentUserId);
         const income = myOrders.filter(o => o.status === 'hoan_thanh').reduce((sum, o) => sum + (Number(o.price) || 0), 0);
         const incomeFormatted = income.toLocaleString('vi-VN') + ' đ';
-        const active = myOrders.filter(o => o.status === 'dang_cay').length;
+        const active = myOrders.filter(o => !o.cancelled && o.status === 'dang_cay').length;
+        const rated = myOrders.filter(o => Number(o.rating) > 0);
+        const averageRating = rated.length ? (rated.reduce((sum,o) => sum + Number(o.rating),0) / rated.length).toFixed(1) : 'Chưa có';
         html = `
         <div class="stats-card">
             <h3 class="stats-title"><i class="fa-solid fa-bolt" style="color: var(--primary)"></i> THỐNG KÊ BOOSTER</h3>
@@ -816,11 +818,11 @@ window.updateDashboardStats = function(orders) {
             </div>
             <div class="stat-item">
                 <span class="stat-label">Điểm đánh giá</span>
-                <span class="stat-value" style="color: var(--genshin-gold)"><i class="fa-solid fa-star"></i> 5.0</span>
+                <span class="stat-value" style="color: var(--genshin-gold)"><i class="fa-solid fa-star"></i> ${averageRating}</span>
             </div>
             <div class="stat-item">
-                <span class="stat-label">Tỷ lệ đúng hạn</span>
-                <span class="stat-value" style="color: #10b981">100%</span>
+                <span class="stat-label">Lượt đánh giá</span>
+                <span class="stat-value">${rated.length}</span>
             </div>
         </div>`;
     } else {
@@ -1434,7 +1436,10 @@ function bindEvents() {
     const menuToggle = document.getElementById('menuToggle');
     const navLinks = document.getElementById('navLinks');
     if (menuToggle && navLinks) {
-        menuToggle.addEventListener('click', () => { navLinks.classList.toggle('active'); });
+        menuToggle.addEventListener('click', () => {
+            const expanded = navLinks.classList.toggle('active');
+            menuToggle.setAttribute('aria-expanded', String(expanded));
+        });
     }
     
     document.querySelectorAll('.modal-close, .modal-overlay').forEach(el => {
@@ -1443,6 +1448,36 @@ function bindEvents() {
                 document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
             }
         });
+    });
+
+    // Contain keyboard focus in the existing form overlays and restore it on close.
+    const overlays = [...document.querySelectorAll('.modal-overlay')];
+    let activeOverlay = null, overlayTrigger = null;
+    const focusables = modal => [...modal.querySelectorAll('button,input,select,textarea,a[href],[tabindex="0"]')]
+        .filter(el => !el.disabled && el.getClientRects().length > 0);
+    overlays.forEach(modal => new MutationObserver(() => {
+        if (modal.classList.contains('active') && activeOverlay !== modal) {
+            overlayTrigger = document.activeElement;
+            activeOverlay = modal;
+            modal.setAttribute('role', 'dialog');
+            modal.setAttribute('aria-modal', 'true');
+            const title = modal.querySelector('h2,h3');
+            if (title) { title.id ||= modal.id + 'Title'; modal.setAttribute('aria-labelledby', title.id); }
+            focusables(modal)[0]?.focus();
+        } else if (!modal.classList.contains('active') && activeOverlay === modal) {
+            activeOverlay = null;
+            overlayTrigger?.focus();
+        }
+    }).observe(modal, {attributes:true,attributeFilter:['class']}));
+    document.addEventListener('keydown', event => {
+        if (!activeOverlay || document.querySelector('dialog[open]')) return;
+        if (event.key === 'Escape') { activeOverlay.classList.remove('active'); event.preventDefault(); }
+        if (event.key === 'Tab') {
+            const targets = focusables(activeOverlay), first = targets[0], last = targets.at(-1);
+            if (!first) return;
+            if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+            else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+        }
     });
 
     function setupOrderPriceInput() {
@@ -1957,38 +1992,8 @@ function bindEvents() {
 }
 
 function initDynamicSlogan() {
-    const sloganEl = document.getElementById('dynamicSlogan');
-    if (!sloganEl) return;
-    const isReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (isReduced) return; // Do not animate slogan if reduced motion
-    
-    const slogans = [
-        "Cày thuê Genshin minh bạch",
-        "Theo dõi tiến độ theo thời gian thực",
-        "Booster được xác minh",
-        "Nghiệm thu trước khi hoàn thành"
-    ];
-    let index = 0;
-    
-    setInterval(() => {
-        sloganEl.style.opacity = '0';
-        sloganEl.style.transform = 'translateY(-6px)';
-        
-        setTimeout(() => {
-            index = (index + 1) % slogans.length;
-            sloganEl.innerText = slogans[index];
-            
-            sloganEl.style.transition = 'none';
-            sloganEl.style.transform = 'translateY(6px)';
-            
-            // force reflow
-            void sloganEl.offsetHeight;
-            
-            sloganEl.style.transition = 'opacity 450ms cubic-bezier(0.4, 0, 0.2, 1), transform 450ms cubic-bezier(0.4, 0, 0.2, 1)';
-            sloganEl.style.opacity = '1';
-            sloganEl.style.transform = 'translateY(0)';
-        }, 450);
-    }, 3500);
+    const slogan = document.getElementById('dynamicSlogan');
+    if (slogan) slogan.textContent = 'Theo dõi tiến độ và trao đổi cùng shop.';
 }
 
 async function initSupabaseLogic() {

@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Quản lý đơn và thông tin tài khoản Namcumz.">
     <meta name="robots" content="noindex, nofollow, noarchive">
     <title>Trang Cá Nhân - NAMCUMZ</title>
+    <link rel="stylesheet" href="assets/css/design-tokens.css?v=20261002-ui">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/jpeg" href="/assets/images/logo.jpg">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -28,17 +31,18 @@
         .btn-save { width: 100%; margin-top: 20px; background: #38bdf8; color: #0f172a; font-weight: 800; padding: 16px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; border-radius: 8px; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); border: none; cursor: pointer; transition: var(--transition); }
         .btn-save:hover { box-shadow: 0 0 25px rgba(56, 189, 248, 0.6); transform: translateY(-2px); background: #7dd3fc; }
     </style>
+    <link rel="stylesheet" href="assets/css/ui.css?v=20261002-ui">
 </head>
-<body>
+<body class="app-page profile-page">
     <div class="profile-layout">
         <aside class="sidebar">
             <div class="sidebar-logo">
                 <a href="/" class="logo-text" style="font-size: 1.5rem;">NAMCUMZ</a>
             </div>
             <nav class="sidebar-nav">
-                <a class="sidebar-link active" onclick="switchTab('my-orders', this)"><i class="fa-solid fa-gamepad"></i> Đơn của tôi</a>
-                <a class="sidebar-link" onclick="switchTab('claim-order', this)"><i class="fa-solid fa-key"></i> Nhận đơn (Bằng mã)</a>
-                <a class="sidebar-link" onclick="switchTab('settings', this)"><i class="fa-solid fa-user-gear"></i> Cài đặt tài khoản</a>
+                <a role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}" class="sidebar-link active" onclick="switchTab('my-orders', this)"><i class="fa-solid fa-gamepad"></i> Đơn của tôi</a>
+                <a role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}" class="sidebar-link" onclick="switchTab('claim-order', this)"><i class="fa-solid fa-key"></i> Nhận đơn (Bằng mã)</a>
+                <a role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}" class="sidebar-link" onclick="switchTab('settings', this)"><i class="fa-solid fa-user-gear"></i> Cài đặt tài khoản</a>
                 <a href="/" class="sidebar-link"><i class="fa-solid fa-house"></i> Về trang chủ</a>
             </nav>
             <div class="sidebar-footer">
@@ -63,7 +67,7 @@
                 
                 <div class="claim-box">
                     <div class="form-group">
-                        <label class="form-label" style="color: var(--accent);">MÃ NHẬN ĐƠN</label>
+                        <label class="form-label" style="color: var(--accent);" for="claimCodeInput">MÃ NHẬN ĐƠN</label>
                         <input type="text" id="claimCodeInput" class="form-control" placeholder="VD: NAM-8X2A" style="font-size: 1.2rem; letter-spacing: 2px; font-weight: bold; text-transform: uppercase;">
                     </div>
                     <button class="btn btn-primary" id="btnClaimOrder" style="width: 100%; margin-top: 10px;">
@@ -77,15 +81,15 @@
                 <div style="max-width: 500px; background: var(--bg-card); padding: 30px; border-radius: 12px; border: 1px solid var(--border-light);">
                     <form id="profileForm">
                         <div class="form-group">
-                            <label class="form-label">TÊN HIỂN THỊ MỚI</label>
+                            <label class="form-label" for="profileDisplayName">TÊN HIỂN THỊ MỚI</label>
                             <input type="text" id="profileDisplayName" class="form-control" placeholder="Nhập tên mới...">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">TIỂU SỬ (BIO)</label>
+                            <label class="form-label" for="profileBio">TIỂU SỬ (BIO)</label>
                             <textarea id="profileBio" class="form-control" rows="3" placeholder="Giới thiệu bản thân..."></textarea>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">LINK ẢNH ĐẠI DIỆN</label>
+                            <label class="form-label" for="profileAvatar">LINK ẢNH ĐẠI DIỆN</label>
                             <input type="text" id="profileAvatar" class="form-control" placeholder="https://...">
                         </div>
                         <button type="submit" class="btn-save" id="btnSaveProfile">LƯU THAY ĐỔI</button>

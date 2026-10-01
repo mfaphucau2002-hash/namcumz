@@ -3,167 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Theo dõi tiến độ, trao đổi và quản lý đơn Genshin tại Namcumz.">
     <meta name="robots" content="noindex, nofollow, noarchive">
     <title>NAMCUMZ - Bảng Điều Khiển</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/design-tokens.css?v=20261002-ui">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/jpeg" href="/assets/images/logo.jpg">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- CSS -->
     <link rel="stylesheet" href="assets/css/style.css">
-    <style>
-        /* Modal Styles */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            z-index: 1000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .modal-overlay.active {
-            display: flex;
-            opacity: 1;
-        }
-        .modal-content {
-            background: var(--bg-card);
-            border: 1px solid var(--border-light);
-            border-radius: 16px;
-            width: 100%;
-            max-width: 550px;
-            padding: 30px;
-            position: relative;
-            transform: translateY(20px);
-            transition: transform 0.3s ease;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-        }
-        .modal-overlay.active .modal-content {
-            transform: translateY(0);
-        }
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .modal-close:hover {
-            color: var(--status-tam-dung);
-        }
-        .modal-title {
-            font-family: var(--font-heading);
-            color: #ffffff;
-            margin-bottom: 25px;
-            font-size: 1.25rem;
-            text-transform: uppercase;
-            font-weight: 800;
-        }
 
-        /* Premium Modal Override */
-        .premium-modal {
-            background: #0f0f11 !important;
-            border: 1px solid rgba(255, 255, 255, 0.05) !important;
-            box-shadow: 0 0 40px rgba(168, 85, 247, 0.2), inset 0 0 20px rgba(168, 85, 247, 0.05) !important;
-            border-radius: 16px !important;
-            max-width: 500px !important;
-        }
-        .premium-modal .form-label {
-            color: #a1a1aa;
-            font-size: 0.8rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-        .premium-modal .form-control {
-            background: #18181b;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            color: #fff;
-            border-radius: 8px;
-            padding: 14px 16px;
-        }
-        .premium-modal .form-control:focus {
-            border-color: rgba(168, 85, 247, 0.5);
-            box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
-        }
-        .price-input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        .price-input-wrapper input {
-            padding-right: 60px; /* space for VND */
-        }
-        .price-input-wrapper .currency {
-            position: absolute;
-            right: 16px;
-            color: #2dd4bf;
-            font-weight: 800;
-            font-size: 0.95rem;
-        }
-        .modal-notice {
-            background: rgba(168, 85, 247, 0.1);
-            border: 1px solid rgba(168, 85, 247, 0.2);
-            border-radius: 8px;
-            padding: 16px;
-            font-size: 0.85rem;
-            color: #a1a1aa;
-            margin-top: 20px;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
-        .modal-notice i {
-            color: #c084fc;
-            margin-top: 2px;
-        }
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-        }
-        .btn-cancel {
-            background: #27272a;
-            color: #d4d4d8;
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .btn-cancel:hover {
-            background: #3f3f46;
-        }
-        .btn-submit-premium {
-            background: #a855f7;
-            color: #fff;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
-        }
-        .btn-submit-premium:hover {
-            background: #c084fc;
-          .btn-save:hover { box-shadow: 0 0 25px rgba(192, 132, 252, 0.6); transform: translateY(-2px); background: #c084fc; }
-        /* Rating Stars */
-        .rating-stars { font-size: 2rem; color: #334155; display: flex; justify-content: center; gap: 10px; cursor: pointer; }
-        .rating-stars i.active, .rating-stars i:hover { color: #eab308; transition: 0.2s; }
-        .review-display { background: rgba(234, 179, 8, 0.1); padding: 10px; border-radius: 8px; margin-top: 10px; border: 1px solid rgba(234, 179, 8, 0.3); }
-    </style>
+    <link rel="stylesheet" href="assets/css/ui.css?v=20261002-ui">
 </head>
-<body>
+<body class="app-page dashboard-page">
     <!-- Header -->
     <header>
         <div class="app-container header-wrap" style="padding: 15px 0;">
@@ -171,7 +24,7 @@
                 <img src="/assets/images/logo.jpg" alt="NAMCUMZ Logo" style="height: 35px; width: 35px; border-radius: 50%; object-fit: cover;"> <span class="logo-text" style="font-family: var(--font-main); font-weight: 800; letter-spacing: 2px;">NAMCUMZ</span>
             </a>
             
-            <button class="menu-toggle" id="menuToggle" style="z-index: 1001;"><i class="fa-solid fa-bars"></i></button>
+            <button aria-label="Mở menu" aria-expanded="false" aria-controls="navLinks" class="menu-toggle" id="menuToggle" style="z-index: 1001;"><i class="fa-solid fa-bars"></i></button>
 
             <nav class="navigation" id="navLinks">
                 <a href="/index.html" class="nav-link">
@@ -194,7 +47,7 @@
                 </a>
                 
                 <!-- Dynamic User Profile Area (Hidden by default, shown via JS) -->
-                <div id="navUserProfile" style="display: none; align-items: center; gap: 15px; margin-left: 20px;">
+                <div id="navUserProfile" style="display: none; align-items: center; gap: 16px; margin-left: 20px;">
                     <div style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); padding: 5px 15px 5px 5px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.05);">
                         <div class="nav-avatar" id="navAvatarInitials" style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-gradient); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">A</div>
                         <div style="display: flex; flex-direction: column; line-height: 1.2;">
@@ -203,7 +56,7 @@
                         </div>
                     </div>
                                         <div class="notification-wrapper" style="position: relative;">
-                        <button id="notificationBtn" style="background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; transition: 0.2s; position: relative; margin-right: 10px;">
+                        <button aria-label="Thông báo" id="notificationBtn" style="background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; transition: 0.2s; position: relative; margin-right: 10px;">
                             <i class="fa-solid fa-bell"></i>
                             <span id="notificationBadge" style="display: none; position: absolute; top: 6px; right: 8px; background: #ef4444; width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 5px #ef4444;"></span>
                         </button>
@@ -217,7 +70,7 @@
                             </div>
                         </div>
                     </div>
-                    <button id="navLogoutBtn" style="background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; transition: 0.2s;">
+                    <button aria-label="Đăng xuất" id="navLogoutBtn" style="background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; transition: 0.2s;">
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </button>
                 </div>
@@ -231,20 +84,18 @@
         <div class="dashboard-header-row animate-on-load" style="animation-delay: 0.1s;">
             <div style="display: flex; flex-direction: column;">
                 <div class="dashboard-title-group">
-                    <h1 class="dashboard-title">CÁC ĐƠN CÀY</h1>
+                    <h1 class="dashboard-title">Quản lý đơn</h1>
                     <span class="order-count-badge" id="totalOrdersBadge">0 đơn</span>
                 </div>
-                <div style="height: 20px; overflow: hidden; position: relative; margin-top: 4px; padding-left: 4px;">
-                    <div id="dynamicSlogan" style="color: var(--text-muted); font-size: 13px; font-weight: 500; transition: opacity 450ms ease, transform 450ms ease; opacity: 1; transform: translateY(0); letter-spacing: 0.5px;">Cày thuê Genshin minh bạch</div>
-                </div>
+                <p class="dashboard-intro" id="dynamicSlogan">Theo dõi tiến độ và trao đổi cùng shop.</p>
             </div>
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <a href="/napgame.html" class="btn btn-outline" style="border-color: #f59e0b; color: #f59e0b; padding: 12px 20px; font-weight: 700;">
+            <div class="dashboard-toolbar">
+                <a href="/napgame.html" class="btn btn-outline">
                     <i class="fa-solid fa-bolt"></i> Nạp Game
                 </a>
-                <a href="javascript:void(0)" class="btn btn-primary" id="createOrderBtn" style="padding: 12px 24px;">
-                    <i class="fa-solid fa-plus"></i> Tạo Đơn Mới
-                </a>
+                <button type="button" class="btn btn-primary" id="createOrderBtn">
+                    <i class="fa-solid fa-plus"></i> Tạo đơn mới
+                </button>
             </div>
         </div>
 
@@ -259,15 +110,13 @@
         </div>
 
         <!-- Filters -->
-        <div style="margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
-            <button class="btn btn-outline mobile-filter-btn" onclick="document.getElementById('mobileFilters').classList.toggle('active')" style="display: none;"><i class="fa-solid fa-filter"></i> Bộ lọc</button>
-        </div>
+
         <div class="filters-row animate-on-load" id="mobileFilters" style="animation-delay: 0.3s;">
             <div class="search-bar">
                 <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
-                <input type="search" id="searchInput" placeholder="Tìm kiếm mã đơn, dịch vụ, người thuê..." autocomplete="off" autocapitalize="off" spellcheck="false" readonly onfocus="if (this.readOnly) { this.value = ''; this.readOnly = false; window.applyFilters(); }" oninput="window.applyFilters()">
+                <input type="search" aria-label="Tìm mã đơn, dịch vụ hoặc người thuê" id="searchInput" placeholder="Tìm kiếm mã đơn, dịch vụ, người thuê..." autocomplete="off" autocapitalize="off" spellcheck="false" readonly onfocus="if (this.readOnly) { this.value = ''; this.readOnly = false; window.applyFilters(); }" oninput="window.applyFilters()">
             </div>
-            <select class="filter-select" id="filterService" onchange="window.applyFilters()">
+            <select class="filter-select" aria-label="Lọc dịch vụ" id="filterService" onchange="window.applyFilters()">
                 <option value="all">Tất cả dịch vụ</option>
                 <option value="[Nạp Game]">Nạp Game</option>
                 <option value="La Hoàn">La Hoàn</option>
@@ -277,7 +126,7 @@
                 <option value="Sự kiện">Sự kiện</option>
                 <option value="Nhựa/Ủy thác">Xả Nhựa / Ủy thác</option>
             </select>
-            <select class="filter-select" id="filterSort" onchange="window.applyFilters()">
+            <select class="filter-select" aria-label="Sắp xếp đơn" id="filterSort" onchange="window.applyFilters()">
                 <option value="newest">Mới nhất</option>
                 <option value="oldest">Cũ nhất</option>
                 <option value="price_desc">Giá cao -> thấp</option>
@@ -304,25 +153,25 @@
     <!-- Footer -->
     <footer style="border-top: 1px solid var(--border-light); padding: 40px 0; margin-top: 60px; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
         <div class="app-container">
-            <p>&copy; 2026 NAMCUMZ. Hệ thống bảo mật thông tin khách hàng tuyệt đối.</p>
+            <p>&copy; 2026 NAMCUMZ. Theo dõi đơn và liên hệ shop tại một nơi.</p>
         </div>
     </footer>
 
     <!-- Create Order Modal -->
-    <div class="modal-overlay" id="createOrderModal">
+    <div class="modal-overlay" id="createOrderModal" role="dialog" aria-modal="true" aria-labelledby="createOrderTitle">
         <div class="modal-content premium-modal">
-            <button class="modal-close" id="closeModalBtn" style="top: 25px;"><i class="fa-solid fa-xmark"></i></button>
-            <h2 class="modal-title">TẠO ĐƠN CÀY THUÊ MỚI</h2>
+            <button aria-label="Đóng hộp thoại" class="modal-close" id="closeModalBtn" style="top: 25px;"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="modal-title" id="createOrderTitle">Tạo đơn Genshin</h2>
             <form id="createOrderForm">
                 
                 <div class="form-group" style="display: none;">
-                    <label class="form-label">NGƯỜI THUÊ CÀY</label>
+                    <label class="form-label" for="orderRenter">NGƯỜI THUÊ CÀY</label>
                     <input type="text" id="orderRenter" class="form-control" placeholder="Tên khách hàng...">
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                     <div class="form-group">
-                        <label class="form-label">MÁY CHỦ (SERVER)</label>
+                        <label class="form-label" for="orderServer">MÁY CHỦ (SERVER)</label>
                         <select id="orderServer" class="form-control" required>
                             <option value="Asia">Asia</option>
                             <option value="America">America</option>
@@ -331,7 +180,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">NHÓM DỊCH VỤ</label>
+                        <label class="form-label" for="orderServiceGroup">NHÓM DỊCH VỤ</label>
                         <select id="orderServiceGroup" class="form-control" required>
                             <option value="Thám hiểm (Map)">Thám hiểm (Map)</option>
                             <option value="Nhiệm vụ">Nhiệm vụ</option>
@@ -344,17 +193,17 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">GÓI CỤ THỂ / MỤC TIÊU</label>
+                    <label class="form-label" for="orderGoal">GÓI CỤ THỂ / MỤC TIÊU</label>
                     <input type="text" id="orderGoal" class="form-control" placeholder="Ví dụ: La hoàn tầng 12, Đảo Tsurumi 100%..." required>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                     <div class="form-group">
-                        <label class="form-label">DEADLINE (THỜI HẠN)</label>
+                        <label class="form-label" for="orderDeadline">DEADLINE (THỜI HẠN)</label>
                         <input type="date" id="orderDeadline" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">GIÁ TIỀN (ƯỚC TÍNH)</label>
+                        <label class="form-label" for="orderPrice">GIÁ TIỀN (ƯỚC TÍNH)</label>
                         <div class="price-input-wrapper">
                             <input type="text" id="orderPrice" class="form-control" value="Chờ Admin báo giá" readonly style="color: var(--status-cho-xu-ly); font-weight: bold; background: rgba(0,0,0,0.2); cursor: not-allowed;">
                         </div>
@@ -362,7 +211,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">GHI CHÚ YÊU CẦU</label>
+                    <label class="form-label" for="orderContent">GHI CHÚ YÊU CẦU</label>
                     <textarea id="orderContent" class="form-control" rows="3" placeholder="Mô tả yêu cầu; không nhập mật khẩu, OTP hoặc mã khôi phục." required style="resize: vertical;"></textarea>
                 </div>
 
@@ -382,13 +231,13 @@
     <!-- Edit Order Modal -->
     <div class="modal-overlay" id="editOrderModal">
         <div class="modal-content premium-modal">
-            <button class="modal-close" onclick="document.getElementById('editOrderModal').classList.remove('active')" style="top: 25px;"><i class="fa-solid fa-xmark"></i></button>
+            <button aria-label="Đóng hộp thoại" class="modal-close" onclick="document.getElementById('editOrderModal').classList.remove('active')" style="top: 25px;"><i class="fa-solid fa-xmark"></i></button>
             <h2 class="modal-title">SỬA ĐƠN HÀNG</h2>
             <form id="editOrderForm">
                 <input type="hidden" id="editOrderId">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                     <div class="form-group">
-                        <label class="form-label">MÁY CHỦ (SERVER)</label>
+                        <label class="form-label" for="editOrderServer">MÁY CHỦ (SERVER)</label>
                         <select id="editOrderServer" class="form-control" required>
                             <option value="Asia">Asia</option>
                             <option value="America">America</option>
@@ -397,7 +246,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">NHÓM DỊCH VỤ</label>
+                        <label class="form-label" for="editOrderServiceGroup">NHÓM DỊCH VỤ</label>
                         <select id="editOrderServiceGroup" class="form-control" required>
                             <option value="Thám hiểm (Map)">Thám hiểm (Map)</option>
                             <option value="Nhiệm vụ">Nhiệm vụ</option>
@@ -410,23 +259,23 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">GÓI CỤ THỂ / MỤC TIÊU</label>
+                    <label class="form-label" for="editOrderGoal">GÓI CỤ THỂ / MỤC TIÊU</label>
                     <input type="text" id="editOrderGoal" class="form-control" required>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                     <div class="form-group">
-                        <label class="form-label">DEADLINE (THỜI HẠN)</label>
+                        <label class="form-label" for="editOrderDeadline">DEADLINE (THỜI HẠN)</label>
                         <input type="date" id="editOrderDeadline" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">GIÁ TIỀN</label>
+                        <label class="form-label" for="editOrderPrice">GIÁ TIỀN</label>
                         <input type="number" id="editOrderPrice" class="form-control" required>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">GHI CHÚ / THÔNG TIN ACC</label>
+                    <label class="form-label" for="editOrderContent">GHI CHÚ / THÔNG TIN ACC</label>
                     <textarea id="editOrderContent" class="form-control" rows="3" required style="resize: vertical;"></textarea>
                 </div>
 
@@ -441,17 +290,17 @@
     <!-- Progress Image Modal -->
     <div class="modal-overlay" id="progressModal">
         <div class="modal-content premium-modal" style="max-width: 520px;">
-            <button class="modal-close" onclick="document.getElementById('progressModal').classList.remove('active')" style="top: 25px;"><i class="fa-solid fa-xmark"></i></button>
+            <button aria-label="Đóng hộp thoại" class="modal-close" onclick="document.getElementById('progressModal').classList.remove('active')" style="top: 25px;"><i class="fa-solid fa-xmark"></i></button>
             <h2 class="modal-title" style="color: var(--secondary); margin-bottom: 20px;"><i class="fa-solid fa-camera"></i> CẬP NHẬT ẢNH TIẾN ĐỘ</h2>
             <form id="progressForm">
                 <input type="hidden" id="progressOrderId">
                 <input type="hidden" id="progressOrderCustomerId">
                 <div class="form-group">
-                    <label class="form-label">CHỌN HÌNH ẢNH (KẾT QUẢ / TIẾN ĐỘ CÀY)</label>
+                    <label class="form-label" for="progressFileInput">CHỌN HÌNH ẢNH (KẾT QUẢ / TIẾN ĐỘ CÀY)</label>
                     <input type="file" id="progressFileInput" class="form-control" accept="image/*" required style="padding: 10px;">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">GHI CHÚ TIẾN ĐỘ (TÙY CHỌN)</label>
+                    <label class="form-label" for="progressCaptionInput">GHI CHÚ TIẾN ĐỘ (TÙY CHỌN)</label>
                     <input type="text" id="progressCaptionInput" class="form-control" placeholder="Ví dụ: Đã xong nhiệm vụ thế giới, level 90...">
                 </div>
                 <div id="progressPreview" style="margin-bottom: 15px; text-align: center; display: none;">
@@ -468,7 +317,7 @@
     <!-- Rating Modal -->
     <div class="modal-overlay" id="ratingModal">
         <div class="modal-content premium-modal" style="max-width: 500px;">
-            <button class="modal-close" onclick="document.getElementById('ratingModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
+            <button aria-label="Đóng hộp thoại" class="modal-close" onclick="document.getElementById('ratingModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
             <h2 class="modal-title" style="color: var(--accent); margin-bottom: 20px;">ĐÁNH GIÁ BOOSTER</h2>
             <div style="text-align: center; margin-bottom: 20px;">
                 <div class="rating-stars" id="ratingStars">
@@ -492,7 +341,7 @@
         <div class="modal-content premium-modal" style="max-width: 600px; padding: 0;">
             <div style="background: rgba(15, 23, 42, 0.95); padding: 20px; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; border-radius: 16px 16px 0 0;">
                 <h3 style="color: var(--primary-light); margin: 0; font-size: 1.2rem;"><i class="fa-solid fa-folder-open"></i> ĐƠN HÀNG: <span id="chatOrderCode" style="color: var(--accent);"></span></h3>
-                <button class="modal-close" id="closeChatBtn" onclick="window.closeChat()" style="position: static; font-size: 1.5rem;"><i class="fa-solid fa-xmark"></i></button>
+                <button aria-label="Đóng hộp thoại" class="modal-close" id="closeChatBtn" onclick="window.closeChat()" style="position: static; font-size: 1.5rem;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
             <div class="chat-tabs" style="display: flex; background: rgba(0,0,0,0.5); border-bottom: 1px solid var(--border-light);">
@@ -502,7 +351,7 @@
 
             <!-- Chat Tab -->
             <div id="chatTabContent">
-                <div id="chatMessages" style="height: 350px; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; background: rgba(0,0,0,0.3);">
+                <div id="chatMessages" style="height: 350px; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; background: rgba(0,0,0,0.3);">
                     <!-- Messages go here -->
                 </div>
                 
@@ -528,11 +377,11 @@
     <!-- Ticket Modal -->
     <div class="modal-overlay" id="ticketModal">
         <div class="modal-content premium-modal" style="max-width: 500px;">
-            <button class="modal-close" onclick="document.getElementById('ticketModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
+            <button aria-label="Đóng hộp thoại" class="modal-close" onclick="document.getElementById('ticketModal').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
             <h2 class="modal-title" style="color: #ef4444; margin-bottom: 20px;"><i class="fa-solid fa-triangle-exclamation"></i> BÁO CÁO SỰ CỐ</h2>
             <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Chúng tôi sẽ tiếp nhận và xử lý ngay lập tức để bảo vệ quyền lợi của bạn.</p>
             <div class="form-group">
-                <label class="form-label">Vấn đề gặp phải</label>
+                <label class="form-label" for="ticketIssueType">Vấn đề gặp phải</label>
                 <select id="ticketIssueType" class="form-control" style="margin-bottom: 15px;">
                     <option value="booster_cham">Booster cày quá chậm</option>
                     <option value="sai_yeu_cau">Cày sai yêu cầu / Hỏng tài nguyên</option>
@@ -548,7 +397,7 @@
     <!-- AI Copilot Modal -->
     <div class="modal-overlay" id="aiCopilotModal">
         <div class="modal-content premium-modal" style="max-width: 700px;">
-            <button class="modal-close" onclick="document.getElementById('aiCopilotModal').classList.remove('active')" style="top: 25px;"><i class="fa-solid fa-xmark"></i></button>
+            <button aria-label="Đóng hộp thoại" class="modal-close" onclick="document.getElementById('aiCopilotModal').classList.remove('active')" style="top: 25px;"><i class="fa-solid fa-xmark"></i></button>
             <h2 class="modal-title" style="color: #60a5fa; margin-bottom: 10px;"><i class="fa-solid fa-robot"></i> AI TRỢ LÝ CÀY THUÊ</h2>
             <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border-light);">
                 Mã đơn: <strong id="aiOrderCode" style="color: #fff;"></strong>
@@ -589,7 +438,7 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="assets/js/runtime-config.js"></script>
     <script src="assets/js/order-api.js"></script>
-    <script src="assets/js/app.js?v=20261002-search-guard"></script>
+    <script src="assets/js/app.js?v=20261002-ui"></script>
     <script src="assets/js/ai-copilot.js"></script>
 </body>
 </html>

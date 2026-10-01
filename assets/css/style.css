@@ -1,26 +1,4 @@
-/* CSS Variables for Dark Mode Premium Theme - Gaming/Boosting Vibe */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800;900&display=swap');
-
-:root {
-    --bg-dark: #080B10;
-    --bg-darker: #040508;
-    --card-bg: #15181F;
-    --border-light: #292D38;
-    --primary: #9868F8;
-    --primary-light: #b08aff;
-    --secondary: #65D5C3;
-    --accent: #65D5C3;
-    --genshin-gold: #F4C430;
-    --text-light: #f8fafc;
-    --text-muted: #94a3b8;
-    
-    --status-dang-cay: #65D5C3;
-    --status-hoan-thanh: #9868F8;
-    --status-tam-dung: #FF5D6C;
-    --status-cho-xu-ly: #F4C430;
-
-    --font-main: 'Inter', sans-serif;
-}
+/* Legacy structural styles; shared palette is defined in design-tokens.css. */
 
 /* Animations */
 @keyframes fadeInUp {

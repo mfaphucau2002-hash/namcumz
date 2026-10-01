@@ -4,27 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Chi tiết gói nạp game login và form tạo đơn bảo mật tại NAMCUMZ.">
-    <link rel="canonical" href="https://namcum.io.vn/napgame-detail.html">
+    <link rel="canonical" href="https://namcumz.io.vn/napgame-detail.html">
     <title id="pageTitle">Chi tiết Nạp Game - NAMCUMZ</title>
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/design-tokens.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/napgame.css">
+    <link rel="stylesheet" href="assets/css/ui.css">
 </head>
 <body class="ng-page">
 
     <!-- HEADER -->
     <header class="lp-header" id="lpHeader">
         <a href="/" class="lp-logo">
-            <img src="assets/images/logo.jpg" alt="Logo" style="width: 32px; height: 32px; border-radius: 50%;">
+            <img src="assets/images/logo.jpg" alt="Logo" class="ng-brand-logo">
             NAMCUMZ
         </a>
         <nav class="lp-nav" id="lpNav">
             <a href="/index.html">Trang chủ</a>
-            <a href="napgame.html" style="color: var(--lp-gold); font-weight: 700;">Nạp Game</a>
+            <a href="napgame.html" aria-current="page">Nạp Game</a>
         </nav>
         <div class="lp-actions">
-            <a href="dashboard.html" class="lp-btn-primary">
+            <a href="login.html" class="lp-btn-primary">
                 <i class="fa-solid fa-user"></i> Đăng nhập
             </a>
         </div>
@@ -42,11 +44,11 @@
         </nav>
 
         <!-- GAME HEADER -->
-        <div class="ng-detail-header">
+        <div class="ng-detail-header"><div class="ng-detail-cover" id="detailGameCover" aria-hidden="true"></div>
             <img src="assets/images/logo.jpg" alt="Game Icon" class="ng-detail-icon" id="detailGameIcon" onerror="this.src='assets/images/logo.jpg'">
             <div class="ng-detail-title">
                 <h1 id="detailGameName">Đang tải...</h1>
-                <div class="ng-detail-meta">
+                <p class="ng-detail-subtitle">Chọn gói đang mở bán và điền thông tin để tạo đơn.</p><div class="ng-detail-meta">
                     <span class="ng-detail-type-badge ng-type-login" id="detailTypeBadge">Nạp Login</span>
                 </div>
             </div>
@@ -66,7 +68,7 @@
                         <button class="ng-tab-btn" data-tab="monthly">Thẻ tháng/Pack</button>
                         <button class="ng-tab-btn" data-tab="battlepass">Battle Pass</button>
                     </div>
-                    <div class="ng-pkg-grid" id="pkgGrid"><!-- JS --></div>
+                    <div class="ng-pkg-grid" id="pkgGrid" role="radiogroup" aria-label="Chọn gói nạp"><div class="ng-loading-state" role="status">Đang tải gói nạp...</div></div><p class="ng-field-error" id="packageError" role="alert" hidden></p>
                 </div>
 
                 <!-- Thông tin đơn hàng -->
@@ -74,7 +76,7 @@
                     <div class="ng-block-title"><i class="fa-solid fa-circle-info"></i> Thông tin đơn hàng (Nạp Login)</div>
                     <div class="ng-form-grid">
                         <div class="ng-form-group">
-                            <label>Máy chủ (Server) <span class="required">*</span></label>
+                            <label for="formServer">Máy chủ (Server) <span class="required">*</span></label>
                             <select id="formServer">
                                 <option value="Asia" selected>Asia</option>
                                 <option value="America">America</option>
@@ -83,7 +85,7 @@
                             </select>
                         </div>
                         <div class="ng-form-group">
-                            <label>Phương thức đăng nhập <span class="required">*</span></label>
+                            <label for="formLoginMethod">Phương thức đăng nhập <span class="required">*</span></label>
                             <select id="formLoginMethod">
                                 <option value="Hoyoverse" selected>Tài khoản HoYoverse / Kuro Games</option>
                                 <option value="Google">Google</option>
@@ -93,20 +95,20 @@
                             </select>
                         </div>
                         <div class="ng-form-group" id="formGroupUsername">
-                            <label>Tên đăng nhập (Email / Username) <span class="required">*</span></label>
-                            <input type="text" id="formUsername" placeholder="Nhập Email hoặc Username">
+                            <label for="formUsername">Tên đăng nhập (Email / Username) <span class="required">*</span></label>
+                            <input type="text" id="formUsername" autocomplete="username" aria-describedby="usernameError" placeholder="Nhập Email hoặc Username"><span class="ng-field-error" id="usernameError" hidden></span>
                         </div>
                         <div class="ng-form-group" id="formGroupPassword">
-                            <label>Mật khẩu <span class="required">*</span></label>
-                            <input type="password" id="formPassword" placeholder="Nhập mật khẩu tài khoản">
+                            <label for="formPassword">Mật khẩu <span class="required">*</span></label>
+                            <input type="password" id="formPassword" autocomplete="off" aria-describedby="passwordError" placeholder="Nhập mật khẩu tài khoản"><span class="ng-field-error" id="passwordError" hidden></span>
                         </div>
-                        <div class="ng-form-group" style="grid-column: 1 / -1;">
-                            <label>SĐT Zalo liên hệ <span class="required">*</span></label>
-                            <input type="text" id="formPhone" placeholder="Nhập SĐT Zalo để admin hỗ trợ hoặc lấy mã xác nhận (nếu có)">
+                        <div class="ng-form-group ng-full-row">
+                            <label for="formPhone">SĐT Zalo liên hệ <span class="required">*</span></label>
+                            <input type="text" id="formPhone" inputmode="tel" autocomplete="tel" aria-describedby="phoneError" placeholder="Nhập SĐT Zalo để nhận hỗ trợ (nếu cần)"><span class="ng-field-error" id="phoneError" hidden></span>
                         </div>
-                        <div class="ng-form-group" style="grid-column: 1 / -1;">
-                            <label>Ghi chú đơn hàng (tuỳ chọn)</label>
-                            <input type="text" id="formNotes" placeholder="Ví dụ: Đã tắt mã 2FA, cần nạp trước giờ reset banner...">
+                        <div class="ng-form-group ng-full-row">
+                            <label for="formNotes">Ghi chú đơn hàng (tuỳ chọn)</label>
+                            <input type="text" id="formNotes" placeholder="Ghi chú yêu cầu; không nhập mật khẩu hoặc mã OTP.">
                         </div>
                     </div>
                 </div>
@@ -114,16 +116,16 @@
                 <!-- Phương thức thanh toán -->
                 <div class="ng-detail-block">
                     <div class="ng-block-title"><i class="fa-solid fa-credit-card"></i> Phương thức thanh toán</div>
-                    <div class="ng-payment-methods">
+                    <div class="ng-payment-methods" aria-label="Kênh thanh toán được hỗ trợ">
                         <div class="ng-pm-badge"><span style="color:#004B9D; font-weight:900;">VCB</span> Vietcombank</div>
                         <div class="ng-pm-badge"><span style="color:#D82A2A;">MB</span> MBBank</div>
                         <div class="ng-pm-badge"><span style="color:#0068B6;">VP</span> VPBank</div>
                         <div class="ng-pm-badge"><i class="fa-solid fa-mobile-screen" style="color:#A50064;"></i> Momo</div>
                         <div class="ng-pm-badge"><i class="fa-solid fa-mobile-screen" style="color:#005BAA;"></i> ZaloPay</div>
                     </div>
-                    <p style="font-size: 12.5px; color: #555; margin-top: 14px;">
-                        <i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b;"></i>
-                        Sau khi tạo đơn, Admin sẽ nhắn Zalo cho bạn số tài khoản để chuyển khoản. Đơn sẽ được xử lý ngay sau khi xác nhận thanh toán.
+                    <p class="ng-payment-note">
+                        <i class="fa-solid fa-triangle-exclamation" ></i>
+                        Sau khi tạo đơn, Admin sẽ nhắn Zalo cho bạn số tài khoản để chuyển khoản. Shop sẽ cập nhật trạng thái đơn sau khi xác nhận thanh toán.
                     </p>
                 </div>
 
@@ -155,7 +157,7 @@
                             </div>
                         </div>
                         <div class="ng-faq-item">
-                            <button class="ng-faq-question">3. Tại sao giá nạp tại NAMCUMZ lại rẻ hơn?</button>
+                            <button class="ng-faq-question">3. Giá gói được lấy từ đâu?</button>
                             <div class="ng-faq-answer">
                                 <p>Tên gói và giá hiển thị được tải từ catalog hiện hành. Vui lòng xác nhận tổng tiền với shop trước khi chuyển khoản.</p>
                             </div>
@@ -178,7 +180,7 @@
                     <div class="ng-summary-body">
                         <div id="emptyCart" class="ng-summary-empty">
                             <i class="fa-solid fa-cart-shopping"></i>
-                            <p>Giỏ hàng trống<br><span style="font-size:12px; color:#3f3f46;">Chọn gói nạp ở bên trái</span></p>
+                            <p>Giỏ hàng trống<br><span class="ng-summary-help">Chọn gói nạp ở bên trái</span></p>
                         </div>
                         <div id="filledCart" style="display:none;">
                             <div class="ng-summary-item">
@@ -190,14 +192,14 @@
                             </div>
                             <!-- Promo code -->
                             <div class="ng-promo-row">
-                                <input type="text" class="ng-promo-input" placeholder="Mã giảm giá..." id="promoInput">
+                                <input type="text" class="ng-promo-input" placeholder="Mã giảm giá" id="promoInput" aria-label="Mã giảm giá" aria-describedby="promoError">
                                 <button class="ng-promo-btn" onclick="applyPromo()">Áp dụng</button>
                             </div>
-                            <div class="ng-total-row">
+                            <p class="ng-field-error" id="promoError" role="alert" hidden></p><div class="ng-total-row">
                                 <span class="ng-total-label">Tổng cộng</span>
                                 <span class="ng-total-price" id="cartTotalPrice">0 đ</span>
                             </div>
-                            <button class="ng-btn-checkout" id="btnSubmitOrder" onclick="submitDetailOrder()" disabled>
+                            <p class="ng-checkout-message" id="checkoutMessage" role="status" tabindex="-1" aria-live="polite" hidden></p><button class="ng-btn-checkout" id="btnSubmitOrder" onclick="submitDetailOrder()" disabled>
                                 <i class="fa-solid fa-check"></i> Đặt hàng ngay
                             </button>
                             <button class="ng-btn-zalo" onclick="window.open('https://zalo.me/0763550673','_blank')">
@@ -205,8 +207,8 @@
                             </button>
                         </div>
                         <div class="ng-summary-trust">
-                            <span><i class="fa-solid fa-shield-halved"></i> An toàn</span>
-                            <span><i class="fa-solid fa-file-invoice"></i> Có bill</span>
+                            <span><i class="fa-solid fa-list-check"></i> Theo dõi trạng thái</span>
+                            <span><i class="fa-solid fa-comments"></i> Trao đổi với shop</span>
 
                         </div>
                     </div>
@@ -232,7 +234,7 @@
     <script src="assets/js/authMediaConfig.js"></script>
     <script src="assets/js/runtime-config.js"></script>
     <script src="assets/js/order-api.js"></script>
-    <script src="assets/js/app.js"></script>
-    <script src="assets/js/napgame.js"></script>
+    <script src="assets/js/app.js?v=20261002-ui"></script>
+    <script src="assets/js/napgame.js?v=20261002-ui"></script>
 </body>
 </html>

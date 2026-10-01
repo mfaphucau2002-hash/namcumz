@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Khu vực quản lý đơn hàng và hỗ trợ khách hàng Namcumz.">
     <meta name="robots" content="noindex, nofollow, noarchive">
     <title>Bảng Điều Khiển Admin - NAMCUMZ</title>
+    <link rel="stylesheet" href="assets/css/design-tokens.css?v=20261002-ui">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/jpeg" href="/assets/images/logo.jpg">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -167,8 +170,9 @@
             position: absolute; top: 20px; right: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;
         }
     </style>
+    <link rel="stylesheet" href="assets/css/ui.css?v=20261002-ui">
 </head>
-<body>
+<body class="app-page admin-page">
     <div class="admin-layout">
         <!-- Sidebar -->
         <aside class="sidebar">
@@ -176,7 +180,7 @@
                 <a href="/" class="logo-text" style="font-size: 1.5rem;"><img src="/assets/images/logo.jpg" alt="NAMCUMZ Logo" style="height: 35px; width: 35px; border-radius: 50%; object-fit: cover;">  NAMCUMZ</a>
             </div>
             <nav class="sidebar-nav">
-                <a class="sidebar-link active" onclick="switchTab('orders', this)"><i class="fa-solid fa-list-check"></i> Quản lý đơn</a>
+                <a role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}" class="sidebar-link active" onclick="switchTab('orders', this)"><i class="fa-solid fa-list-check"></i> Quản lý đơn</a>
                 <a class="sidebar-link" id="ticketsTabLink" onclick="switchTab('tickets', this)"><i class="fa-solid fa-headset"></i> Hỗ trợ & Khiếu nại</a>
                 <a class="sidebar-link" id="staffTabLink" onclick="switchTab('staff', this)" style="display: none;"><i class="fa-solid fa-users-gear"></i> Quản lý nhân sự</a>
                 <a href="/checkscam" class="sidebar-link"><i class="fa-solid fa-shield-virus"></i> Check Scam</a>
@@ -310,25 +314,25 @@
                 <input type="hidden" id="adminOrderId"> <!-- Hidden ID for Edit -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div class="form-group">
-                        <label class="form-label">Tên Người Cày (Booster)</label>
+                        <label class="form-label" for="adminBooster">Tên Người Cày (Booster)</label>
                         <input type="text" id="adminBooster" class="form-control" placeholder="Để trống nếu chưa có">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Tên Người Thuê</label>
+                        <label class="form-label" for="adminRenter">Tên Người Thuê</label>
                         <input type="text" id="adminRenter" class="form-control" placeholder="Nhập tên khách" required>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Nội dung cày</label>
+                    <label class="form-label" for="adminContent">Nội dung cày</label>
                     <textarea id="adminContent" class="form-control" rows="3" required></textarea>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div class="form-group">
-                        <label class="form-label">Giá tiền (VND)</label>
+                        <label class="form-label" for="adminPrice">Giá tiền (VND)</label>
                         <input type="text" id="adminPrice" class="form-control" placeholder="VD: 500,000">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Trạng thái</label>
+                        <label class="form-label" for="adminStatus">Trạng thái</label>
                         <select id="adminStatus" class="form-control" style="background-color: var(--bg-secondary);">
                             <option value="cho_xu_ly">Chờ xử lý</option>
                             <option value="dang_cay">Đang cày</option>
@@ -366,7 +370,7 @@
             <h2 class="modal-title" style="color: var(--accent); margin-bottom: 20px;"><i class="fa-solid fa-reply"></i> PHẢN HỒI KHIẾU NẠI</h2>
             <input type="hidden" id="respondTicketId">
             <div class="form-group" style="margin-bottom: 15px;">
-                <label class="form-label" style="color: #a1a1aa; margin-bottom: 6px; font-weight:700;">Nội dung phản hồi khách hàng:</label>
+                <label class="form-label" style="color: #a1a1aa; margin-bottom: 6px; font-weight:700;" for="respondTicketText">Nội dung phản hồi khách hàng:</label>
                 <textarea id="respondTicketText" class="form-control" rows="4" placeholder="Nhập câu trả lời hoặc hướng xử lý..."></textarea>
             </div>
             <div style="display: flex; justify-content: flex-end; gap: 10px;">

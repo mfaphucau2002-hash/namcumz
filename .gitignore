@@ -30,3 +30,5 @@ desktop.ini
 
 # Local source snapshots
 _backup/source_*/
+
+_backup/source_*.html

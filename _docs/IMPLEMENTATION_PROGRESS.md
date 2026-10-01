@@ -359,3 +359,11 @@ Theo yêu cầu của chủ shop ("loại bỏ phần nạp uid đi vì phần n
 - G8: bản frontend đã phát hành; chưa có nghiệm thu workflow end-to-end bằng test order và chưa diễn tập DB restore. Trạng thái phù hợp: **đã phát hành, nghiệm thu một phần; các cổng backup và staging workflow được miễn/chưa xác minh**.
 
 **Việc còn lại theo quyết định hiện tại:** không còn thao tác bắt buộc cho release; G0/G3–G5 và E2E G8 đang waived/not verified. Chỉ còn đo hiệu năng sâu hơn (Web Vitals + API p50/p95) nếu muốn hoàn thành yêu cầu G7 theo nghĩa đầy đủ. Không thao tác thử trên đơn khách thật.
+
+## 02/10/2026 — Thiết kế lại giao diện Namcumz
+
+- Đã làm mới trang chủ, catalog nạp game, chi tiết nạp, danh sách đơn và hệ thống style dùng chung cho đăng nhập/admin/profile. Nền navy/slate, một font Be Vietnam Pro, viền 1px nhẹ, khoảng cách theo bước 8px, controls >=44px và focus/hover/active/disabled/loading rõ ràng.
+- Tách `design-tokens.css`, `ui.css`, `landing.css`; gom `napgame.css` thành một bộ layout đang dùng. Bỏ card/gradient/glow trang trí, số liệu/review bịa và carousel tự chạy. Tám ảnh game tối ưu tổng 712 KB có nguồn trong `UI_ASSET_SOURCES.md`.
+- Browser: 12 kiểm tra trang chủ/catalog/danh sách đơn mẫu/login ở 375/768/1440px không overflow-x. Detail nạp ở 375px không tràn; chọn radio gói cập nhật summary; submit thiếu thông tin báo ba lỗi inline và focus đúng trường đầu tiên. Dữ liệu mẫu đặt trong `_backup` bị ignore, không đóng gói production.
+- Offline 45/45 PASS; build 33 files; diff check PASS. Chưa thử giao dịch đơn thật; các cổng staging/restore đã miễn vẫn ghi waived / not verified. Chi tiết ở `UI_REDESIGN_20261002.md`.
+- Bước tiếp theo: push main, chờ Vercel Ready và mở domain để xác nhận bản thiết kế mới đã được phục vụ.

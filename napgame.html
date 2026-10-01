@@ -3,29 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Danh mục nạp game NAMCUMZ. Gói đang mở bán và giá được tải từ catalog hiện hành."
-    <link rel="canonical" href="https://namcum.io.vn/napgame.html">
+    <meta name="description" content="Danh mục nạp game NAMCUMZ. Gói đang mở bán và giá được tải từ catalog hiện hành.">
+    <link rel="canonical" href="https://namcumz.io.vn/napgame.html">
     <title>Danh mục nạp game | NAMCUMZ</title>
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/design-tokens.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/napgame.css">
+    <link rel="stylesheet" href="assets/css/ui.css">
 </head>
 <body class="ng-page">
 
     <!-- HEADER -->
     <header class="lp-header" id="lpHeader">
         <a href="/" class="lp-logo">
-            <img src="assets/images/logo.jpg" alt="Logo" style="width: 32px; height: 32px; border-radius: 50%;">
+            <img src="assets/images/logo.jpg" alt="Logo" class="ng-brand-logo">
             NAMCUMZ
         </a>
         <nav class="lp-nav" id="lpNav">
             <a href="/index.html">Trang chủ</a>
             <a href="/index.html#dich-vu">Cày Thuê</a>
-            <a href="napgame.html" style="color: var(--lp-gold); font-weight: 700;">Nạp Game</a>
+            <a href="napgame.html" aria-current="page">Nạp Game</a>
         </nav>
         <div class="lp-actions">
-            <a href="dashboard.html" class="lp-btn-primary">
+            <a href="login.html" class="lp-btn-primary">
                 <i class="fa-solid fa-user"></i> Đăng nhập
             </a>
         </div>
@@ -84,37 +86,30 @@
                     </div>
                 </div>
             </div>
-            <button class="ng-slider-nav ng-slider-prev" onclick="slideTo(-1)"><i class="fa-solid fa-chevron-left"></i></button>
-            <button class="ng-slider-nav ng-slider-next" onclick="slideTo(1)"><i class="fa-solid fa-chevron-right"></i></button>
+            <button class="ng-slider-nav ng-slider-prev" aria-label="Ảnh trước" onclick="slideTo(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="ng-slider-nav ng-slider-next" aria-label="Ảnh tiếp" onclick="slideTo(1)"><i class="fa-solid fa-chevron-right"></i></button>
             <div class="ng-slider-dots">
-                <button class="ng-dot active" onclick="goSlide(0)"></button>
-                <button class="ng-dot" onclick="goSlide(1)"></button>
-                <button class="ng-dot" onclick="goSlide(2)"></button>
-                <button class="ng-dot" onclick="goSlide(3)"></button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 2. LIVE TICKER -->
-    <div class="ng-ticker-wrap">
-        <div class="ng-ticker-live"><div class="ng-ticker-dot"></div> LIVE</div>
-        <div class="ng-ticker-content">
-            <div class="ng-ticker-track" id="tickerTrack"><!-- JS --></div>
-        </div>
+                <button class="ng-dot active" aria-label="Xem game 1" onclick="goSlide(0)"></button>
+                <button class="ng-dot" aria-label="Xem game 2" onclick="goSlide(1)"></button>
+                <button class="ng-dot" aria-label="Xem game 3" onclick="goSlide(2)"></button>
+                <button class="ng-dot" aria-label="Xem game 4" onclick="goSlide(3)"></button>
+            </button>
+        </button>
     </div>
 
     <!-- 3. CATALOG CONTENT -->
     <div class="ng-catalog-wrap">
 
         <!-- Search + Filter Tabs -->
+        <div class="ng-catalog-intro"><p class="ng-eyebrow">DANH MỤC NẠP GAME</p><h1>Chọn game của bạn</h1><p>Chọn game, xem gói và giá đang mở bán, rồi tạo đơn ngay trên trang chi tiết.</p></div>
         <div class="ng-search-bar">
             <div class="ng-search-input-wrap">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" class="ng-search-input" id="gameSearch" placeholder="Tìm game bạn muốn nạp...">
+                <input type="text" class="ng-search-input" id="gameSearch" placeholder="Tìm game bạn muốn nạp..." aria-label="Tìm game">
             </div>
             <div class="ng-catalog-tabs">
                 <button class="ng-cat-tab active" data-filter="all">Tất cả Game</button>
-                <button class="ng-cat-tab" data-filter="hot">🔥 Nổi Bật</button>
+                <button class="ng-cat-tab" data-filter="hot">Game nổi bật</button>
             </div>
         </div>
 
@@ -122,7 +117,7 @@
         <div class="ng-section" id="sectionFeatured">
             <div class="ng-sec-header">
                 <div class="ng-sec-title">Game Nổi Bật</div>
-                <span class="ng-sec-sub">Game đang có catalog sẽ hiển thị tại đây</span>
+                <span class="ng-sec-sub">Các game có gói đang mở bán</span>
             </div>
             <div class="ng-grid-portrait" id="gridFeatured"><!-- JS --></div>
         </div>
@@ -131,64 +126,40 @@
         <!-- Section 3: Nạp Login -->
         <div class="ng-section" id="sectionLogin">
             <div class="ng-sec-header">
-                <div class="ng-sec-title">Danh Sách Game Nạp Login</div>
+                <div class="ng-sec-title">Tất cả game nạp login</div>
                 <span class="ng-sec-sub">Thông tin và giá gói được tải từ catalog hiện hành</span>
             </div>
             <div class="ng-grid-horizontal" id="gridLogin"><!-- JS --></div>
         </div>
 
         <!-- Section 4: Profile -->
-        <div class="ng-section">
-            <div class="ng-profile-box">
-                <div class="ng-profile-img-wrap">
-                    <img src="assets/images/logo.jpg" alt="NAMCUMZ Admin" class="ng-profile-img">
-                </div>
-                <div class="ng-profile-content">
-                    <div class="ng-profile-tag">#ADMIN • NAMCUMZ</div>
-                    <h2>Chào, mình là <span>NAMCUMZ</span></h2>
-                    <div class="ng-profile-phone"><i class="fa-solid fa-phone"></i> 0348 731 338</div>
-                    <p class="ng-profile-desc">
-                        Có mong muốn hỗ trợ anh em & đem lại trải nghiệm dịch vụ nạp game tốt nhất, uy tín, nhanh chóng với mức giá chiết khấu đặc biệt cho cộng đồng.
-                    </p>
-                    <div class="ng-profile-stats">
-                        <div class="ng-stat-card">
-                            <div class="ng-stat-icon"><i class="fa-solid fa-shield-halved"></i></div>
-                            <div class="ng-stat-info"><h4>Catalog</h4><p>Gói đang mở bán</p></div>
-                        </div>
-                        <div class="ng-stat-card">
-                            <div class="ng-stat-icon"><i class="fa-solid fa-bolt"></i></div>
-                            <div class="ng-stat-info"><h4>Theo đơn</h4><p>Thời gian thay đổi</p></div>
-                        </div>
-                        <div class="ng-stat-card">
-                            <div class="ng-stat-icon"><i class="fa-solid fa-gamepad"></i></div>
-                            <div class="ng-stat-info"><h4>Catalog</h4><p>Game đang mở bán</p></div>
-                        </div>
-                        <div class="ng-stat-card">
-                            <div class="ng-stat-icon"><i class="fa-regular fa-clock"></i></div>
-                            <div class="ng-stat-info"><h4>Hỗ trợ</h4><p>Liên hệ qua Zalo</p></div>
-                        </div>
-                    </div>
-                </div>
+        <!-- SUPPORT -->
+        <section class="ng-profile-box">
+            <div class="ng-profile-content">
+                <p class="ng-eyebrow">HỖ TRỢ ĐẶT ĐƠN</p>
+                <h2>Cần giúp chọn gói?</h2>
+                <p class="ng-profile-desc">Trao đổi với shop về gói nạp, phương thức thanh toán và tiến độ đơn.</p>
+                <a class="ng-support-link" href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">Liên hệ Zalo CSKH <span aria-hidden="true">↗</span></a>
             </div>
-        </div>
+        </section>
 
     </div><!-- end ng-catalog-wrap -->
 
     <!-- FOOTER -->
     <footer class="lp-footer">
         <p class="lp-footer-disclaimer">NAMCUMZ không liên kết với các nhà phát hành game. Vui lòng xác nhận gói, giá và phương thức thanh toán với shop trước khi giao dịch.</p>
-        <p style="color: #444; font-size: 13px; margin-top: 8px;">© 2026 NAMCUMZ. All rights reserved.</p>
+        <p class="ng-footer-copy">© 2026 NAMCUMZ. All rights reserved.</p>
     </footer>
 
-    <!-- SOCIAL PROOF POPUP (injected by JS) -->
-    <div id="socialProofContainer"></div>
+    <!-- CATALOG STATUS -->
+
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/authMediaConfig.js"></script>
     <script src="assets/js/runtime-config.js"></script>
     <script src="assets/js/order-api.js"></script>
-    <script src="assets/js/app.js"></script>
-    <script src="assets/js/napgame.js"></script>
+    <script src="assets/js/app.js?v=20261002-ui"></script>
+    <script src="assets/js/napgame.js?v=20261002-ui"></script>
 </body>
 </html>

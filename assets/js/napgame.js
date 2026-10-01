@@ -10,27 +10,27 @@ const ZALO_LINK = 'https://zalo.me/0763550673';
 // ==========================================
 const GAMES_CATALOG = {
     featured: [
-        { id: 'genshin', name: 'Genshin Impact',    image: 'assets/images/games/genshin.webp',  badge: 'HOT', badgeCls: 'badge-hot' },
-        { id: 'hsr',     name: 'Honkai Star Rail',  image: 'assets/images/games/hsr.webp',      badge: 'HOT', badgeCls: 'badge-hot' },
-        { id: 'zzz',     name: 'Zenless Zone Zero', image: 'assets/images/games/zzz.webp',      badge: 'NEW', badgeCls: 'badge-new' },
-        { id: 'wuwa',    name: 'Wuthering Waves',   image: 'assets/images/games/wuwa.webp',     badge: '',    badgeCls: '' }
+        { id: 'genshin', name: 'Genshin Impact',    image: 'assets/images/games/genshin_card.jpg',  badge: '', badgeCls: 'badge-hot' },
+        { id: 'hsr',     name: 'Honkai Star Rail',  image: 'assets/images/games/hsr_card.jpg',      badge: '', badgeCls: 'badge-hot' },
+        { id: 'zzz',     name: 'Zenless Zone Zero', image: 'assets/images/games/zzz_card.jpg',      badge: '', badgeCls: 'badge-new' },
+        { id: 'wuwa',    name: 'Wuthering Waves',   image: 'assets/images/games/wuwa_card.jpg',     badge: '',    badgeCls: '' }
     ],
     login: [
-        { id: 'genshin', name: 'Genshin Impact', sub: 'Nạp Login', icon: 'assets/images/games/genshin_icon.webp' },
-        { id: 'hsr', name: 'Honkai Star Rail', sub: 'Nạp Login', icon: 'assets/images/games/hsr_icon.webp' },
-        { id: 'wuwa', name: 'Wuthering Waves', sub: 'Nạp Login', icon: 'assets/images/games/wuwa_icon.webp' },
-        { id: 'zzz', name: 'Zenless Zone Zero', sub: 'Nạp Login', icon: 'assets/images/games/zzz_icon.webp' }
+        { id: 'genshin', name: 'Genshin Impact', sub: 'Nạp Login', icon: 'assets/images/games/genshin_card.jpg' },
+        { id: 'hsr', name: 'Honkai Star Rail', sub: 'Nạp Login', icon: 'assets/images/games/hsr_card.jpg' },
+        { id: 'wuwa', name: 'Wuthering Waves', sub: 'Nạp Login', icon: 'assets/images/games/wuwa_card.jpg' },
+        { id: 'zzz', name: 'Zenless Zone Zero', sub: 'Nạp Login', icon: 'assets/images/games/zzz_card.jpg' }
     ]
 };
 const GAME_INFO = {
-    'genshin': { name: 'Genshin Impact', icon: 'assets/images/games/genshin_icon.webp', type: 'login' },
-    'genshin-login': { name: 'Genshin Impact', icon: 'assets/images/games/genshin_icon.webp', type: 'login' },
-    'hsr': { name: 'Honkai Star Rail', icon: 'assets/images/games/hsr_icon.webp', type: 'login' },
-    'hsr-login': { name: 'Honkai Star Rail', icon: 'assets/images/games/hsr_icon.webp', type: 'login' },
-    'zzz': { name: 'Zenless Zone Zero', icon: 'assets/images/games/zzz_icon.webp', type: 'login' },
-    'zzz-login': { name: 'Zenless Zone Zero', icon: 'assets/images/games/zzz_icon.webp', type: 'login' },
-    'wuwa': { name: 'Wuthering Waves', icon: 'assets/images/games/wuwa_icon.webp', type: 'login' },
-    'wuwa-login': { name: 'Wuthering Waves', icon: 'assets/images/games/wuwa_icon.webp', type: 'login' },
+    'genshin': { name: 'Genshin Impact', icon: 'assets/images/games/genshin_card.jpg', type: 'login' },
+    'genshin-login': { name: 'Genshin Impact', icon: 'assets/images/games/genshin_card.jpg', type: 'login' },
+    'hsr': { name: 'Honkai Star Rail', icon: 'assets/images/games/hsr_card.jpg', type: 'login' },
+    'hsr-login': { name: 'Honkai Star Rail', icon: 'assets/images/games/hsr_card.jpg', type: 'login' },
+    'zzz': { name: 'Zenless Zone Zero', icon: 'assets/images/games/zzz_card.jpg', type: 'login' },
+    'zzz-login': { name: 'Zenless Zone Zero', icon: 'assets/images/games/zzz_card.jpg', type: 'login' },
+    'wuwa': { name: 'Wuthering Waves', icon: 'assets/images/games/wuwa_card.jpg', type: 'login' },
+    'wuwa-login': { name: 'Wuthering Waves', icon: 'assets/images/games/wuwa_card.jpg', type: 'login' },
     'default': { name: 'Game Top-up', icon: 'assets/images/logo.jpg', type: 'login' }
 };
 
@@ -45,7 +45,7 @@ const GAME_PACKAGES = {
         { id: '10000000-0000-0000-0000-000000000005', name: '1980 + 260 Đá Sáng Thế',             price:  570000, img: 'assets/images/games/crystals_1980.webp', tag: 'topup',      desc: '' },
         { id: '10000000-0000-0000-0000-000000000006', name: '3280 + 600 Đá Sáng Thế',             price:  950000, img: 'assets/images/games/crystals_3280.webp', tag: 'topup',      desc: '' },
         { id: '10000000-0000-0000-0000-000000000007', name: '6480 + 1600 Đá Sáng Thế',            price: 1850000, img: 'assets/images/games/crystals_6480.webp', tag: 'topup',      desc: '' },
-        { id: '10000000-0000-0000-0000-000000000008', name: 'FULL PACK GENSHIN IMPACT',           price: 3800000, img: 'assets/images/games/genshin_icon.webp',  tag: 'topup',      desc: 'Toàn bộ gói nạp lớn nhất' }
+        { id: '10000000-0000-0000-0000-000000000008', name: 'FULL PACK GENSHIN IMPACT',           price: 3800000, img: 'assets/images/games/genshin_card.jpg',  tag: 'topup',      desc: 'Toàn bộ gói nạp lớn nhất' }
     ],
     'genshin-login': 'genshin',
 
@@ -117,12 +117,12 @@ function slideTo(dir) {
 
 function startSlider() {
     if (!document.getElementById('sliderTrack')) return;
-    resetSlideTimer();
+    goSlide(0);
 }
 
 function resetSlideTimer() {
     if (slideInterval) clearInterval(slideInterval);
-    slideInterval = setInterval(() => goSlide(slideIndex + 1), 5000);
+    // Manual navigation avoids moving content while the customer reads.
 }
 
 // ==========================================
@@ -132,6 +132,8 @@ function resetSlideTimer() {
 // ==========================================
 async function initCatalogPage() {
     startSlider();
+    showCatalogMessage('gridFeatured', 'Đang tải danh mục...');
+    showCatalogMessage('gridLogin', 'Đang tải danh mục...');
     document.querySelectorAll('a[href*="zalo.me"]').forEach(a => a.href = ZALO_LINK);
 
     let activeGames;
@@ -165,7 +167,7 @@ async function initCatalogPage() {
                 if (loginSec) loginSec.style.display = '';
                 if (featSec) featSec.style.display = '';
             } else if (btn.dataset.filter === 'hot') {
-                renderPortrait(availableFeatured.filter(game => game.badge === 'HOT' || game.badge === 'NEW'));
+                renderPortrait(availableFeatured);
                 if (loginSec) loginSec.style.display = 'none';
                 if (featSec) featSec.style.display = '';
             }
@@ -254,7 +256,7 @@ function showCatalogMessage(containerId, message) {
     if (!container) return;
     const status = document.createElement('div');
     status.setAttribute('role', 'status');
-    status.style.cssText = 'grid-column:1/-1;text-align:center;padding:24px;color:#aaa;';
+    status.className = 'ng-catalog-status';
     status.textContent = message;
     container.replaceChildren(status);
 }
@@ -269,6 +271,10 @@ async function initDetailPage() {
     if (breadcrumb) breadcrumb.textContent = gameInfo.name;
     const icon = document.getElementById('detailGameIcon');
     if (icon) { icon.src = gameInfo.icon; icon.onerror = () => icon.src = 'assets/images/logo.jpg'; }
+    const cover = document.getElementById('detailGameCover');
+    if (cover && GAMES_CATALOG.featured.some(game => game.id === currentGameId.replace('-login', ''))) {
+        cover.style.backgroundImage = "url(" + GAMES_CATALOG.featured.find(game => game.id === currentGameId.replace("-login", "")).image + ")";
+    }
     const name = document.getElementById('detailGameName');
     if (name) name.textContent = gameInfo.name;
     const badge = document.getElementById('detailTypeBadge');
@@ -311,13 +317,6 @@ async function initDetailPage() {
     document.querySelectorAll('.ng-btn-zalo').forEach(button => {
         button.onclick = () => window.open(ZALO_LINK, '_blank');
     });
-    document.querySelectorAll('.ng-faq-question').forEach(button => {
-        button.addEventListener('click', () => {
-            const isActive = button.classList.contains('active');
-            document.querySelectorAll('.ng-faq-question').forEach(item => item.classList.remove('active'));
-            if (!isActive) button.classList.add('active');
-        });
-    });
     renderReviews();
 }
 function renderUnsupportedGame(gameInfo) {
@@ -341,7 +340,7 @@ function renderPackages(packages, filter) {
     const filtered = filter === 'all' ? packages : packages.filter(pkg => pkg.tag === filter);
     if (filtered.length === 0) {
         const empty = document.createElement('div');
-        empty.style.cssText = 'grid-column:1/-1;text-align:center;color:#555;padding:32px;';
+        empty.className = 'ng-catalog-status';
         empty.textContent = 'Không có gói nào trong danh mục này.';
         grid.replaceChildren(empty);
         return;
@@ -365,11 +364,10 @@ function renderPackages(packages, filter) {
             badge.textContent = pkg.tag === 'monthly' ? 'Thẻ Tháng' : 'BP';
             card.appendChild(badge);
         }
-        const image = document.createElement('img');
-        image.src = pkg.img;
-        image.alt = '';
-        image.className = 'ng-pkg-img';
-        image.onerror = () => { image.src = 'assets/images/logo.jpg'; };
+        const image = document.createElement('span');
+        image.className = 'ng-pkg-symbol';
+        image.setAttribute('aria-hidden', 'true');
+        image.textContent = pkg.tag === 'topup' ? '✦' : '◈';
         const packageName = document.createElement('span');
         packageName.className = 'ng-pkg-name';
         packageName.textContent = pkg.name;
@@ -399,6 +397,8 @@ function renderReviews() {
 }
 function updateCart() {
     if (!currentSelectedPackage) return;
+    const packageError = document.getElementById('packageError');
+    if (packageError) packageError.hidden = true;
     const priceStr = currentSelectedPackage.price.toLocaleString('vi-VN') + ' đ';
 
     const emptyCt  = document.getElementById('emptyCart');
@@ -415,7 +415,7 @@ function updateCart() {
     if (nameEl)  nameEl.textContent  = currentSelectedPackage.name;
     if (priceEl) priceEl.textContent = priceStr;
     if (totalEl) totalEl.textContent = priceStr;
-    if (imgEl)   { imgEl.src = currentSelectedPackage.img; imgEl.onerror = () => imgEl.src = 'assets/images/logo.jpg'; }
+    if (imgEl)   { imgEl.src = (GAME_INFO[currentGameId] || GAME_INFO.default).icon; imgEl.onerror = () => imgEl.src = 'assets/images/logo.jpg'; }
     if (btnEl)   btnEl.disabled = false;
 
     const mobilePrice = document.getElementById('mobileBarPrice');
@@ -424,23 +424,58 @@ function updateCart() {
     if (mobileBtn)   mobileBtn.disabled = false;
 }
 
-function applyPromo() {
-    const code = (document.getElementById('promoInput') || {}).value || '';
-    if (!code.trim()) return;
-    alert('Mã "' + code.trim() + '" không hợp lệ hoặc đã hết hạn.');
+// Show a field error and connect it to the affected control.
+function setFieldError(fieldId, errorId, message) {
+    const field = document.getElementById(fieldId);
+    const error = document.getElementById(errorId);
+    if (field) field.setAttribute('aria-invalid', message ? 'true' : 'false');
+    if (error) {
+        error.textContent = message;
+        error.hidden = !message;
+    }
 }
 
-// ==========================================
-// 7. SUBMIT TOPUP ORDER VIA SECURE RPC
-// ==========================================
+// Show order status in the page without interrupting keyboard or screen reader flow.
+function showCheckoutMessage(message, state = 'error') {
+    const status = document.getElementById('checkoutMessage');
+    if (!status) return;
+    status.textContent = message;
+    status.dataset.state = state;
+    status.hidden = !message;
+}
+
+// Explain current promo availability without claiming a discount.
+function applyPromo() {
+    const input = document.getElementById('promoInput');
+    const error = document.getElementById('promoError');
+    if (!input || !error) return;
+    const code = input.value.trim();
+    error.textContent = code ? 'Hiện chưa hỗ trợ áp dụng mã giảm giá trực tuyến. Tổng tiền không thay đổi.' : 'Vui lòng nhập mã giảm giá.';
+    error.hidden = false;
+    input.setAttribute('aria-invalid', 'true');
+}
+
+// Submit the selected database package through the existing secure order API.
 async function submitDetailOrder() {
+    showCheckoutMessage('');
+    setFieldError('formUsername', 'usernameError', '');
+    setFieldError('formPassword', 'passwordError', '');
+    setFieldError('formPhone', 'phoneError', '');
+    const packageError = document.getElementById('packageError');
+    if (packageError) packageError.hidden = true;
+
     if (!window.currentUser?.id) {
-        alert('Vui lòng đăng nhập trước khi tạo đơn nạp game.');
-        window.location.href = 'login.html';
+        showCheckoutMessage('Vui lòng đăng nhập để tạo đơn. Mở trang Đăng nhập ở đầu trang, sau đó quay lại gói đã chọn.');
+        document.getElementById('checkoutMessage')?.focus();
         return;
     }
     if (!currentSelectedPackage?.id) {
-        return alert('Vui lòng chọn một gói nạp.');
+        if (packageError) {
+            packageError.textContent = 'Vui lòng chọn một gói nạp.';
+            packageError.hidden = false;
+            packageError.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        }
+        return;
     }
 
     const server = (document.getElementById('formServer')?.value || 'Asia').trim();
@@ -449,42 +484,34 @@ async function submitDetailOrder() {
     const password = document.getElementById('formPassword')?.value || '';
     const phone = (document.getElementById('formPhone')?.value || '').trim();
     const notes = (document.getElementById('formNotes')?.value || '').trim();
-
-    if (!account || !password) {
-        return alert('Vui lòng nhập tên đăng nhập và mật khẩu tài khoản game.');
-    }
-    if (!phone) {
-        return alert('Vui lòng nhập số điện thoại Zalo để nhận thông báo và hỗ trợ khi nạp.');
+    let firstInvalid = null;
+    if (!account) { setFieldError('formUsername', 'usernameError', 'Vui lòng nhập email hoặc tên đăng nhập.'); firstInvalid ||= 'formUsername'; }
+    if (!password) { setFieldError('formPassword', 'passwordError', 'Vui lòng nhập mật khẩu tài khoản game.'); firstInvalid ||= 'formPassword'; }
+    if (!phone) { setFieldError('formPhone', 'phoneError', 'Vui lòng nhập số điện thoại Zalo liên hệ.'); firstInvalid ||= 'formPhone'; }
+    if (firstInvalid) {
+        document.getElementById(firstInvalid)?.focus();
+        showCheckoutMessage('Vui lòng kiểm tra các trường được đánh dấu.');
+        return;
     }
 
     const btn = document.getElementById('btnSubmitOrder');
     const mobileBtn = document.getElementById('mobileBarBtn');
-    const originalText = btn ? btn.innerHTML : '';
-    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...'; }
-    if (mobileBtn) { mobileBtn.disabled = true; mobileBtn.innerHTML = 'Đang xử lý...'; }
-
+    const originalText = btn?.innerHTML || '';
+    const mobileText = mobileBtn?.textContent || 'Đặt hàng';
+    if (btn) { btn.disabled = true; btn.setAttribute('aria-busy', 'true'); btn.textContent = 'Đang tạo đơn...'; }
+    if (mobileBtn) { mobileBtn.disabled = true; mobileBtn.setAttribute('aria-busy', 'true'); mobileBtn.textContent = 'Đang xử lý...'; }
     try {
         const client = window.supabaseClient;
         if (!client) throw new Error('Không tìm thấy kết nối hệ thống.');
-        const order = await OrderAPI.topup(
-            client,
-            window.currentUser.id,
-            currentSelectedPackage.id,
-            server,
-            loginMethod,
-            account,
-            password,
-            phone,
-            notes
-        );
-        alert('Tạo đơn nạp game thành công! Đang chuyển đến trang theo dõi đơn hàng.');
+        const order = await OrderAPI.topup(client, window.currentUser.id, currentSelectedPackage.id, server, loginMethod, account, password, phone, notes);
+        showCheckoutMessage('Đã tạo đơn. Đang chuyển đến trang theo dõi...', 'success');
         window.location.href = `dashboard.html?tab=history&order=${encodeURIComponent(order.id)}`;
     } catch (err) {
         console.error('Lỗi tạo đơn nạp game:', err);
-        alert(err.message || 'Không thể tạo đơn nạp game. Vui lòng kiểm tra lại hoặc liên hệ Zalo.');
+        showCheckoutMessage(err.message || 'Không thể tạo đơn. Vui lòng kiểm tra lại hoặc liên hệ Zalo.');
     } finally {
-        if (btn) { btn.disabled = false; btn.innerHTML = originalText; }
-        if (mobileBtn) { mobileBtn.disabled = false; mobileBtn.innerHTML = 'Đặt hàng'; }
+        if (btn) { btn.disabled = false; btn.removeAttribute('aria-busy'); btn.innerHTML = originalText; }
+        if (mobileBtn) { mobileBtn.disabled = false; mobileBtn.removeAttribute('aria-busy'); mobileBtn.textContent = mobileText; }
     }
 }
 
@@ -496,32 +523,32 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('sliderTrack')) initCatalogPage();
     if (document.getElementById('pkgGrid')) initDetailPage();
     initZaloWidget();
+    document.querySelectorAll('.ng-faq-question').forEach((button, index) => {
+        const answer = button.nextElementSibling;
+        if (!answer) return;
+        answer.id = 'faqAnswer' + index;
+        answer.hidden = true;
+        button.setAttribute('aria-controls', answer.id);
+        button.setAttribute('aria-expanded', 'false');
+        button.addEventListener('click', () => {
+            const opening = button.getAttribute('aria-expanded') !== 'true';
+            button.classList.toggle('active', opening);
+            button.setAttribute('aria-expanded', String(opening));
+            answer.hidden = !opening;
+        });
+    });
 });
 
 // ==========================================
 // 8. FLOATING ZALO WIDGET
 // ==========================================
 function initZaloWidget() {
-    const div = document.createElement('div');
-    div.innerHTML = `
-        <a href="https://zalo.me/0763550673" target="_blank" style="
-            position: fixed; bottom: 90px; right: 20px; z-index: 9999;
-            background: #0068ff; color: white; border-radius: 50%;
-            width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 15px rgba(0,104,255,0.4); font-size: 30px;
-            animation: bounceZalo 2s infinite; text-decoration: none;
-        ">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1200px-Icon_of_Zalo.svg.png" style="width:35px; height:35px;" alt="Zalo">
-        </a>
-        <style>
-            @keyframes bounceZalo { 
-                0%, 100% { transform: translateY(0); } 
-                50% { transform: translateY(-10px); } 
-            }
-            @media (min-width: 993px) {
-                a[href*="zalo.me/0763550673"] { bottom: 20px !important; }
-            }
-        </style>
-    `;
-    document.body.appendChild(div);
+    const link = document.createElement('a');
+    link.className = 'ng-zalo-float';
+    link.href = ZALO_LINK;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.setAttribute('aria-label', 'Liên hệ Zalo CSKH');
+    link.innerHTML = '<i class="fa-regular fa-comment-dots" aria-hidden="true"></i><span>CSKH</span>';
+    document.body.appendChild(link);
 }
