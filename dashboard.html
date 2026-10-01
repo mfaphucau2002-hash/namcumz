@@ -265,7 +265,7 @@
         <div class="filters-row animate-on-load" id="mobileFilters" style="animation-delay: 0.3s;">
             <div class="search-bar">
                 <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
-                <input type="text" id="searchInput" placeholder="Tìm kiếm mã đơn, dịch vụ, người thuê..." onkeyup="window.applyFilters()">
+                <input type="search" id="searchInput" name="order-search" placeholder="Tìm kiếm mã đơn, dịch vụ, người thuê..." autocomplete="off" autocapitalize="off" spellcheck="false" oninput="window.applyFilters()">
             </div>
             <select class="filter-select" id="filterService" onchange="window.applyFilters()">
                 <option value="all">Tất cả dịch vụ</option>

@@ -2037,6 +2037,8 @@ async function initSupabaseLogic() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    const orderSearch = document.getElementById('searchInput');
+    if (orderSearch) orderSearch.value = '';
     const config = window.NAMCUMZ_CONFIG || {};
     const localHost = ['localhost', '127.0.0.1', '[::1]', ''].includes(location.hostname);
     const configuredStaging = config.environment === 'staging' && /^https:\/\/[^/]+\.supabase\.co$/.test(config.supabaseUrl || '') && config.supabaseAnonKey && config.supabaseUrl !== SUPABASE_URL;
@@ -2148,3 +2150,11 @@ window.viewOrderCredentials = async function(orderId) {
         body.innerHTML = '<div style="color:#ef4444;padding:16px;">' + escapeHtml(err.message || 'Lỗi khi tải thông tin đăng nhập') + '</div>';
     }
 };
+// Browsers may restore form values when returning to the dashboard from history/BFCache.
+if (typeof window.addEventListener === 'function') window.addEventListener('pageshow', () => {
+    const orderSearch = document.getElementById('searchInput');
+    if (orderSearch && orderSearch.value) {
+        orderSearch.value = '';
+        if (typeof window.applyFilters === 'function') window.applyFilters();
+    }
+});
