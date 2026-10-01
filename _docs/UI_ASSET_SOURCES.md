@@ -10,4 +10,3 @@ All images below are optimized crops of artwork hosted by each game's publisher.
 | Wuthering Waves | [Official game site](https://wutheringwaves.kurogames.com/en/main/); [source JPG](https://wutheringwaves.kurogames.com/static4.0/assets/main-bg-7d3fbb99.jpg) | `assets/images/games/wuwa_card.jpg` — 480×600, 48,114 B | `assets/images/games/wuwa_banner.jpg` — 1200×450, 76,302 B |
 
 All outputs are progressive JPEG at quality 82. HSR and ZZZ crops exclude baked version promotional text. Total output weight: 712,051 bytes (approximately 0.7 MB).
-

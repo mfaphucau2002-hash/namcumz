@@ -367,3 +367,8 @@ Theo yêu cầu của chủ shop ("loại bỏ phần nạp uid đi vì phần n
 - Browser: 12 kiểm tra trang chủ/catalog/danh sách đơn mẫu/login ở 375/768/1440px không overflow-x. Detail nạp ở 375px không tràn; chọn radio gói cập nhật summary; submit thiếu thông tin báo ba lỗi inline và focus đúng trường đầu tiên. Dữ liệu mẫu đặt trong `_backup` bị ignore, không đóng gói production.
 - Offline 45/45 PASS; build 33 files; diff check PASS. Chưa thử giao dịch đơn thật; các cổng staging/restore đã miễn vẫn ghi waived / not verified. Chi tiết ở `UI_REDESIGN_20261002.md`.
 - Bước tiếp theo: push main, chờ Vercel Ready và mở domain để xác nhận bản thiết kế mới đã được phục vụ.
+
+## 02/10/2026 — UI redesign đã phát hành
+
+- Commit `6e5f552` đã push main; Vercel deployment `7FvEAdu2EpZ1pwSZBswnwyNjWVNN` Ready. Đã mở domain https://namcumz.io.vn/ và thấy H1/bố cục mới, không có ảnh bị lỗi.
+- Bản thiết kế frontend hoàn tất. Không cần người dùng chạy SQL hoặc thao tác thêm. Các kiểm tra giao dịch thật/backup đã miễn vẫn chưa được xác minh.

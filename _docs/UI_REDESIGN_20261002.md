@@ -27,4 +27,4 @@ This verifies frontend presentation and local behavior. Previously waived full b
 
 ## Release
 
-The frontend is ready for GitHub main / Vercel deployment. Confirm the deployment serves this version before calling the release complete.
+Commit `6e5f552` was pushed to GitHub main. Vercel deployment `7FvEAdu2EpZ1pwSZBswnwyNjWVNN` is Ready. The production domain https://namcumz.io.vn/ was opened and visibly serves the new storefront, with no broken artwork images. Frontend redesign release is complete.
