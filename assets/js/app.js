@@ -2153,7 +2153,7 @@ window.viewOrderCredentials = async function(orderId) {
 // Browsers may restore form values when returning to the dashboard from history/BFCache.
 if (typeof window.addEventListener === 'function') window.addEventListener('pageshow', () => {
     const orderSearch = document.getElementById('searchInput');
-    if (orderSearch && orderSearch.value) {
+    if (orderSearch) {
         orderSearch.value = '';
         if (typeof window.applyFilters === 'function') window.applyFilters();
     }

@@ -265,7 +265,7 @@
         <div class="filters-row animate-on-load" id="mobileFilters" style="animation-delay: 0.3s;">
             <div class="search-bar">
                 <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
-                <input type="search" id="searchInput" name="order-search" placeholder="Tìm kiếm mã đơn, dịch vụ, người thuê..." autocomplete="off" autocapitalize="off" spellcheck="false" oninput="window.applyFilters()">
+                <input type="search" id="searchInput" placeholder="Tìm kiếm mã đơn, dịch vụ, người thuê..." autocomplete="off" autocapitalize="off" spellcheck="false" readonly onfocus="if (this.readOnly) { this.value = ''; this.readOnly = false; window.applyFilters(); }" oninput="window.applyFilters()">
             </div>
             <select class="filter-select" id="filterService" onchange="window.applyFilters()">
                 <option value="all">Tất cả dịch vụ</option>
@@ -589,7 +589,7 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="assets/js/runtime-config.js"></script>
     <script src="assets/js/order-api.js"></script>
-    <script src="assets/js/app.js"></script>
+    <script src="assets/js/app.js?v=20261002-search-guard"></script>
     <script src="assets/js/ai-copilot.js"></script>
 </body>
 </html>
