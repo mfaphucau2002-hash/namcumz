@@ -1,17 +1,16 @@
 # 🎮 KẾ HOẠCH XÂY DỰNG TRANG NẠP GAME — NAMCUMZ
 ## (Phiên bản đã đánh giá + cập nhật đầy đủ)
 
-> **Phiên bản kế hoạch:** v3.0 (Triển khai hoàn tất Login Top-up)  
+> **Phiên bản kế hoạch:** v3.0 (roadmap giao diện ban đầu; trạng thái thực tế chưa nghiệm thu toàn bộ)
 > **Ngày tạo:** 2026-08-07 | **Cập nhật:** 2026-09-30  
-> **Trạng thái tổng thể:** 🟢 Đã hoàn thành & phát hành Production (Login Top-up)
+> **Trạng thái tài liệu:** Bản kế hoạch giao diện ban đầu; đã được thay thế về bảo mật/vận hành bởi `_docs/WEBSITE_UPGRADE_PLAN.md`. Không dùng bảng roadmap cũ bên dưới làm bằng chứng phát hành. Tiến độ hiện hành: `_docs/IMPLEMENTATION_PROGRESS.md`.
 
 ---
 
 ## 🛡️ BACKUP DATABASE — TRƯỚC KHI BUILD
 
-> [!CAUTION]
-> **Nếu bạn không hài lòng với bất kỳ thay đổi nào và muốn khôi phục lại:**  
-> Báo AI: *"Restore lại từ backup ngày 2026-08-07"* — AI sẽ dùng file backup bên dưới để import lại toàn bộ dữ liệu cũ.
+> [!WARNING]
+> Snapshot 2026-08-07 bên dưới là bản dump lịch sử, chưa diễn tập restore và không được dùng để khôi phục DB hiện tại. Backup/restore phải được tạo và xác minh riêng theo `_docs/WEBSITE_UPGRADE_PLAN.md` trước production migration.
 
 ### 📦 Snapshot trạng thái trước khi build napgame
 
@@ -621,7 +620,7 @@ CSS:
 | 1D | Admin tab nạp game | ⬜ | — |
 | 1D | Table đơn + filter | ⬜ | — |
 
-> ⬜ Chưa bắt đầu | 🔄 Đang làm | ✅ Hoàn thành | ❌ Bị chặn
+> Bảng trạng thái phía trên là snapshot roadmap 2026-08-07, hiện lỗi thời; không phải checklist triển khai hiện hành. Theo dõi bảo mật/vận hành ở `_docs/WEBSITE_UPGRADE_PLAN.md` và trạng thái thực tế ở `_docs/IMPLEMENTATION_PROGRESS.md`.
 
 ---
 

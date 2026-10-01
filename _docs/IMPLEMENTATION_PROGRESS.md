@@ -1,5 +1,8 @@
 # Tiến độ triển khai — 30/09/2026
 
+> **Cập nhật điều phối 01/10/2026:** Nhật ký dưới đây chứa các ghi nhận theo từng đợt, gồm cả thông tin trước đây mâu thuẫn về staging/production. Đừng suy ra trạng thái live chỉ từ các ghi nhận đó. Bảng cổng trong `WEBSITE_UPGRADE_PLAN.md` đã được sửa để phân biệt code có trong repo với nghiệm thu DB/deploy thực tế.
+
+
 Đợt 1: G0 và bản sửa frontend ban đầu của G1/G2. Chưa hoàn tất toàn bộ giai đoạn; chưa deploy hoặc thay đổi DB.
 
 ## Đầu vào đã chốt
@@ -225,3 +228,103 @@ Theo yêu cầu của chủ shop ("loại bỏ phần nạp uid đi vì phần n
    - _tools/order-api.test.mjs: 7/7 PASS.
    - _tools/database.test.mjs: 13/13 PASS.
    - _tools/build.cjs: 19/19 files built successfully into dist/.
+## 01/10/2026 — Đối chiếu kế hoạch và trạng thái hiện tại
+
+- Git có commit lịch sử `84b4a6b`, nhưng repo `main` hiện ở `dc21f4e`; không có bằng chứng trong workspace đủ để xác minh phiên bản đang chạy trên production hoặc migration ledger hiện tại. Các thay đổi đang có trong working tree chưa commit.
+- Có migration production đã chuẩn bị (`production_000_p0_containment.sql`, `production_001_release.sql`, `production_002_credentials_encryption.sql`), nhưng chưa chạy/verify trên production. Trên `namcumz-staging`, đã tạo khóa trong Vault (không lộ giá trị), chạy `staging_004_credentials_encryption.sql` thành công và `staging_004_verify.sql` trả PASS. Trước migration staging có 0 dòng credentials; cột plaintext được bỏ và cột ciphertext được bật NOT NULL.
+- Frontend trong working tree chọn contract `staging_004_credentials_encryption` theo staging và `production_002_credentials_encryption` theo production; code này chưa deploy. Trên staging, smoke script `_db/staging_004_smoke.sql` PASS với transaction rollback: top-up giả, idempotent retry, credential owner round-trip và từ chối khách khác. Đây là DB smoke bằng JWT claims giả lập, chưa xác nhận Auth/API/browser E2E hoặc quyền booster/admin.
+- Kế hoạch nạp game v3 có roadmap lịch sử lỗi thời. `WEBSITE_UPGRADE_PLAN.md` là kế hoạch bao quát; trạng thái nghiệm thu được hạ khỏi “hoàn tất” cho đến khi có kiểm tra staging/production tương ứng.
+
+### Việc tiếp theo
+
+1. Operator có quyền Supabase kiểm tra project/ledger và chạy verify chỉ đọc trước khi chọn migration; không gửi secret qua chat.
+2. Tiếp theo: chạy frontend Auth/API E2E trên staging với tài khoản thử; kiểm tra viewer thực tế và các quyền booster/admin. Hoàn thiện các ma trận còn thiếu của G1–G7.
+3. Sau khi staging đạt và backup/restore DB được chứng minh, operator có quyền Supabase áp dụng các migration production theo `CREDENTIAL_ENCRYPTION_SETUP.md`; xác minh contract trước khi deploy frontend.
+4. Chạy E2E và thiết bị thực theo checklist G8; chỉ khi có bằng chứng mới đánh dấu các cổng đạt.
+
+**Trạng thái hiện tại:** staging 004 đã cài và verify; staging top-up/credentials DB smoke đạt, dữ liệu thử đã rollback. Chưa chạy frontend Auth/API E2E, chưa nghiệm thu các role booster/admin, chưa chứng minh backup/restore và chưa thay đổi production. Production migration/deploy vẫn đang chờ các cổng này.
+
+
+## 01/10/2026 — Chuẩn bị local preview cho E2E staging
+
+- `_tools/preview.cjs` phục vụ `assets/js/runtime-config.js` động từ `.env.local` với allowlist URL cố định của `namcumz-staging`, publishable key dạng `sb_publishable_...`, environment `staging` và contract `staging_004_credentials_encryption`. Cấu hình production trong file runtime được giữ nguyên; `.env.local` đã nằm trong `.gitignore`.
+- HTTP smoke trên localhost xác nhận runtime trả staging URL/contract và đã nạp key; trang chính, robots, sitemap trả 200; `_docs`, `_backup`, `_db` trả 404. Browser E2E chưa chạy.
+- Người dùng chọn dùng tài khoản staging hiện có, không tạo mới. Supabase Auth UI ước tính 10 users; truy vấn `user_roles` xác nhận hiện chỉ có 2 customer, chưa có booster/admin. Chưa xác định tài khoản customer nào dùng để đăng nhập; không đọc/đổi mật khẩu. Muốn test booster/admin cần chọn cụ thể user hiện có và xác nhận gán quyền theo role.
+## 01/10/2026 — Tiếp tục kiểm tra staging sau 004
+
+- Sửa `_tools/preview.cjs` để allowlist nhận đúng `robots.txt` và `sitemap.xml`; trước đó hai đường dẫn này nằm ngoài mảng Set.
+- Preview HTTP cục bộ: `/`, `/robots.txt`, `/sitemap.xml` trả 200; `/_docs/...`, `/_backup/` và `/_db/...sql` trả 404.
+- Preview localhost đã nạp cấu hình staging từ `.env.local`; `runtime-config.js` production được giữ nguyên. Chưa chạy Auth/API/browser E2E: CUA browser không truy cập được loopback và đã chuyển sang dùng user hiện có; role table chỉ có 2 customer, chưa có booster/admin; chưa có thông tin đăng nhập để chạy UI.
+- Migration 004 staging và smoke rollback ghi ở trên vẫn là phạm vi live đã xác nhận. Cần staging publishable key, tài khoản customer/booster/admin dùng riêng cho test và cổng backup/restore để tiếp tục ma trận.
+- Kiểm thử lượt này: DB 13/13, order API 7/7, check 39/39, build 21 files; preview allowlist PASS. Không deploy hoặc chạy migration production.
+## Bằng chứng staging 004
+
+- Ledger trước migration xác nhận staging_003_login_topup; Vault key tồn tại; ban đầu có 0 credential rows và cột plaintext còn tồn tại.
+- Kết quả chạy staging_004_credentials_encryption.sql: staging_004_credentials_encryption successfully installed.
+- _db/staging_004_verify.sql: PASS: staging_004_credentials_encryption metadata verified.
+- _db/staging_004_smoke.sql: PASS cho idempotency, giải mã qua RPC cho chủ đơn, từ chối khách khác; toàn bộ trong transaction rollback.
+
+## 01/10/2026 — Production contract, lỗi thao tác đơn và đo hiệu năng G7
+
+- Ảnh lỗi Admin “Thiếu phiên bản đơn. Hãy tải lại danh sách.” khớp với tiền điều kiện trong `assets/js/order-api.js`: thao tác hủy/hoàn thành cần `orders.version` và RPC có kiểm soát phiên bản.
+- Đã chạy truy vấn chỉ đọc trên Supabase production `namcumz` (ref `vqnuutdmcekqkbdvawlw`): bảng `public.orders` tồn tại, nhưng `orders.version` không tồn tại; `public.app_contract_version()` không tồn tại; bảng migration ledger frontend kỳ vọng cũng không tồn tại. Kết luận: production DB chưa được cài contract/RPC tương thích với frontend hiện tại. Không phải lỗi có thể giải quyết an toàn bằng bỏ qua version ở client.
+- Chưa thực hiện ghi/hủy/hoàn thành đơn thật; không migration, deploy hoặc sửa dữ liệu production trong lần kiểm tra này.
+- G0 bị chặn tại backup/restore: Supabase production đang ở Free Plan; Dashboard nêu rõ Free Plan không có project backups. Script `backup_supabase.ps1` cũ chỉ đọc một tập bảng qua REST/anon và không đủ để làm bản sao đầy đủ hay chứng minh restore. Không chạy script này như backup.
+- G6: không sửa UI trong lượt này theo ưu tiên đã chốt; thiết bị/responsive chưa kiểm tra lại.
+- G7 baseline mạng sơ bộ: 5 request HTML GET cho mỗi URL, status 200. `/`: 82,969 bytes; mẫu 1592.4, 65.3, 57.1, 65.0, 306.7 ms (median 65.3 ms). `/napgame.html`: 10,000 bytes; 1767.8, 116.8, 125.5, 129.0, 377.8 ms (median 129.0 ms). Các số gồm thời gian mạng + tải body, không phải LCP/CLS/INP, không đo API p95 và biến động/outlier lớn; cần đo browser/Web Vitals và API trên staging để nghiệm thu.
+- G8: **chưa sẵn sàng phát hành**. Cần hoàn tất các cổng dưới đây theo đúng thứ tự, có backup/restore độc lập trước migration production.
+
+### Việc tiếp theo sau đối chiếu production
+
+1. Chủ shop/operator quyết định phương án backup cho production (nâng gói có scheduled backup hoặc export đầy đủ được hỗ trợ); tạo backup có timestamp và diễn tập restore vào project cô lập, đối chiếu số dòng/quan hệ.
+2. Trên staging, chọn tài khoản hiện có cho customer A/B; role table hiện chỉ có 2 customer, chưa có booster/admin. Để test booster/admin cần UUID user staging hiện có và xác nhận cấp role. Sau đó chạy Auth/API/browser E2E; không dùng tài khoản production.
+3. Hoàn thành ma trận G1–G5 trên staging: quyền trực tiếp/âm, Auth, quy trình đơn từ tạo đến nghiệm thu/hủy, concurrency/retry/version cũ, catalog/giá nạp, Storage/chat/ticket/admin và log. G4 có staging migration 004 + SQL smoke PASS nhưng browser/API/Auth và vai trò còn chờ.
+4. G6 giữ nguyên theo ưu tiên hiện tại; thiết bị/viewport cần kiểm tra nếu muốn đóng nghiệm thu toàn diện.
+5. G7: lặp phép đo trong cùng điều kiện, lấy browser Web Vitals và API p50/p95, ghi vùng/thiết bị/mạng/cache/bộ dữ liệu; đặt baseline/threshold.
+6. Sau khi cổng staging và backup đạt, review lần cuối rồi chạy lần lượt migration production `production_000_p0_containment.sql`, `production_001_release.sql`, verify, và `production_002_credentials_encryption.sql` theo `CREDENTIAL_ENCRYPTION_SETUP.md`; dừng ngay nếu verify sai. Chỉ deploy frontend tương thích sau khi production contract verify PASS.
+7. Chạy production smoke chỉ bằng user/test order được chủ shop chỉ định; xác minh đọc, nhận, tiến độ, nghiệm thu/hủy theo quy tắc nghiệp vụ, alert/monitoring và phương án rollback. Không thao tác đơn khách thật để test.
+
+## 01/10/2026 — Kiểm tra backup DB cũ / restore drill G0
+
+- Không tạo bản backup DB mới trong lượt này: Supabase Dashboard không mở được project cần thao tác (direct project URL trả 404 ở phiên hiện tại); máy cũng không có `pg_dump`, `pg_restore`, `psql`, `supabase` CLI hoặc Docker. Không có đường truy cập đặc quyền đủ để export toàn database và restore vào DB cô lập.
+- Phân tích cấu trúc `namcumz/_backup/BACKUP_20260807_223911.json` tại chỗ, không in nội dung hàng: JSON chỉ có 4 bảng `notifications`, `order_messages`, `orders`, `user_roles`, tổng 148 bản ghi theo mảng/metadata (56 + 64 + 20 + 8), timestamp 07/08/2026. Đây là kết quả truy vấn REST/anon cũ, không bao gồm toàn bộ schema, auth, storage, private schemas, routines hoặc dữ liệu bị RLS ẩn; vì vậy không thể coi là production DB backup hoàn chỉnh và không dùng để restore/đối chiếu live.
+- Restore drill phần code ở `source_20260930_initial` đã đạt hash integrity 38/38, nhưng đây không phải DB restore. Không ghi dữ liệu lên production/staging và không thay đổi workspace trong lúc diễn tập.
+- **G0 DB backup/restore: BLOCKED**, chờ tài khoản/project access có quyền export, công cụ dump chính thức và môi trường khôi phục cô lập. Sau khi có, lấy full dump có schema + data, restore vào DB tạm, chạy kiểm tra counts/FK/constraints/RLS/functions/storage manifests; so sánh counts/hashes và ghi rõ objects không được gói backup hỗ trợ.
+
+- 01/10 follow-up qua tab in-app browser đã đăng nhập đúng production `namcumz` (ref `vqnuutdmcekqkbdvawlw`): trang Database > Backups xác nhận `Free Plan does not include project backups`; tab `Restore to new project` xác nhận yêu cầu Pro Plan và physical backups. Organization vẫn FREE, nên không bật upgrade/khởi tạo tài nguyên tính phí.
+- Phương án free còn lại là logical dump theo Supabase CLI (roles/schema/data); máy hiện chưa có CLI/Docker/Postgres client và chưa có database password trong phiên làm việc. Không lấy/đặt lại password, không chạy dump một phần thay thế, không restore vào production hoặc staging đang dùng.
+
+## 01/10/2026 — G4 storefront safety pass và đo staging G7
+
+- Trên working tree local (chưa deploy): catalog trang nạp chỉ giữ bốn game có package rows trên staging; tên/ID/giá package lấy từ public `packages` rows đang active; package thiếu/không hợp lệ không cho đặt. Render tên package bằng `textContent`/DOM nodes, bỏ inline event handler trên thẻ package.
+- Gỡ dữ liệu review, đơn/ticker/social-proof giả; bỏ rating/số bán và các cam kết không có bằng chứng như xử lý 5 phút, bảo mật tuyệt đối, rủi ro 0%, hoàn tiền tự động. Điều chỉnh nội dung FAQ/giá/thời gian theo hướng có điều kiện. Không tạo order khi kiểm tra UI.
+- Browser staging preview: trang detail tải thành công, hiển thị 8 gói Genshin và đúng giá đã đối chiếu trước đó với catalog staging; nút đặt đơn ở trạng thái disabled khi chưa chọn gói; không còn ticker hoặc điểm rating giả. Đây là kiểm tra render; thao tác submit, auth thật, viewer credentials và role admin/booster chưa E2E.
+- Hiệu năng staging, mỗi endpoint 7 GET bằng publishable key, body nhỏ, cùng máy/mạng, bao gồm request+body: `GET /rest/v1/packages?select=id&active=eq.true&limit=1` 200/47 B, samples 524.2, 1399.3, 601.7, 986.6, 424.5, 192.4, 144.1 ms; median 524.2 ms. `GET /rest/v1/rpc/app_contract_version` 200/36 B, samples 403.2, 172.5, 188.0, 152.7, 177.5, 1325.0, 1376.6 ms; median 188.0 ms. N nhỏ và outlier lớn: chỉ là baseline thô, không đại diện API p95 hoặc Web Vitals; cần lặp lại trong điều kiện chuẩn hóa.
+- Local validation sau chỉnh sửa: `_tools/check.cjs` 39/39, `_tools/order-api.test.mjs` 7/7, `_tools/database.test.mjs` 13/13, build 21 files PASS. Artifact `dist/` là build cục bộ; không publish/deploy.
+- Production vẫn nguyên trạng. Thiếu `orders.version`, `app_contract_version()` và migration ledger; do đó UI hủy/hoàn tất báo thiếu version. Không bỏ kiểm tra version và không thao tác order production thật. Mọi migration production còn bị chặn bởi backup/restore đầy đủ: project Free không có scheduled backup, không có DB password/công cụ dump trong máy, và file JSON cũ không đủ để khôi phục.
+- G0 DB restore drill BLOCKED; G1–G5 staging E2E chưa đạt hết role/ma trận; G6 theo ưu tiên hoãn; G7 mới có baseline sơ bộ; G8 chưa sẵn sàng. Thay đổi local chưa commit, chưa deploy.
+- Bổ sung kiểm chứng tương tác: browser preview đã render các gói qua staging nhưng click/keyboard automation trên thẻ package không làm cập nhật giỏ hàng trong phiên kiểm tra. Vì vậy chọn gói/checkout **chưa được nghiệm thu E2E**; không tuyên bố luồng đặt đơn hoạt động chỉ dựa trên render. Không submit giao dịch.
+
+## 01/10/2026 — Quyết định chủ shop về các cổng còn lại và sửa chọn package
+
+- Chủ shop từ chối nâng Supabase lên gói có phí. Không đề nghị thanh toán lại; full DB backup/restore được ghi là waived/blocked, không coi JSON cũ hoặc source snapshot là DB backup.
+- Chủ shop miễn role matrix và order workflow E2E staging, đồng thời yêu cầu agent tự xử lý phần còn làm được. Hai loại kiểm tra này được ghi **waived / not verified**, không phải PASS. Không tạo/đổi tài khoản hoặc cấp role.
+- Sửa package picker từ div click surface sang radio native trong label. Browser preview xác nhận click gói `60 Đá Sáng Thế` cập nhật giỏ 20.000đ và bật nút đặt; xác nhận tiếp qua bàn phím chọn `Không Nguyệt Chúc Phúc` cập nhật 85.000đ. Không nhấn submit, không tạo order.
+- Loại bỏ helper click cũ không dùng; package server rows chỉ nhận tên hợp lệ và giá hữu hạn dương. Render tên qua `textContent`, không dùng markup từ tên trong DB.
+- Local check/build sẽ chạy lại sau các chỉnh sửa trên. Không deploy hoặc migrate production. Production DB vẫn thiếu contract/version; database password và Vault key production không có trong phiên; không thay đổi production.
+- Kết quả cuối sau native radio picker: `_tools/check.cjs` 39/39, OrderAPI 7/7, DB workflow 13/13, build 21 files và `git diff --check` đều PASS. Browser click + Space đã cập nhật cart đúng; không submit. Chủ shop miễn staging role/order E2E nên mục này tiếp tục là waived/not verified.
+
+## 01/10/2026 — Production verification follow-up
+
+- Chủ shop báo đã chạy đủ ba migration production `production_000`, `production_001`, `production_002`.
+- Ảnh kết quả: `production_002_verify.sql` trả `PASS: production_002_credentials_encryption metadata verified`. `production_001_verify.sql` dừng ở `Incorrect RPC grants: public.booster_profile(uuid)`.
+- Đối chiếu source xác nhận lỗi nằm trong verifier: `booster_profile(uuid)` và `booster_reviews(uuid)` bị đưa vào vòng kiểm tra RPC cấm `anon`, trong khi phía dưới cùng file yêu cầu anon được gọi hai RPC public-read này. Đã sửa `_db/production_001_verify.sql`: chuyển các kiểm tra này ra riêng và yêu cầu quyền EXECUTE đúng cho anon + authenticated. `git diff --check` PASS.
+- Chưa xác nhận toàn bộ production release PASS; chưa deploy frontend. Local `_tools/check.cjs` không chạy được trong sandbox vì `spawnSync ... node.exe EPERM`, không phải lỗi assertion của verifier.
+- **Bước tiếp theo:** trong Supabase SQL Editor của `namcumz` / `main PRODUCTION`, chạy lại đúng file `_db/production_001_verify.sql` từ workspace đã sửa. Không chạy lại migration. Nếu trả PASS, tiếp tục deploy frontend; nếu còn lỗi, dừng và gửi nguyên văn lỗi để sửa đúng grant/verify.
+
+## 01/10/2026 — production verifier: public catalog grant
+
+- Ảnh lượt chạy tiếp theo của `production_001_verify.sql` dừng ở `anon can still SELECT operational table: packages`. Đây cũng là verifier sai phạm vi: migration bật RLS cho `public.packages`, tạo policy `catalog_read` cho anon/authenticated và cấp SELECT để catalog/giá public hoạt động.
+- Đã sửa `_db/production_001_verify.sql` lần hai: bỏ `packages` khỏi nhóm bảng vận hành cấm anon đọc; thêm kiểm tra riêng rằng cả anon và authenticated có SELECT trên `packages`. Không sửa grant hay dữ liệu production.
+- `git diff --check -- _db/production_001_verify.sql` PASS. Migration 002 tiếp tục được xác nhận PASS theo ảnh trước. Chưa có kết quả PASS cuối cho migration 001, chưa deploy.
+- **Bước tiếp theo:** thay SQL trong Supabase SQL Editor `namcumz` / `main PRODUCTION` bằng toàn bộ verifier cục bộ mới nhất và Run lại. Không chạy migration lần nữa. Nếu có lỗi khác, gửi nguyên văn; chỉ sau dòng PASS mới chuyển sang deploy frontend.

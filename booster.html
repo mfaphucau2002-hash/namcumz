@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow, noarchive">
     <title>Hồ Sơ Booster - NAMCUMZ</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -160,6 +161,13 @@
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
+            const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+            const safeUrl = value => {
+                try {
+                    const url = new URL(String(value || ''), window.location.origin);
+                    return ['http:', 'https:'].includes(url.protocol) ? esc(url.href) : '';
+                } catch (_) { return ''; }
+            };
             const boosterId = urlParams.get('id');
             
             if (!boosterId) {
@@ -169,21 +177,13 @@
 
             try {
                 // Fetch booster profile info
-                const { data: boosterInfo, error: infoError } = await supabaseClient
-                    .from('user_roles')
-                    .select('*')
-                    .eq('id', boosterId)
-                    .single();
+                const { data: boosterProfiles, error: infoError } = await supabaseClient.rpc('booster_profile', { p_id: boosterId });
+                const boosterInfo = boosterProfiles?.[0] || null;
 
                 if (infoError || !boosterInfo) throw new Error("Booster không tồn tại");
 
                 // Fetch completed orders
-                const { data: completedOrders, error: ordersError } = await supabaseClient
-                    .from('orders')
-                    .select('id, rating, review_comment, renter_name, created_at, updated_at')
-                    .eq('booster_id', boosterId)
-                    .eq('status', 'hoan_thanh');
-
+                const { data: completedOrders, error: ordersError } = await supabaseClient.rpc('booster_reviews', { p_booster_id: boosterId });
                 if (ordersError) throw ordersError;
 
                 const orderCount = completedOrders ? completedOrders.length : 0;
@@ -205,11 +205,11 @@
                             reviewsHtml += `
                                 <div class="review-card">
                                     <div class="review-header">
-                                        <div class="reviewer-name"><i class="fa-solid fa-user"></i> ${order.renter_name}</div>
+                                        <div class="reviewer-name"><i class="fa-solid fa-user"></i> ${esc(order.reviewer_name)}</div>
                                         <div class="review-date">${new Date(order.updated_at || order.created_at).toLocaleDateString('vi-VN')}</div>
                                     </div>
                                     <div style="margin-bottom: 8px;">${stars}</div>
-                                    <div style="color: var(--text-main); font-size: 0.95rem;"><i>"${order.review_comment || 'Không có bình luận'}"</i></div>
+                                    <div style="color: var(--text-main); font-size: 0.95rem;"><i>"${esc(order.review_comment || 'Không có bình luận')}"</i></div>
                                 </div>
                             `;
                         }
@@ -231,21 +231,21 @@
                     ? `<span class="profile-badge" style="background: rgba(234, 179, 8, 0.2); color: #eab308; border: 1px solid #eab308; margin-left: 10px;"><i class="fa-solid fa-star"></i> TOP BOOSTER</span>` 
                     : '';
 
-                const avatarSrc = boosterInfo.avatar_url ? boosterInfo.avatar_url : '';
+                const avatarSrc = safeUrl(boosterInfo.avatar_url);
                 const avatarInitials = boosterInfo.username ? boosterInfo.username.substring(0, 2).toUpperCase() : 'BS';
                 const avatarHtml = avatarSrc 
                     ? `<img src="${avatarSrc}" class="profile-avatar">` 
-                    : `<div class="profile-avatar">${avatarInitials}</div>`;
+                    : `<div class="profile-avatar">${esc(avatarInitials)}</div>`;
 
                 document.getElementById('profileContent').innerHTML = `
                     <div class="profile-header">
                         ${avatarHtml}
-                        <h1 class="profile-name">${boosterInfo.username}</h1>
+                        <h1 class="profile-name">${esc(boosterInfo.username)}</h1>
                         <div>
                             <span class="profile-badge ${rankClass}">${rankIcon} RANK ${rankName}</span>
                             ${topBoosterBadge}
                         </div>
-                        <div class="profile-bio">${boosterInfo.bio || 'Booster này chưa cập nhật tiểu sử.'}</div>
+                        <div class="profile-bio">${esc(boosterInfo.bio || 'Booster này chưa cập nhật tiểu sử.')}</div>
                         
                         <div class="profile-stats">
                             <div class="stat-item">
@@ -267,7 +267,7 @@
 
             } catch (err) {
                 console.error(err);
-                document.getElementById('profileContent').innerHTML = `<div class="alert" style="background: rgba(249, 115, 22, 0.1); color: #f97316; text-align: center;">Lỗi tải hồ sơ: ${err.message}</div>`;
+                document.getElementById('profileContent').innerHTML = `<div class="alert" style="background: rgba(249, 115, 22, 0.1); color: #f97316; text-align: center;">Lỗi tải hồ sơ: ${esc(err.message)}</div>`;
             }
         });
     </script>

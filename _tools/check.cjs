@@ -93,6 +93,43 @@ check('staging cancelled order has no workflow controls',()=>{
  assert.ok(elements.grid.innerHTML.includes('Đã hủy'));
  assert.ok(!elements.grid.innerHTML.includes('runOrderAction'));
 });
-console.log(`${checks} checks passed; browser/staging/DB permissions are NOT covered.`);
+check('credential fields never enter inline JavaScript',()=>{
+ const admin=fs.readFileSync(path.join(root,'admin.html'),'utf8');
+ assert.ok(!admin.includes("onclick=\"navigator.clipboard.writeText('${esc(data.account_"));
+ assert.ok(admin.includes('data-copy-value="${esc(data.account_username)}"'));
+ assert.ok(admin.includes('data-toggle-password="credPass"'));
+ assert.ok(!source.includes("onclick=\"navigator.clipboard.writeText('${escapeHtml(data.account_"));
+ assert.ok(source.includes('data-copy-value="${escapeHtml(data.account_username)}"'));
+ assert.ok(source.includes('data-toggle-password="viewCredPassField"'));
+});
+check('credential viewer uses encrypted RPC only',()=>{
+ const admin=fs.readFileSync(path.join(root,'admin.html'),'utf8');
+ const app=source;
+ const migration=fs.readFileSync(path.join(root,'_db/production_002_credentials_encryption.sql'),'utf8');
+ assert.ok(admin.includes("rpc('get_order_credentials'"));
+ assert.ok(app.includes("rpc('get_order_credentials'"));
+ assert.ok(!admin.includes("from('order_credentials')"));
+ assert.ok(!app.includes("from('order_credentials')"));
+ assert.ok(migration.includes('account_password_ciphertext'));
+ assert.ok(migration.includes('DROP COLUMN account_password'));
+ assert.ok(migration.includes("vault.decrypted_secrets"));
+});check('game passwords preserve intentional whitespace',()=>{
+ const napgame=fs.readFileSync(path.join(root,'assets/js/napgame.js'),'utf8');
+ const release=fs.readFileSync(path.join(root,'_db/production_001_release.sql'),'utf8');
+ assert.ok(napgame.includes("const password = document.getElementById('formPassword')?.value || '';"));
+ assert.ok(release.includes('clean_pass text := p_password;'));
+ assert.ok(!release.includes('clean_pass text := trim(p_password);'));
+});
+check('unsupported game packages never fall back to another game',()=>{
+ const napgame=fs.readFileSync(path.join(root,'assets/js/napgame.js'),'utf8');
+ assert.ok(napgame.includes("'default': []"));
+ assert.ok(napgame.includes('if (!packages.length) {'));
+ assert.ok(napgame.includes('renderUnsupportedGame(gameInfo);'));
+});
+check('profile review and claim inputs are encoded and server-owned',()=>{
+ const profile=fs.readFileSync(path.join(root,'profile.html'),'utf8');
+ assert.ok(profile.includes('${esc(order.review_comment || \'\')}'));
+ assert.ok(!profile.includes('p_user_id: currentUserId'));
+});console.log(`${checks} checks passed; browser/staging/DB permissions are NOT covered.`);
 
 

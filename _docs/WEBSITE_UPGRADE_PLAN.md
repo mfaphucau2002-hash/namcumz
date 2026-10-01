@@ -1,6 +1,6 @@
 # KẾ HOẠCH FIX & NÂNG CẤP WEBSITE NAMCUMZ
 
-Ngày: 30/09/2026 • Phiên bản 2.0 • Trạng thái: Đã hoàn tất triển khai & phát hành Production (Gate G0 đến G8)
+Ngày: 30/09/2026 • Phiên bản 2.0 • Trạng thái: Kế hoạch triển khai; trạng thái nghiệm thu mới nhất xem `_docs/IMPLEMENTATION_PROGRESS.md`
 
 Căn cứ: _docs/AUDIT_2026-09-29.md, PROJECT_RULES.md, WORKSPACE_NOTES.md và mã nguồn hiện tại.
 
@@ -62,7 +62,7 @@ P0: xác minh và xử lý ngay nếu còn tồn tại. P1: bắt buộc cho b�
 | 0.1 / P1 | Snapshot Git, lưu thay đổi dở, danh sách sửa/xóa/untracked; nhánh triển khai (D4) | Không | Có mốc khôi phục; không mất công việc hiện tại |
 | 0.2 / P0 | Kiểm kê schema/constraints/indexes/RLS/grants/RPC/triggers, Auth/Storage/Realtime và host (A1–A7, D3) | Quyền đọc cấu hình | Biết lỗi nào còn tồn tại; báo cáo bỏ bí mật |
 | 0.3 / P1 | Sửa backup: thư mục cố định, phân trang, đủ bảng, lỗi rõ; schema/Auth/Storage theo hỗ trợ; restore riêng (D1) | 0.2 | Đối chiếu hàng/quan hệ, restore đạt, bí mật không vào Git/deploy |
-| 0.4 / P1 | Tách môi trường; user test customer A/B, booster A/B, admin/super_admin; dữ liệu giả | 0.2 | Preview đúng staging; thiếu config báo lỗi; không tự ghi production |
+| 0.4 / P1 | Tách môi trường; user test customer A/B, booster A/B, admin/super_admin; dữ liệu giả | 0.2 | Preview đúng staging; thiếu config báo lỗi; không tự ghi production. Local allowlist smoke PASS; Auth/API/browser E2E đang chờ config và tài khoản thử |
 | 0.5 / P1 | Chốt Q01–Q10; baseline các luồng, desktop/mobile, tốc độ | 0.1 | Có đầu vào còn thiếu, người phụ trách, bằng chứng trước sửa |
 
 Nếu 0.2 xác nhận public Auth/lộ dữ liệu nhạy cảm, vá tối thiểu G1 ngay sau kiểm tra cần thiết, không trì hoãn để hoàn thiện tài liệu/backup toàn hệ thống.
@@ -328,14 +328,14 @@ Mỗi ID theo trạng thái Chưa bắt đầu → Đang làm → Chờ kiểm t
 
 | Cổng | Trạng thái | Bằng chứng kiểm thử & Phát hành | Ghi chú |
 |---|---|---|---|
-| G0 — Hiện trạng & An toàn | **Đạt** | Snapshot backup, rà soát schema & an toàn DB | Không xóa mất dữ liệu |
-| G1 — Bảo mật hệ thống | **Đạt** | RLS trên 8 bảng, XSS sanitize DOM, cô lập role | Chặn mọi truy cập trái phép |
-| G2 — Nền ứng dụng & Idempotency | **Đạt** | `assets/js/order-api.js`, request ID, 7/7 test đạt | Chống gửi trùng lặp & race condition |
-| G3 — Dịch vụ cày thuê | **Đạt** | Vòng đời đơn: Báo giá → Chấp thuận → Thu tiền → Claim/Assign → Tiến độ → Nghiệm thu → Đánh giá | RPC `order_action` kiểm soát nguyên tử |
-| G4 — Nạp game (Login Top-up) | **Đạt** | Bỏ UID, 30 gói nạp chính hãng, cô lập credentials trong `order_credentials` | RPC `create_topup_order` xác thực catalog |
-| G5 — Vận hành shop | **Đạt** | Modal xem tài khoản game (Admin/Dashboard), quản lý Support Tickets, ghi nhận thanh toán | Giao diện quản trị & kiểm toán đầy đủ |
-| G6 — Giao diện toàn website | **Đạt** | Gắn link Nạp Game lên 8 trang, 100% link nội bộ hợp lệ, mobile responsive | Header, hero, cards, mobile menu |
-| G7 — Hiệu năng & Tích hợp | **Đạt** | `ai-copilot.js` bảo mật, đóng gói allowlist `dist/` 19 tệp | Build chuẩn Vercel |
-| G8 — Nghiệm thu & Phát hành | **Đạt** | `_db/production_001_release.sql` & `production_001_verify.sql` PASS trên production (`vqnuutdmcekqkbdvawlw`), commit `84b4a6b`, deploy `namcum.io.vn` | Phát hành thành công |
+| G0 — Hiện trạng & An toàn | **Bị chặn: backup/restore** | Snapshot mã nguồn có; Supabase production Free không có project backups; chưa chứng minh restore DB | Cần backup đầy đủ và restore vào môi trường cô lập |
+| G1 — Bảo mật hệ thống | **Chờ xác minh live** | Migration và verify scripts có trong repo; cần chạy/đối chiếu trên đúng DB | Code/RLS thiết kế không thay cho API test |
+| G2 — Nền ứng dụng & Idempotency | **Đã triển khai cục bộ; chờ nghiệm thu** | `assets/js/order-api.js` và kiểm thử offline được ghi nhận | Cần kiểm thử Auth/API/E2E thật |
+| G3 — Dịch vụ cày thuê | **Chờ nghiệm thu** | Có workflow RPC và giao diện | Cần vai trò A/B và concurrent claim trên staging |
+| G4 — Nạp game (Login Top-up) | **Staging DB smoke đạt; production/nghiệp vụ chờ nghiệm thu** | `staging_004_credentials_encryption` verify PASS; dữ liệu giả rollback sau smoke | Chưa test Auth/API/browser; catalog/giá cần xác minh shop; production migration chưa chạy |
+| G5 — Vận hành shop | **Chờ nghiệm thu** | Có giao diện admin/booster/support | Cần kiểm tra quyền/API/Storage thật |
+| G6 — Giao diện toàn website | **Đang tạm ổn; chờ kiểm tra thiết bị** | Có các trang và liên kết trong repo; lượt này không sửa UI | Mobile/browser matrix chưa có bằng chứng đầy đủ |
+| G7 — Hiệu năng & Tích hợp | **Đang đo sơ bộ** | 5 HTML GET production: `/` median 65.3ms/82,969B; `/napgame.html` median 129ms/10,000B | Chỉ là network GET; cần browser Web Vitals và API p95 cùng điều kiện |
+| G8 — Nghiệm thu & Phát hành | **Chưa sẵn sàng; lỗi production đã xác định** | Production thiếu `orders.version`, `public.app_contract_version()` và migration ledger; Free Plan không có project backups | Chặn migration/deploy đến khi backup/restore và staging E2E đạt; chi tiết ở `IMPLEMENTATION_PROGRESS.md` |
 
-**Tổng kết**: Toàn bộ các cổng từ G0 đến G8 đã hoàn thành xuất sắc và triển khai trực tiếp lên Production `namcum.io.vn`.
+**Tổng kết (01/10/2026)**: Có nhiều phần code và migration đã được chuẩn bị, cùng ghi nhận lịch sử về staging/release. Chưa đủ bằng chứng để tuyên bố toàn bộ G0–G8 đã nghiệm thu hoặc production hiện đang chạy đúng cấu hình. Theo dõi trạng thái mới nhất và các đầu việc kế tiếp trong `_docs/IMPLEMENTATION_PROGRESS.md`.

@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /login.html
+Disallow: /dashboard.html
+Disallow: /admin.html
+Disallow: /profile.html
+Disallow: /booster.html
+Sitemap: https://namcum.io.vn/sitemap.xml

@@ -54,7 +54,7 @@ DECLARE
   o public.orders;
   pkg public.packages;
   clean_acc text := trim(p_account);
-  clean_pass text := trim(p_password);
+  clean_pass text := p_password;
   clean_phone text := trim(p_phone);
   clean_notes text := trim(coalesce(p_notes, ''));
   clean_method text := trim(coalesce(p_login_method, 'Hoyoverse'));

@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Chi tiết gói nạp game login và form tạo đơn bảo mật tại NAMCUMZ.">
+    <link rel="canonical" href="https://namcum.io.vn/napgame-detail.html">
     <title id="pageTitle">Chi tiết Nạp Game - NAMCUMZ</title>
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -45,21 +47,8 @@
             <div class="ng-detail-title">
                 <h1 id="detailGameName">Đang tải...</h1>
                 <div class="ng-detail-meta">
-                    <div class="ng-detail-rating">
-                        <span class="ng-stars">★★★★★</span>
-                        <span id="detailRating">5.0</span>
-                    </div>
-                    <span class="ng-sold" id="detailSold">-- đã bán</span>
                     <span class="ng-detail-type-badge ng-type-login" id="detailTypeBadge">Nạp Login</span>
                 </div>
-            </div>
-        </div>
-
-        <!-- TICKER (Mini) -->
-        <div class="ng-ticker-wrap" style="border-radius: 10px; margin-bottom: 20px;">
-            <div class="ng-ticker-live"><div class="ng-ticker-dot"></div> LIVE</div>
-            <div class="ng-ticker-content">
-                <div class="ng-ticker-track" id="tickerTrack"><!-- JS --></div>
             </div>
         </div>
 
@@ -142,10 +131,10 @@
                 <div class="ng-detail-block">
                     <div class="ng-block-title"><i class="fa-solid fa-file-lines"></i> Mô tả dịch vụ</div>
                     <ul class="ng-desc-list" id="gameDescription">
-                        <li><i class="fa-solid fa-bolt"></i> Thời gian xử lý: Khoảng 1 – 5 phút kể từ khi thanh toán (thỉnh thoảng sớm hơn).</li>
-                        <li><i class="fa-solid fa-circle-check"></i> Giao dịch an toàn, có bill rõ ràng.</li>
-                        <li><i class="fa-solid fa-shield-halved"></i> Cam kết bảo mật tuyệt đối — Mật khẩu được mã hóa lưu trữ cách ly, khách hàng có thể đổi lại mật khẩu ngay sau khi hoàn tất đơn.</li>
-                        <li><i class="fa-solid fa-rotate-left"></i> Hoàn tiền đầy đủ nếu không xử lý được đơn.</li>
+                        <li><i class="fa-solid fa-bolt"></i> Thời gian xử lý phụ thuộc game, tình trạng dịch vụ và thời điểm thanh toán; admin sẽ cập nhật theo từng đơn.</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Thông tin đơn và trạng thái được cập nhật trong hệ thống; chứng từ cần được xác nhận theo từng giao dịch.</li>
+                        <li><i class="fa-solid fa-shield-halved"></i> Nếu đơn yêu cầu thông tin đăng nhập game, chỉ gửi qua biểu mẫu riêng của đơn; không gửi mật khẩu qua chat hoặc ghi chú.</li>
+                        <li><i class="fa-solid fa-rotate-left"></i> Hủy, hoàn tiền và xử lý ngoại lệ theo xác nhận của shop cho từng trường hợp.</li>
                     </ul>
                 </div>
 
@@ -156,19 +145,19 @@
                         <div class="ng-faq-item">
                             <button class="ng-faq-question">1. Nạp Login có an toàn không, có bị ban acc không?</button>
                             <div class="ng-faq-answer">
-                                <p>Hoàn toàn an toàn. NAMCUMZ thanh toán 100% qua kênh chính ngạch của nhà phát hành (HoYoverse, Riot, v.v.) và cung cấp hoá đơn (bill) hợp lệ nếu bạn yêu cầu. Tuyệt đối không sử dụng nguồn nạp lậu, refund hay thẻ hack nên tỷ lệ ban acc là 0%.</p>
+                                <p>Không có dịch vụ nạp nào có thể bảo đảm rủi ro bằng 0. Hãy kiểm tra điều khoản của nhà phát hành và chỉ tiếp tục nếu bạn chấp nhận việc chia sẻ thông tin cần thiết cho đơn.</p>
                             </div>
                         </div>
                         <div class="ng-faq-item">
                             <button class="ng-faq-question">2. Bao lâu thì tôi nhận được tài nguyên vào acc?</button>
                             <div class="ng-faq-answer">
-                                <p>Sau khi bạn chuyển khoản thành công và admin xác nhận, đơn hàng nạp login thường được xử lý trong vòng 3 đến 5 phút. Trong những đợt banner hot hoặc giờ cao điểm, có thể mất thêm một chút thời gian (tối đa 15 phút).</p>
+                                <p>Thời gian xử lý thay đổi theo game, khối lượng yêu cầu và xác nhận thanh toán. Theo dõi trạng thái đơn hoặc liên hệ hỗ trợ nếu cần.</p>
                             </div>
                         </div>
                         <div class="ng-faq-item">
                             <button class="ng-faq-question">3. Tại sao giá nạp tại NAMCUMZ lại rẻ hơn?</button>
                             <div class="ng-faq-answer">
-                                <p>NAMCUMZ tận dụng tỷ giá ưu đãi và các gói chiết khấu chính ngạch từ nhà phát hành để đem lại mức giá tốt nhất cho khách hàng, có hoá đơn xác nhận giao dịch đầy đủ.</p>
+                                <p>Tên gói và giá hiển thị được tải từ catalog hiện hành. Vui lòng xác nhận tổng tiền với shop trước khi chuyển khoản.</p>
                             </div>
                         </div>
                     </div>
@@ -176,7 +165,7 @@
 
                 <!-- Đánh giá -->
                 <div class="ng-detail-block">
-                    <div class="ng-block-title"><i class="fa-solid fa-star"></i> Đánh giá từ khách hàng <span style="font-size:13px; color:#eab308; margin-left:auto;">★ 5.0 (21)</span></div>
+                    <div class="ng-block-title"><i class="fa-solid fa-star"></i> Đánh giá đã xác minh</div>
                     <div class="ng-reviews" id="reviewList"><!-- JS renders reviews --></div>
                 </div>
 
@@ -211,14 +200,14 @@
                             <button class="ng-btn-checkout" id="btnSubmitOrder" onclick="submitDetailOrder()" disabled>
                                 <i class="fa-solid fa-check"></i> Đặt hàng ngay
                             </button>
-                            <button class="ng-btn-zalo" onclick="window.open('https://zalo.me/','_blank')">
+                            <button class="ng-btn-zalo" onclick="window.open('https://zalo.me/0763550673','_blank')">
                                 <i class="fa-solid fa-comment-dots"></i> Liên hệ Zalo trực tiếp
                             </button>
                         </div>
                         <div class="ng-summary-trust">
                             <span><i class="fa-solid fa-shield-halved"></i> An toàn</span>
                             <span><i class="fa-solid fa-file-invoice"></i> Có bill</span>
-                            <span><i class="fa-solid fa-bolt"></i> 5 phút</span>
+
                         </div>
                     </div>
                 </div>

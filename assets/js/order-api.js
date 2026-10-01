@@ -4,6 +4,9 @@
     const inflight = new Map();
     async function write(client, actor, operation, payload) {
         if (!client || !actor) throw new Error('Vui lòng đăng nhập trước khi thao tác.');
+        if (window.NAMCUMZ_CONFIG?.environment && window.NAMCUMZ_DB_READY !== true) {
+            throw new Error('Hệ thống đang bảo trì để đồng bộ cơ sở dữ liệu. Vui lòng thử lại sau.');
+        }
         const key = JSON.stringify([actor, operation, payload]);
         if (inflight.has(key)) return inflight.get(key);
         const request = pending.get(key) || crypto.randomUUID();

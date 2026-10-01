@@ -2,7 +2,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const root = path.resolve(__dirname, '..');
-const files = ['index.html','login.html','dashboard.html','admin.html','profile.html','booster.html','napgame.html','napgame-detail.html'];
+const files = ['index.html','login.html','dashboard.html','admin.html','profile.html','booster.html','napgame.html','napgame-detail.html','robots.txt','sitemap.xml'];
 const types = new Set(['.js','.css','.jpg','.jpeg','.png','.webp','.gif','.svg','.ico','.woff','.woff2','.ttf','.mp4','.webm','.mp3','.ogg']);
 // Collect static inputs without following symlinks or hidden paths.
 function collect(directory) {

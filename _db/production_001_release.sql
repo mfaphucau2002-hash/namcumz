@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS public.orders (
   status text NOT NULL DEFAULT 'cho_xu_ly' CHECK (status IN ('cho_xu_ly','dang_cay','cho_nghiem_thu','hoan_thanh','tam_dung')),
   booster_id uuid REFERENCES public.user_roles(id),
   booster_name text NOT NULL DEFAULT 'Chưa nhận',
-  secret_code text CHECK (secret_code IS NULL),
+  secret_code text,
   rating integer CHECK (rating BETWEEN 1 AND 5),
   review_comment text CHECK (char_length(review_comment) <= 2000),
   ai_plan text,
@@ -100,6 +100,23 @@ ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS status text NOT NULL DEFAULT 
 ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS booster_id uuid REFERENCES public.user_roles(id);
 ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS booster_name text NOT NULL DEFAULT 'Chưa nhận';
 ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS secret_code text;
+-- Allow trusted manual orders to carry a bounded, one-time claim code.
+ALTER TABLE public.orders ALTER COLUMN user_id DROP NOT NULL;
+DO $secret_code_constraints$
+DECLARE constraint_row record;
+BEGIN
+  FOR constraint_row IN
+    SELECT conname
+    FROM pg_constraint
+    WHERE conrelid = 'public.orders'::regclass
+      AND pg_get_constraintdef(oid) ILIKE '%secret_code%IS NULL%'
+  LOOP
+    EXECUTE format('ALTER TABLE public.orders DROP CONSTRAINT %I', constraint_row.conname);
+  END LOOP;
+END $secret_code_constraints$;
+ALTER TABLE public.orders DROP CONSTRAINT IF EXISTS orders_secret_code_length;
+ALTER TABLE public.orders ADD CONSTRAINT orders_secret_code_length
+  CHECK (secret_code IS NULL OR char_length(secret_code) BETWEEN 6 AND 100);
 ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS rating integer;
 ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS review_comment text;
 ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS ai_plan text;
@@ -266,6 +283,65 @@ BEGIN
   RETURN NEW;
 END $fn$;
 
+-- Secure one-time claim flow for trusted manual orders.
+CREATE OR REPLACE FUNCTION public.claim_order_by_secret(p_secret_code text)
+RETURNS boolean
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = '' AS $fn$
+DECLARE
+  uid uuid := namcumz_private.require_user();
+  code text := upper(btrim(coalesce(p_secret_code, '')));
+  claimed boolean;
+BEGIN
+  IF char_length(code) < 6 OR char_length(code) > 100 THEN
+    RETURN false;
+  END IF;
+  PERFORM namcumz_private.rate_limit('claim:' || uid::text, 8, 60);
+  UPDATE public.orders
+  SET user_id = uid,
+      secret_code = NULL,
+      renter_name = COALESCE(NULLIF(renter_name, ''), (
+        SELECT COALESCE(NULLIF(display_name, ''), username)
+        FROM public.user_roles WHERE id = uid
+      ))
+  WHERE secret_code IS NOT NULL
+    AND upper(secret_code) = code
+    AND user_id IS NULL
+  RETURNING true INTO claimed;
+  RETURN COALESCE(claimed, false);
+END $fn$;
+-- Remove legacy public diagnostics, claimers, and role-provisioning triggers.
+DO $legacy_functions$
+BEGIN
+  IF to_regprocedure('public.inspect_auth_user(text)') IS NOT NULL THEN
+    REVOKE ALL ON FUNCTION public.inspect_auth_user(text) FROM PUBLIC, anon, authenticated;
+    DROP FUNCTION public.inspect_auth_user(text);
+  END IF;
+  IF to_regprocedure('public.claim_order_by_secret(text,uuid)') IS NOT NULL THEN
+    REVOKE ALL ON FUNCTION public.claim_order_by_secret(text, uuid) FROM PUBLIC, anon, authenticated;
+    DROP FUNCTION public.claim_order_by_secret(text, uuid);
+  END IF;
+END $legacy_functions$;
+
+DO $legacy_auth_triggers$
+DECLARE trigger_row record;
+BEGIN
+  IF to_regclass('auth.users') IS NULL THEN RETURN; END IF;
+  FOR trigger_row IN
+    SELECT quote_ident(n.nspname) AS schema_name, quote_ident(c.relname) AS table_name, quote_ident(t.tgname) AS trigger_name
+    FROM pg_trigger t JOIN pg_class c ON c.oid=t.tgrelid JOIN pg_namespace n ON n.oid=c.relnamespace JOIN pg_proc p ON p.oid=t.tgfoid
+    WHERE t.tgisinternal=false AND c.oid='auth.users'::regclass AND p.proname IN ('handle_new_user','on_signup')
+  LOOP
+    EXECUTE format('DROP TRIGGER IF EXISTS %s ON %s.%s', trigger_row.trigger_name, trigger_row.schema_name, trigger_row.table_name);
+  END LOOP;
+END $legacy_auth_triggers$;
+
+DO $legacy_signup_function$
+BEGIN
+  IF to_regprocedure('public.handle_new_user()') IS NOT NULL THEN
+    REVOKE ALL ON FUNCTION public.handle_new_user() FROM PUBLIC, anon, authenticated;
+    DROP FUNCTION public.handle_new_user();
+  END IF;
+END $legacy_signup_function$;
 DROP TRIGGER IF EXISTS namcumz_signup ON auth.users;
 CREATE TRIGGER namcumz_signup AFTER INSERT ON auth.users
 FOR EACH ROW EXECUTE FUNCTION namcumz_private.on_signup();
@@ -377,7 +453,7 @@ DECLARE
   o public.orders;
   pkg public.packages;
   clean_acc text := trim(p_account);
-  clean_pass text := trim(p_password);
+  clean_pass text := p_password;
   clean_phone text := trim(p_phone);
   clean_notes text := trim(coalesce(p_notes, ''));
   clean_method text := trim(coalesce(p_login_method, 'Hoyoverse'));
@@ -579,13 +655,35 @@ BEGIN
 END $fn$;
 
 -- 4.5 Booster profiles list
+DROP FUNCTION IF EXISTS public.booster_profiles();
 CREATE OR REPLACE FUNCTION public.booster_profiles()
-RETURNS TABLE(id uuid, display_name text, bio text, orders_completed integer)
+RETURNS TABLE(id uuid, username text, display_name text, bio text, avatar_url text, orders_completed integer)
 LANGUAGE sql STABLE SECURITY DEFINER SET search_path = '' AS $fn$
-  SELECT id, coalesce(nullif(display_name, ''), username), bio, orders_completed FROM public.user_roles
-  WHERE role = 'booster' AND active ORDER BY orders_completed DESC LIMIT 100;
+  SELECT id, username, coalesce(nullif(display_name, ''), username), bio, avatar_url, orders_completed
+  FROM public.user_roles
+  WHERE role = 'booster' AND active
+  ORDER BY orders_completed DESC LIMIT 100;
 $fn$;
 
+-- Public exact lookup for a booster profile page.
+CREATE OR REPLACE FUNCTION public.booster_profile(p_id uuid)
+RETURNS TABLE(id uuid, username text, display_name text, bio text, avatar_url text, orders_completed integer)
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = '' AS $fn$
+  SELECT id, username, coalesce(nullif(display_name, ''), username), bio, avatar_url, orders_completed
+  FROM public.user_roles
+  WHERE id = p_id AND role = 'booster' AND active;
+$fn$;
+-- Public review summary for a booster profile.
+CREATE OR REPLACE FUNCTION public.booster_reviews(p_booster_id uuid)
+RETURNS TABLE(id uuid, rating integer, review_comment text, reviewer_name text, created_at timestamptz, updated_at timestamptz)
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = '' AS $fn$
+  SELECT o.id, o.rating, o.review_comment, 'Khách hàng', o.created_at, o.updated_at
+  FROM public.orders o
+  WHERE o.booster_id = p_booster_id
+    AND o.status = 'hoan_thanh'
+    AND o.rating IS NOT NULL
+  ORDER BY o.updated_at DESC NULLS LAST, o.created_at DESC;
+$fn$;
 -- 4.6 Super admin set user role
 CREATE OR REPLACE FUNCTION public.set_user_role(p_target uuid, p_role text, p_active boolean, p_reason text)
 RETURNS void LANGUAGE plpgsql SECURITY DEFINER SET search_path = '' AS $fn$
@@ -754,6 +852,17 @@ DROP POLICY IF EXISTS tickets_read ON public.support_tickets;
 DROP POLICY IF EXISTS tickets_create ON public.support_tickets;
 DROP POLICY IF EXISTS catalog_read ON public.packages;
 DROP POLICY IF EXISTS credentials_read ON public.order_credentials;
+-- Legacy policy names are not stable across setup scripts. Remove every existing policy on operational tables.
+DO $legacy_policies$
+DECLARE policy_row record;
+BEGIN
+  FOR policy_row IN
+    SELECT schemaname,tablename,policyname FROM pg_policies
+    WHERE schemaname='public' AND tablename=ANY(ARRAY['user_roles','orders','order_credentials','order_messages','notifications','order_logs','support_tickets','packages'])
+  LOOP
+    EXECUTE format('DROP POLICY IF EXISTS %I ON %I.%I',policy_row.policyname,policy_row.schemaname,policy_row.tablename);
+  END LOOP;
+END $legacy_policies$;
 
 -- Enable RLS on all tables
 ALTER TABLE public.user_roles ENABLE ROW LEVEL SECURITY;
@@ -827,7 +936,7 @@ DECLARE f record;
 BEGIN
   FOR f IN SELECT p.oid::regprocedure AS signature FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace
   WHERE n.nspname='public' AND p.proname IN (
-    'create_order','create_topup_order','order_action','claim_queue','booster_profiles','set_user_role',
+    'create_order','create_topup_order','order_action','claim_queue','booster_profiles','booster_profile','booster_reviews','set_user_role',
     'save_package','send_order_message','create_ticket','respond_ticket','auth_username_email'
   ) LOOP
     EXECUTE format('REVOKE ALL ON FUNCTION %s FROM PUBLIC,anon,authenticated', f.signature);
@@ -837,6 +946,8 @@ END $grants$;
 GRANT EXECUTE ON FUNCTION public.create_order(uuid, text, text, uuid, text) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.create_topup_order(uuid, uuid, text, text, text, text, text, text) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.order_action(uuid, integer, text, jsonb, uuid) TO authenticated;
+REVOKE ALL ON FUNCTION public.claim_order_by_secret(text) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.claim_order_by_secret(text) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.claim_queue() TO authenticated;
 GRANT EXECUTE ON FUNCTION public.set_user_role(uuid, text, boolean, text) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.save_package(uuid, text, text, bigint, boolean) TO authenticated;
@@ -844,7 +955,17 @@ GRANT EXECUTE ON FUNCTION public.send_order_message(uuid, uuid, text, text) TO a
 GRANT EXECUTE ON FUNCTION public.create_ticket(uuid, uuid, text, text) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.respond_ticket(uuid, text, text) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.booster_profiles() TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.booster_profile(uuid) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.booster_reviews(uuid) TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.auth_username_email(text, text) TO service_role;
+-- Public read-only contract probe used by the frontend release gate.
+CREATE OR REPLACE FUNCTION public.app_contract_version()
+RETURNS text LANGUAGE sql STABLE SECURITY INVOKER SET search_path=''
+AS $fn$
+  SELECT 'production_001_release'::text;
+$fn$;
+REVOKE ALL ON FUNCTION public.app_contract_version() FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.app_contract_version() TO anon, authenticated;
 
 -- 7. Seed Official Login Packages
 INSERT INTO public.packages (id, game, name, price, active, type) VALUES

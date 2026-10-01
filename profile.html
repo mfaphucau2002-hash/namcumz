@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow, noarchive">
     <title>Trang Cá Nhân - NAMCUMZ</title>
     <link rel="icon" type="image/jpeg" href="/assets/images/logo.jpg">
     <!-- FontAwesome -->
@@ -109,6 +110,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const currentUserId = localStorage.getItem('userId');
+            const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
             if (!currentUserId) { window.location.href = '/login'; return; }
 
             window.loadMyOrders = async () => {
@@ -121,9 +123,9 @@
                 grid.innerHTML = '';
                 data.forEach(order => {
                     let statusObj = typeof getStatusDetails === 'function' ? getStatusDetails(order.status) : { text: 'Unknown', icon: 'fa-question', class: '', colorVar: 'var(--text-muted)' };
-                    let avatar = order.booster_name ? order.booster_name.charAt(0).toUpperCase() : '?';
+                    let avatar = esc(order.booster_name ? order.booster_name.charAt(0).toUpperCase() : '?');
                     let priceHtml = order.price ? `<span style="color: #fff;">${parseInt(order.price).toLocaleString('vi-VN')} VNĐ</span>` : `<span style="color: var(--text-muted);">Chưa báo giá</span>`;
-                    let contentText = order.content || 'Không có mô tả';
+                    let contentText = esc(order.content || 'Không có mô tả');
                     
                     let isAssignedBooster = order.booster_id === currentUserId;
                     let isOwner = order.user_id === currentUserId;
@@ -154,7 +156,7 @@
                         ratingHtml = `
                             <div class="review-display">
                                 <div>${stars}</div>
-                                <div style="color: var(--primary-light); font-size: 0.85rem; margin-top: 4px;"><i>"${order.review_comment || ''}"</i></div>
+                                <div style="color: var(--primary-light); font-size: 0.85rem; margin-top: 4px;"><i>"${esc(order.review_comment || '')}"</i></div>
                             </div>
                         `;
                     } else if (order.status === 'hoan_thanh' && isOwner) {
@@ -167,14 +169,14 @@
                                   <div class="booster-info">
                                       <div class="booster-avatar" style="border-color: ${statusObj.colorVar}">${avatar}</div>
                                       <div>
-                                          <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">NGƯỜI CÀY: ${order.booster_id ? `<a href="booster.html?id=${order.booster_id}" style="color: #fff; text-decoration: underline;">${order.booster_name}</a>` : '<span style="color: #fff;">Đang chờ...</span>'}</div>
-                                          <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-top:2px;">NGƯỜI THUÊ: <span style="color: var(--accent);">${order.renter_name}</span></div>
+                                          <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">NGƯỜI CÀY: ${order.booster_id ? `<a href="booster.html?id=${order.booster_id}" style="color: #fff; text-decoration: underline;">${esc(order.booster_name)}</a>` : '<span style="color: #fff;">Đang chờ...</span>'}</div>
+                                          <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-top:2px;">NGƯỜI THUÊ: <span style="color: var(--accent);">${esc(order.renter_name)}</span></div>
                                       </div>
                                   </div>
                                 ${statusBadgeHtml}
                             </div>
                             <div class="order-details">
-                                <div style="font-size: 0.8rem; font-weight: 700; color: #a855f7; margin-bottom: 8px;">MÃ ĐƠN: ${order.order_code}</div>
+                                <div style="font-size: 0.8rem; font-weight: 700; color: #a855f7; margin-bottom: 8px;">MÃ ĐƠN: ${esc(order.order_code)}</div>
                                 <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;"><i class="fa-regular fa-clock"></i> ${new Date(order.created_at).toLocaleString('vi-VN')}</div>
                                 <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 6px; font-size: 0.9rem; line-height: 1.5; font-weight: 500;">${contentText}</div>
                                 ${ratingHtml}
@@ -229,7 +231,6 @@
                     
                     const { data, error } = await supabaseClient.rpc('claim_order_by_secret', {
                         p_secret_code: code,
-                        p_user_id: currentUserId
                     });
                     
                     if (error) {

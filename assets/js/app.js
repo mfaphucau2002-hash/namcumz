@@ -16,6 +16,30 @@ let currentSort = 'newest';
 Object.defineProperty(window, 'currentUser', { get: () => currentUser });
 let verifiedRole = 'guest';
 const usesOrderRPC = () => ['staging', 'production'].includes(window.NAMCUMZ_CONFIG?.environment);
+const expectedDbVersion = () => window.NAMCUMZ_CONFIG?.expectedDbVersion || (window.NAMCUMZ_CONFIG?.environment === 'staging' ? 'staging_004_credentials_encryption' : 'production_002_credentials_encryption');
+let dbContractReady = !usesOrderRPC();
+window.NAMCUMZ_DB_READY = dbContractReady;
+
+function showDatabaseContractError() {
+    const grid = document.getElementById('ordersGrid');
+    if (grid) {
+        grid.innerHTML = '<div role="alert" style="color: var(--status-tam-dung); grid-column: 1/-1; text-align: center; padding: 20px;">Hệ thống đang bảo trì để đồng bộ cơ sở dữ liệu. Vui lòng thử lại sau.</div>';
+    }
+}
+
+async function verifyDatabaseContract() {
+    if (!usesOrderRPC()) return true;
+    if (!supabaseClient) return false;
+    try {
+        const { data, error } = await supabaseClient.rpc('app_contract_version');
+        dbContractReady = !error && data === expectedDbVersion();
+    } catch (_) {
+        dbContractReady = false;
+    }
+    window.NAMCUMZ_DB_READY = dbContractReady;
+    if (!dbContractReady) showDatabaseContractError();
+    return dbContractReady;
+}
 let orderFetchSequence = 0;
 const busyOrders = new Set();
 let sendingChat = false;
@@ -202,6 +226,7 @@ window.logOrderAction = async function(orderId, actionText) {
 
 window.fetchOrders = async function() {
     if (!supabaseClient) return;
+    if (usesOrderRPC() && !dbContractReady) { showDatabaseContractError(); return; }
     // Private orders are never requested before a session is available.
     if (!currentUser?.id) {
         allOrders = [];
@@ -718,7 +743,7 @@ window.fetchLeaderboard = async function() {
     const list = document.getElementById('leaderboardList');
     if (!list || !supabaseClient) return;
     
-    const { data, error } = await supabaseClient.from('user_roles').select('*').eq('role', 'booster').order('orders_completed', { ascending: false }).limit(5);
+    const { data, error } = await supabaseClient.rpc('booster_profiles');
     if (error || !data || data.length === 0) {
         list.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem;">Chưa có dữ liệu</div>';
         return;
@@ -732,13 +757,18 @@ window.fetchLeaderboard = async function() {
         else if (index === 2) { badgeIcon = 'fa-award'; badgeColor = '#b45309'; }
         else { badgeIcon = 'fa-star'; badgeColor = 'var(--text-muted)'; }
         
-        const avatar = b.avatar_url || `https://via.placeholder.com/40/a855f7/fff?text=${b.username.charAt(0).toUpperCase()}`;
+        const displayName = b.username || b.display_name || 'Booster';
+        let avatar = '/assets/images/logo.jpg';
+        try {
+            const avatarUrl = new URL(String(b.avatar_url || ''), window.location.origin);
+            if (['http:', 'https:'].includes(avatarUrl.protocol)) avatar = escapeHtml(avatarUrl.href);
+        } catch (_) {}
         list.innerHTML += `
             <div style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.02); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
                 <div style="font-weight: bold; color: ${badgeColor}; width: 20px;">#${index + 1}</div>
                 <img src="${avatar}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
                 <div style="flex: 1;">
-                    <div style="color: #fff; font-size: 0.9rem; font-weight: 600;">${b.username}</div>
+                    <div style="color: #fff; font-size: 0.9rem; font-weight: 600;">${escapeHtml(displayName)}</div>
                     <div style="color: var(--text-muted); font-size: 0.75rem;">${b.orders_completed || 0} đơn</div>
                 </div>
                 <div style="color: ${badgeColor};"><i class="fa-solid ${badgeIcon}"></i></div>
@@ -1779,8 +1809,9 @@ function initDynamicSlogan() {
     }, 3500);
 }
 
-function initSupabaseLogic() {
+async function initSupabaseLogic() {
     if(!supabaseClient) return;
+    if (!(await verifyDatabaseContract())) return;
     
     injectDynamicModals();
     setupNavbar();
@@ -1875,7 +1906,8 @@ window.viewOrderCredentials = async function(orderId) {
     body.innerHTML = '<div style="text-align:center;padding:20px;color:#a1a1aa;"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải thông tin bảo mật...</div>';
     modal.style.display = 'flex';
     try {
-        const { data, error } = await supabaseClient.from('order_credentials').select('*').eq('order_id', orderId).single();
+        const { data: credentialRows, error } = await supabaseClient.rpc('get_order_credentials', { p_order_id: orderId });
+        const data = credentialRows?.[0] || null;
         if (error || !data) throw error || new Error('Không tìm thấy thông tin đăng nhập hoặc bạn không có quyền xem.');
         body.innerHTML = `
             <div style="display:flex;flex-direction:column;gap:14px;">
@@ -1887,7 +1919,7 @@ window.viewOrderCredentials = async function(orderId) {
                     <div style="font-size:12px;color:#a1a1aa;margin-bottom:4px;">Tên tài khoản / Email</div>
                     <div style="display:flex;justify-content:space-between;align-items:center;">
                         <span style="font-weight:700;color:#fff;font-family:monospace;word-break:break-all;">${escapeHtml(data.account_username)}</span>
-                        <button class="btn btn-outline" style="padding:4px 10px;font-size:12px;" onclick="navigator.clipboard.writeText('${escapeHtml(data.account_username)}');alert('Đã sao chép tài khoản!');"><i class="fa-solid fa-copy"></i></button>
+                        <button class="btn btn-outline" style="padding:4px 10px;font-size:12px;" data-copy-value="${escapeHtml(data.account_username)}"><i class="fa-solid fa-copy"></i></button>
                     </div>
                 </div>
                 <div style="background:#27272a;padding:12px;border-radius:8px;">
@@ -1895,8 +1927,8 @@ window.viewOrderCredentials = async function(orderId) {
                     <div style="display:flex;justify-content:space-between;align-items:center;">
                         <input type="password" id="viewCredPassField" readonly value="${escapeHtml(data.account_password)}" style="background:none;border:none;color:#fff;font-weight:700;font-family:monospace;font-size:15px;outline:none;width:70%;">
                         <div style="display:flex;gap:6px;">
-                            <button class="btn btn-outline" style="padding:4px 10px;font-size:12px;" onclick="const f=document.getElementById('viewCredPassField');f.type=f.type==='password'?'text':'password';"><i class="fa-solid fa-eye"></i></button>
-                            <button class="btn btn-outline" style="padding:4px 10px;font-size:12px;" onclick="navigator.clipboard.writeText('${escapeHtml(data.account_password)}');alert('Đã sao chép mật khẩu!');"><i class="fa-solid fa-copy"></i></button>
+                            <button class="btn btn-outline" style="padding:4px 10px;font-size:12px;" data-toggle-password="viewCredPassField"><i class="fa-solid fa-eye"></i></button>
+                            <button class="btn btn-outline" style="padding:4px 10px;font-size:12px;" data-copy-value="${escapeHtml(data.account_password)}"><i class="fa-solid fa-copy"></i></button>
                         </div>
                     </div>
                 </div>
@@ -1914,6 +1946,22 @@ window.viewOrderCredentials = async function(orderId) {
                 </div>` : ''}
             </div>
         `;
+        body.querySelectorAll('[data-copy-value]').forEach((button) => {
+            button.addEventListener('click', async () => {
+                try {
+                    await navigator.clipboard.writeText(button.dataset.copyValue || '');
+                    alert(button.dataset.copyValue === document.getElementById('viewCredPassField')?.value ? 'Đã sao chép mật khẩu!' : 'Đã sao chép tài khoản!');
+                } catch (copyError) {
+                    alert('Không thể sao chép thông tin trên thiết bị này.');
+                }
+            });
+        });
+        body.querySelectorAll('[data-toggle-password]').forEach((button) => {
+            button.addEventListener('click', () => {
+                const field = document.getElementById(button.dataset.togglePassword);
+                if (field) field.type = field.type === 'password' ? 'text' : 'password';
+            });
+        });
     } catch (err) {
         body.innerHTML = '<div style="color:#ef4444;padding:16px;">' + escapeHtml(err.message || 'Lỗi khi tải thông tin đăng nhập') + '</div>';
     }

@@ -16,49 +16,24 @@ const GAMES_CATALOG = {
         { id: 'wuwa',    name: 'Wuthering Waves',   image: 'assets/images/games/wuwa.webp',     badge: '',    badgeCls: '' }
     ],
     login: [
-        { id: 'genshin',   name: 'Genshin Impact',             sub: 'Nạp Login • Bảo mật 100%', discount: '-15%', icon: 'assets/images/games/genshin_icon.webp', sold: '9.8K' },
-        { id: 'hsr',       name: 'Honkai Star Rail',           sub: 'Nạp Login • Xử lý 5p',      discount: '-30%', icon: 'assets/images/games/hsr_icon.webp',     sold: '5.4K' },
-        { id: 'wuwa',      name: 'Wuthering Waves',            sub: 'Nạp Login • Có bill',       discount: '-15%', icon: 'assets/images/games/wuwa_icon.webp',    sold: '4.1K' },
-        { id: 'zzz',       name: 'Zenless Zone Zero',          sub: 'Nạp Login • Nhanh gọn',     discount: '-20%', icon: 'assets/images/games/zzz_icon.webp',     sold: '3.2K' },
-        { id: 'thientinh', name: 'Thiên Tinh Kỳ Vũ',           sub: 'Nạp Login',                 discount: '-20%', icon: 'assets/images/games/thientinh_icon.webp',sold: '1.2K' },
-        { id: 'valo',      name: 'Valorant',                   sub: 'Nạp Login',                 discount: '-10%', icon: 'assets/images/games/valorant_icon.webp', sold: '2.8K' },
-        { id: 'lol',       name: 'League of Legends',          sub: 'Nạp Login',                 discount: '-10%', icon: 'assets/images/games/lol_icon.webp',      sold: '3.1K' },
-        { id: 'mlbb',      name: 'Mobile Legends Bang Bang',   sub: 'Nạp Login',                 discount: '-15%', icon: 'assets/images/games/mlbb_icon.webp',     sold: '6.5K' },
-        { id: 'cnz',       name: 'Chaos Zero Nightmare',       sub: 'Nạp Login',                 discount: '-15%', icon: 'assets/images/games/cnz_icon.webp',      sold: '900' },
-        { id: 'gfl2',      name: 'Girls Frontline 2 Exilium',  sub: 'Nạp Login',                 discount: '-20%', icon: 'assets/images/games/gfl2_icon.webp',     sold: '1.5K' },
-        { id: 'ba',        name: 'Blue Archive',               sub: 'Nạp Login',                 discount: '-15%', icon: 'assets/images/games/ba_icon.webp',       sold: '2.0K' },
-        { id: 'arknights', name: 'Arknights',                  sub: 'Nạp Login',                 discount: '-10%', icon: 'assets/images/games/arknights_icon.webp',sold: '1.8K' },
-        { id: 'skycotl',   name: 'Sky: Child of the Light',    sub: 'Nạp Login',                 discount: '-10%', icon: 'assets/images/games/sky_icon.webp',      sold: '800' },
-        { id: 'biubia',    name: 'Biu La Đại Lục: Săn Hồn',    sub: 'Nạp Login',                 discount: '-10%', icon: 'assets/images/games/biubia_icon.webp',   sold: '650' },
-        { id: 'pgr',       name: 'Punishing Gray Raven',       sub: 'Nạp Login',                 discount: '-10%', icon: 'assets/images/games/pgr_icon.webp',      sold: '1.1K' },
-        { id: 'rev1999',   name: 'Reverse: 1999',              sub: 'Nạp Login',                 discount: '-10%', icon: 'assets/images/games/rev1999_icon.webp',  sold: '1.3K' },
-        { id: 'nen2eve',   name: 'Neverness to Everness',      sub: 'Nạp Login',                 discount: '-15%', icon: 'assets/images/games/nen2eve_icon.webp',  sold: '500' },
-        { id: 'dislyte',   name: 'Dislyte',                    sub: 'Nạp Login',                 discount: '-10%', icon: 'assets/images/games/dislyte_icon.webp',  sold: '700' }
+        { id: 'genshin', name: 'Genshin Impact', sub: 'Nạp Login', icon: 'assets/images/games/genshin_icon.webp' },
+        { id: 'hsr', name: 'Honkai Star Rail', sub: 'Nạp Login', icon: 'assets/images/games/hsr_icon.webp' },
+        { id: 'wuwa', name: 'Wuthering Waves', sub: 'Nạp Login', icon: 'assets/images/games/wuwa_icon.webp' },
+        { id: 'zzz', name: 'Zenless Zone Zero', sub: 'Nạp Login', icon: 'assets/images/games/zzz_icon.webp' }
     ]
 };
-
 const GAME_INFO = {
-    'genshin':       { name: 'Genshin Impact',    icon: 'assets/images/games/genshin_icon.webp',   rating: '5.0', sold: '9.777 đã bán', type: 'login', sold_n: 9777 },
-    'genshin-login': { name: 'Genshin Impact',    icon: 'assets/images/games/genshin_icon.webp',   rating: '5.0', sold: '9.777 đã bán', type: 'login', sold_n: 9777 },
-    'hsr':           { name: 'Honkai Star Rail',  icon: 'assets/images/games/hsr_icon.webp',       rating: '4.9', sold: '5.412 đã bán', type: 'login', sold_n: 5412 },
-    'hsr-login':     { name: 'Honkai Star Rail',  icon: 'assets/images/games/hsr_icon.webp',       rating: '4.9', sold: '5.412 đã bán', type: 'login', sold_n: 5412 },
-    'zzz':           { name: 'Zenless Zone Zero', icon: 'assets/images/games/zzz_icon.webp',       rating: '5.0', sold: '3.200 đã bán', type: 'login', sold_n: 3200 },
-    'zzz-login':     { name: 'Zenless Zone Zero', icon: 'assets/images/games/zzz_icon.webp',       rating: '5.0', sold: '3.200 đã bán', type: 'login', sold_n: 3200 },
-    'wuwa':          { name: 'Wuthering Waves',   icon: 'assets/images/games/wuwa_icon.webp',      rating: '5.0', sold: '4.100 đã bán', type: 'login', sold_n: 4100 },
-    'wuwa-login':    { name: 'Wuthering Waves',   icon: 'assets/images/games/wuwa_icon.webp',      rating: '5.0', sold: '4.100 đã bán', type: 'login', sold_n: 4100 },
-    'thientinh':     { name: 'Thiên Tinh Kỳ Vũ',  icon: 'assets/images/games/thientinh_icon.webp', rating: '5.0', sold: '1.200 đã bán', type: 'login', sold_n: 1200 },
-    'valo':          { name: 'Valorant',          icon: 'assets/images/games/valorant_icon.webp',  rating: '4.8', sold: '2.800 đã bán', type: 'login', sold_n: 2800 },
-    'lol':           { name: 'League of Legends', icon: 'assets/images/games/lol_icon.webp',       rating: '4.8', sold: '3.100 đã bán', type: 'login', sold_n: 3100 },
-    'mlbb':          { name: 'Mobile Legends',    icon: 'assets/images/games/mlbb_icon.webp',      rating: '4.9', sold: '6.500 đã bán', type: 'login', sold_n: 6500 },
-    'gfl2':          { name: 'Girls Frontline 2', icon: 'assets/images/games/gfl2_icon.webp',      rating: '5.0', sold: '1.500 đã bán', type: 'login', sold_n: 1500 },
-    'ba':            { name: 'Blue Archive',      icon: 'assets/images/games/ba_icon.webp',        rating: '4.9', sold: '2.000 đã bán', type: 'login', sold_n: 2000 },
-    'ba-login':      { name: 'Blue Archive',      icon: 'assets/images/games/ba_icon.webp',        rating: '4.9', sold: '2.000 đã bán', type: 'login', sold_n: 2000 },
-    'arknights':     { name: 'Arknights',         icon: 'assets/images/games/arknights_icon.webp', rating: '4.9', sold: '1.800 đã bán', type: 'login', sold_n: 1800 },
-    'default':       { name: 'Game Top-up',       icon: 'assets/images/logo.jpg',                  rating: '5.0', sold: '100+ đã bán',   type: 'login', sold_n: 100  }
+    'genshin': { name: 'Genshin Impact', icon: 'assets/images/games/genshin_icon.webp', type: 'login' },
+    'genshin-login': { name: 'Genshin Impact', icon: 'assets/images/games/genshin_icon.webp', type: 'login' },
+    'hsr': { name: 'Honkai Star Rail', icon: 'assets/images/games/hsr_icon.webp', type: 'login' },
+    'hsr-login': { name: 'Honkai Star Rail', icon: 'assets/images/games/hsr_icon.webp', type: 'login' },
+    'zzz': { name: 'Zenless Zone Zero', icon: 'assets/images/games/zzz_icon.webp', type: 'login' },
+    'zzz-login': { name: 'Zenless Zone Zero', icon: 'assets/images/games/zzz_icon.webp', type: 'login' },
+    'wuwa': { name: 'Wuthering Waves', icon: 'assets/images/games/wuwa_icon.webp', type: 'login' },
+    'wuwa-login': { name: 'Wuthering Waves', icon: 'assets/images/games/wuwa_icon.webp', type: 'login' },
+    'default': { name: 'Game Top-up', icon: 'assets/images/logo.jpg', type: 'login' }
 };
 
-// ============================================================
-// GAME PACKAGES — Seeded with verified UUIDs from migration 003
 // ============================================================
 const GAME_PACKAGES = {
     // ---------- GENSHIN IMPACT ----------
@@ -112,81 +87,14 @@ const GAME_PACKAGES = {
     'wuwa-login': 'wuwa',
 
     // ---------- DEFAULT fallback ----------
-    'default': [
-        { id: '10000000-0000-0000-0000-000000000001', name: 'Gói nạp mặc định', price: 85000, img: 'assets/images/logo.jpg', tag: 'monthly', desc: '' }
-    ]
+    'default': []
 };
 
-const FAKE_REVIEWS = [
-    { name: 'Li**Nguyen',  stars: 5, text: 'Nạp nhanh lắm, tầm 3 phút là có rồi. Giá rẻ hơn nạp trực tiếp, sẽ ủng hộ tiếp.', date: '2 ngày trước' },
-    { name: 'Du**Dat',     stars: 5, text: 'Admin nhiệt tình, bill rõ ràng. Đã nạp 3 lần rồi lần nào cũng ổn.', date: '5 ngày trước' },
-    { name: 'Nh**Huyen',   stars: 5, text: 'Uy tín, giao dịch an toàn. Mình lo lúc đầu nhưng kết quả rất tốt!', date: '1 tuần trước' }
-];
-
-const FAKE_ORDERS = [
-    { user: 'Hi*****an', game: 'Genshin Impact',    pkg: '980 Đá Sáng Thế',      price: '270.000đ', time: '2 phút trước' },
-    { user: 'T*****ng',  game: 'Honkai Star Rail',  pkg: '300+30 Mộng Cảnh',     price: '75.000đ',  time: '8 phút trước' },
-    { user: 'Ng*****eu', game: 'Wuthering Waves',   pkg: '60 Astrite',           price: '17.000đ',  time: '15 phút trước' },
-    { user: 'Me*****Me', game: 'Valorant',           pkg: '1050 VP',              price: '200.000đ', time: '22 phút trước' },
-    { user: 'Da*****rk', game: 'Mobile Legends',    pkg: '500 Kim Cương',        price: '115.000đ', time: '1 giờ trước' }
-];
-
-// ==========================================
 // 2. TICKER
 // ==========================================
-async function initTicker() {
-    const track = document.getElementById('tickerTrack');
-    if (!track) return;
-
-    let ordersList = FAKE_ORDERS;
-    if (typeof supabaseClient !== 'undefined' && supabaseClient) {
-        try {
-            const { data, error } = await supabaseClient.from('orders')
-                .select('*')
-                .ilike('content', '%[Nạp Game]%')
-                .order('created_at', { ascending: false })
-                .limit(10);
-
-            if (!error && data && data.length > 0) {
-                ordersList = data.map(o => {
-                    const renter = o.renter_name || 'Khách';
-                    const parts = o.content ? o.content.split('\n') : [];
-                    let pkg = 'Gói nạp';
-                    if (parts[0]) {
-                        const m = parts[0].match(/\]\s+\[Nạp Game\]\s+(.*)/i);
-                        if (m) pkg = m[1];
-                    }
-                    let game = 'Game';
-                    if (parts[1] && parts[1].includes('Game:')) {
-                        game = parts[1].replace('Game:', '').trim();
-                    }
-                    return {
-                        user: renter.length > 3 ? renter.substring(0,2) + '***' + renter.slice(-1) : renter + '***',
-                        game: game,
-                        pkg: pkg,
-                        price: (o.price ? parseInt(o.price).toLocaleString('vi-VN') : '0') + ' đ',
-                        time: typeof timeAgo === 'function' ? timeAgo(o.created_at) : 'Vừa xong'
-                    };
-                });
-            }
-        } catch (err) {
-            console.error('Ticker err:', err);
-        }
-    }
-
-    const html = ordersList.map(o => `
-        <span class="ticker-item">
-            <span class="ticker-avatar">${o.user[0].toUpperCase()}</span>
-            <b>${o.user}</b> vừa nạp <b>${o.game}</b> · ${o.pkg}
-            <span class="ticker-price" style="color:var(--ng-hot); font-weight:bold; margin-left:8px;">${o.price}</span>
-            <span class="ticker-time">${o.time}</span>
-        </span>
-    `).join('<span class="ticker-sep">•</span>');
-
-    track.innerHTML = html + '<span class="ticker-sep">•</span>' + html;
+function initTicker() {
+    document.querySelectorAll('.ng-ticker-wrap').forEach(ticker => ticker.remove());
 }
-
-// ==========================================
 // 3. SLIDER (Catalog Page)
 // ==========================================
 let slideIndex = 0;
@@ -220,248 +128,275 @@ function resetSlideTimer() {
 // ==========================================
 // 4. SOCIAL PROOF POPUP
 // ==========================================
-const PROOF_DATA = [
-    { u: 'Hi*****an', g: 'Genshin Impact',    p: '270.000đ' },
-    { u: 'Ti*****ng', g: 'Honkai Star Rail',  p: '75.000đ' },
-    { u: 'Mi*****i',  g: 'Wuthering Waves',   p: '480.000đ' },
-    { u: 'Da*****rk', g: 'Zenless Zone Zero', p: '250.000đ' }
-];
-let proofIdx = 0;
-
-function showSocialProof() {
-    const container = document.getElementById('socialProofContainer');
-    if (!container) return;
-    const d = PROOF_DATA[proofIdx % PROOF_DATA.length];
-    proofIdx++;
-    const popup = document.createElement('div');
-    popup.className = 'ng-social-popup';
-    popup.innerHTML = `
-        <button class="ng-social-popup-close" onclick="this.parentElement.remove()">✕</button>
-        <div class="ng-social-popup-avatar">${d.u[0]}</div>
-        <div class="ng-social-popup-text">
-            <strong>${d.u}</strong> vừa nạp<br>
-            <span>${d.g}</span> với giá <span class="ng-social-popup-price">${d.p}</span>
-        </div>
-    `;
-    container.innerHTML = '';
-    container.appendChild(popup);
-    setTimeout(() => {
-        popup.style.animation = 'fadeOut 0.5s ease forwards';
-        setTimeout(() => popup.remove(), 500);
-    }, 5000);
-}
-
-// ==========================================
 // 5. CATALOG RENDERING + FILTER
 // ==========================================
-function initCatalogPage() {
+async function initCatalogPage() {
     startSlider();
-    renderPortrait(GAMES_CATALOG.featured);
-    renderHorizontal(GAMES_CATALOG.login, 'gridLogin');
-
-    // Update all Zalo links
     document.querySelectorAll('a[href*="zalo.me"]').forEach(a => a.href = ZALO_LINK);
 
-    // Tab filters
+    let activeGames;
+    try {
+        if (!supabaseClient) throw new Error('Chưa kết nối được danh mục nạp game.');
+        const { data, error } = await supabaseClient.from('packages').select('game').eq('active', true);
+        if (error) throw error;
+        activeGames = new Set((data || []).map(row => row.game));
+    } catch (error) {
+        console.error('Không tải được catalog nạp game:', error);
+        showCatalogMessage('gridFeatured', 'Danh mục nạp game đang tạm thời không khả dụng. Vui lòng thử lại sau.');
+        showCatalogMessage('gridLogin', 'Danh mục nạp game đang tạm thời không khả dụng. Vui lòng thử lại sau.');
+        return;
+    }
+
+    const availableFeatured = GAMES_CATALOG.featured.filter(game => activeGames.has(game.name));
+    const availableLogin = GAMES_CATALOG.login.filter(game => activeGames.has(game.name));
+    renderPortrait(availableFeatured);
+    renderHorizontal(availableLogin, 'gridLogin');
+    if (!availableFeatured.length) showCatalogMessage('gridFeatured', 'Hiện chưa có game nào mở bán.');
+    if (!availableLogin.length) showCatalogMessage('gridLogin', 'Hiện chưa có game nào mở bán.');
+
     document.querySelectorAll('.ng-cat-tab').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.ng-cat-tab').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            const f = btn.dataset.filter;
             const loginSec = document.getElementById('sectionLogin');
-            const featSec  = document.getElementById('sectionFeatured');
-            if (f === 'all') {
-                renderPortrait(GAMES_CATALOG.featured);
+            const featSec = document.getElementById('sectionFeatured');
+            if (btn.dataset.filter === 'all') {
+                renderPortrait(availableFeatured);
                 if (loginSec) loginSec.style.display = '';
                 if (featSec) featSec.style.display = '';
-            } else if (f === 'hot') {
-                renderPortrait(GAMES_CATALOG.featured.filter(g => g.badge === 'HOT' || g.badge === 'NEW'));
+            } else if (btn.dataset.filter === 'hot') {
+                renderPortrait(availableFeatured.filter(game => game.badge === 'HOT' || game.badge === 'NEW'));
                 if (loginSec) loginSec.style.display = 'none';
                 if (featSec) featSec.style.display = '';
             }
         });
     });
 
-    // Search
     const searchInput = document.getElementById('gameSearch');
     if (searchInput) {
-        searchInput.addEventListener('input', e => {
-            const q = e.target.value.toLowerCase().trim();
+        searchInput.addEventListener('input', event => {
+            const query = event.target.value.toLowerCase().trim();
             document.querySelectorAll('.ng-card-hz, .ng-card-portrait').forEach(card => {
-                const titleEl = card.querySelector('.ng-card-hz-title, .ng-card-portrait-title');
-                const name = (titleEl || {}).innerText || '';
-                card.style.display = name.toLowerCase().includes(q) ? '' : 'none';
+                const title = card.querySelector('.ng-card-hz-title, .ng-card-portrait-title');
+                card.style.display = (title?.innerText || '').toLowerCase().includes(query) ? '' : 'none';
             });
         });
     }
-
-    // Social proof popup
-    setTimeout(showSocialProof, 3000);
-    setInterval(showSocialProof, 8000);
 }
-
 function renderPortrait(data) {
     const grid = document.getElementById('gridFeatured');
     if (!grid) return;
-    grid.innerHTML = data.map(g => `
-        <a href="napgame-detail.html?game=${g.id}" class="ng-card-portrait">
-            <img src="${g.image}" alt="${g.name}" onerror="this.src='assets/images/logo.jpg'">
+    grid.innerHTML = data.map(game => `
+        <a href="napgame-detail.html?game=${game.id}" class="ng-card-portrait">
+            <img src="${game.image}" alt="${game.name}" onerror="this.src='assets/images/logo.jpg'">
             <div class="ng-card-portrait-info">
-                ${g.badge ? `<div class="ng-card-portrait-badge ${g.badgeCls}">${g.badge}</div>` : ''}
-                <div class="ng-card-portrait-title">${g.name}</div>
+                ${game.badge ? `<div class="ng-card-portrait-badge ${game.badgeCls}">${game.badge}</div>` : ''}
+                <div class="ng-card-portrait-title">${game.name}</div>
                 <div class="ng-card-portrait-btn">Nạp Ngay</div>
-                <div style="color:#aaa; font-size:12px; margin-top:8px; display:flex; justify-content:space-between;">
-                    <span><i class="fa-solid fa-star" style="color:#eab308;"></i> ${g.rating || '5.0'}</span>
-                    <span>Đã bán: ${g.sold || '2.3K'}</span>
-                </div>
             </div>
         </a>
     `).join('');
 }
-
 function renderHorizontal(data, containerId) {
     const grid = document.getElementById(containerId);
     if (!grid) return;
-    grid.innerHTML = data.map(g => `
-        <a href="napgame-detail.html?game=${g.id}" class="ng-card-hz">
-            <img src="${g.icon}" class="ng-card-hz-icon" onerror="this.src='assets/images/logo.jpg'">
+    grid.innerHTML = data.map(game => `
+        <a href="napgame-detail.html?game=${game.id}" class="ng-card-hz">
+            <img src="${game.icon}" class="ng-card-hz-icon" alt="" onerror="this.src='assets/images/logo.jpg'">
             <div class="ng-card-hz-info">
-                <div class="ng-card-hz-title">${g.name}</div>
-                <div class="ng-card-hz-sub">${g.sub}</div>
-                <div class="ng-card-hz-badges">
-                    <span class="ng-card-hz-badge badge-login">Login</span>
-                    <span class="ng-card-hz-badge" style="background:rgba(255,255,255,0.05); color:#999; border:none;">Đã bán: ${g.sold || '1.1K'}</span>
-                </div>
+                <div class="ng-card-hz-title">${game.name}</div>
+                <div class="ng-card-hz-sub">${game.sub}</div>
+                <div class="ng-card-hz-badges"><span class="ng-card-hz-badge badge-login">Login</span></div>
             </div>
-            <div class="ng-card-hz-discount">${g.discount}</div>
         </a>
     `).join('');
 }
-
-// ==========================================
 // 6. DETAIL PAGE LOGIC
 // ==========================================
 let currentSelectedPackage = null;
 let currentGameId = 'default';
 let activeTabFilter = 'all';
 
-function initDetailPage() {
+function getPackagePresentation(packageId) {
+    for (const value of Object.values(GAME_PACKAGES)) {
+        if (Array.isArray(value)) {
+            const match = value.find(item => item.id === packageId);
+            if (match) return match;
+        }
+    }
+    return {};
+}
+
+// Load active catalog rows; names, ids, and prices always come from the database.
+async function loadActivePackages(gameName) {
+    if (!supabaseClient) throw new Error('Chưa kết nối được danh mục nạp game.');
+    const { data, error } = await supabaseClient.from('packages')
+        .select('id,game,name,price,active')
+        .eq('game', gameName)
+        .eq('active', true)
+        .order('price', { ascending: true });
+    if (error) throw error;
+    return (data || []).filter(row => row && typeof row.name === 'string' && Number.isFinite(Number(row.price)) && Number(row.price) > 0).map(row => {
+        const presentation = getPackagePresentation(row.id);
+        return {
+            ...presentation,
+            id: row.id,
+            name: row.name,
+            price: Number(row.price),
+            img: presentation.img || Object.values(GAME_INFO).find(info => info.name === gameName)?.icon || 'assets/images/logo.jpg',
+            tag: presentation.tag || 'topup'
+        };
+    });
+}
+
+function showCatalogMessage(containerId, message) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const status = document.createElement('div');
+    status.setAttribute('role', 'status');
+    status.style.cssText = 'grid-column:1/-1;text-align:center;padding:24px;color:#aaa;';
+    status.textContent = message;
+    container.replaceChildren(status);
+}
+
+async function initDetailPage() {
     const params = new URLSearchParams(window.location.search);
     currentGameId = params.get('game') || 'default';
+    const gameInfo = GAME_INFO[currentGameId] || GAME_INFO.default;
 
-    const gameInfo = GAME_INFO[currentGameId] || GAME_INFO['default'];
-
-    // Resolve packages — follow aliases
-    let pkgData = GAME_PACKAGES[currentGameId];
-    if (typeof pkgData === 'string') pkgData = GAME_PACKAGES[pkgData];
-    if (!pkgData) pkgData = GAME_PACKAGES['default'];
-    const packages = pkgData;
-
-    // Page title + breadcrumb
     document.title = `${gameInfo.name} - Nạp Game | NAMCUMZ`;
-    const bcEl = document.getElementById('breadcrumbGame');
-    if (bcEl) bcEl.textContent = gameInfo.name;
-
-    // Game header
-    const iconEl = document.getElementById('detailGameIcon');
-    if (iconEl) { iconEl.src = gameInfo.icon; iconEl.onerror = () => iconEl.src = 'assets/images/logo.jpg'; }
-    const nameEl = document.getElementById('detailGameName');
-    if (nameEl) nameEl.textContent = gameInfo.name;
-    const ratingEl = document.getElementById('detailRating');
-    if (ratingEl) ratingEl.textContent = gameInfo.rating;
-    const soldEl = document.getElementById('detailSold');
-    if (soldEl) soldEl.textContent = gameInfo.sold;
-    const badgeEl = document.getElementById('detailTypeBadge');
-    if (badgeEl) {
-        badgeEl.textContent = 'Nạp Login';
-        badgeEl.className = 'ng-detail-type-badge ng-type-login';
+    const breadcrumb = document.getElementById('breadcrumbGame');
+    if (breadcrumb) breadcrumb.textContent = gameInfo.name;
+    const icon = document.getElementById('detailGameIcon');
+    if (icon) { icon.src = gameInfo.icon; icon.onerror = () => icon.src = 'assets/images/logo.jpg'; }
+    const name = document.getElementById('detailGameName');
+    if (name) name.textContent = gameInfo.name;
+    const badge = document.getElementById('detailTypeBadge');
+    if (badge) {
+        badge.textContent = 'Nạp Login';
+        badge.className = 'ng-detail-type-badge ng-type-login';
     }
-
-    // Pre-fill phone if logged in
     if (window.currentUser) {
-        const phEl = document.getElementById('formPhone');
-        if (phEl && !phEl.value) phEl.value = window.currentUser.phone || '';
+        const phone = document.getElementById('formPhone');
+        if (phone && !phone.value) phone.value = window.currentUser.phone || '';
     }
 
-    // Render packages + tabs
+    let packages;
+    try {
+        packages = await loadActivePackages(gameInfo.name);
+    } catch (error) {
+        console.error('Không tải được gói nạp:', error);
+        currentSelectedPackage = null;
+        showCatalogMessage('pkgGrid', 'Không tải được danh mục giá. Đơn hàng đang tạm khóa; vui lòng thử lại sau.');
+        ['btnSubmitOrder', 'mobileBarBtn'].forEach(id => {
+            const button = document.getElementById(id);
+            if (button) button.disabled = true;
+        });
+        return;
+    }
+
+    if (!packages.length) {
+        renderUnsupportedGame(gameInfo);
+        return;
+    }
     renderPackages(packages, 'all');
-    document.querySelectorAll('.ng-tab-btn[data-tab]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.ng-tab-btn[data-tab]').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            activeTabFilter = btn.dataset.tab;
+    document.querySelectorAll('.ng-tab-btn[data-tab]').forEach(button => {
+        button.addEventListener('click', () => {
+            document.querySelectorAll('.ng-tab-btn[data-tab]').forEach(tab => tab.classList.remove('active'));
+            button.classList.add('active');
+            activeTabFilter = button.dataset.tab;
             renderPackages(packages, activeTabFilter);
         });
     });
-
-    // Zalo buttons
-    document.querySelectorAll('.ng-btn-zalo').forEach(btn => {
-        btn.onclick = () => window.open(ZALO_LINK, '_blank');
+    document.querySelectorAll('.ng-btn-zalo').forEach(button => {
+        button.onclick = () => window.open(ZALO_LINK, '_blank');
     });
-
-    // FAQ Accordion
-    document.querySelectorAll('.ng-faq-question').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const isActive = btn.classList.contains('active');
-            document.querySelectorAll('.ng-faq-question').forEach(b => b.classList.remove('active'));
-            if (!isActive) btn.classList.add('active');
+    document.querySelectorAll('.ng-faq-question').forEach(button => {
+        button.addEventListener('click', () => {
+            const isActive = button.classList.contains('active');
+            document.querySelectorAll('.ng-faq-question').forEach(item => item.classList.remove('active'));
+            if (!isActive) button.classList.add('active');
         });
     });
-
     renderReviews();
 }
-
+function renderUnsupportedGame(gameInfo) {
+    currentSelectedPackage = null;
+    const grid = document.getElementById('pkgGrid');
+    if (grid) {
+        grid.innerHTML = `<div role="status" style="grid-column:1/-1;text-align:center;color:#555;padding:32px;">
+            Gói nạp cho ${gameInfo.name} đang được cập nhật. Vui lòng chọn game khác hoặc liên hệ Zalo để được hỗ trợ.
+        </div>`;
+    }
+    ['btnSubmitOrder', 'mobileBarBtn'].forEach(id => {
+        const button = document.getElementById(id);
+        if (button) button.disabled = true;
+    });
+}
+// Render database catalog data with text nodes so package names cannot inject markup.
+// Render active package data as safe, native radio choices.
 function renderPackages(packages, filter) {
     const grid = document.getElementById('pkgGrid');
     if (!grid) return;
-    const filtered = filter === 'all' ? packages : packages.filter(p => p.tag === filter);
+    const filtered = filter === 'all' ? packages : packages.filter(pkg => pkg.tag === filter);
     if (filtered.length === 0) {
-        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#555;padding:32px;">Không có gói nào trong danh mục này.</div>';
+        const empty = document.createElement('div');
+        empty.style.cssText = 'grid-column:1/-1;text-align:center;color:#555;padding:32px;';
+        empty.textContent = 'Không có gói nào trong danh mục này.';
+        grid.replaceChildren(empty);
         return;
     }
-    grid.innerHTML = filtered.map(pkg => `
-        <div class="ng-pkg-card" onclick="selectDetailPackage(${JSON.stringify(pkg).replace(/"/g, '&quot;')}, this)">
-            ${pkg.tag === 'monthly' ? '<div class="ng-pkg-badge">Thẻ Tháng</div>' : pkg.tag === 'battlepass' ? '<div class="ng-pkg-badge">BP</div>' : ''}
-            <img src="${pkg.img}" class="ng-pkg-img" onerror="this.src='assets/images/logo.jpg'">
-            <span class="ng-pkg-name">${pkg.name}</span>
-            <span class="ng-pkg-price">${pkg.price.toLocaleString('vi-VN')} đ</span>
-        </div>
-    `).join('');
 
-    // Re-highlight if already selected
-    if (currentSelectedPackage) {
-        document.querySelectorAll('.ng-pkg-card').forEach(card => {
-            const nameEl = card.querySelector('.ng-pkg-name');
-            if (nameEl && nameEl.textContent === currentSelectedPackage.name) card.classList.add('selected');
+    const cards = filtered.map(pkg => {
+        const card = document.createElement('label');
+        card.className = 'ng-pkg-card';
+        card.style.display = 'block';
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'selectedPackage';
+        radio.value = pkg.id;
+        radio.setAttribute('aria-label', `${pkg.name} ${pkg.price.toLocaleString('vi-VN')} đ`);
+        radio.style.cssText = 'position:absolute;opacity:0;width:1px;height:1px;';
+        radio.checked = currentSelectedPackage?.id === pkg.id;
+        card.appendChild(radio);
+        if (pkg.tag === 'monthly' || pkg.tag === 'battlepass') {
+            const badge = document.createElement('span');
+            badge.className = 'ng-pkg-badge';
+            badge.textContent = pkg.tag === 'monthly' ? 'Thẻ Tháng' : 'BP';
+            card.appendChild(badge);
+        }
+        const image = document.createElement('img');
+        image.src = pkg.img;
+        image.alt = '';
+        image.className = 'ng-pkg-img';
+        image.onerror = () => { image.src = 'assets/images/logo.jpg'; };
+        const packageName = document.createElement('span');
+        packageName.className = 'ng-pkg-name';
+        packageName.textContent = pkg.name;
+        const price = document.createElement('span');
+        price.className = 'ng-pkg-price';
+        price.textContent = pkg.price.toLocaleString('vi-VN') + ' đ';
+        card.append(image, packageName, price);
+
+        radio.addEventListener('change', () => {
+            if (!radio.checked) return;
+            currentSelectedPackage = pkg;
+            grid.querySelectorAll('.ng-pkg-card').forEach(item => item.classList.remove('selected'));
+            card.classList.add('selected');
+            updateCart();
         });
-    }
+        if (radio.checked) card.classList.add('selected');
+        return card;
+    });
+    grid.replaceChildren(...cards);
 }
-
 function renderReviews() {
     const list = document.getElementById('reviewList');
     if (!list) return;
-    list.innerHTML = FAKE_REVIEWS.map(r => `
-        <div class="ng-review-item">
-            <div class="ng-review-avatar">${r.name[0]}</div>
-            <div class="ng-review-content">
-                <div class="ng-review-header">
-                    <span class="ng-review-name">${r.name}</span>
-                    <span class="ng-review-date">${r.date}</span>
-                </div>
-                <div class="ng-review-stars">${'★'.repeat(r.stars)}</div>
-                <div class="ng-review-text">${r.text}</div>
-            </div>
-        </div>
-    `).join('');
+    const note = document.createElement('p');
+    note.textContent = 'Đánh giá đã xác minh sẽ hiển thị sau khi có đơn được nghiệm thu.';
+    list.replaceChildren(note);
 }
-
-function selectDetailPackage(pkg, element) {
-    currentSelectedPackage = pkg;
-    document.querySelectorAll('.ng-pkg-card').forEach(el => el.classList.remove('selected'));
-    element.classList.add('selected');
-    updateCart();
-}
-
 function updateCart() {
     if (!currentSelectedPackage) return;
     const priceStr = currentSelectedPackage.price.toLocaleString('vi-VN') + ' đ';
@@ -511,7 +446,7 @@ async function submitDetailOrder() {
     const server = (document.getElementById('formServer')?.value || 'Asia').trim();
     const loginMethod = (document.getElementById('formLoginMethod')?.value || 'Hoyoverse').trim();
     const account = (document.getElementById('formUsername')?.value || '').trim();
-    const password = (document.getElementById('formPassword')?.value || '').trim();
+    const password = document.getElementById('formPassword')?.value || '';
     const phone = (document.getElementById('formPhone')?.value || '').trim();
     const notes = (document.getElementById('formNotes')?.value || '').trim();
 

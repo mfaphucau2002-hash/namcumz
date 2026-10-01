@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow, noarchive">
     <title>Bảng Điều Khiển Admin - NAMCUMZ</title>
     <link rel="icon" type="image/jpeg" href="/assets/images/logo.jpg">
     <!-- FontAwesome -->
@@ -671,7 +672,8 @@
                 const credBody = document.getElementById('credModalBody');
                 credBody.innerHTML = '<div style="text-align:center; padding:20px; color:#a1a1aa;"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải thông tin tài khoản...</div>';
                 credModal.classList.add('active');
-                const { data, error } = await supabaseClient.from('order_credentials').select('*').eq('order_id', orderId).single();
+                const { data: credentialRows, error } = await supabaseClient.rpc('get_order_credentials', { p_order_id: orderId });
+        const data = credentialRows?.[0] || null;
                 if (error || !data) {
                     credBody.innerHTML = '<div style="color:#ef4444; padding:20px;">Không thể tải thông tin đăng nhập: ' + esc(error?.message || 'Không có dữ liệu') + '</div>';
                     return;
@@ -686,15 +688,15 @@
                             <span style="color:#a1a1aa; font-size:12px;">Tên tài khoản / Email:</span>
                             <div style="display:flex; gap:8px; align-items:center; margin-top:4px;">
                                 <input type="text" readonly value="${esc(data.account_username)}" class="form-control" style="background:#1c1c1e; flex:1;" id="credAcc">
-                                <button class="btn-sm btn-edit" onclick="navigator.clipboard.writeText('${esc(data.account_username)}'); alert('Đã sao chép tài khoản!')" title="Sao chép"><i class="fa-solid fa-copy"></i></button>
+                                <button class="btn-sm btn-edit" data-copy-value="${esc(data.account_username)}" title="Sao chép"><i class="fa-solid fa-copy"></i></button>
                             </div>
                         </div>
                         <div>
                             <span style="color:#a1a1aa; font-size:12px;">Mật khẩu:</span>
                             <div style="display:flex; gap:8px; align-items:center; margin-top:4px;">
                                 <input type="password" readonly value="${esc(data.account_password)}" class="form-control" style="background:#1c1c1e; flex:1;" id="credPass">
-                                <button class="btn-sm btn-edit" onclick="const p=document.getElementById('credPass'); p.type = p.type === 'password' ? 'text' : 'password';" title="Ẩn/Hiện"><i class="fa-solid fa-eye"></i></button>
-                                <button class="btn-sm btn-edit" onclick="navigator.clipboard.writeText('${esc(data.account_password)}'); alert('Đã sao chép mật khẩu!')" title="Sao chép"><i class="fa-solid fa-copy"></i></button>
+                                <button class="btn-sm btn-edit" data-toggle-password="credPass" title="Ẩn/Hiện"><i class="fa-solid fa-eye"></i></button>
+                                <button class="btn-sm btn-edit" data-copy-value="${esc(data.account_password)}" title="Sao chép"><i class="fa-solid fa-copy"></i></button>
                             </div>
                         </div>
                         <div>
@@ -711,6 +713,22 @@
                         </div>` : ''}
                     </div>
                 `;
+                credBody.querySelectorAll('[data-copy-value]').forEach((button) => {
+                    button.addEventListener('click', async () => {
+                        try {
+                            await navigator.clipboard.writeText(button.dataset.copyValue || '');
+                            alert(button.dataset.copyValue === document.getElementById('credPass')?.value ? 'Đã sao chép mật khẩu!' : 'Đã sao chép tài khoản!');
+                        } catch (copyError) {
+                            alert('Không thể sao chép thông tin trên thiết bị này.');
+                        }
+                    });
+                });
+                credBody.querySelectorAll('[data-toggle-password]').forEach((button) => {
+                    button.addEventListener('click', () => {
+                        const field = document.getElementById(button.dataset.togglePassword);
+                        if (field) field.type = field.type === 'password' ? 'text' : 'password';
+                    });
+                });
             };
 
             // Record payment for an order via RPC
