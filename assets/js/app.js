@@ -94,37 +94,208 @@ async function appendPrivateMessage(msg, orderId, actor) {
     appendMessage({...msg, privateImageUrl:signedUrl, privateAttachmentUnavailable:msg.attachment_path && !signedUrl});
 }
 
+// Present consistent, accessible dialogs for order workflow actions.
+window.showOrderDialog = function(options = {}) {
+    const config = {
+        variant: 'alert', title: 'Thông báo', message: '', tone: 'info',
+        confirmText: 'Đã hiểu', cancelText: 'Hủy', fields: [], ...options
+    };
+    return new Promise(resolve => {
+        const previousFocus = document.activeElement;
+        let dialog = document.getElementById('orderActionDialog');
+        if (!dialog) {
+            dialog = document.createElement('dialog');
+            dialog.id = 'orderActionDialog';
+            dialog.className = 'order-action-dialog';
+            dialog.setAttribute('aria-labelledby', 'orderDialogTitle');
+            dialog.setAttribute('aria-describedby', 'orderDialogMessage');
+            dialog.innerHTML = '<div class="order-dialog__panel">' +
+                    '<button type="button" class="order-dialog__close" aria-label="Đóng hộp thoại"><i class="fa-solid fa-xmark"></i></button>' +
+                    '<div class="order-dialog__icon"><i class="fa-solid fa-circle-info"></i></div>' +
+                    '<span class="order-dialog__eyebrow">NAMCUMZ · QUẢN LÝ ĐƠN</span>' +
+                    '<h2 id="orderDialogTitle"></h2>' +
+                    '<p id="orderDialogMessage" class="order-dialog__message"></p>' +
+                    '<div class="order-dialog__fields"></div>' +
+                    '<div class="order-dialog__actions">' +
+                        '<button type="button" class="order-dialog__button order-dialog__button--cancel" data-dialog-cancel></button>' +
+                        '<button type="button" class="order-dialog__button order-dialog__button--confirm" data-dialog-confirm></button>' +
+                    '</div>' +
+                '</div>';
+            document.body.appendChild(dialog);
+        }
+        const title = dialog.querySelector('#orderDialogTitle');
+        const message = dialog.querySelector('#orderDialogMessage');
+        const icon = dialog.querySelector('.order-dialog__icon i');
+        const fieldsHost = dialog.querySelector('.order-dialog__fields');
+        const cancelButton = dialog.querySelector('[data-dialog-cancel]');
+        const confirmButton = dialog.querySelector('[data-dialog-confirm]');
+        title.textContent = config.title;
+        message.textContent = config.message;
+        message.hidden = !config.message;
+        const icons = {info:'fa-circle-info',success:'fa-circle-check',warning:'fa-triangle-exclamation',danger:'fa-circle-exclamation'};
+        icon.className = 'fa-solid ' + (icons[config.tone] || icons.info);
+        dialog.classList.toggle('is-danger', config.tone === 'danger');
+        dialog.classList.toggle('is-success', config.tone === 'success');
+        cancelButton.hidden = config.variant === 'alert';
+        cancelButton.textContent = config.cancelText;
+        confirmButton.textContent = config.confirmText;
+        confirmButton.classList.toggle('order-dialog__button--danger', config.tone === 'danger');
+        fieldsHost.replaceChildren();
+        const controls = [];
+        (config.variant === 'prompt' ? config.fields : []).forEach((field, index) => {
+            const wrapper = document.createElement('label');
+            wrapper.className = 'order-dialog__field';
+            const caption = document.createElement('span');
+            caption.textContent = field.label || 'Nội dung';
+            const control = field.type === 'textarea' ? document.createElement('textarea') : document.createElement('input');
+            control.className = 'order-dialog__input';
+            control.name = field.name || 'value' + index;
+            control.dataset.dialogField = control.name;
+            control.required = Boolean(field.required);
+            control.placeholder = field.placeholder || '';
+            control.value = field.value == null ? '' : String(field.value);
+            if (control.tagName === 'INPUT') {
+                control.type = field.type || 'text';
+                ['min','max','step','inputmode'].forEach(key => {
+                    if (field[key] != null) control.setAttribute(key, String(field[key]));
+                });
+            } else if (field.maxLength) {
+                control.maxLength = field.maxLength;
+            }
+            wrapper.append(caption, control);
+            if (field.hint) {
+                const hint = document.createElement('small');
+                hint.textContent = field.hint;
+                wrapper.appendChild(hint);
+            }
+            fieldsHost.appendChild(wrapper);
+            controls.push(control);
+        });
+        let settled = false;
+        const finish = value => {
+            if (settled) return;
+            settled = true;
+            if (dialog.open) dialog.close();
+            resolve(value);
+            if (previousFocus && previousFocus.isConnected) previousFocus.focus({preventScroll:true});
+        };
+        const submit = () => {
+            if (config.variant === 'prompt') {
+                const invalid = controls.find(control => !control.checkValidity() || (control.required && !control.value.trim()));
+                if (invalid) { invalid.reportValidity(); invalid.focus(); return; }
+                const values = Object.fromEntries(controls.map(control => [control.name, control.value]));
+                finish(controls.length === 1 ? controls[0].value : values);
+                return;
+            }
+            finish(true);
+        };
+        confirmButton.onclick = submit;
+        cancelButton.onclick = () => finish(null);
+        dialog.querySelector('.order-dialog__close').onclick = () => finish(null);
+        dialog.oncancel = event => { event.preventDefault(); finish(null); };
+        dialog.onclick = event => { if (event.target === dialog) finish(null); };
+        controls.forEach(control => control.onkeydown = event => {
+            if (event.key === 'Enter' && control.tagName !== 'TEXTAREA') { event.preventDefault(); submit(); }
+        });
+        if (!dialog.open) dialog.showModal();
+        requestAnimationFrame(() => (controls[0] || confirmButton).focus());
+    });
+};
+
+// Show concise success feedback without blocking the order workflow.
+window.showOrderToast = function(message) {
+    let toast = document.getElementById('orderActionToast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'orderActionToast';
+        toast.className = 'order-action-toast';
+        toast.setAttribute('role', 'status');
+        toast.setAttribute('aria-live', 'polite');
+        document.body.appendChild(toast);
+    }
+    toast.innerHTML = '<i class="fa-solid fa-circle-check" aria-hidden="true"></i><span></span>';
+    toast.querySelector('span').textContent = message;
+    toast.classList.add('is-visible');
+    clearTimeout(window.orderActionToastTimer);
+    window.orderActionToastTimer = setTimeout(() => toast.classList.remove('is-visible'), 3600);
+};
+
 // Submit only versioned RPC actions; audit and notifications belong to the server.
 window.runOrderAction = async function(id, action, suppliedData) {
     if (busyOrders.has(id)) return false;
     const order = allOrders.find(o => o.id === id);
-    if (!order || !currentUser?.id) { alert('Vui lòng đăng nhập và tải lại đơn.'); return false; }
+    if (!order || !currentUser?.id) {
+        await window.showOrderDialog({title:'Chưa sẵn sàng thao tác', message:'Vui lòng đăng nhập và tải lại danh sách đơn.', tone:'warning'});
+        return false;
+    }
     let data = suppliedData || {};
     if (!suppliedData) {
-        if (action === 'quote') {
-            const price = prompt('Giá báo cho khách (VND):'); if (price === null) return false;
-            const minimum = prompt('Số tiền phải thu trước khi giao đơn (VND):'); if (minimum === null) return false;
-            data = {price: Number(price), required_amount: Number(minimum)};
-            if (!Number.isSafeInteger(data.price) || !Number.isSafeInteger(data.required_amount) || data.price <= 0 || data.required_amount <= 0 || data.required_amount > data.price) return alert('Số tiền không hợp lệ.');
-        }
-        if (action === 'payment') {
-            const amount = prompt('Số tiền vừa nhận thêm (VND):'); if (amount === null) return false;
-            data.amount = Number(amount);
-            if (!Number.isSafeInteger(data.amount) || data.amount <= 0) return alert('Số tiền không hợp lệ.');
-        }
-        if (action === 'progress') {
-            const value = prompt('Tiến độ thực tế từ 0 đến 99 (%):'); if (value === null) return false;
-            data.progress = Number(value);
-            if (!Number.isInteger(data.progress) || data.progress < 0 || data.progress > 99) return alert('Tiến độ không hợp lệ.');
-        }
-        if (['quote','payment','progress','submit','rework','pause','resume','cancel'].includes(action)) {
-            const reason = prompt('Ghi chú / lý do (thanh toán cần mã đối soát):');
-            if (!reason?.trim()) return false;
+        const orderCode = order.order_code || 'đơn hàng';
+        const workflowPrompts = {
+            quote: {
+                title:'Báo giá đơn hàng', message:'Nhập tổng giá, số tiền cần thanh toán trước khi giao và ghi chú cho khách.', confirmText:'Gửi báo giá',
+                fields:[
+                    {name:'price',label:'Tổng giá (VND)',type:'number',min:1,step:1,required:true,placeholder:'Ví dụ: 300000'},
+                    {name:'required_amount',label:'Cần thu trước khi giao (VND)',type:'number',min:1,step:1,required:true,placeholder:'Ví dụ: 250000'},
+                    {name:'reason',label:'Ghi chú báo giá',type:'textarea',required:true,placeholder:'Giải thích gói dịch vụ hoặc thời hạn'}
+                ]
+            },
+            payment: {
+                title:'Xác nhận thanh toán', message:'Ghi nhận đúng số tiền đã nhận và mã tham chiếu giao dịch.', confirmText:'Ghi nhận',
+                fields:[
+                    {name:'amount',label:'Số tiền đã nhận (VND)',type:'number',min:1,step:1,required:true},
+                    {name:'reason',label:'Mã giao dịch / ghi chú',type:'textarea',required:true,placeholder:'Nhập mã tham chiếu trên hóa đơn'}
+                ]
+            },
+            progress: {
+                title:'Cập nhật tiến độ', message:'Tiến độ hiển thị cho khách cần phản ánh công việc thực tế.', confirmText:'Lưu tiến độ',
+                fields:[
+                    {name:'progress',label:'Tiến độ (0–99%)',type:'number',min:0,max:99,step:1,required:true,placeholder:'Ví dụ: 45'},
+                    {name:'reason',label:'Ghi chú tiến độ',type:'textarea',required:true,placeholder:'Mô tả phần việc đã hoàn thành'}
+                ]
+            }
+        };
+        if (workflowPrompts[action]) {
+            const values = await window.showOrderDialog({...workflowPrompts[action], variant:'prompt', tone:action === 'payment' ? 'success' : 'info'});
+            if (!values) return false;
+            if (action === 'quote') {
+                data = {price:Number(values.price),required_amount:Number(values.required_amount),reason:values.reason.trim()};
+                if (!Number.isSafeInteger(data.price) || !Number.isSafeInteger(data.required_amount) || data.price <= 0 || data.required_amount <= 0 || data.required_amount > data.price) {
+                    await window.showOrderDialog({title:'Thông tin chưa hợp lệ',message:'Số tiền cần thu phải lớn hơn 0 và không được vượt quá tổng giá.',tone:'warning'});
+                    return false;
+                }
+            } else if (action === 'payment') {
+                data = {amount:Number(values.amount),reason:values.reason.trim()};
+                if (!Number.isSafeInteger(data.amount) || data.amount <= 0) {
+                    await window.showOrderDialog({title:'Số tiền chưa hợp lệ',message:'Nhập số tiền nguyên dương đã thực nhận.',tone:'warning'});
+                    return false;
+                }
+            } else {
+                data = {progress:Number(values.progress),reason:values.reason.trim()};
+                if (!Number.isInteger(data.progress) || data.progress < 0 || data.progress > 99) {
+                    await window.showOrderDialog({title:'Tiến độ chưa hợp lệ',message:'Nhập số nguyên từ 0 đến 99%.',tone:'warning'});
+                    return false;
+                }
+            }
+        } else if (['submit','rework','pause','resume','cancel'].includes(action)) {
+            const labels = {submit:'Ghi chú kết quả nghiệm thu',rework:'Lý do yêu cầu làm lại',pause:'Lý do tạm dừng',resume:'Ghi chú tiếp tục đơn',cancel:'Lý do hủy đơn'};
+            const reason = await window.showOrderDialog({
+                variant:'prompt', title:labels[action], message:'Đơn ' + orderCode + ' sẽ được cập nhật và lưu lại lịch sử.',
+                confirmText:'Xác nhận', tone:action === 'cancel' ? 'danger' : 'info',
+                fields:[{name:'reason',label:labels[action],type:'textarea',required:true,placeholder:'Nhập nội dung ngắn gọn, rõ ràng'}]
+            });
+            if (!reason) return false;
             data.reason = reason.trim();
         }
-        if (action === 'approve_quote' && !confirm('Chấp thuận giá ' + Number(order.price).toLocaleString('vi-VN') + ' đ?')) return false;
-        if (action === 'complete' && !confirm('Xác nhận đã kiểm tra và nghiệm thu kết quả?')) return false;
-        if (action === 'claim' && !confirm('Nhận thực hiện đơn này?')) return false;
+        const confirmations = {
+            approve_quote:{title:'Chấp thuận báo giá',message:'Xác nhận giá ' + Number(order.price).toLocaleString('vi-VN') + ' đ cho ' + orderCode + '?',confirmText:'Chấp thuận'},
+            complete:{title:'Nghiệm thu đơn hàng',message:'Xác nhận bạn đã kiểm tra và đồng ý với kết quả của ' + orderCode + '?',confirmText:'Nghiệm thu',tone:'success'},
+            claim:{title:'Nhận thực hiện đơn',message:'Bạn xác nhận nhận và chịu trách nhiệm thực hiện ' + orderCode + '?',confirmText:'Nhận đơn',tone:'success'}
+        };
+        if (confirmations[action]) {
+            const accepted = await window.showOrderDialog({...confirmations[action],variant:'confirm'});
+            if (!accepted) return false;
+        }
     }
     busyOrders.add(id);
     const actor = currentUser.id;
@@ -133,13 +304,16 @@ window.runOrderAction = async function(id, action, suppliedData) {
         if (currentUser?.id !== actor) return false;
         if (currentUser?.id) allOrders = allOrders.map(o => o.id === id ? updated : o);
         await window.fetchOrders();
+        const messages = {claim:'Đã nhận đơn. Đơn được chuyển sang Đang cày.',cancel:'Đơn đã được hủy và chuyển khỏi danh sách đơn đang hoạt động.',complete:'Đã nghiệm thu đơn hàng.',submit:'Đã gửi kết quả để khách nghiệm thu.',progress:'Đã cập nhật tiến độ đơn hàng.',quote:'Đã gửi báo giá.',payment:'Đã ghi nhận thanh toán.',pause:'Đã tạm dừng đơn.',resume:'Đã tiếp tục đơn.',rework:'Đã gửi yêu cầu làm lại.'};
+        window.showOrderToast(messages[action] || 'Đã cập nhật đơn hàng.');
         return true;
     } catch (error) {
-        alert(error.message);
-        if (error.message.includes('Đơn đã thay đổi')) await window.fetchOrders();
+        await window.showOrderDialog({title:'Không thể cập nhật đơn',message:error.message || 'Hệ thống chưa thể lưu thay đổi. Vui lòng thử lại.',tone:'danger'});
+        if (error.message?.includes('Đơn đã thay đổi')) await window.fetchOrders();
         return false;
     } finally { busyOrders.delete(id); }
 };
+
 
 // Encode untrusted text before inserting into HTML templates.
 function escapeHtml(value) {
@@ -267,7 +441,12 @@ window.applyFilters = function() {
     currentSort = sortEl ? sortEl.value : 'newest';
     
     let filtered = allOrders.filter(order => {
-        if (currentTab !== 'all' && order.status !== currentTab) return false;
+        if (currentTab === 'cancelled') {
+            if (!order.cancelled) return false;
+        } else {
+            if (order.cancelled) return false;
+            if (currentTab !== 'all' && order.status !== currentTab) return false;
+        }
         if (currentService !== 'all' && order.content && !order.content.toLowerCase().includes(currentService.toLowerCase())) return false;
         
         if (currentSearch) {
@@ -315,8 +494,8 @@ window.renderOrders = function(ordersToRender, containerId) {
         container.innerHTML = `
         <div style="grid-column: 1/-1; text-align: center; padding: 80px 20px; background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px dashed rgba(255,255,255,0.1);">
             <img src="/assets/images/empty-paimon.png" alt="Empty" style="width: 120px; opacity: 0.7; margin-bottom: 20px; filter: grayscale(50%);" onerror="this.style.display='none'">
-            <h3 style="color: var(--text-light); font-size: 1.5rem; margin-bottom: 10px; font-weight: 700;">Chưa có đơn cày phù hợp</h3>
-            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px;">Không tìm thấy đơn hàng nào khớp với yêu cầu hiện tại của bạn. Hãy thử thay đổi bộ lọc hoặc tạo một yêu cầu mới.</p>
+            <h3 style="color: var(--text-light); font-size: 1.5rem; margin-bottom: 10px; font-weight: 700;">${currentTab === 'cancelled' ? 'Chưa có đơn đã hủy' : 'Chưa có đơn cày phù hợp'}</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px;">${currentTab === 'cancelled' ? 'Đơn đã hủy sẽ được lưu ở đây để tiện tra cứu lịch sử.' : 'Không tìm thấy đơn nào khớp bộ lọc. Hãy thử thay đổi điều kiện tìm kiếm.'}</p>
             <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
                 <button class="btn btn-primary" onclick="window.openCreateOrderModal()"><i class="fa-solid fa-plus"></i> Tạo đơn Genshin</button>
                 <button class="btn" style="background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1);" onclick="document.getElementById('searchInput').value=''; document.getElementById('filterService').value='all'; window.filterByTab('all');"><i class="fa-solid fa-filter-circle-xmark"></i> Xóa bộ lọc</button>
@@ -567,12 +746,15 @@ window.renderOrders = function(ordersToRender, containerId) {
 
 window.updateDashboardStats = function(orders) {
     if(!document.getElementById('totalOrdersBadge')) return;
-    let counts = { all: orders.length, cho_xu_ly: 0, dang_cay: 0, cho_nghiem_thu: 0, hoan_thanh: 0, tam_dung: 0 };
-    orders.forEach(o => { if (counts[o.status] !== undefined) counts[o.status]++; });
+    let counts = { all: orders.length, cancelled: 0, cho_xu_ly: 0, dang_cay: 0, cho_nghiem_thu: 0, hoan_thanh: 0, tam_dung: 0 };
+    orders.forEach(o => {
+        if (o.cancelled) counts.cancelled++;
+        else if (counts[o.status] !== undefined) counts[o.status]++;
+    });
     
     document.getElementById('totalOrdersBadge').innerText = `${orders.length} đơn`;
     
-    ['all', 'cho_xu_ly', 'dang_cay', 'cho_nghiem_thu', 'hoan_thanh'].forEach(status => {
+    ['all', 'cho_xu_ly', 'dang_cay', 'cho_nghiem_thu', 'hoan_thanh', 'cancelled'].forEach(status => {
         const el = document.getElementById('count-' + status);
         if (el) window.animateCountUp(el, counts[status] || 0, 800);
     });

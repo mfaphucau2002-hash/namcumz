@@ -458,9 +458,11 @@
 
                 data.forEach(order => {
                     adminOrdersMap.set(order.id, order);
-                    if(order.status === 'cho_xu_ly') pending++;
-                    if(order.status === 'dang_cay') playing++;
-                    if(order.status === 'hoan_thanh') done++;
+                    if (!order.cancelled) {
+                        if(order.status === 'cho_xu_ly') pending++;
+                        if(order.status === 'dang_cay') playing++;
+                        if(order.status === 'hoan_thanh') done++;
+                    }
 
                     let statusText = order.status;
                     let color = '#fff';
@@ -511,25 +513,42 @@
             window.deleteOrder = async (id) => {
                 if (['staging', 'production'].includes(window.NAMCUMZ_CONFIG?.environment)) {
                     const order = adminOrdersMap.get(id);
-                    if (!order) { alert('Không tìm thấy thông tin đơn hàng.'); return; }
-                    if (order.cancelled) { alert('Đơn hàng này đã được hủy trước đó.'); return; }
-                    if (!confirm('Đơn hàng không bị xóa vĩnh viễn nhằm đảm bảo lịch sử đối soát và tài chính. Bạn có muốn HỦY đơn này không?')) return;
-                    const reason = prompt('Nhập lý do hủy đơn (bắt buộc cho kiểm toán):', 'Admin hủy đơn');
-                    if (!reason || !reason.trim()) return;
+                    if (!order) {
+                        await window.showOrderDialog({title:'Không tìm thấy đơn',message:'Tải lại danh sách đơn rồi thử lại.',tone:'warning'});
+                        return;
+                    }
+                    if (order.cancelled) {
+                        await window.showOrderDialog({title:'Đơn đã được hủy',message:'Đơn này đã nằm trong lịch sử hủy và không còn thao tác nghiệp vụ.',tone:'warning'});
+                        return;
+                    }
+                    const confirmed = await window.showOrderDialog({
+                        variant:'confirm', title:'Hủy đơn hàng',
+                        message:'Đơn sẽ được giữ lại trong lịch sử đối soát nhưng rời khỏi danh sách đang hoạt động.',
+                        confirmText:'Tiếp tục hủy', tone:'danger'
+                    });
+                    if (!confirmed) return;
+                    const reason = await window.showOrderDialog({
+                        variant:'prompt', title:'Lý do hủy đơn', message:'Nội dung này sẽ được lưu trong nhật ký đơn hàng.',
+                        confirmText:'Xác nhận hủy', tone:'danger',
+                        fields:[{name:'reason',label:'Lý do',type:'textarea',required:true,value:'Admin hủy đơn',placeholder:'Nhập lý do rõ ràng'}]
+                    });
+                    if (!reason) return;
                     const actorId = window.currentUser?.id || localStorage.getItem('userId');
                     try {
                         await window.OrderAPI.action(supabaseClient, actorId, order, 'cancel', { reason: reason.trim() });
-                        alert('Đã hủy đơn hàng thành công!');
-                        loadAdminTable();
+                        await loadAdminTable();
+                        window.showOrderToast('Đã hủy đơn. Đơn được chuyển khỏi danh sách hoạt động.');
                     } catch (err) {
-                        alert('Lỗi hủy đơn: ' + (err.message || err));
+                        await window.showOrderDialog({title:'Không thể hủy đơn',message:err.message || 'Hệ thống chưa thể lưu thay đổi.',tone:'danger'});
+                        await loadAdminTable();
                     }
                     return;
                 }
-                if(confirm('Bạn có chắc chắn muốn xóa đơn này không?')) {
-                    const { error } = await supabaseClient.from('orders').delete().eq('id', id);
-                    if(!error) loadAdminTable();
-                }
+                const confirmed = await window.showOrderDialog({variant:'confirm',title:'Xóa đơn hàng',message:'Bạn có chắc chắn muốn xóa đơn này không?',confirmText:'Xóa',tone:'danger'});
+                if (!confirmed) return;
+                const { error } = await supabaseClient.from('orders').delete().eq('id', id);
+                if (!error) await loadAdminTable();
+                else await window.showOrderDialog({title:'Không thể xóa đơn',message:error.message,tone:'danger'});
             };
 
             // Fetch and render Staff Table

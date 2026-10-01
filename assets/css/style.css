@@ -961,3 +961,123 @@ body { font-weight: 400; background-color: var(--bg-dark); }
 }
 
 
+
+
+/* ORDER ACTION DIALOGS */
+.order-action-dialog {
+    width: min(560px, calc(100% - 32px));
+    max-width: 560px;
+    max-height: calc(100dvh - 32px);
+    padding: 0;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    border-radius: 24px;
+    overflow: visible;
+    color: var(--text-light);
+    background: transparent;
+    box-shadow: 0 32px 100px rgba(0, 0, 0, 0.58);
+    font-family: "Baloo 2", "Nunito", "Be Vietnam Pro", var(--font-main), sans-serif;
+}
+.order-action-dialog::backdrop {
+    background: rgba(3, 6, 12, 0.76);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    animation: orderDialogFade 180ms ease both;
+}
+.order-dialog__panel {
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+    position: relative;
+    padding: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: inherit;
+    background: radial-gradient(circle at 100% 0, rgba(152, 104, 248, 0.16), transparent 38%), linear-gradient(145deg, #171b25, #0e1118 78%);
+    animation: orderDialogRise 240ms cubic-bezier(.2,.8,.2,1) both;
+}
+.order-dialog__close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 12px;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+    transition: transform 180ms ease, color 180ms ease, background 180ms ease;
+}
+.order-dialog__close:hover { color: var(--text-light); background: rgba(255, 255, 255, 0.1); transform: rotate(5deg); }
+.order-dialog__icon {
+    display: grid;
+    width: 52px;
+    height: 52px;
+    margin-bottom: 18px;
+    place-items: center;
+    border: 1px solid rgba(152, 104, 248, 0.32);
+    border-radius: 17px;
+    color: var(--primary-light);
+    background: rgba(152, 104, 248, 0.13);
+    font-size: 20px;
+}
+.order-action-dialog.is-danger .order-dialog__icon { color: var(--status-tam-dung); border-color: rgba(255, 93, 108, 0.28); background: rgba(255, 93, 108, 0.1); }
+.order-action-dialog.is-success .order-dialog__icon { color: var(--secondary); border-color: rgba(101, 213, 195, 0.28); background: rgba(101, 213, 195, 0.1); }
+.order-dialog__eyebrow { color: var(--text-muted); font-size: 11px; font-weight: 800; letter-spacing: .14em; }
+.order-dialog__panel h2 { margin: 7px 42px 8px 0; color: var(--text-light); font-size: clamp(21px, 4vw, 26px); line-height: 1.25; }
+.order-dialog__message { margin: 0 0 20px; color: #aab5c7; font-size: 14px; line-height: 1.6; }
+.order-dialog__fields { display: grid; gap: 14px; margin-top: 18px; }
+.order-dialog__field { display: grid; gap: 7px; color: #d9e0ec; font-size: 13px; font-weight: 700; }
+.order-dialog__field small { color: var(--text-muted); font-size: 12px; font-weight: 500; }
+.order-dialog__input {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: 13px;
+    outline: none;
+    color: var(--text-light);
+    background: rgba(3, 6, 12, 0.62);
+    font: 500 15px/1.5 var(--font-main), sans-serif;
+    transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+.order-dialog__input:focus { border-color: var(--primary-light); background: rgba(3, 6, 12, 0.82); box-shadow: 0 0 0 4px rgba(152, 104, 248, 0.15); }
+textarea.order-dialog__input { min-height: 96px; resize: vertical; }
+.order-dialog__actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
+.order-dialog__button { min-height: 46px; padding: 0 18px; border: 1px solid transparent; border-radius: 13px; font: 700 14px var(--font-main), sans-serif; cursor: pointer; transition: transform 180ms ease, filter 180ms ease, background 180ms ease; }
+.order-dialog__button:hover { transform: translateY(-1px); filter: brightness(1.08); }
+.order-dialog__button:focus-visible, .order-dialog__close:focus-visible { outline: 3px solid rgba(176, 138, 255, 0.6); outline-offset: 2px; }
+.order-dialog__button--cancel { border-color: rgba(148, 163, 184, 0.2); color: #d5dbe7; background: rgba(255, 255, 255, 0.045); }
+.order-dialog__button--confirm { color: #10131a; background: linear-gradient(135deg, #b08aff, #8b5cf6); box-shadow: 0 8px 24px rgba(139, 92, 246, 0.22); }
+.order-dialog__button--confirm.order-dialog__button--danger { color: #fff; background: linear-gradient(135deg, #fb7185, #e11d48); box-shadow: 0 8px 24px rgba(225, 29, 72, 0.2); }
+.order-action-toast {
+    position: fixed;
+    z-index: 4000;
+    right: 24px;
+    bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    max-width: min(420px, calc(100vw - 32px));
+    padding: 14px 18px;
+    border: 1px solid rgba(101, 213, 195, 0.24);
+    border-radius: 16px;
+    color: var(--text-light);
+    background: rgba(17, 24, 32, 0.96);
+    box-shadow: 0 16px 46px rgba(0, 0, 0, 0.42);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(12px);
+    transition: opacity 220ms ease, transform 220ms ease;
+}
+.order-action-toast i { color: var(--secondary); font-size: 18px; }
+.order-action-toast.is-visible { opacity: 1; transform: translateY(0); }
+@keyframes orderDialogFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes orderDialogRise { from { opacity: 0; transform: translateY(10px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@media (max-width: 560px) {
+    .order-dialog__panel { padding: 25px 20px 20px; }
+    .order-dialog__actions { flex-direction: column-reverse; }
+    .order-dialog__button { width: 100%; }
+    .order-action-toast { right: 16px; bottom: 16px; left: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .order-action-dialog::backdrop, .order-dialog__panel, .order-action-toast { animation: none; transition: none; }
+}

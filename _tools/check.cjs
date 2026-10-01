@@ -130,6 +130,26 @@ check('profile review and claim inputs are encoded and server-owned',()=>{
  const profile=fs.readFileSync(path.join(root,'profile.html'),'utf8');
  assert.ok(profile.includes('${esc(order.review_comment || \'\')}'));
  assert.ok(!profile.includes('p_user_id: currentUserId'));
-});console.log(`${checks} checks passed; browser/staging/DB permissions are NOT covered.`);
+});check('cancelled orders move to a separate tab and leave active counts',()=>{
+ const dashboard=fs.readFileSync(path.join(root,'dashboard.html'),'utf8');
+ const admin=fs.readFileSync(path.join(root,'admin.html'),'utf8');
+ assert.ok(source.includes("if (currentTab === 'cancelled')"));
+ assert.ok(source.includes('if (order.cancelled) return false;'));
+ assert.ok(source.includes('counts.cancelled++'));
+ assert.ok(dashboard.includes("window.filterByTab('cancelled')"));
+ assert.ok(admin.includes('if (!order.cancelled) {'));
+});
+check('order workflow and cancellation use the custom dialog',()=>{
+ const actionStart=source.indexOf('window.runOrderAction = async function');
+ const actionEnd=source.indexOf('// Encode untrusted text before inserting into HTML templates.',actionStart);
+ const action=source.slice(actionStart,actionEnd);
+ const admin=fs.readFileSync(path.join(root,'admin.html'),'utf8');
+ assert.ok(action.includes('window.showOrderDialog'));
+ assert.ok(!/\b(prompt|confirm|alert)\s*\(/.test(action));
+ assert.ok(action.includes("title:'Cập nhật tiến độ'"));
+ assert.ok(admin.includes("variant:'prompt', title:'Lý do hủy đơn'"));
+ assert.ok(admin.includes('await loadAdminTable();'));
+});
+console.log(`${checks} checks passed; browser/staging/DB permissions are NOT covered.`);
 
 
