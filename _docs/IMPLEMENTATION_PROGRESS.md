@@ -347,3 +347,15 @@ Theo yêu cầu của chủ shop ("loại bỏ phần nạp uid đi vì phần n
 - Mã nguồn: commit `eee5ec8` (`fix: clarify order workflow and modernize dialogs`) đã push `origin/main`. Vercel deployment cho commit này báo **Ready**. Đã mở domain `https://namcumz.io.vn/dashboard` và xác nhận HTML production có tab `Đã hủy`; trang chưa đăng nhập hiện 0 đơn nên không thể đối chiếu bản ghi tài khoản.
 - Kiểm tra tự động: `_tools/check.cjs` 41/41; `order-api.test.mjs` 7/7; `database.test.mjs` 13/13; build 21 files; `node --check assets/js/app.js` và `git diff --check` PASS.
 - Giới hạn nghiệm thu: chưa chạy claim/cancel/complete trên đơn thật hay test order production. Vì vậy đã xác nhận bản production mới được phục vụ, nhưng chưa tuyên bố thao tác nghiệp vụ đã E2E PASS. Cần dùng một test order phù hợp để xác nhận claim chuyển sang **Đang cày**, hủy chuyển khỏi tab hoạt động sang **Đã hủy**, và progress cập nhật sau tải lại.
+## 02/10/2026 — Đối chiếu trạng thái kế hoạch sau các bản vá
+
+- Production hiện chạy bản sửa đơn hủy/dialog (`eee5ec8`) và chống browser giữ search (`c251ed2`); Vercel deployment cho `c251ed2` Ready. Đã mở dashboard production, xác nhận ô tìm kiếm trống khi vào/quay lại, bấm vào thì có thể nhập; không sửa dữ liệu đơn.
+- G0: full database backup/restore được chủ shop miễn vì không muốn nâng gói; **waived / not done**, không phải PASS.
+- G1: chủ shop báo đã chạy migration production 000/001/002; ảnh đã xác nhận metadata verify 001/002 PASS sau khi điều chỉnh verifier. Kiểm tra runtime RLS/API và negative access vẫn không làm theo lựa chọn miễn test.
+- G2: frontend đã deploy; kiểm tra offline hiện 41/41 và OrderAPI 7/7. Luồng đơn trực tiếp trên test order không E2E.
+- G3: role/concurrency/order workflow staging được miễn; role booster/admin staging không có sẵn. G4: credential encryption metadata verify PASS; top-up Auth/API/browser và xác nhận giao dịch thật chưa E2E. G5: quyền admin/Storage/support/audit chưa E2E. Các mục này **waived / not verified**, không PASS.
+- G6: ma trận thiết bị/viewport được hoãn theo ưu tiên chủ shop.
+- G7: đã có baseline HTTP sơ bộ production và staging ghi ở các mục trên; chưa có Core Web Vitals (LCP/CLS/INP) hay API p95 chuẩn hóa. Chủ shop yêu cầu ưu tiên đo hiệu năng; phần đo hiện có chỉ là request + tải HTML, nên đây là phần duy nhất còn đáng làm nếu muốn đo sâu hơn.
+- G8: bản frontend đã phát hành; chưa có nghiệm thu workflow end-to-end bằng test order và chưa diễn tập DB restore. Trạng thái phù hợp: **đã phát hành, nghiệm thu một phần; các cổng backup và staging workflow được miễn/chưa xác minh**.
+
+**Việc còn lại theo quyết định hiện tại:** không còn thao tác bắt buộc cho release; G0/G3–G5 và E2E G8 đang waived/not verified. Chỉ còn đo hiệu năng sâu hơn (Web Vitals + API p50/p95) nếu muốn hoàn thành yêu cầu G7 theo nghĩa đầy đủ. Không thao tác thử trên đơn khách thật.

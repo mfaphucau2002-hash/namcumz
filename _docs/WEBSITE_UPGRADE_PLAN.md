@@ -367,3 +367,18 @@ Trạng thái này supersede bảng snapshot 01/10 ở trên:
 Đã triển khai và deploy commit `eee5ec8`: đơn có `cancelled=true` được gom vào tab **Đã hủy**, không còn bị tính/lọc như đơn chờ xử lý; dialog nhập/xác nhận/lỗi thay prompt trình duyệt, thành công có toast và danh sách admin tự tải lại. Root cause là status workflow cũ được giữ để bảo toàn lịch sử, còn giao diện không xét cờ cancelled.
 
 Vercel báo Ready; domain production mở trang dashboard và có tab **Đã hủy**. Automated checks: 41 + 7 + 13 PASS; build 21 files. Chưa E2E thao tác claim/hủy/hoàn thành bằng test order; không đổi trạng thái đơn khách thật. Bước nghiệm thu kế tiếp: thao tác bằng test order staging hoặc order do chủ shop chỉ định; kiểm tra tải lại dữ liệu và tab tương ứng. Các trạng thái G0–G8 khác vẫn theo bảng trên, G0 backup/restore đã được người dùng bỏ qua và chưa đạt.
+## Trạng thái kế hoạch đã đối chiếu — 02/10/2026
+
+| Cổng | Tình trạng mới nhất |
+|---|---|
+| G0 | Full DB backup/restore được chủ shop miễn do không nâng gói; chưa làm, không tính PASS. |
+| G1 | Migration production 000/001/002 được chủ shop báo đã chạy; verifier metadata 001/002 PASS theo ảnh. Runtime API/RLS tests waived/not verified. |
+| G2 | Frontend production deployed. Offline checks 41/41, OrderAPI 7/7; chưa E2E workflow bằng test order. |
+| G3 | Role matrix/concurrency/order E2E staging waived/not verified. |
+| G4 | Credential encryption metadata verified. Top-up Auth/API/browser/giao dịch chưa E2E, waived/not verified. |
+| G5 | Admin/Storage/support/audit E2E chưa làm, waived/not verified. |
+| G6 | Responsive/device matrix hoãn theo ưu tiên chủ shop. |
+| G7 | Đã có HTTP baselines sơ bộ; Core Web Vitals và API p50/p95 chuẩn hóa còn thiếu nếu muốn đo sâu. |
+| G8 | Đã phát hành, nghiệm thu một phần; workflow test và DB restore drill chưa làm/đã miễn. |
+
+Bản production mới nhất cho search/dialog/orders đã được Vercel deploy Ready (`c251ed2` là search guard; `eee5ec8` là order workflow UI). Không có test write lên đơn khách. **Không còn bước bắt buộc nào theo các lựa chọn miễn hiện tại**; phần tùy chọn còn lại là đo G7 sâu hơn bằng Web Vitals/API latency. Các mục waived không được xem là đạt.
