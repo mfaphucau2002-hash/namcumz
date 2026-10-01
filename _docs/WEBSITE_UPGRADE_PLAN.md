@@ -339,3 +339,26 @@ Mỗi ID theo trạng thái Chưa bắt đầu → Đang làm → Chờ kiểm t
 | G8 — Nghiệm thu & Phát hành | **Chưa sẵn sàng; lỗi production đã xác định** | Production thiếu `orders.version`, `public.app_contract_version()` và migration ledger; Free Plan không có project backups | Chặn migration/deploy đến khi backup/restore và staging E2E đạt; chi tiết ở `IMPLEMENTATION_PROGRESS.md` |
 
 **Tổng kết (01/10/2026)**: Có nhiều phần code và migration đã được chuẩn bị, cùng ghi nhận lịch sử về staging/release. Chưa đủ bằng chứng để tuyên bố toàn bộ G0–G8 đã nghiệm thu hoặc production hiện đang chạy đúng cấu hình. Theo dõi trạng thái mới nhất và các đầu việc kế tiếp trong `_docs/IMPLEMENTATION_PROGRESS.md`.
+
+## Cập nhật trạng thái 02/10/2026 — Production deployment
+
+Trạng thái này supersede bảng snapshot 01/10 ở trên:
+
+| Cổng | Trạng thái hiện tại | Bằng chứng / phần còn lại |
+|---|---|---|
+| G0 | Backup/restore chưa làm; người dùng chủ động bỏ qua | Project production Free không có project backups. Chưa có full dump/restore drill; rủi ro này không được ghi là đã đạt. |
+| G1 | Migration production đã được báo chạy; metadata verifier 001/002 PASS | Ảnh SQL Editor xác nhận PASS. API/auth/role/Storage test trực tiếp vẫn chưa làm. |
+| G2 | Frontend đã deploy | Commit `6f74184`; Vercel Production `Ready`, `namcumz.io.vn` trả 200. Hủy/hoàn thành chưa được E2E với đơn test. |
+| G3 | Chờ nghiệm thu role trên staging | Staging chỉ có customer; thiếu booster/admin để thử nhận đơn, concurrency và quyền. |
+| G4 | Mã hóa credential đã verify; giao dịch thật chưa thử | Staging SQL smoke/verify và production verifier có PASS; chưa chạy Auth/API/browser top-up hoặc đối chiếu giá shop. |
+| G5 | Chờ nghiệm thu admin/support | Chưa kiểm tra API, Storage, phân quyền và audit log bằng tài khoản test. |
+| G6 | Tạm ổn theo ưu tiên người dùng | Ma trận thiết bị/viewport được hoãn. |
+| G7 | Đã đo HTTP sơ bộ sau deploy | 7 GET/URL, status 200: `/` 83,619 B, median 69.7 ms; `/napgame.html` 9,978 B, median 148.5 ms; `/login.html` 67,819 B, median 153.9 ms. Mẫu gồm mạng + tải body và có outlier lần lượt 1.57s, 8.04s, 398ms; chưa phải Web Vitals hoặc API p95. |
+| G8 | Đã deploy, chưa nghiệm thu luồng đơn/rollback | Production page mở được; chưa chạy hủy/hoàn thành trên test order, chưa chứng minh rollback DB. Không thử bằng đơn khách thật. |
+
+### Việc cần làm để đóng các mục còn lại
+
+1. Để xác nhận lỗi hủy/hoàn thành đã hết: tạo/chỉ định một test order trên staging và tài khoản test có quyền booster/admin; staging hiện không có các role này. Không dùng đơn khách thật.
+2. Nếu muốn đóng G0, cần một bản sao DB đầy đủ và restore vào project cô lập. Người dùng hiện đã chọn bỏ qua bước backup/restore; vì vậy G0 vẫn chưa đạt.
+3. Nếu cần nghiệm thu G7 đầy đủ, đo Web Vitals (LCP/CLS/INP) trên trình duyệt và API latency p50/p95 dưới cùng điều kiện vùng/mạng/dataset.
+4. G1/G3/G4/G5 cần kiểm tra Auth, quyền âm/dương, thao tác nghiệp vụ, Storage và log trên staging; chưa có bằng chứng thì giữ trạng thái chờ.

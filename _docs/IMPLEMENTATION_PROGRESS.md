@@ -328,3 +328,15 @@ Theo yêu cầu của chủ shop ("loại bỏ phần nạp uid đi vì phần n
 - Đã sửa `_db/production_001_verify.sql` lần hai: bỏ `packages` khỏi nhóm bảng vận hành cấm anon đọc; thêm kiểm tra riêng rằng cả anon và authenticated có SELECT trên `packages`. Không sửa grant hay dữ liệu production.
 - `git diff --check -- _db/production_001_verify.sql` PASS. Migration 002 tiếp tục được xác nhận PASS theo ảnh trước. Chưa có kết quả PASS cuối cho migration 001, chưa deploy.
 - **Bước tiếp theo:** thay SQL trong Supabase SQL Editor `namcumz` / `main PRODUCTION` bằng toàn bộ verifier cục bộ mới nhất và Run lại. Không chạy migration lần nữa. Nếu có lỗi khác, gửi nguyên văn; chỉ sau dòng PASS mới chuyển sang deploy frontend.
+
+## 02/10/2026 — Production release và đo HTTP sau deploy
+
+- Đã rà lại GitHub/Vercel account từ browser; Vercel project `namcumz` nối repo `mfaphucau2002-hash/namcumz`.
+- Commit `6f741845c5fbc0194538469e68be837feedf74f2` (`feat: complete production release plan updates`) đã đẩy lên `main` từ `dc21f4e`.
+- Vercel ghi nhận deployment production cho commit `6f74184` là `Ready`; production homepage `https://namcumz.io.vn/` mở được và trả nội dung trang NAMCUMZ.
+- Mã nguồn kiểm tra trước commit: `node _tools/check.cjs` 39/39 PASS; build tạo 21 files; `git diff --check` PASS. Runtime production chỉ dùng anon/public Supabase key, không chứa service-role secret.
+- Theo người dùng, ba SQL production đã được chạy; ảnh xác nhận `production_001_verify.sql` và `production_002_verify.sql` PASS. Không thực hiện thao tác ghi/hủy/hoàn thành lên đơn production.
+- G7 sau deploy: 7 GET/URL, tất cả HTTP 200. `/`: 83,619 bytes, median 69.7 ms (mẫu 1572.4, 492.2, 63.5, 69.7, 329.9, 67.9, 65.7). `/napgame.html`: 9,978 bytes, median 148.5 ms (8043.4, 3761.9, 148.5, 142.7, 352.3, 130.1, 125.9). `/login.html`: 67,819 bytes, median 153.9 ms (361.6, 379.2, 142.3, 398.1, 119.1, 153.9, 119.9). Đây là network + tải HTML, không phải Web Vitals/API p95; có outlier đáng kể.
+- G0 full database backup/restore vẫn chưa làm theo lựa chọn của người dùng; không ghi là đạt. Staging chưa có booster/admin hiện hữu nên không thể E2E toàn bộ thao tác đơn/role mà không có test account phù hợp. Hủy/hoàn thành đơn khách thật chưa thử.
+
+**Bước kế tiếp:** chỉ cần test có kiểm soát hủy và hoàn thành trên staging với test order và account có role customer/booster/admin. Nếu user không muốn thêm account/role hoặc backup, các cổng này tiếp tục được ghi là chưa nghiệm thu/đã bỏ qua; không cần chạy lại SQL migration production.
