@@ -340,3 +340,10 @@ Theo yêu cầu của chủ shop ("loại bỏ phần nạp uid đi vì phần n
 - G0 full database backup/restore vẫn chưa làm theo lựa chọn của người dùng; không ghi là đạt. Staging chưa có booster/admin hiện hữu nên không thể E2E toàn bộ thao tác đơn/role mà không có test account phù hợp. Hủy/hoàn thành đơn khách thật chưa thử.
 
 **Bước kế tiếp:** chỉ cần test có kiểm soát hủy và hoàn thành trên staging với test order và account có role customer/booster/admin. Nếu user không muốn thêm account/role hoặc backup, các cổng này tiếp tục được ghi là chưa nghiệm thu/đã bỏ qua; không cần chạy lại SQL migration production.
+## 02/10/2026 — Sửa luồng hiển thị đơn hủy và hộp thoại thao tác
+
+- Nguyên nhân: backend giữ nguyên `orders.status` khi đặt cờ `cancelled=true` để lưu lịch sử; dashboard cũ chỉ lọc tab/thống kê theo `status`, nên đơn hủy vẫn nằm trong tab đang hoạt động. Các thao tác tiến độ/hủy còn dùng hộp thoại `prompt/confirm/alert` gốc của trình duyệt.
+- Đã sửa: thêm tab lưu trữ **Đã hủy**, loại đơn đã hủy khỏi tab và số đếm đang hoạt động; hộp thoại nhập liệu/xác nhận/lỗi được thay bằng dialog có style đồng nhất và toast thành công; bảng admin tự tải lại sau thao tác. Hủy đơn là trạng thái kết thúc, không còn nút thao tác nghiệp vụ trên đơn đã hủy.
+- Mã nguồn: commit `eee5ec8` (`fix: clarify order workflow and modernize dialogs`) đã push `origin/main`. Vercel deployment cho commit này báo **Ready**. Đã mở domain `https://namcumz.io.vn/dashboard` và xác nhận HTML production có tab `Đã hủy`; trang chưa đăng nhập hiện 0 đơn nên không thể đối chiếu bản ghi tài khoản.
+- Kiểm tra tự động: `_tools/check.cjs` 41/41; `order-api.test.mjs` 7/7; `database.test.mjs` 13/13; build 21 files; `node --check assets/js/app.js` và `git diff --check` PASS.
+- Giới hạn nghiệm thu: chưa chạy claim/cancel/complete trên đơn thật hay test order production. Vì vậy đã xác nhận bản production mới được phục vụ, nhưng chưa tuyên bố thao tác nghiệp vụ đã E2E PASS. Cần dùng một test order phù hợp để xác nhận claim chuyển sang **Đang cày**, hủy chuyển khỏi tab hoạt động sang **Đã hủy**, và progress cập nhật sau tải lại.

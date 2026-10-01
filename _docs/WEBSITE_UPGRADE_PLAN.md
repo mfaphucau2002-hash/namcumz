@@ -362,3 +362,8 @@ Trạng thái này supersede bảng snapshot 01/10 ở trên:
 2. Nếu muốn đóng G0, cần một bản sao DB đầy đủ và restore vào project cô lập. Người dùng hiện đã chọn bỏ qua bước backup/restore; vì vậy G0 vẫn chưa đạt.
 3. Nếu cần nghiệm thu G7 đầy đủ, đo Web Vitals (LCP/CLS/INP) trên trình duyệt và API latency p50/p95 dưới cùng điều kiện vùng/mạng/dataset.
 4. G1/G3/G4/G5 cần kiểm tra Auth, quyền âm/dương, thao tác nghiệp vụ, Storage và log trên staging; chưa có bằng chứng thì giữ trạng thái chờ.
+## Cập nhật 02/10/2026 — Sửa UI thao tác đơn
+
+Đã triển khai và deploy commit `eee5ec8`: đơn có `cancelled=true` được gom vào tab **Đã hủy**, không còn bị tính/lọc như đơn chờ xử lý; dialog nhập/xác nhận/lỗi thay prompt trình duyệt, thành công có toast và danh sách admin tự tải lại. Root cause là status workflow cũ được giữ để bảo toàn lịch sử, còn giao diện không xét cờ cancelled.
+
+Vercel báo Ready; domain production mở trang dashboard và có tab **Đã hủy**. Automated checks: 41 + 7 + 13 PASS; build 21 files. Chưa E2E thao tác claim/hủy/hoàn thành bằng test order; không đổi trạng thái đơn khách thật. Bước nghiệm thu kế tiếp: thao tác bằng test order staging hoặc order do chủ shop chỉ định; kiểm tra tải lại dữ liệu và tab tương ứng. Các trạng thái G0–G8 khác vẫn theo bảng trên, G0 backup/restore đã được người dùng bỏ qua và chưa đạt.
