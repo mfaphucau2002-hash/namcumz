@@ -37,7 +37,7 @@
                     <i class="fa-solid fa-chart-line"></i> Bảng điều khiển
                 </a>
                 <a href="/checkscam.html" class="nav-link scam"><i class="fa-solid fa-shield-virus"></i> Check Scam</a>
-                <a href="javascript:void(0)" class="nav-link" onclick="document.getElementById('ordersGrid')?.scrollIntoView({behavior:'smooth'})">
+                <a href="#ordersGrid" class="nav-link">
                     <i class="fa-solid fa-gamepad"></i> Đơn của tôi
                 </a>
                 <a href="/login" class="nav-link" id="navAccountBtn">
@@ -302,7 +302,7 @@
                     <input type="text" id="progressCaptionInput" class="form-control" placeholder="Ví dụ: Đã xong nhiệm vụ thế giới, level 90...">
                 </div>
                 <div id="progressPreview" style="margin-bottom: 15px; text-align: center; display: none;">
-                    <img id="progressPreviewImg" src="" style="max-width: 100%; max-height: 200px; border-radius: 10px; border: 1px solid var(--border-light); object-fit: contain;">
+                    <img id="progressPreviewImg" alt="Ảnh xem trước tiến độ" style="max-width: 100%; max-height: 200px; border-radius: 10px; border: 1px solid var(--border-light); object-fit: contain;">
                 </div>
                 <div class="modal-actions">
                     <button type="button" class="btn-cancel modal-close" onclick="document.getElementById('progressModal').classList.remove('active')">Hủy</button>
