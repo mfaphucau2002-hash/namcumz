@@ -372,3 +372,12 @@ Theo yêu cầu của chủ shop ("loại bỏ phần nạp uid đi vì phần n
 
 - Commit `6e5f552` đã push main; Vercel deployment `7FvEAdu2EpZ1pwSZBswnwyNjWVNN` Ready. Đã mở domain https://namcumz.io.vn/ và thấy H1/bố cục mới, không có ảnh bị lỗi.
 - Bản thiết kế frontend hoàn tất. Không cần người dùng chạy SQL hoặc thao tác thêm. Các kiểm tra giao dịch thật/backup đã miễn vẫn chưa được xác minh.
+
+## 03/10/2026 — Sửa schema đơn nạp production (lỗi `text <> integer`)
+
+- Ảnh lỗi sau khi sửa owner default cho thấy RPC nạp game đi tiếp tới trigger `namcumz_private.prepare_order`, nơi `NEW.price <> 0` không chạy được vì bảng production cũ giữ `orders.price` ở kiểu `text` (migration `CREATE TABLE IF NOT EXISTS` không đổi cột cũ). Cùng bảng còn mặc định `status = dang_cay`.
+- Đối chiếu production: 37 đơn; 35 giá gồm chữ số, 2 giá dùng dấu phân tách nghìn (`200.000`, `500,000`), không có giá trống. Không có view phụ thuộc `orders.price` trong `pg_views`/`pg_matviews` theo truy vấn đã chạy.
+- Áp dụng `_db/production_004_legacy_price_alignment.sql` trên Supabase `namcumz` / `main PRODUCTION` dưới dạng một DO statement nguyên tử: tạo bản gốc `id, original_price, original_status` trong `namcumz_private.orders_price_legacy_20261003`; chuyển `price` sang `bigint` và chuẩn hóa dấu phân tách; đặt default `price = 0`, `status = cho_xu_ly`; gửi schema reload cho PostgREST. Xác minh độc lập sau chạy: `price bigint DEFAULT 0`, `status text DEFAULT 'cho_xu_ly'::text`.
+- Chạy `_db/production_004_rollback_smoke.sql` tương đương trong SQL Editor với dữ liệu tổng hợp cho chính gói `FULL PACK GENSHIN IMPACT`: RPC tạo đơn thành công, trả `price = 3800000`, `status = cho_xu_ly`, `kind = topup`, `user_id` đúng; ciphertext có mặt và không trùng mật khẩu tổng hợp. Khối con cố ý ném exception để rollback toàn bộ đơn/log/credential/rate-limit.
+- Hậu kiểm production: số đơn 37 bằng số bản ghi backup 37; thông tin thử còn lại 0; giá và trạng thái của 37 đơn cũ đối chiếu với bản gốc sai lệch 0; role `authenticated` vẫn có quyền EXECUTE RPC. Website public vẫn tải đủ 8 gói Genshin, gồm FULL PACK, không có ảnh gói hỏng.
+- **Giới hạn:** chưa có phiên đăng nhập người mua trong in-app browser để gửi form frontend bằng phiên người dùng thật. Bài thử đã bao phủ RPC và dữ liệu production bằng giao dịch rollback; lần đặt hàng thực tiếp theo là kiểm tra cuối cùng của đường browser → PostgREST.
