@@ -501,7 +501,7 @@ async function submitDetailOrder() {
     if (btn) { btn.disabled = true; btn.setAttribute('aria-busy', 'true'); btn.textContent = 'Đang tạo đơn...'; }
     if (mobileBtn) { mobileBtn.disabled = true; mobileBtn.setAttribute('aria-busy', 'true'); mobileBtn.textContent = 'Đang xử lý...'; }
     try {
-        const client = window.supabaseClient;
+        const client = supabaseClient;
         if (!client) throw new Error('Không tìm thấy kết nối hệ thống.');
         const order = await OrderAPI.topup(client, window.currentUser.id, currentSelectedPackage.id, server, loginMethod, account, password, phone, notes);
         showCheckoutMessage('Đã tạo đơn. Đang chuyển đến trang theo dõi...', 'success');

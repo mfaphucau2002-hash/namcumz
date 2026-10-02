@@ -113,7 +113,12 @@ check('credential viewer uses encrypted RPC only',()=>{
  assert.ok(migration.includes('account_password_ciphertext'));
  assert.ok(migration.includes('DROP COLUMN account_password'));
  assert.ok(migration.includes("vault.decrypted_secrets"));
-});check('game passwords preserve intentional whitespace',()=>{
+});check('top-up checkout uses initialized shared Supabase client',()=>{
+ const napgame=fs.readFileSync(path.join(root,'assets/js/napgame.js'),'utf8');
+ assert.ok(napgame.includes('const client = supabaseClient;'));
+ assert.ok(!napgame.includes('window.supabaseClient'));
+});
+check('game passwords preserve intentional whitespace',()=>{
  const napgame=fs.readFileSync(path.join(root,'assets/js/napgame.js'),'utf8');
  const release=fs.readFileSync(path.join(root,'_db/production_001_release.sql'),'utf8');
  assert.ok(napgame.includes("const password = document.getElementById('formPassword')?.value || '';"));
