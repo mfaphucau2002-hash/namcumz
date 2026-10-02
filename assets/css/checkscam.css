@@ -1,0 +1,24 @@
+/* CHECK SCAM PAGE */
+.cs-page{--cs-line:var(--ui-border);--cs-muted:var(--ui-muted);--cs-surface:var(--ui-surface)}
+.cs-page .lp-desktop-nav [aria-current=page],.cs-page .lp-mobile-nav [aria-current=page]{color:var(--ui-text)}
+.cs-intro{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(260px,.55fr);gap:64px;align-items:end;padding-block:96px 88px}
+.cs-intro .lp-kicker,.cs-heading .lp-kicker,.cs-flow .lp-kicker,.cs-note .lp-kicker{margin-bottom:16px}
+.cs-intro h1{font-size:clamp(42px,5vw,68px);line-height:1.15;letter-spacing:-.05em;max-width:800px;margin-bottom:24px}
+.cs-lead{font-size:16px;line-height:1.8;color:var(--cs-muted);max-width:720px;margin-bottom:32px}
+.cs-actions{display:flex;gap:16px;flex-wrap:wrap}
+.cs-source{border-left:1px solid var(--cs-line);padding-left:24px;min-width:0}
+.cs-source-label,.cs-item>span{display:block;color:var(--ui-accent);font-size:11px;letter-spacing:.12em;font-weight:700;margin-bottom:16px}
+.cs-source strong{display:block;font-size:18px;margin-bottom:12px}.cs-source p,.cs-heading>p:last-child,.cs-flow p,.cs-note p{color:var(--cs-muted);font-size:13px;line-height:1.8}
+.cs-source a,.cs-heading a,.cs-note a{display:inline-flex;align-items:center;min-height:44px;color:var(--ui-accent);font-size:12px;font-weight:600;text-decoration:underline;text-underline-offset:4px}
+.cs-source a:hover,.cs-heading a:hover,.cs-note a:hover{color:var(--ui-text)}
+.cs-section{border-top:1px solid var(--cs-line);padding-block:80px}.cs-heading{margin-bottom:32px}.cs-heading h2,.cs-flow h2,.cs-note h2{font-size:clamp(28px,3vw,42px);letter-spacing:-.04em;line-height:1.3;margin-bottom:12px}.cs-heading>p:last-child{margin-bottom:0}
+.cs-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--cs-line)}.cs-item{min-width:0;padding:24px 24px 0 0}.cs-item+.cs-item{border-left:1px solid var(--cs-line);padding-left:24px}.cs-item h3{font-size:16px;line-height:1.5;margin-bottom:12px}.cs-item p{font-size:12px;line-height:1.8;color:var(--cs-muted);margin:0}
+.cs-flow{background:var(--cs-surface)}.cs-flow-layout{display:grid;grid-template-columns:1fr 1fr;gap:80px}.cs-flow p{max-width:520px;margin-bottom:24px}.cs-steps{list-style:none;margin:0;padding:0;border-top:1px solid var(--cs-line)}.cs-steps li{display:grid;gap:6px;padding:20px 0;border-bottom:1px solid var(--cs-line)}.cs-steps strong{font-size:14px}.cs-steps span{font-size:12px;color:var(--cs-muted)}
+.cs-note{display:flex;align-items:center;justify-content:space-between;gap:48px;padding-block:80px}.cs-note>div{max-width:780px}.cs-note p{margin-bottom:0}.cs-note>a{flex-shrink:0}
+.cs-page a:focus-visible,.cs-page button:focus-visible{outline:2px solid var(--ui-accent);outline-offset:3px}
+/* PUBLIC SNAPSHOT */
+.cs-snapshot{border-top:1px solid var(--cs-line);background:var(--cs-surface)}.cs-snapshot-inner{display:flex;align-items:center;justify-content:space-between;gap:32px;padding-block:24px}.cs-snapshot span:first-child{display:block;color:var(--ui-accent);font-size:10px;font-weight:700;letter-spacing:.12em;margin-bottom:8px}.cs-snapshot strong{font-size:15px}.cs-snapshot p{font-size:11px;color:var(--cs-muted);margin:8px 0 0}.cs-snapshot a{display:inline-flex;align-items:center;min-height:44px;flex-shrink:0;color:var(--ui-accent);font-size:12px;font-weight:600}.cs-snapshot a:hover{color:var(--ui-text)}
+/* MOBILE */
+@media(max-width:900px){.cs-intro{gap:32px}.cs-grid{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:24px}.cs-item:nth-child(3){border-left:0;padding-left:0}.cs-flow-layout{gap:40px}}
+@media(max-width:640px){.cs-snapshot-inner{display:block}.cs-snapshot a{margin-top:16px}.cs-intro{grid-template-columns:1fr;padding-block:64px}.cs-intro h1{font-size:40px}.cs-actions{display:grid}.cs-source{border-left:0;border-top:1px solid var(--cs-line);padding:24px 0 0}.cs-section{padding-block:64px}.cs-grid{grid-template-columns:1fr;row-gap:0}.cs-item,.cs-item+.cs-item,.cs-item:nth-child(3){border-left:0;border-bottom:1px solid var(--cs-line);padding:24px 0}.cs-flow-layout{grid-template-columns:1fr;gap:24px}.cs-note{display:block;padding-block:64px}.cs-note>a{margin-top:16px}}
+@media(prefers-reduced-motion:reduce){.cs-page *{animation-duration:.01ms!important;transition-duration:.01ms!important}}
