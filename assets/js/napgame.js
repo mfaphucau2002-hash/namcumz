@@ -273,7 +273,7 @@ async function initDetailPage() {
     if (icon) { icon.src = gameInfo.icon; icon.onerror = () => icon.src = 'assets/images/logo.jpg'; }
     const cover = document.getElementById('detailGameCover');
     if (cover && GAMES_CATALOG.featured.some(game => game.id === currentGameId.replace('-login', ''))) {
-        cover.style.backgroundImage = "url(" + GAMES_CATALOG.featured.find(game => game.id === currentGameId.replace("-login", "")).image + ")";
+        cover.style.backgroundImage = "url(assets/images/games/" + currentGameId.replace("-login", "") + "_banner.jpg)";
     }
     const name = document.getElementById('detailGameName');
     if (name) name.textContent = gameInfo.name;
@@ -364,10 +364,12 @@ function renderPackages(packages, filter) {
             badge.textContent = pkg.tag === 'monthly' ? 'Thẻ Tháng' : 'BP';
             card.appendChild(badge);
         }
-        const image = document.createElement('span');
-        image.className = 'ng-pkg-symbol';
-        image.setAttribute('aria-hidden', 'true');
-        image.textContent = pkg.tag === 'topup' ? '✦' : '◈';
+        const image = document.createElement('img');
+        image.className = 'ng-pkg-img';
+        image.src = pkg.tag === 'monthly' ? 'assets/images/topup/pass.svg' : pkg.tag === 'battlepass' ? 'assets/images/topup/battlepass.svg' : 'assets/images/topup/crystals.svg';
+        image.alt = '';
+        image.loading = 'lazy';
+        image.decoding = 'async';
         const packageName = document.createElement('span');
         packageName.className = 'ng-pkg-name';
         packageName.textContent = pkg.name;
@@ -415,7 +417,7 @@ function updateCart() {
     if (nameEl)  nameEl.textContent  = currentSelectedPackage.name;
     if (priceEl) priceEl.textContent = priceStr;
     if (totalEl) totalEl.textContent = priceStr;
-    if (imgEl)   { imgEl.src = (GAME_INFO[currentGameId] || GAME_INFO.default).icon; imgEl.onerror = () => imgEl.src = 'assets/images/logo.jpg'; }
+    if (imgEl) imgEl.src = currentSelectedPackage.tag === 'monthly' ? 'assets/images/topup/pass.svg' : currentSelectedPackage.tag === 'battlepass' ? 'assets/images/topup/battlepass.svg' : 'assets/images/topup/crystals.svg';
     if (btnEl)   btnEl.disabled = false;
 
     const mobilePrice = document.getElementById('mobileBarPrice');
@@ -503,12 +505,16 @@ async function submitDetailOrder() {
     try {
         const client = supabaseClient;
         if (!client) throw new Error('Không tìm thấy kết nối hệ thống.');
-        const order = await OrderAPI.topup(client, window.currentUser.id, currentSelectedPackage.id, server, loginMethod, account, password, phone, notes);
+        const { data: authData, error: authError } = await client.auth.getUser();
+        if (authError || !authData?.user?.id || authData.user.id !== window.currentUser.id) {
+            throw new Error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại rồi thử tạo đơn.');
+        }
+        const order = await OrderAPI.topup(client, authData.user.id, currentSelectedPackage.id, server, loginMethod, account, password, phone, notes);
         showCheckoutMessage('Đã tạo đơn. Đang chuyển đến trang theo dõi...', 'success');
         window.location.href = `dashboard.html?tab=history&order=${encodeURIComponent(order.id)}`;
     } catch (err) {
         console.error('Lỗi tạo đơn nạp game:', err);
-        showCheckoutMessage(err.message || 'Không thể tạo đơn. Vui lòng kiểm tra lại hoặc liên hệ Zalo.');
+        showCheckoutMessage(err.message?.includes('Authenticated owner required') ? 'Không xác định được chủ đơn. Vui lòng tải lại trang và thử lại; nếu vẫn lỗi, liên hệ CSKH.' : (err.message || 'Không thể tạo đơn. Vui lòng kiểm tra lại hoặc liên hệ Zalo.'));
     } finally {
         if (btn) { btn.disabled = false; btn.removeAttribute('aria-busy'); btn.innerHTML = originalText; }
         if (mobileBtn) { mobileBtn.disabled = false; mobileBtn.removeAttribute('aria-busy'); mobileBtn.textContent = mobileText; }
@@ -518,7 +524,18 @@ async function submitDetailOrder() {
 // ==========================================
 // INIT ROUTER
 // ==========================================
+// Keep the shared top-up header aligned with the actual Supabase session.
+async function syncTopupAccountLink() {
+    const link = document.getElementById('ngAccountLink');
+    if (!link || !supabaseClient) return;
+    const { data, error } = await supabaseClient.auth.getUser();
+    const signedIn = !error && Boolean(data?.user?.id);
+    link.href = signedIn ? 'dashboard.html' : 'login.html';
+    link.innerHTML = signedIn ? '<i class="fa-solid fa-user" aria-hidden="true"></i> Tài khoản' : '<i class="fa-solid fa-user" aria-hidden="true"></i> Đăng nhập';
+}
 document.addEventListener('DOMContentLoaded', () => {
+    syncTopupAccountLink();
+    if (supabaseClient) supabaseClient.auth.onAuthStateChange(() => { setTimeout(syncTopupAccountLink, 0); });
     initTicker();
     if (document.getElementById('sliderTrack')) initCatalogPage();
     if (document.getElementById('pkgGrid')) initDetailPage();

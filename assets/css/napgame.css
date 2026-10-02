@@ -310,3 +310,9 @@ body.ng-page {
 }
 
 .ng-pm-badge span,.ng-pm-badge i { color: var(--ui-muted) !important; }
+
+/* Product artwork and restrained header motion. */
+.ng-pkg-img { width: 64px; height: 64px; margin-bottom: 12px; border: 1px solid var(--ui-border); border-radius: 12px; }
+.ng-detail-cover { animation: ng-cover-drift 18s ease-in-out infinite alternate; }
+@keyframes ng-cover-drift { from { transform: scale(1); } to { transform: scale(1.045); } }
+@media (prefers-reduced-motion: reduce) { .ng-detail-cover { animation: none; } }
