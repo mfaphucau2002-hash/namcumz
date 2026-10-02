@@ -5,6 +5,7 @@
 - Danh mục Nạp Game bị cắt khỏi màn hình do hai thẻ đóng HTML sai trong slider: commit `6c0024f`. Production đã hiển thị 4 thẻ game nổi bật và 4 mục login.
 - Bốn thẻ game ở trang chủ trước đây cùng mở trang danh mục, nay mở đúng chi tiết theo game: commit `b8b70f7`. Production DOM đã xác nhận 4 URL riêng.
 - Dashboard dùng `javascript:void(0)` cho “Đơn của tôi” và ảnh xem trước có `src=""`: commit `616f9c4`. Production DOM xác nhận link nội trang `#ordersGrid`, ảnh chờ tải không có src rỗng.
+- Nút đăng ký có thẻ đóng HTML sai, đã sửa ở commit 58aa800; production DOM xác nhận cấu trúc utton > span đúng.
 
 ## Kiểm tra đã làm
 
@@ -16,7 +17,7 @@
 
 ## Vấn đề còn mở
 
-- Form đăng ký ở `login.html` yêu cầu đồng ý “Điều khoản sử dụng” và “Chính sách bảo mật”, nhưng cả hai liên kết đang là `href="#"`; repository chưa có văn bản tương ứng. Đây là lỗi nội dung và sự đồng ý của người dùng, không nên tự điền nội dung pháp lý chưa được chủ shop chốt. Cần có hai văn bản thực tế rồi nối liên kết và kiểm tra trước khi coi đăng ký hoàn thiện.
+- Form đăng ký ở `login.html` yêu cầu đồng ý “Điều khoản sử dụng” và “Chính sách bảo mật”, nhưng cả hai liên kết đang là `href="#"`; repository chưa có văn bản tương ứng. Đây là lỗi nội dung và sự đồng ý của người dùng, không nên tự điền nội dung pháp lý chưa được chủ shop chốt. Đã có bản nháp nội bộ trong `_docs/TERMS_DRAFT_20261002.md` và `_docs/PRIVACY_DRAFT_20261002.md` (Git ignore). Cần chủ shop chốt các thông tin còn đánh dấu `[CẦN CHỐT]`, duyệt văn bản, rồi mới tạo trang công khai và nối liên kết.
 - Core Web Vitals mobile và API dưới tải đồng thời chưa đo đủ; xem `G7_PERFORMANCE_20261002.md`.
 
 Không có cơ sở để tuyên bố toàn website không còn lỗi; phạm vi trên là phần đã kiểm tra.
