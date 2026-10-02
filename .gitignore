@@ -32,3 +32,6 @@ desktop.ini
 _backup/source_*/
 
 _backup/source_*.html
+
+# Owner review drafts; keep off the public site and repository
+_docs/*_DRAFT_*.md
