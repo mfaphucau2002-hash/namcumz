@@ -18,17 +18,19 @@ function updateLandingAccountLinks() {
         const loginLink = actions.querySelector('.lp-login');
         const createLink = actions.querySelector('.lp-header-cta');
         if (!loginLink) {
-          actions.innerHTML = '<a class="lp-button lp-login" href="/login.html?form=login">Đăng nhập / Đăng ký</a><a class="lp-button lp-button-primary lp-header-cta" href="/login.html?form=register">Tạo đơn ↗</a>';
+          actions.innerHTML = '<a class="lp-button lp-login" href="/login.html?form=login">Đăng nhập / Đăng ký</a><a class="lp-button lp-button-primary lp-header-cta" href="/login.html?form=login&next=%2Fdashboard%3Faction%3Dcreate-order" data-order-link>Tạo đơn ↗</a>';
         }
         if (loginLink) loginLink.href = '/login.html?form=login';
-        if (createLink) createLink.href = '/login.html?form=register';
+        if (createLink) createLink.href = '/login.html?form=login&next=%2Fdashboard%3Faction%3Dcreate-order';
       }
-    }    if (mobileAccount) {
-      mobileAccount.href = isLoggedIn ? '/dashboard.html' : '/login.html?form=register';
+    }
+    if (mobileAccount) {
+      mobileAccount.href = isLoggedIn ? '/dashboard.html' : '/login.html?form=login';
       mobileAccount.textContent = isLoggedIn ? 'Tài khoản / Đơn hàng' : 'Đăng nhập / Tạo tài khoản';
     }
     document.querySelectorAll('[data-order-link]').forEach((link) => {
-      link.href = isLoggedIn ? '/dashboard.html' : '/login.html?form=register';
+      const destination = '/dashboard?action=create-order';
+      link.href = isLoggedIn ? destination : `/login.html?form=login&next=${encodeURIComponent(destination)}`;
     });
   } catch (_) {
     // Storage can be unavailable in private browsing; default links still work.
@@ -62,6 +64,7 @@ updateLandingAccountLinks();
 setupLandingMenu();
 setupLandingCarousel();
 setupLandingAccountModal();
+setupLandingServiceSelection();
 
 // Open local customer auth routes in an accessible dialog while preserving direct-link fallbacks.
 function setupLandingAccountModal() {
@@ -150,4 +153,13 @@ function setupLandingCarousel() {
   carousel.addEventListener('focusout', (event) => { if (!carousel.contains(event.relatedTarget)) start(); });
   document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
   start();
+}
+// Carry only a short-lived service choice across same-tab navigation and the login dialog.
+function setupLandingServiceSelection() {
+  document.addEventListener('click', event => {
+    const card = event.target.closest('[data-service-preset]');
+    if (!card || !['map','challenge','resources','daily'].includes(card.dataset.servicePreset)) return;
+    if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    try { sessionStorage.setItem('namcumz-service-preset', JSON.stringify({key:card.dataset.servicePreset,created:Date.now()})); } catch (_) { /* The form remains usable when storage is unavailable. */ }
+  }, true);
 }

@@ -308,3 +308,48 @@ body.landing-page #dich-vu,body.landing-page #game,body.landing-page #quy-trinh{
  .landing-page .lp-trust-strip span i{display:grid;width:28px;height:28px;flex:0 0 28px;place-items:center;border:1px solid rgba(112,220,229,.24);border-radius:8px;background:rgba(112,220,229,.08);color:var(--lp-accent);font-style:normal}
  .landing-page .lp-carousel-dots{right:auto;bottom:15px;left:0;width:65%;}
 }
+/* STORE SERVICE CARDS — artwork, labelled actions and responsive reference proportions. */
+.landing-page .lp-header-inner{gap:24px}
+.landing-page .lp-desktop-nav{gap:18px}
+.landing-page .lp-desktop-nav a{font-size:12px}
+.landing-page .lp-shop-heading{text-align:center;max-width:760px;margin:0 auto 38px}
+.landing-page .lp-shop-heading h2{font-size:clamp(22px,3.2vw,36px);font-weight:800;line-height:1.3;margin-bottom:18px;color:var(--lp-accent)}
+.landing-page .lp-shop-heading>span{display:block;width:70px;height:3px;background:var(--lp-accent);margin:0 auto 20px;border-radius:8px}
+.landing-page .lp-shop-heading>p:last-child{color:var(--lp-muted);font-size:13px}
+.landing-page .lp-shop-service-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.landing-page .lp-shop-service-card{display:flex;flex-direction:column;min-width:0;border:1px solid var(--lp-line);border-radius:16px;background:var(--lp-surface);overflow:hidden;transition:border-color 250ms ease,transform 250ms ease;}
+.landing-page .lp-shop-service-card:hover{border-color:var(--lp-accent);transform:translateY(-5px)}
+.landing-page .lp-shop-art{position:relative;display:block;height:210px;overflow:hidden}
+.landing-page .lp-shop-art>img{width:100%;height:100%;object-fit:cover;transition:transform 300ms ease}
+.landing-page .lp-shop-service-card:hover .lp-shop-art>img{transform:scale(1.04)}
+.landing-page .lp-shop-tag{position:absolute;top:12px;right:10px;max-width:calc(100% - 20px);padding:4px 9px;border:1px solid var(--lp-accent);border-radius:20px;background:var(--lp-surface);color:var(--lp-accent);font-size:9px;font-weight:800;letter-spacing:.04em}
+.landing-page .lp-shop-card-body{display:flex;flex:1;flex-direction:column;padding:18px 16px;gap:12px}
+.landing-page .lp-shop-card-body>strong{border-left:3px solid var(--lp-accent);padding-left:10px;font-size:16px;line-height:1.5;font-weight:800}
+.landing-page .lp-shop-card-body>small{color:var(--lp-muted);font-size:12px;line-height:1.6}
+.landing-page .lp-shop-card-action{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:12px;font-size:11px;font-weight:700;color:var(--lp-muted)}
+.landing-page .lp-shop-card-action b{font-size:27px;line-height:1;color:var(--lp-accent)}
+.landing-page .lp-games .lp-section-heading h2{color:var(--lp-accent);font-size:clamp(22px,3.2vw,36px)}
+.landing-page .lp-games .lp-game-card{border-radius:16px;border:1px solid var(--lp-line);background:var(--lp-surface);}
+.landing-page .lp-games .lp-game-card:hover{border-color:var(--lp-accent)}
+/* MOBILE */
+@media(max-width:1020px){.landing-page .lp-shop-service-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.landing-page .lp-shop-art{height:220px}}
+@media(max-width:520px){.landing-page .lp-shop-service-grid{gap:12px}.landing-page .lp-shop-art{height:154px}.landing-page .lp-shop-card-body{padding:14px 10px;gap:10px}.landing-page .lp-shop-card-body>strong{font-size:12px;padding-left:7px}.landing-page .lp-shop-card-body>small{font-size:10px}.landing-page .lp-shop-card-action{font-size:9px}.landing-page .lp-shop-tag{top:8px;right:6px;font-size:7px;padding:3px 6px}.landing-page .lp-shop-heading{margin-bottom:24px}}
+@media(prefers-reduced-motion:reduce){.landing-page .lp-shop-service-card,.landing-page .lp-shop-art>img{transition:none}.landing-page .lp-shop-service-card:hover,.landing-page .lp-shop-service-card:hover .lp-shop-art>img{transform:none}}
+
+/* PUBLIC RANKINGS — real booster profile rows in the reference side panel. */
+.landing-page .lp-ranking-panel{position:absolute;inset:22px 20px 22px auto;z-index:5;width:24%;padding:24px 16px;border:1px solid var(--lp-accent);border-radius:18px;background:var(--lp-surface);display:flex;flex-direction:column;justify-content:center}
+.landing-page .lp-ranking-heading{display:flex;align-items:center;justify-content:center;gap:8px}
+.landing-page .lp-ranking-heading>span{font-size:25px;color:var(--lp-accent)}
+.landing-page .lp-ranking-heading h2{font-size:15px;font-weight:800;margin:0;line-height:1.4}
+.landing-page .lp-ranking-caption{text-align:center;font-size:11px;color:var(--lp-muted);margin:8px 0 18px}
+.landing-page .lp-ranking-state{padding:24px 8px;text-align:center;font-size:12px;color:var(--lp-muted);line-height:1.7}
+.landing-page .lp-ranking-row{display:grid;grid-template-columns:18px 36px minmax(0,1fr);align-items:center;gap:8px;padding:12px 0;border-bottom:1px solid var(--lp-line)}
+.landing-page .lp-ranking-row:hover strong{color:var(--lp-accent)}
+.landing-page .lp-ranking-number{grid-row:span 2;color:var(--lp-accent);font-weight:800;font-size:12px}
+.landing-page .lp-ranking-row img{grid-row:span 2;width:36px;height:36px;object-fit:cover;border-radius:50%;border:1px solid var(--lp-accent)}
+.landing-page .lp-ranking-row strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;line-height:1.2}
+.landing-page .lp-ranking-row small{font-size:11px;line-height:1;color:var(--lp-muted)}
+.landing-page .lp-ranking-footnote{font-size:10px;text-align:center;margin:18px 0 0;color:var(--lp-muted)}
+/* MOBILE */
+@media(min-width:769px) and (max-width:1020px){.landing-page .lp-ranking-panel{inset:16px 14px 16px auto;width:220px;padding:18px 12px}}
+@media(max-width:768px){.landing-page .lp-ranking-panel{position:relative;inset:auto;width:100%;margin-top:20px;padding:18px}.landing-page .lp-ranking-row{grid-template-columns:20px 40px minmax(0,1fr) auto}.landing-page .lp-ranking-number,.landing-page .lp-ranking-row img{grid-row:auto}.landing-page .lp-ranking-state{padding:12px}.landing-page .lp-ranking-row small{font-size:11px}}

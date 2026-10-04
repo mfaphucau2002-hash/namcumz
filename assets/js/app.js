@@ -1398,6 +1398,30 @@ window.fetchOrderLogs = async function() {
 // --- INITIALIZATION SCRIPT ---
 
 // Clear private notification UI immediately when the authenticated account changes.
+// Prefill the actual service controls once; never submit or store account information.
+function applyRequestedServicePreset() {
+    try {
+        const raw = sessionStorage.getItem('namcumz-service-preset');
+        if (!raw) return;
+        sessionStorage.removeItem('namcumz-service-preset');
+        const selected = JSON.parse(raw);
+        const choices = {
+            map:['Thám hiểm (Map)','Khám phá bản đồ'],
+            challenge:['La Hoàn','Nội dung thử thách'],
+            resources:['Khác','Nhân vật & tài nguyên'],
+            daily:['Nhựa/Ủy thác','Nhiệm vụ & chăm tài khoản']
+        };
+        const age = Date.now() - selected.created;
+        if (!Object.prototype.hasOwnProperty.call(choices, selected.key) || !Number.isFinite(age) || age < 0 || age > 15 * 60 * 1000) return;
+        const group = document.getElementById('orderServiceGroup');
+        const goal = document.getElementById('orderGoal');
+        if (!group || !goal) return;
+        group.value = choices[selected.key][0];
+        group.dispatchEvent(new Event('change', {bubbles:true}));
+        goal.value = choices[selected.key][1];
+    } catch (_) { /* Invalid/disabled storage must not stop order creation. */ }
+}
+
 let notificationActor = null;
 function setupNavbar() {
     const actor = currentUser?.id || null;
@@ -1607,6 +1631,7 @@ function bindEvents() {
             if(form) form.reset();
             if(document.getElementById('calcExtraOptions')) document.getElementById('calcExtraOptions').style.display = 'none';
             setupOrderPriceInput();
+            applyRequestedServicePreset();
             createOrderModal.classList.add('active');
         });
     }
@@ -1619,6 +1644,7 @@ function bindEvents() {
             const form = document.getElementById('createOrderForm');
             if(form) form.reset();
             setupOrderPriceInput();
+            applyRequestedServicePreset();
             modal.classList.add('active');
         }
     };

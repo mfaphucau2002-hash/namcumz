@@ -1,0 +1,20 @@
+# DuckStreamer parity continuation — 2026-10-05
+
+## Authoritative evidence
+- Reopened live DuckStreamer home and dismissed its announcement to inspect the banner, ranking side panel and image service cards. Reviewed service card section at desktop width.
+- Namcumz now has four real Genshin service cards with artwork, category labels, service action and responsive 4/2-column grid. Four real top-up game links are preserved.
+- Header includes farming/orders/profile links. Guest account opens login. Service and header create actions retain action=create-order across login.
+- Chosen card stores only a short-lived enum in sessionStorage. Actual order group/goal is prefilled after form reset; no order submission occurs automatically.
+- Hero side panel uses existing public booster_profiles RPC. No public spending/order API was added; no customer transaction metadata published. Ranking rows use DOM text nodes, valid profile UUIDs and real completed counts. Empty/error/retry states supported.
+- Local checks: 26 focused auth/notification/landing/ranking/preset tests pass; static checks 57 pass; build 90 publishable files. Browser actual widths 390/768/1280: no document overflow for new service/ranking layouts. Guest card opens login iframe with correct next destination.
+
+## Remaining differences and verification
+| Component | Current outcome | Still outstanding |
+|---|---|---|
+| Banner/cards/navigation | New layout and click flow reviewed locally | Production deployment confirmation and signed-in prefill |
+| Reference spending podium/recent sales | Only existing public booster ranking used | No safe public customer spending/sales feed; do not fabricate customer names or amounts |
+| Service coverage | Four actual Genshin categories and four top-up games | Reference has additional farming games and top-up catalogs unsupported by current shop |
+| Auth/account/workflow | Existing Supabase contract maintained | Full authenticated staging role/order tests remain waived / not verified |
+| Overall target | Progress, not completed | 99% similarity has not been objectively established; remaining route/visual/flow comparison still required |
+
+Previous goal turn classification: progress (source edits, local tests and browser evidence). No completion claim.
