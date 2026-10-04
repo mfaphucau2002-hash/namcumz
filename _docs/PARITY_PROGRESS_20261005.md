@@ -31,3 +31,9 @@ Previous goal turn classification: progress (source edits, local tests and brows
 - Added profile order-kind labels, UUID-scoped same-origin detail/chat destinations, full-width empty/error/retry state, keyboard account tabs and hash destinations. Removed nested settings styling and extra h1 headings.
 - Local public category checks at 390/768/desktop: six cards, no horizontal page overflow, mobile navigation and guest login modal work. Profile live verification pending release.
 - Stage role/order workflow checks remain waived / not verified. Overall99% not established; keep goal active.
+
+## Live category/profile release evidence
+- Commit d28218bdcc5e1aea56a46d73b167d402ddab1fdb; Vercel 6VD9jCigxs6eJ51hJ6ZEZMrECcNc Ready / Current Production, 5s. /caythue now served on custom domain.
+- Signed-in category quest action opened real dashboard modal with group Nhiệm vụ and goal Nhiệm vụ theo yêu cầu; no submission.
+- Actual profile empty state, settings hash and ArrowLeft tab navigation verified in logged-in account. Responsive check used dedicated tab after detecting viewport override applied to another selected tab; actual390 width measured page375/form343. No errors/warnings observed.
+- 30 focused tests pass; static checks60; build93 files. Small mobile header alignment correction applies shared lp-header-actions class.
