@@ -39,3 +39,15 @@ Previous goal turn classification: progress (source edits, local tests and brows
 - 30 focused tests pass; static checks60; build93 files. Small mobile header alignment correction applies shared lp-header-actions class.
 
 - Live visual review found public header chose old auth metadata name before current actor-scoped profile name. Corrected display-name priority; session identity still comes exclusively from Supabase. Added regression for rejecting another account cached display name.
+
+- Final release ebbbc10275f7fbf6010285d68f04d71814e35e8b; Vercel DB89eaYLRHtbh1JkNikdfLkFU5yB Ready / Current Production,5s. Live category header now displays namcumzzz like dashboard/profile; warn/error logs empty.31 distinct focused tests passed across runs.
+- Profile actual768 viewport page753;390 page375. Screenshot farming-live-20261005.png and profile-live-20261005.png saved in authorized visualization directory.
+- Reference custom quote requires its authenticated account; guest attempt only opened its login/warning dialogs, no account created. Next compare/refine own quote/order details layouts and continue route audit. Goal turn classification progress; overall99% unproven.
+
+## Quote request layout continuation
+- Previous goal turn classified as progress: public categories/profile/navigation released and verified.
+- Current dashboard creation overlay now uses catalog-style heading, two-column request/summary cards on desktop, single-column phone layout, responsive paired fields and sticky submission actions.
+- Summary reads actual visible group/server/goal/deadline via textContent, updates after reset/prefill/open, makes no API calls or persistence and does not submit automatically.
+- Removed legacy automatic price calculator from RPC-backed production/staging creation because these orders use server-confirmed quotes. Quote/approval/payment workflow and OrderAPI payload unchanged. Dashboard farming navigation now opens the public category route.
+- Local fixture contains no auth/database scripts. Verified desktop/390/768 modal layout, summary input updates and no horizontal overflow.34 targeted regressions pass;62 static checks;95-file build.
+- Live release/preset verification pending. No order/payment was created. Staging role/order workflow remains waived / not verified; overall99% unproven.

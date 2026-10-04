@@ -1523,7 +1523,7 @@ function injectDynamicModals() {
     
     // Price Calculator in Create Form
     const priceGroup = document.getElementById('orderPrice')?.closest('.form-group');
-    if(priceGroup && !document.getElementById('calcService')) {
+    if(priceGroup && !usesOrderRPC() && !document.getElementById('calcService')) {
         const calcHTML = `
         <div class="form-group" style="background: rgba(101, 213, 195, 0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(101, 213, 195, 0.2); margin-bottom: 15px;">
             <label class="form-label" style="color: var(--secondary);"><i class="fa-solid fa-calculator"></i> MÁY TÍNH BÁO GIÁ TỰ ĐỘNG</label>
@@ -1614,7 +1614,7 @@ function bindEvents() {
                 priceInput.setAttribute('readonly', 'true');
                 priceInput.style.cursor = 'not-allowed';
                 priceInput.type = 'text';
-                priceInput.value = 'Chờ Admin báo giá';
+                priceInput.value = 'Chờ shop báo giá';
             }
         }
     }

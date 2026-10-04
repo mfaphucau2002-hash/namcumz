@@ -14,7 +14,8 @@
     <!-- CSS -->
     <link rel="stylesheet" href="assets/css/style.css">
 
-    <link rel="stylesheet" href="assets/css/ui.css?v=20261004-dashboard2">
+    <link rel="stylesheet" href="assets/css/ui.css?v=20261005-request13">
+<link rel="stylesheet" href="/assets/css/order-request.css?v=20261005-request13">
 </head>
 <body class="app-page dashboard-page">
     <!-- Header -->
@@ -30,7 +31,7 @@
                 <a href="/index.html" class="nav-link">
                     <i class="fa-solid fa-home"></i> Trang chủ
                 </a>
-                <a href="/dashboard.html?action=create-order" class="nav-link">Cày thuê</a>
+                <a href="/caythue.html" class="nav-link">Cày thuê</a>
                 <a href="/napgame.html" class="nav-link" style="color: #f59e0b; font-weight: 700;">
                     <i class="fa-solid fa-bolt"></i> Nạp Game
                 </a>
@@ -176,17 +177,17 @@
 
     <!-- Create Order Modal -->
     <div class="modal-overlay" id="createOrderModal" role="dialog" aria-modal="true" aria-labelledby="createOrderTitle">
-        <div class="modal-content premium-modal">
+        <div class="modal-content premium-modal request-modal">
             <button aria-label="Đóng hộp thoại" class="modal-close" id="closeModalBtn" style="top: 25px;"><i class="fa-solid fa-xmark"></i></button>
-            <h2 class="modal-title" id="createOrderTitle">Tạo đơn Genshin</h2>
-            <form id="createOrderForm">
+            <p class="request-kicker">GENSHIN IMPACT / YÊU CẦU DỊCH VỤ</p><h2 class="modal-title" id="createOrderTitle">Tạo đơn Genshin</h2><p class="request-intro" id="requestIntro">Điền mục tiêu và thời hạn để shop xác nhận phạm vi, báo giá cho bạn.</p>
+            <form id="createOrderForm" aria-describedby="requestIntro"><div class="request-fields">
                 
                 <div class="form-group" style="display: none;">
                     <label class="form-label" for="orderRenter">NGƯỜI THUÊ CÀY</label>
                     <input type="text" id="orderRenter" class="form-control" placeholder="Tên khách hàng...">
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="request-field-pair">
                     <div class="form-group">
                         <label class="form-label" for="orderServer">MÁY CHỦ (SERVER)</label>
                         <select id="orderServer" class="form-control" required>
@@ -214,15 +215,15 @@
                     <input type="text" id="orderGoal" class="form-control" placeholder="Ví dụ: La hoàn tầng 12, Đảo Tsurumi 100%..." required>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="request-field-pair">
                     <div class="form-group">
-                        <label class="form-label" for="orderDeadline">DEADLINE (THỜI HẠN)</label>
+                        <label class="form-label" for="orderDeadline">THỜI HẠN MONG MUỐN</label>
                         <input type="date" id="orderDeadline" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="orderPrice">GIÁ TIỀN (ƯỚC TÍNH)</label>
+                        <label class="form-label" for="orderPrice">BÁO GIÁ CỦA SHOP</label>
                         <div class="price-input-wrapper">
-                            <input type="text" id="orderPrice" class="form-control" value="Chờ Admin báo giá" readonly style="color: var(--status-cho-xu-ly); font-weight: bold; background: rgba(0,0,0,0.2); cursor: not-allowed;">
+                            <input type="text" id="orderPrice" class="form-control" value="Chờ shop báo giá" readonly style="color: var(--status-cho-xu-ly); font-weight: bold; background: rgba(0,0,0,0.2); cursor: not-allowed;">
                         </div>
                     </div>
                 </div>
@@ -237,7 +238,8 @@
                     <span>Đơn mới chờ shop báo giá. Bạn chấp thuận giá trước khi shop xác nhận thanh toán và giao đơn. Không gửi mật khẩu hoặc OTP trong ghi chú.</span>
                 </div>
                 
-                <div class="modal-actions">
+                </div><aside class="request-summary" aria-labelledby="requestSummaryTitle"><div class="request-summary-heading"><img src="/assets/images/games/genshin_icon.webp" alt="" width="48" height="48"><div><p>GENSHIN IMPACT</p><h3 id="requestSummaryTitle">Yêu cầu của bạn</h3></div></div><dl><div><dt>Nhóm dịch vụ</dt><dd id="requestSummaryGroup">Thám hiểm (Map)</dd></div><div><dt>Máy chủ</dt><dd id="requestSummaryServer">Asia</dd></div><div><dt>Mục tiêu</dt><dd id="requestSummaryGoal">Chưa nhập mục tiêu</dd></div><div><dt>Thời hạn</dt><dd id="requestSummaryDeadline">Chưa chọn thời hạn</dd></div></dl><div class="request-quote-state"><span>Giá dịch vụ</span><strong>Chờ shop báo giá</strong><small>Bạn xác nhận giá trước khi thanh toán.</small></div><ol class="request-workflow"><li><span aria-hidden="true">1</span>Gửi yêu cầu cho shop</li><li><span aria-hidden="true">2</span>Chấp thuận báo giá</li><li><span aria-hidden="true">3</span>Thanh toán &amp; theo dõi đơn</li></ol><a href="/caythue.html" class="request-back">← Xem nhóm dịch vụ</a></aside>
+                <div class="modal-actions request-actions">
                     <button type="button" class="btn-cancel modal-close" id="cancelModalBtn" onclick="document.getElementById('createOrderModal').classList.remove('active')">Hủy</button>
                     <button type="submit" class="btn-submit-premium" id="submitOrderBtn">Tạo đơn</button>
                 </div>
@@ -455,8 +457,9 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="assets/js/runtime-config.js"></script>
     <script src="assets/js/order-api.js"></script>
-    <script src="assets/js/app.js?v=20261005-categories11"></script>
+    <script src="assets/js/app.js?v=20261005-request13"></script>
     <script src="assets/js/ai-copilot.js"></script>
+<script src="/assets/js/order-request.js?v=20261005-request13" defer></script>
 </body>
 </html>
 
