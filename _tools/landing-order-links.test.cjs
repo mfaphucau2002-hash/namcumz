@@ -58,3 +58,13 @@ test('verified session sends service links directly to order creation', () => {
   h.listeners['namcumz-auth-updated']();
   assert.equal(new URL(h.orders[0].href, 'https://namcumz.io.vn').searchParams.get('next'), '/dashboard?action=create-order');
 });
+test('public account label uses the same actor-scoped profile name as dashboard', () => {
+  const h = harness();
+  h.context.window.NAMCUMZ_PUBLIC_USER = {id:'session-user',user_metadata:{display_name:'old name'}};
+  h.context.localStorage.getItem = key => key === 'userId' ? 'session-user' : 'current profile name';
+  h.listeners['namcumz-auth-updated']();
+  assert.equal(h.actions.accountLink.textContent,'current profile name / Đơn hàng');
+  h.context.localStorage.getItem = key => key === 'userId' ? 'other-user' : 'other profile name';
+  h.listeners['namcumz-auth-updated']();
+  assert.equal(h.actions.accountLink.textContent,'old name / Đơn hàng');
+});

@@ -37,3 +37,5 @@ Previous goal turn classification: progress (source edits, local tests and brows
 - Signed-in category quest action opened real dashboard modal with group Nhiệm vụ and goal Nhiệm vụ theo yêu cầu; no submission.
 - Actual profile empty state, settings hash and ArrowLeft tab navigation verified in logged-in account. Responsive check used dedicated tab after detecting viewport override applied to another selected tab; actual390 width measured page375/form343. No errors/warnings observed.
 - 30 focused tests pass; static checks60; build93 files. Small mobile header alignment correction applies shared lp-header-actions class.
+
+- Live visual review found public header chose old auth metadata name before current actor-scoped profile name. Corrected display-name priority; session identity still comes exclusively from Supabase. Added regression for rejecting another account cached display name.

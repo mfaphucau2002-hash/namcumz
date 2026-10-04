@@ -12,7 +12,7 @@ function updateLandingAccountLinks() {
         accountLink.href = '/dashboard.html';
         const user = window.currentUser || window.NAMCUMZ_PUBLIC_USER;
         const cachedName = localStorage.getItem('userId') === user.id ? localStorage.getItem('username') : '';
-        accountLink.textContent = (user.user_metadata?.display_name || cachedName || 'Tài khoản') + ' / Đơn hàng';
+        accountLink.textContent = (cachedName || user.user_metadata?.display_name || 'Tài khoản') + ' / Đơn hàng';
         actions.appendChild(accountLink);
       } else {
         const loginLink = actions.querySelector('.lp-login');
