@@ -1409,7 +1409,9 @@ function applyRequestedServicePreset() {
             map:['Thám hiểm (Map)','Khám phá bản đồ'],
             challenge:['La Hoàn','Nội dung thử thách'],
             resources:['Khác','Nhân vật & tài nguyên'],
-            daily:['Nhựa/Ủy thác','Nhiệm vụ & chăm tài khoản']
+            daily:['Nhựa/Ủy thác','Nhiệm vụ & chăm tài khoản'],
+            quest:['Nhiệm vụ','Nhiệm vụ theo yêu cầu'],
+            events:['Sự kiện','Nội dung sự kiện']
         };
         const age = Date.now() - selected.created;
         if (!Object.prototype.hasOwnProperty.call(choices, selected.key) || !Number.isFinite(age) || age < 0 || age > 15 * 60 * 1000) return;

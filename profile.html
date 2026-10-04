@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- CSS -->
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/landing.css">
+    <link rel="stylesheet" href="assets/css/landing.css?v=20261005-categories11">
     <style>
         .profile-layout { display: flex; min-height: 100vh; }
         .sidebar { width: 260px; background: var(--bg-card); border-right: 1px solid var(--border-light); padding: 24px 0; display: flex; flex-direction: column; position: fixed; height: 100vh; }
@@ -32,38 +32,38 @@
         .btn-save { width: 100%; margin-top: 20px; background: #38bdf8; color: #0f172a; font-weight: 800; padding: 16px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; border-radius: 8px; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); border: none; cursor: pointer; transition: var(--transition); }
         .btn-save:hover { box-shadow: 0 0 25px rgba(56, 189, 248, 0.6); transform: translateY(-2px); background: #7dd3fc; }
     </style>
-    <link rel="stylesheet" href="assets/css/ui.css?v=20261004-profile-shell">
+    <link rel="stylesheet" href="assets/css/ui.css?v=20261005-categories11">
 </head>
 <body class="app-page landing-page profile-page">
         <header class="lp-header">
         <div class="lp-shell lp-header-inner">
             <a class="lp-logo" href="/" aria-label="NAMCUMZ — trang chủ"><img src="/assets/images/logo.jpg" alt="" width="32" height="32"><span>NAMCUMZ</span></a>
-            <nav class="lp-desktop-nav" aria-label="Điều hướng chính"><a href="/">Trang chủ</a><a href="/reviews.html">Đánh giá</a><a href="/napgame.html">Nạp game</a><details class="lp-support-menu"><summary>Hỗ trợ</summary><div><a href="/checkscam.html">Kiểm tra giao dịch</a><a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">Zalo CSKH ↗</a></div></details></nav>
+            <nav class="lp-desktop-nav" aria-label="Điều hướng chính"><a href="/">Trang chủ</a><a href="/caythue.html">Cày thuê</a><a href="/profile.html" aria-current="page">Hồ sơ</a><a href="/reviews.html">Đánh giá</a><a href="/napgame.html">Nạp game</a><details class="lp-support-menu"><summary>Hỗ trợ</summary><div><a href="/checkscam.html">Kiểm tra giao dịch</a><a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">Zalo CSKH ↗</a></div></details></nav>
             <div class="profile-header-actions"><a class="lp-button lp-button-quiet" href="/dashboard.html">Đơn hàng <span aria-hidden="true">↗</span></a><button id="logoutBtn" aria-label="Đăng xuất" class="lp-button lp-button-outline" type="button"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Đăng xuất</button></div>
             <button class="lp-menu-toggle" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="lpMobileNav"><span></span><span></span></button>
         </div>
-        <nav class="lp-mobile-nav" id="lpMobileNav" aria-label="Điều hướng di động" hidden><a href="/">Trang chủ</a><a href="/reviews.html">Đánh giá</a><a href="/napgame.html">Nạp game</a><a href="/checkscam.html">Kiểm tra giao dịch</a><a href="/dashboard.html">Đơn hàng</a><button id="logoutBtnMobile" type="button"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Đăng xuất</button></nav>
+        <nav class="lp-mobile-nav" id="lpMobileNav" aria-label="Điều hướng di động" hidden><a href="/">Trang chủ</a><a href="/caythue.html">Cày thuê</a><a href="/profile.html" aria-current="page">Hồ sơ</a><a href="/reviews.html">Đánh giá</a><a href="/napgame.html">Nạp game</a><a href="/checkscam.html">Kiểm tra giao dịch</a><a href="/dashboard.html">Đơn hàng</a><button id="logoutBtnMobile" type="button"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Đăng xuất</button></nav>
     </header>
     <main class="profile-main">
             <div class="profile-content-shell">
 
                 <div class="profile-overview"><div><p class="lp-kicker">TÀI KHOẢN / ĐƠN HÀNG</p><h1>Xin chào, <span id="profileGreetingName">Nhà lữ hành</span></h1><p>Theo dõi đơn, trao đổi với shop và quản lý thông tin tài khoản.</p></div><a class="btn btn-outline" href="/napgame.html"><i class="fa-solid fa-bolt"></i> Khám phá dịch vụ</a></div>
 
-            <nav class="profile-tabs" aria-label="Quản lý tài khoản">
-                    <button type="button" aria-current="page" class="sidebar-link active" onclick="switchTab('my-orders', this)"><i class="fa-solid fa-gamepad" aria-hidden="true"></i> Đơn của tôi</button>
-                    <button type="button" class="sidebar-link" onclick="switchTab('claim-order', this)"><i class="fa-solid fa-key" aria-hidden="true"></i> Nhận mã</button>
-                    <button type="button" class="sidebar-link" onclick="switchTab('settings', this)"><i class="fa-solid fa-user-gear" aria-hidden="true"></i> Cài đặt</button>
+            <nav class="profile-tabs" role="tablist" aria-label="Quản lý tài khoản">
+                    <button type="button" id="profile-tab-my-orders" role="tab" aria-controls="tab-my-orders" aria-selected="true" tabindex="0" data-profile-tab="my-orders" class="sidebar-link active" onclick="switchTab('my-orders', this)"><i class="fa-solid fa-gamepad" aria-hidden="true"></i> Đơn của tôi</button>
+                    <button type="button" id="profile-tab-claim-order" role="tab" aria-controls="tab-claim-order" aria-selected="false" tabindex="-1" data-profile-tab="claim-order" class="sidebar-link" onclick="switchTab('claim-order', this)"><i class="fa-solid fa-key" aria-hidden="true"></i> Nhận mã</button>
+                    <button type="button" id="profile-tab-settings" role="tab" aria-controls="tab-settings" aria-selected="false" tabindex="-1" data-profile-tab="settings" class="sidebar-link" onclick="switchTab('settings', this)"><i class="fa-solid fa-user-gear" aria-hidden="true"></i> Cài đặt</button>
                 </nav>
-                <div id="tab-my-orders" class="tab-content active animate-on-load">
-                <h1 class="section-title">ĐƠN CÀY CỦA TÔI</h1>
-                <p style="color: var(--text-muted); margin-bottom: 30px;">Danh sách các đơn hàng bạn đã tạo hoặc đã nhận bằng mã.</p>
+                <div id="tab-my-orders" role="tabpanel" aria-labelledby="profile-tab-my-orders" tabindex="0" class="tab-content active animate-on-load">
+                <h2 class="section-title">ĐƠN HÀNG CỦA TÔI</h2>
+                <p style="color: var(--text-muted); margin-bottom: 30px;">Đơn cày thuê và đơn nạp game của bạn. Mở chi tiết để trao đổi và theo dõi tiến độ.</p>
                 <div class="my-orders-grid" id="myOrdersGrid">
                     <div style="color: var(--text-muted);">Đang tải dữ liệu...</div>
                 </div>
             </div>
 
-            <div id="tab-claim-order" class="tab-content animate-on-load">
-                <h1 class="section-title">NHẬN ĐƠN BẰNG MÃ</h1>
+            <div id="tab-claim-order" role="tabpanel" aria-labelledby="profile-tab-claim-order" tabindex="0" class="tab-content animate-on-load">
+                <h2 class="section-title">NHẬN ĐƠN BẰNG MÃ</h2>
                 <p style="color: var(--text-muted); margin-bottom: 30px;">Nếu Admin tạo đơn hộ bạn, hãy nhập <strong>Mã Nhận Đơn</strong> (được Admin cấp) vào đây để liên kết đơn đó vào tài khoản của bạn.</p>
 
                 <div class="claim-box">
@@ -77,9 +77,9 @@
                 </div>
             </div>
 
-            <div id="tab-settings" class="tab-content animate-on-load">
-                <h1 class="section-title">CÀI ĐẶT TÀI KHOẢN</h1>
-                <div style="max-width: 500px; background: var(--bg-card); padding: 30px; border-radius: 12px; border: 1px solid var(--border-light);">
+            <div id="tab-settings" role="tabpanel" aria-labelledby="profile-tab-settings" tabindex="0" class="tab-content animate-on-load">
+                <h2 class="section-title">CÀI ĐẶT TÀI KHOẢN</h2>
+                <div class="profile-settings-shell">
                     <form id="profileForm">
                         <div class="form-group">
                             <label class="form-label" for="profileDisplayName">TÊN HIỂN THỊ MỚI</label>
@@ -97,27 +97,17 @@
                     </form>
                 </div>
             </div>
+            </div>
     </main>
 
     <footer class="lp-footer"><div class="lp-shell"><div class="lp-footer-top"><a class="lp-logo" href="/"><img src="/assets/images/logo.jpg" alt="" width="32" height="32"><span>NAMCUMZ</span></a><nav aria-label="Liên kết cuối trang"><a href="/">Trang chủ</a><a href="/napgame.html">Nạp game</a><a href="/reviews.html">Đánh giá</a><a href="/terms.html">Điều khoản</a><a href="/privacy.html">Bảo mật</a><a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">Zalo CSKH</a></nav></div><p class="lp-copyright">Quản lý tài khoản và trao đổi về đơn hàng NAMCUMZ. © 2026</p></div></footer>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/runtime-config.js"></script>
     <script src="assets/js/order-api.js"></script>
-    <script src="assets/js/app.js?v=20261005-service10"></script>
-    <script src="assets/js/landing.js?v=20261005-shopcards10" defer></script>
-            <script>
-        function switchTab(tabId, el) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
-            document.getElementById('tab-' + tabId).classList.add('active');
-            el.classList.add('active');
-            document.querySelectorAll('.profile-tabs .sidebar-link').forEach(link => {
-                if (link === el) link.setAttribute('aria-current', 'page');
-                else link.removeAttribute('aria-current');
-            });
-            if (tabId === 'my-orders') loadMyOrders();
-        }
-
+    <script src="assets/js/app.js?v=20261005-categories11"></script>
+    <script src="assets/js/landing.js?v=20261005-categories11" defer></script>
+    <script src="assets/js/profile-navigation.js?v=20261005-categories11"></script>
+    <script>
         document.addEventListener('DOMContentLoaded', () => {
             const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
             const authClient = window.supabaseClient;
@@ -140,16 +130,22 @@
 
             window.loadMyOrders = async () => {
                 const grid = document.getElementById('myOrdersGrid');
-                grid.innerHTML = '<div style="color: var(--text-muted);">Đang tải dữ liệu...</div>';
+                grid.setAttribute('aria-busy', 'true');
+                grid.innerHTML = '<div class="profile-order-state" role="status">Đang tải đơn hàng…</div>';
                 const sessionUserId = window.profileUserId;
                 if (!sessionUserId) return;
-                const { data, error } = await supabaseClient.from('orders').select('*').eq('user_id', sessionUserId).order('created_at', { ascending: false });
-                if (error) return grid.innerHTML = '<div style="color: var(--status-tam-dung);">Lỗi tải dữ liệu.</div>';
-                if (data.length === 0) return grid.innerHTML = '<div style="color: var(--text-muted);">Bạn chưa có đơn cày nào.</div>';
+                let data, error;
+                try { ({ data, error } = await supabaseClient.from('orders').select('*').eq('user_id', sessionUserId).order('created_at', { ascending: false })); } catch (_) { error = true; }
+                grid.setAttribute('aria-busy', 'false');
+                if (error) return grid.innerHTML = '<div class="profile-order-state" role="alert"><h3>Chưa tải được đơn hàng</h3><p>Hãy thử tải lại sau giây lát.</p><button type="button" class="btn btn-outline" onclick="loadMyOrders()">Thử lại</button></div>';
+                if (!data?.length) return grid.innerHTML = '<div class="profile-order-state"><span class="profile-empty-icon" aria-hidden="true"><i class="fa-solid fa-box-open"></i></span><h3>Bạn chưa có đơn hàng</h3><p>Chọn dịch vụ cày thuê hoặc gói nạp game để bắt đầu. Các đơn của bạn sẽ xuất hiện tại đây.</p><div class="profile-empty-actions"><a class="btn btn-primary" href="/caythue.html">Cày thuê Genshin</a><a class="btn btn-outline" href="/napgame.html">Nạp game</a></div></div>';
+
 
                 grid.innerHTML = '';
                 data.forEach(order => {
                     let statusObj = typeof getStatusDetails === 'function' ? getStatusDetails(order.status) : { text: 'Unknown', icon: 'fa-question', class: '', colorVar: 'var(--text-muted)' };
+                    const topup = order.kind === 'topup' || String(order.content || '').includes('[Nạp Game]');
+                    const detailHref = window.profileOrderDestination(order.id);
                     let avatar = esc(order.booster_name ? order.booster_name.charAt(0).toUpperCase() : '?');
                     let priceHtml = order.price ? `<span style="color: #fff;">${parseInt(order.price).toLocaleString('vi-VN')} VNĐ</span>` : `<span style="color: var(--text-muted);">Chưa báo giá</span>`;
                     let contentText = esc(order.content || 'Không có mô tả');
@@ -196,14 +192,14 @@
                                   <div class="booster-info">
                                       <div class="booster-avatar" style="border-color: ${statusObj.colorVar}">${avatar}</div>
                                       <div>
-                                          <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">NGƯỜI CÀY: ${order.booster_id ? `<a href="booster.html?id=${order.booster_id}" style="color: #fff; text-decoration: underline;">${esc(order.booster_name)}</a>` : '<span style="color: #fff;">Đang chờ...</span>'}</div>
+                                          <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">${topup ? 'XỬ LÝ NẠP' : 'NGƯỜI CÀY'}: ${window.profileOrderDestination(order.booster_id) ? `<a href="booster.html?id=${encodeURIComponent(order.booster_id)}" style="color: #fff; text-decoration: underline;">${esc(order.booster_name)}</a>` : '<span style="color: #fff;">Đang chờ...</span>'}</div>
                                           <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-top:2px;">NGƯỜI THUÊ: <span style="color: var(--accent);">${esc(order.renter_name)}</span></div>
                                       </div>
                                   </div>
                                 ${statusBadgeHtml}
                             </div>
                             <div class="order-details">
-                                <div style="font-size: 0.8rem; font-weight: 700; color: #a855f7; margin-bottom: 8px;">MÃ ĐƠN: ${esc(order.order_code)}</div>
+                                <div class="profile-order-code">MÃ ĐƠN: ${esc(order.order_code)} <span class="profile-order-kind">${topup ? 'Nạp game' : 'Cày thuê'}</span></div>
                                 <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;"><i class="fa-regular fa-clock"></i> ${new Date(order.created_at).toLocaleString('vi-VN')}</div>
                                 <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 6px; font-size: 0.9rem; line-height: 1.5; font-weight: 500;">${contentText}</div>
                                 ${ratingHtml}
@@ -211,7 +207,7 @@
                             <div class="order-footer">
                                 <div style="font-size: 0.85rem; color: var(--text-muted);">Giá thanh toán</div>
                                 <div style="font-size: 1.1rem; font-weight: 800; color: #fff;">${priceHtml}</div>
-                                <div>${actionButtons}</div>
+                                <div class="profile-order-actions">${actionButtons}${detailHref ? `<a class="btn btn-outline" href="${detailHref}">Chi tiết &amp; trao đổi <span aria-hidden="true">↗</span></a>` : ''}</div>
                             </div>
                         </div>`;
                 });

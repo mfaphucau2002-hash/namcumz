@@ -18,3 +18,16 @@
 | Overall target | Progress, not completed | 99% similarity has not been objectively established; remaining route/visual/flow comparison still required |
 
 Previous goal turn classification: progress (source edits, local tests and browser evidence). No completion claim.
+
+## Production evidence after release
+- Commit 9995af550b45e1cf686e6ec644fe69d2d3b0b4d7; Vercel E4NtDbVW3VanZSGDZFgCEXKxD3Xe shows Ready / Production.
+- Live signed-in homepage challenge card opened dashboard creation modal with group La Hoàn and goal Nội dung thử thách. Browser warn/error log empty. Form was not submitted, no order created.
+- Proof: authorized visualization directory service-prefill-live-20261005.png.
+- Reference cannot currently be matched in spending/customer feed or unsupported games using current factual data; 99% remains unproven. Keep broad goal incomplete.
+
+## Service categories and profile continuation
+- Read the live reference Genshin category and package routes. Category layout uses centered gradient heading, shop advisory and folder-style cards.
+- Added /caythue with six existing order-form groups, shared public auth/header/footer, real quote workflow and no fixed-price catalog invented. New quest/events presets preserve login return and prefill only.
+- Added profile order-kind labels, UUID-scoped same-origin detail/chat destinations, full-width empty/error/retry state, keyboard account tabs and hash destinations. Removed nested settings styling and extra h1 headings.
+- Local public category checks at 390/768/desktop: six cards, no horizontal page overflow, mobile navigation and guest login modal work. Profile live verification pending release.
+- Stage role/order workflow checks remain waived / not verified. Overall99% not established; keep goal active.
