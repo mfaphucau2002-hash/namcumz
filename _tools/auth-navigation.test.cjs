@@ -15,7 +15,7 @@ function harness(){
     continueAfterAuthentication:()=>{context.redirected=true;}};
   context.window={location:{pathname:'/napgame.html',search:''},dispatchEvent:e=>events.push(e.type),setTimeout:fn=>timers.push(fn),fetchOrders:()=>{},fetchLeaderboard:()=>{}};
   vm.createContext(context);
-  vm.runInContext(slice(app,'function setupNavbar() {','function injectDynamicModals() {') + slice(app,'async function initSupabaseLogic() {',"document.addEventListener('DOMContentLoaded'"), context);
+  vm.runInContext("let notificationDestinationHandled = '';\n" + slice(app,'let notificationActor = null;','function injectDynamicModals() {') + slice(app,'async function initSupabaseLogic() {',"document.addEventListener('DOMContentLoaded'"), context);
   return {context,storage,timers,pending,events,emit:(event,session)=>callback(event,session)};
 }
 test('auth listener and login binding survive a failed order database contract',async()=>{
@@ -42,7 +42,7 @@ test('catalog desktop and mobile links use session and preserve return route',()
 });
 test('detail return validation accepts a game with or without selected package and rejects unsafe URLs',()=>{
  const login=fs.readFileSync('login.html','utf8'); const code=slice(login,'            const authQuery =',"        });\n    </script>").split(/\r?\n/).filter(line=>!line.includes('switchCustomerForm')).join('\n');
- for(const [path,allowed] of [['/napgame.html',true],['/napgame',true],['/dashboard?action=create-order',true],['/profile',true],['/napgame-detail?game=genshin',true],['/napgame-detail.html?game=genshin',true],['/napgame-detail.html?game=hsr&package=20000000-0000-0000-0000-000000000001',true],['//evil.example',false],['/napgame-detail.html?game=unknown',false],['/napgame-detail.html?game=genshin&package=bad',false],['/napgame-detail.html?game=genshin&game=hsr',false]]){
+ for(const [path,allowed] of [['/napgame.html',true],['/napgame',true],['/dashboard?action=create-order',true],['/profile',true],['/dashboard?order=12345678-1234-1234-1234-123456789abc&section=chat',true],['/dashboard?section=support',true],['/dashboard?order=bad',false],['/dashboard?section=support&next=https://evil.example',false],['/dashboard?order=12345678-1234-1234-1234-123456789abc&order=bad',false],['/napgame-detail?game=genshin',true],['/napgame-detail.html?game=genshin',true],['/napgame-detail.html?game=hsr&package=20000000-0000-0000-0000-000000000001',true],['//evil.example',false],['/napgame-detail.html?game=unknown',false],['/napgame-detail.html?game=genshin&package=bad',false],['/napgame-detail.html?game=genshin&game=hsr',false]]){
   const context={URL,URLSearchParams,window:{location:{origin:'https://namcumz.io.vn',search:'?next='+encodeURIComponent(path)}}}; vm.createContext(context); vm.runInContext(code,context); assert.equal(Boolean(context.window.NAMCUMZ_AUTH_NEXT),allowed,path);
  }
 });
@@ -89,3 +89,7 @@ test('dashboard top-up filter recognizes server kind without requiring a legacy 
  const context={window:{renderOrders:rows=>shown=rows},document:{getElementById:id=>elements[id]},allOrders:[{id:'topup',kind:'topup',content:'[Asia] [Genshin Impact] 60 Đá',status:'cho_xu_ly'},{id:'farm',kind:'service',content:'Cày nhiệm vụ Genshin',status:'cho_xu_ly'},{id:'old',content:'[Nạp Game] Genshin',status:'cho_xu_ly'}],currentTab:'all',currentSearch:'',currentService:'all',currentSort:''};
  vm.createContext(context);vm.runInContext(slice(app,'window.applyFilters = function()', 'window.filterByTab = function'),context);context.window.applyFilters();assert.deepEqual(Array.from(shown,row=>row.id),['topup','old']);
 });
+
+test('account changes clear old notifications and support responses',()=>{const h=harness();let removed=0;const list={innerHTML:'private data'};const dropdown={style:{display:'flex'}};h.context.document.getElementById=id=>({notificationList:list,notificationDropdown:dropdown,notificationSupport:{remove:()=>removed++}}[id]||null);h.context.currentUser={id:'a'};h.context.setupNavbar();assert.equal(list.innerHTML,'');assert.equal(dropdown.style.display,'none');list.innerHTML='old';h.context.currentUser={id:'b'};h.context.setupNavbar();assert.equal(list.innerHTML,'');assert.equal(removed,2);});
+
+test('guest order links preserve notification destination when opening login',()=>{const h=harness();let href='/login.html?form=login';const link={getAttribute:()=>href,setAttribute:(key,value)=>href=value};h.context.window.location={pathname:'/dashboard',search:'?order=12345678-1234-1234-1234-123456789abc&section=chat'};h.context.document.querySelectorAll=()=>[link];h.context.setupNavbar();assert.equal(new URL('https://namcumz.io.vn'+href).searchParams.get('next'),'/dashboard?order=12345678-1234-1234-1234-123456789abc&section=chat');});

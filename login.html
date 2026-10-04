@@ -1034,24 +1034,32 @@
             const nextPath = authQuery.get('next');
             const allowedAccountReturn = /^\/(profile|dashboard|napgame)(\.html)?$/.test(nextPath || '') || ['/dashboard?action=create-order', '/dashboard.html?action=create-order'].includes(nextPath);
             let allowedTopupReturn = false;
+            let allowedNotificationReturn = false;
             if (nextPath && nextPath.startsWith('/') && !nextPath.startsWith('//') && !nextPath.includes('\\')) {
                 try {
                     const returnUrl = new URL(nextPath, window.location.origin);
                     const returnGames = ['genshin', 'genshin-login', 'hsr', 'hsr-login', 'zzz', 'zzz-login', 'wuwa', 'wuwa-login'];
                     const returnParams = [...returnUrl.searchParams.entries()];
+                    const returnOrder = returnUrl.searchParams.get('order');
+                    const returnSection = returnUrl.searchParams.get('section');
+                    const validOrder = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(returnOrder || '');
+                    allowedNotificationReturn = returnUrl.origin === window.location.origin && ['/dashboard','/dashboard.html'].includes(returnUrl.pathname) && !returnUrl.hash && (
+                        (validOrder && returnParams.length === (returnSection ? 2 : 1) && (!returnSection || returnSection === 'chat') && returnParams.every(([key]) => key === 'order' || key === 'section')) ||
+                        (returnSection === 'support' && returnParams.length === 1)
+                    );
                     allowedTopupReturn = returnUrl.origin === window.location.origin && ['/napgame-detail', '/napgame-detail.html'].includes(returnUrl.pathname) && !returnUrl.hash && returnGames.includes(returnUrl.searchParams.get('game')) && (!returnUrl.searchParams.has('package') || /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(returnUrl.searchParams.get('package') || '')) && returnParams.length === (returnUrl.searchParams.has('package') ? 2 : 1) && returnParams.every(([key]) => key === 'game' || key === 'package') && returnParams.some(([key]) => key === 'game');
                 } catch (_) {
                     allowedTopupReturn = false;
                 }
             }
-            if (allowedAccountReturn || allowedTopupReturn) window.NAMCUMZ_AUTH_NEXT = nextPath;
+            if (allowedAccountReturn || allowedTopupReturn || allowedNotificationReturn) window.NAMCUMZ_AUTH_NEXT = nextPath;
         });
     </script>
     
     <!-- Load App Logic (contains all authentication and supabase bindings) -->
     <script src="assets/js/runtime-config.js"></script>
     <script src="assets/js/order-api.js"></script>
-    <script src="assets/js/app.js?v=20261004-notifications8"></script>
+    <script src="assets/js/app.js?v=20261005-notifications9"></script>
 </body>
 </html>
 

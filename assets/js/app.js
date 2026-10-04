@@ -1397,7 +1397,32 @@ window.fetchOrderLogs = async function() {
 
 // --- INITIALIZATION SCRIPT ---
 
+// Clear private notification UI immediately when the authenticated account changes.
+let notificationActor = null;
 function setupNavbar() {
+    const actor = currentUser?.id || null;
+    if (notificationActor !== actor) {
+        notificationActor = actor;
+        notificationDestinationHandled = '';
+        const dropdown = document.getElementById('notificationDropdown');
+        if (dropdown) dropdown.style.display = 'none';
+        const list = document.getElementById('notificationList');
+        if (list) list.innerHTML = '';
+        document.getElementById('notificationSupport')?.remove();
+    }
+    // Preserve an order/support destination through the normal login form.
+    if (!actor && ['/dashboard','/dashboard.html'].includes(window.location.pathname)) {
+        const query = new URLSearchParams(window.location.search);
+        const order = query.get('order');
+        const section = query.get('section');
+        if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(order || '') || section === 'support') {
+            const next = '/dashboard' + (order ? '?order=' + encodeURIComponent(order) + (section === 'chat' ? '&section=chat' : '') : '?section=support');
+            document.querySelectorAll('a[href*="login.html"]').forEach(link => {
+                const form = link.getAttribute('href').includes('form=register') ? 'register' : 'login';
+                link.setAttribute('href','/login.html?form=' + form + '&next=' + encodeURIComponent(next));
+            });
+        }
+    }
     window.dispatchEvent(new Event('namcumz-auth-updated'));
     const isLoggedIn = Boolean(currentUser?.id);
     const userRole = localStorage.getItem('userRole') || 'guest';
@@ -1710,6 +1735,12 @@ function bindEvents() {
     }
 
     // Notification bell toggle
+    let notificationFetchSequence = 0;
+    let fetchActor = currentUser?.id || null;
+    window.addEventListener('namcumz-auth-updated', () => {
+        const actor = currentUser?.id || null;
+        if (actor !== fetchActor) { fetchActor = actor; ++notificationFetchSequence; }
+    });
     const notifBtn = document.getElementById('notificationBtn');
     const notifDropdown = document.getElementById('notificationDropdown');
     if (notifBtn && notifDropdown) {
@@ -1717,6 +1748,7 @@ function bindEvents() {
         notifBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             const isVisible = notifDropdown.style.display === 'flex';
+            const request = ++notificationFetchSequence;
             notifDropdown.style.display = isVisible ? 'none' : 'flex';
             notifDropdown.style.flexDirection = 'column';
             // Fetch notifications when opened
@@ -1727,7 +1759,7 @@ function bindEvents() {
                     listEl.innerHTML = '<div class="notif-item" role="status">Đang tải thông báo…</div>';
                     supabaseClient.from('notifications').select('*').eq('user_id', currentUserId).order('created_at', { ascending: false }).limit(15)
                         .then(({ data, error }) => {
-                        if (currentUser?.id !== currentUserId) return;
+                        if (request !== notificationFetchSequence || currentUser?.id !== currentUserId) return;
                         if (error) { listEl.innerHTML = '<div class="notif-item" role="alert">Chưa tải được thông báo. Vui lòng mở lại.</div>'; return; }
                             if (!data || data.length === 0) {
                                 listEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:0.85rem;">Không có thông báo mới</div>';
@@ -1751,12 +1783,15 @@ function bindEvents() {
                         try { await Promise.race([markRead, timeout]); } catch (_) { /* Reading must not block navigation. */ }
                         if (currentUser?.id === actor) window.location.assign(href);
                     }));
+                        }).catch(() => {
+                            if (request === notificationFetchSequence && currentUser?.id === currentUserId) listEl.innerHTML = '<div class="notif-item" role="alert">Chưa tải được thông báo. Vui lòng mở lại.</div>';
                         });
                 }
             }
         });
         document.addEventListener('click', (e) => {
             if (!notifBtn.contains(e.target) && !notifDropdown.contains(e.target)) {
+                ++notificationFetchSequence;
                 notifDropdown.style.display = 'none';
             }
         });
