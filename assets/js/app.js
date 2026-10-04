@@ -424,16 +424,51 @@ window.fetchOrders = async function() {
         window.getOrderById = function(id) { return allOrders.find(o => o.id === id); };
         
         window.applyFilters();
-        const requestedOrder = new URLSearchParams(window.location.search).get('order');
-        if (requestedOrder && /^[0-9a-f-]{36}$/i.test(requestedOrder)) {
-            const card = [...document.querySelectorAll('[data-order-id]')].find(element => element.dataset.orderId === requestedOrder);
-            if (card) { card.classList.add('ui-order-highlight'); card.scrollIntoView({block:'center', behavior:'smooth'}); }
-        }
+        await window.openNotificationDestination();
         if(typeof window.updateDashboardStats === 'function') window.updateDashboardStats(allOrders.filter(o => !o.queue_only));
     } catch (error) {
         console.error("Lỗi tải đơn hàng:", error.message);
         const grid = document.getElementById('ordersGrid');
         if(grid) grid.innerHTML = '<div class="ui-inline-error" role="alert"><span>Chưa tải được đơn. Vui lòng thử lại.</span><button class="btn btn-outline" onclick="window.fetchOrders()">Thử lại</button></div>';
+    }
+};
+
+// Construct internal destinations from notification metadata, never from untrusted URLs.
+function notificationTarget(notification) {
+    const id = String(notification.order_id || '');
+    const valid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+    if (valid) return '/dashboard?order=' + encodeURIComponent(id) + (/Tin nhắn|Ảnh tiến độ/i.test(notification.title || '') ? '&section=chat' : '');
+    return /hỗ trợ|khiếu nại/i.test(notification.title || '') ? '/dashboard?section=support' : '/dashboard';
+}
+
+// Reveal the requested accessible order even when it is cancelled or hidden by filters.
+let notificationDestinationHandled = '';
+window.openNotificationDestination = async function() {
+    const query = new URLSearchParams(window.location.search);
+    const targetKey = (currentUser?.id || '') + window.location.search;
+    if (notificationDestinationHandled === targetKey) return;
+    const id = query.get('order');
+    if (id) {
+        const order = allOrders.find(item => item.id === id);
+        notificationDestinationHandled = targetKey;
+        if (!order) { alert('Đơn hàng này không còn tồn tại hoặc bạn không có quyền xem.'); return; }
+        const search = document.getElementById('searchInput');
+        const service = document.getElementById('filterService');
+        if (search) search.value = '';
+        if (service) service.value = 'all';
+        window.filterByTab(order.cancelled ? 'cancelled' : 'all');
+        const card = [...document.querySelectorAll('[data-order-id]')].find(item => item.dataset.orderId === id);
+        if (card) { card.classList.add('ui-order-highlight'); card.scrollIntoView({block:'center', behavior:'smooth'}); }
+        if (query.get('section') === 'chat') await window.openChat(id, order.order_code || '');
+    } else if (query.get('section') === 'support' && currentUser?.id) {
+        const actor = currentUser.id;
+        const {data, error} = await supabaseClient.from('support_tickets').select('*').eq('user_id', actor).order('created_at', {ascending:false});
+        if (currentUser?.id !== actor) return;
+        notificationDestinationHandled = error ? '' : targetKey;
+        let panel = document.getElementById('notificationSupport');
+        if (!panel) { panel = document.createElement('section'); panel.id = 'notificationSupport'; panel.className = 'card'; document.getElementById('ordersGrid')?.before(panel); }
+        panel.innerHTML = '<h2>Phản hồi hỗ trợ</h2>' + (error ? '<p role="alert">Chưa tải được phản hồi. Vui lòng tải lại trang.</p>' : ((data || []).map(ticket => '<article class="notif-item"><h3>' + escapeHtml(ticket.issue_type || 'Yêu cầu hỗ trợ') + '</h3><p>' + escapeHtml(ticket.description || '') + '</p><p>' + escapeHtml(ticket.response || 'Đang chờ phản hồi') + '</p>' + (ticket.order_id ? '<a href="' + notificationTarget({order_id:ticket.order_id}) + '">Xem đơn liên quan</a>' : '') + '</article>').join('') || '<p>Bạn chưa có yêu cầu hỗ trợ.</p>'));
+        panel.scrollIntoView({block:'center', behavior:'smooth'});
     }
 };
 
@@ -1686,21 +1721,36 @@ function bindEvents() {
             notifDropdown.style.flexDirection = 'column';
             // Fetch notifications when opened
             if (!isVisible && supabaseClient) {
-                const currentUserId = localStorage.getItem('userId');
+                const currentUserId = currentUser?.id;
                 if (currentUserId) {
                     const listEl = document.getElementById('notificationList') || notifDropdown;
+                    listEl.innerHTML = '<div class="notif-item" role="status">Đang tải thông báo…</div>';
                     supabaseClient.from('notifications').select('*').eq('user_id', currentUserId).order('created_at', { ascending: false }).limit(15)
-                        .then(({ data }) => {
+                        .then(({ data, error }) => {
+                        if (currentUser?.id !== currentUserId) return;
+                        if (error) { listEl.innerHTML = '<div class="notif-item" role="alert">Chưa tải được thông báo. Vui lòng mở lại.</div>'; return; }
                             if (!data || data.length === 0) {
                                 listEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:0.85rem;">Không có thông báo mới</div>';
                                 return;
                             }
                             listEl.innerHTML = data.map(n => `
-                                <div class="notif-item ${!n.read_at ? 'unread' : ''}">
+                                <a href="${notificationTarget(n)}" data-notification-id="${escapeHtml(n.id)}" class="notif-item ${!n.read_at ? 'unread' : ''}" style="display:block;text-decoration:none;color:inherit;">
                                     <div style="font-size:0.85rem;color:#fff;font-weight:600;">${escapeHtml(n.title || 'Thông báo')}</div>
                                     <div style="font-size:0.8rem;color:var(--text-muted);margin-top:3px;">${escapeHtml(n.content || '')}</div>
                                     <div class="notif-time">${new Date(n.created_at).toLocaleString('vi-VN')}</div>
-                                </div>`).join('');
+                                </a>`).join('');
+                    listEl.querySelectorAll('[data-notification-id]').forEach(link => link.addEventListener('click', async event => {
+                        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+                        event.preventDefault();
+                        const href = link.getAttribute('href');
+                        const actor = currentUser?.id;
+                        if (!actor || actor !== currentUserId) return;
+                        link.classList.remove('unread');
+                        const timeout = new Promise(resolve => window.setTimeout(resolve, 600));
+                        const markRead = supabaseClient.from('notifications').update({read_at:new Date().toISOString()}).eq('id', link.dataset.notificationId).eq('user_id', actor);
+                        try { await Promise.race([markRead, timeout]); } catch (_) { /* Reading must not block navigation. */ }
+                        if (currentUser?.id === actor) window.location.assign(href);
+                    }));
                         });
                 }
             }
@@ -1715,11 +1765,13 @@ function bindEvents() {
     const markAllReadBtn = document.getElementById('markAllReadBtn');
     if (markAllReadBtn && supabaseClient) {
         markAllReadBtn.addEventListener('click', async () => {
-            const currentUserId = localStorage.getItem('userId');
-            if (!currentUserId) return;
-            await supabaseClient.from('notifications').update({ read_at: new Date().toISOString() }).eq('user_id', currentUserId).is('read_at', null);
-            const listEl = document.getElementById('notificationList');
-            if (listEl) listEl.querySelectorAll('.notif-item.unread').forEach(el => el.classList.remove('unread'));
+            const actor = currentUser?.id;
+            if (!actor) return;
+            try {
+                const {error} = await supabaseClient.from('notifications').update({read_at:new Date().toISOString()}).eq('user_id',actor).is('read_at',null);
+                if (error || currentUser?.id !== actor) return;
+                document.getElementById('notificationList')?.querySelectorAll('.notif-item.unread').forEach(el => el.classList.remove('unread'));
+            } catch (_) { /* Keep unread indicators if the update fails. */ }
         });
     }
 
