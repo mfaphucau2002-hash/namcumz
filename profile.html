@@ -6,13 +6,14 @@
     <meta name="description" content="Quản lý đơn và thông tin tài khoản Namcumz.">
     <meta name="robots" content="noindex, nofollow, noarchive">
     <title>Trang Cá Nhân - NAMCUMZ</title>
-    <link rel="stylesheet" href="assets/css/design-tokens.css?v=20261002-ui">
+    <link rel="stylesheet" href="assets/css/design-tokens.css?v=20261004-mobile3">
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/jpeg" href="/assets/images/logo.jpg">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- CSS -->
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/landing.css">
     <style>
         .profile-layout { display: flex; min-height: 100vh; }
         .sidebar { width: 260px; background: var(--bg-card); border-right: 1px solid var(--border-light); padding: 24px 0; display: flex; flex-direction: column; position: fixed; height: 100vh; }
@@ -31,29 +32,29 @@
         .btn-save { width: 100%; margin-top: 20px; background: #38bdf8; color: #0f172a; font-weight: 800; padding: 16px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; border-radius: 8px; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); border: none; cursor: pointer; transition: var(--transition); }
         .btn-save:hover { box-shadow: 0 0 25px rgba(56, 189, 248, 0.6); transform: translateY(-2px); background: #7dd3fc; }
     </style>
-    <link rel="stylesheet" href="assets/css/ui.css?v=20261002-ui">
+    <link rel="stylesheet" href="assets/css/ui.css?v=20261004-profile-shell">
 </head>
-<body class="app-page profile-page">
-    <div class="profile-layout">
-        <aside class="sidebar">
-            <div class="sidebar-logo">
-                <a href="/" class="logo-text" style="font-size: 1.5rem;">NAMCUMZ</a>
-            </div>
-            <nav class="sidebar-nav">
-                <a role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}" class="sidebar-link active" onclick="switchTab('my-orders', this)"><i class="fa-solid fa-gamepad"></i> Đơn của tôi</a>
-                <a role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}" class="sidebar-link" onclick="switchTab('claim-order', this)"><i class="fa-solid fa-key"></i> Nhận đơn (Bằng mã)</a>
-                <a role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}" class="sidebar-link" onclick="switchTab('settings', this)"><i class="fa-solid fa-user-gear"></i> Cài đặt tài khoản</a>
-                <a href="/" class="sidebar-link"><i class="fa-solid fa-house"></i> Về trang chủ</a>
-            </nav>
-            <div class="sidebar-footer">
-                <button id="logoutBtn" class="btn btn-secondary" style="width: 100%; border-color: rgba(239, 68, 68, 0.3); color: var(--status-tam-dung);">
-                    <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
-                </button>
-            </div>
-        </aside>
+<body class="app-page landing-page profile-page">
+        <header class="lp-header">
+        <div class="lp-shell lp-header-inner">
+            <a class="lp-logo" href="/" aria-label="NAMCUMZ — trang chủ"><img src="/assets/images/logo.jpg" alt="" width="32" height="32"><span>NAMCUMZ</span></a>
+            <nav class="lp-desktop-nav" aria-label="Điều hướng chính"><a href="/">Trang chủ</a><a href="/reviews.html">Đánh giá</a><a href="/napgame.html">Nạp game</a><details class="lp-support-menu"><summary>Hỗ trợ</summary><div><a href="/checkscam.html">Kiểm tra giao dịch</a><a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">Zalo CSKH ↗</a></div></details></nav>
+            <div class="profile-header-actions"><a class="lp-button lp-button-quiet" href="/dashboard.html">Đơn hàng <span aria-hidden="true">↗</span></a><button id="logoutBtn" aria-label="Đăng xuất" class="lp-button lp-button-outline" type="button"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Đăng xuất</button></div>
+            <button class="lp-menu-toggle" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="lpMobileNav"><span></span><span></span></button>
+        </div>
+        <nav class="lp-mobile-nav" id="lpMobileNav" aria-label="Điều hướng di động" hidden><a href="/">Trang chủ</a><a href="/reviews.html">Đánh giá</a><a href="/napgame.html">Nạp game</a><a href="/checkscam.html">Kiểm tra giao dịch</a><a href="/dashboard.html">Đơn hàng</a><button id="logoutBtnMobile" type="button"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Đăng xuất</button></nav>
+    </header>
+    <main class="profile-main">
+            <div class="profile-content-shell">
 
-        <main class="profile-main">
-            <div id="tab-my-orders" class="tab-content active animate-on-load">
+                <div class="profile-overview"><div><p class="lp-kicker">TÀI KHOẢN / ĐƠN HÀNG</p><h1>Xin chào, <span id="profileGreetingName">Nhà lữ hành</span></h1><p>Theo dõi đơn, trao đổi với shop và quản lý thông tin tài khoản.</p></div><a class="btn btn-outline" href="/napgame.html"><i class="fa-solid fa-bolt"></i> Khám phá dịch vụ</a></div>
+
+            <nav class="profile-tabs" aria-label="Quản lý tài khoản">
+                    <button type="button" aria-current="page" class="sidebar-link active" onclick="switchTab('my-orders', this)"><i class="fa-solid fa-gamepad" aria-hidden="true"></i> Đơn của tôi</button>
+                    <button type="button" class="sidebar-link" onclick="switchTab('claim-order', this)"><i class="fa-solid fa-key" aria-hidden="true"></i> Nhận mã</button>
+                    <button type="button" class="sidebar-link" onclick="switchTab('settings', this)"><i class="fa-solid fa-user-gear" aria-hidden="true"></i> Cài đặt</button>
+                </nav>
+                <div id="tab-my-orders" class="tab-content active animate-on-load">
                 <h1 class="section-title">ĐƠN CÀY CỦA TÔI</h1>
                 <p style="color: var(--text-muted); margin-bottom: 30px;">Danh sách các đơn hàng bạn đã tạo hoặc đã nhận bằng mã.</p>
                 <div class="my-orders-grid" id="myOrdersGrid">
@@ -64,7 +65,7 @@
             <div id="tab-claim-order" class="tab-content animate-on-load">
                 <h1 class="section-title">NHẬN ĐƠN BẰNG MÃ</h1>
                 <p style="color: var(--text-muted); margin-bottom: 30px;">Nếu Admin tạo đơn hộ bạn, hãy nhập <strong>Mã Nhận Đơn</strong> (được Admin cấp) vào đây để liên kết đơn đó vào tài khoản của bạn.</p>
-                
+
                 <div class="claim-box">
                     <div class="form-group">
                         <label class="form-label" style="color: var(--accent);" for="claimCodeInput">MÃ NHẬN ĐƠN</label>
@@ -96,43 +97,65 @@
                     </form>
                 </div>
             </div>
-        </main>
-    </div>
+    </main>
 
+    <footer class="lp-footer"><div class="lp-shell"><div class="lp-footer-top"><a class="lp-logo" href="/"><img src="/assets/images/logo.jpg" alt="" width="32" height="32"><span>NAMCUMZ</span></a><nav aria-label="Liên kết cuối trang"><a href="/">Trang chủ</a><a href="/napgame.html">Nạp game</a><a href="/reviews.html">Đánh giá</a><a href="/terms.html">Điều khoản</a><a href="/privacy.html">Bảo mật</a><a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">Zalo CSKH</a></nav></div><p class="lp-copyright">Quản lý tài khoản và trao đổi về đơn hàng NAMCUMZ. © 2026</p></div></footer>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/runtime-config.js"></script>
     <script src="assets/js/order-api.js"></script>
-    <script src="assets/js/app.js"></script>
+    <script src="assets/js/app.js?v=20261004-unified7"></script>
+    <script src="assets/js/landing.js?v=20261004-unified7" defer></script>
             <script>
         function switchTab(tabId, el) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
             document.getElementById('tab-' + tabId).classList.add('active');
             el.classList.add('active');
+            document.querySelectorAll('.profile-tabs .sidebar-link').forEach(link => {
+                if (link === el) link.setAttribute('aria-current', 'page');
+                else link.removeAttribute('aria-current');
+            });
             if (tabId === 'my-orders') loadMyOrders();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const currentUserId = localStorage.getItem('userId');
             const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-            if (!currentUserId) { window.location.href = '/login'; return; }
+            const authClient = window.supabaseClient;
+            if (!authClient) {
+                window.location.href = '/login.html?next=' + encodeURIComponent('/profile.html');
+                return;
+            }
+            authClient.auth.getSession().then(({ data, error }) => {
+                const sessionUserId = data?.session?.user?.id;
+                if (error || !sessionUserId) {
+                    window.location.href = '/login.html?next=' + encodeURIComponent('/profile.html');
+                    return;
+                }
+                window.profileUserId = sessionUserId;
+                window.loadMyOrders();
+                window.loadProfileSettings();
+            }).catch(() => {
+                window.location.href = '/login.html?next=' + encodeURIComponent('/profile.html');
+            });
 
             window.loadMyOrders = async () => {
                 const grid = document.getElementById('myOrdersGrid');
                 grid.innerHTML = '<div style="color: var(--text-muted);">Đang tải dữ liệu...</div>';
-                const { data, error } = await supabaseClient.from('orders').select('*').eq('user_id', currentUserId).order('created_at', { ascending: false });
+                const sessionUserId = window.profileUserId;
+                if (!sessionUserId) return;
+                const { data, error } = await supabaseClient.from('orders').select('*').eq('user_id', sessionUserId).order('created_at', { ascending: false });
                 if (error) return grid.innerHTML = '<div style="color: var(--status-tam-dung);">Lỗi tải dữ liệu.</div>';
                 if (data.length === 0) return grid.innerHTML = '<div style="color: var(--text-muted);">Bạn chưa có đơn cày nào.</div>';
-                
+
                 grid.innerHTML = '';
                 data.forEach(order => {
                     let statusObj = typeof getStatusDetails === 'function' ? getStatusDetails(order.status) : { text: 'Unknown', icon: 'fa-question', class: '', colorVar: 'var(--text-muted)' };
                     let avatar = esc(order.booster_name ? order.booster_name.charAt(0).toUpperCase() : '?');
                     let priceHtml = order.price ? `<span style="color: #fff;">${parseInt(order.price).toLocaleString('vi-VN')} VNĐ</span>` : `<span style="color: var(--text-muted);">Chưa báo giá</span>`;
                     let contentText = esc(order.content || 'Không có mô tả');
-                    
-                    let isAssignedBooster = order.booster_id === currentUserId;
-                    let isOwner = order.user_id === currentUserId;
+
+                    let isAssignedBooster = order.booster_id === sessionUserId;
+                    let isOwner = order.user_id === sessionUserId;
                     let statusBadgeHtml = '';
                     if (isAssignedBooster) {
                         statusBadgeHtml = `
@@ -149,7 +172,7 @@
                             </div>
                         `;
                     }
-                    
+
                     let ratingHtml = '';
                     let actionButtons = '';
                     if (order.rating) {
@@ -166,7 +189,7 @@
                     } else if (order.status === 'hoan_thanh' && isOwner) {
                         actionButtons += `<button onclick="openRatingModal('${order.id}')" class="btn" style="background: #eab308; color: #000; font-weight: bold; padding: 6px 12px; font-size: 0.8rem; margin-right: 5px;"><i class="fa-solid fa-star"></i> Đánh giá ngay</button>`;
                     }
-                    
+
                     grid.innerHTML += `
                         <div class="order-card animate-on-load">
                             <div class="order-header">
@@ -194,13 +217,13 @@
                 });
             };
 
-            loadMyOrders();
-
-            if (document.getElementById('profileDisplayName') && currentUserId) {
+            window.loadProfileSettings = () => {
+                const sessionUserId = window.profileUserId;
+                if (!sessionUserId || !document.getElementById('profileDisplayName')) return;
                 // Fetch current user info
-                supabaseClient.from('user_roles').select('*').eq('id', currentUserId).single().then(({data}) => {
+                supabaseClient.from('user_roles').select('*').eq('id', sessionUserId).single().then(({data}) => {
                     if(data) {
-                        if(data.username) document.getElementById('profileDisplayName').value = data.username;
+                        if(data.username) { document.getElementById('profileDisplayName').value = data.username; document.getElementById('profileGreetingName').textContent = data.username; }
                         if(data.bio) document.getElementById('profileBio').value = data.bio;
                         if(data.avatar_url) document.getElementById('profileAvatar').value = data.avatar_url;
                     }
@@ -212,11 +235,11 @@
                     const newBio = document.getElementById('profileBio').value.trim();
                     const newAvatar = document.getElementById('profileAvatar').value.trim();
                     if(!newName) return alert("Tên không được để trống!");
-                    
+
                     const btn = document.getElementById('btnSaveProfile');
                     btn.innerHTML = 'ĐANG LƯU...';
-                    
-                    const { error } = await supabaseClient.from('user_roles').update({ username: newName, bio: newBio, avatar_url: newAvatar }).eq('id', currentUserId);
+
+                    const { error } = await supabaseClient.from('user_roles').update({ username: newName, bio: newBio, avatar_url: newAvatar }).eq('id', sessionUserId);
                     if(error) alert("Lỗi cập nhật: " + error.message);
                     else {
                         localStorage.setItem('username', newName);
@@ -224,19 +247,20 @@
                     }
                     btn.innerHTML = 'LƯU THAY ĐỔI';
                 });
-            }
+            };
 
             const btnClaimOrder = document.getElementById('btnClaimOrder');
             if (btnClaimOrder) {
                 btnClaimOrder.addEventListener('click', async () => {
+                    if (!window.profileUserId) return;
                     const code = document.getElementById('claimCodeInput').value.trim().toUpperCase();
                     if (!code) return alert("Vui lòng nhập mã nhận đơn!");
                     btnClaimOrder.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG XỬ LÝ...';
-                    
+
                     const { data, error } = await supabaseClient.rpc('claim_order_by_secret', {
                         p_secret_code: code,
                     });
-                    
+
                     if (error) {
                         alert("Có lỗi xảy ra: " + error.message);
                     } else if (data === true) {
@@ -246,18 +270,23 @@
                     } else {
                         alert("Mã nhận đơn không hợp lệ, không tồn tại hoặc bạn đã nhận đơn này rồi!");
                     }
-                    
+
                     btnClaimOrder.innerHTML = '<i class="fa-solid fa-link"></i> LIÊN KẾT ĐƠN';
                 });
             }
 
-            const logoutBtn = document.getElementById('logoutBtn');
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', () => {
-                    localStorage.clear();
-                    if(supabaseClient) supabaseClient.auth.signOut().then(() => window.location.href = '/');
+            document.querySelectorAll('#logoutBtn, #logoutBtnMobile').forEach((logoutBtn) => {
+                logoutBtn.addEventListener('click', async () => {
+                    document.querySelectorAll('#logoutBtn, #logoutBtnMobile').forEach((button) => { button.disabled = true; });
+                    try {
+                        await supabaseClient.auth.signOut();
+                        window.location.href = '/';
+                    } catch (error) {
+                        document.querySelectorAll('#logoutBtn, #logoutBtnMobile').forEach((button) => { button.disabled = false; });
+                        alert('Không thể đăng xuất lúc này. Vui lòng thử lại.');
+                    }
                 });
-            }
+            });
         });
     </script>
 </body>

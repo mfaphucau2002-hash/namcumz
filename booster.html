@@ -6,7 +6,7 @@
     <meta name="description" content="Hồ sơ và đánh giá Booster tại Namcumz.">
     <meta name="robots" content="noindex, nofollow, noarchive">
     <title>Hồ Sơ Booster - NAMCUMZ</title>
-<link rel="stylesheet" href="assets/css/design-tokens.css?v=20261002-ui">
+<link rel="stylesheet" href="assets/css/design-tokens.css?v=20261004-mobile3">
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
@@ -126,7 +126,8 @@
             color: var(--text-muted);
         }
     </style>
-    <link rel="stylesheet" href="assets/css/ui.css?v=20261002-ui">
+    <link rel="stylesheet" href="assets/css/ui.css?v=20261004-mobile3">
+    <link rel="stylesheet" href="assets/css/booster.css?v=20261004-store2">
 </head>
 <body class="app-page booster-page">
     <nav class="navbar">
@@ -160,7 +161,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/runtime-config.js"></script>
     <script src="assets/js/order-api.js"></script>
-    <script src="assets/js/app.js"></script>
+    <script src="assets/js/app.js?v=20261004-unified7"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -174,7 +175,7 @@
             const boosterId = urlParams.get('id');
             
             if (!boosterId) {
-                document.getElementById('profileContent').innerHTML = '<div class="alert text-center">Không tìm thấy thông tin Booster!</div>';
+                document.getElementById('profileContent').innerHTML = '<div class="alert text-center"><strong>Không tìm thấy thông tin Booster!</strong><p>Hồ sơ có thể không còn công khai hoặc liên kết chưa đầy đủ.</p><a class="booster-empty-link" href="/">Quay lại trang chủ ↗</a></div>';
                 return;
             }
 

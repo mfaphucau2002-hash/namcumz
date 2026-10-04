@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/design-tokens.css">
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/napgame.css?v=20261002-media">
+    <link rel="stylesheet" href="assets/css/napgame.css?v=20261004-unified7">
     <link rel="stylesheet" href="assets/css/ui.css">
 </head>
 <body class="ng-page">
@@ -23,20 +23,52 @@
         </a>
         <nav class="lp-nav" id="lpNav">
             <a href="/index.html">Trang chủ</a>
-            <a href="napgame.html" aria-current="page">Nạp Game</a>
+            <a href="/reviews.html">Đánh giá</a>
+            <a href="/index.html#dich-vu">Cày thuê</a>
+            <a href="napgame.html" aria-current="page">Nạp game</a>
+            <a href="/dashboard.html">Bảng điều khiển</a><a href="/profile.html">Hồ sơ</a>
         </nav>
         <div class="lp-actions">
-            <a href="login.html" class="lp-btn-primary" id="ngAccountLink">
-                <i class="fa-solid fa-user"></i> Đăng nhập
-            </a>
+            <a href="login.html?form=login" class="lp-btn-primary" id="ngAccountLink"><i class="fa-solid fa-user"></i> Đăng nhập / Đăng ký</a>
+<div id="navUserProfile" style="display: none; align-items: center; gap: 16px; margin-left: 20px;">
+                    <div style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); padding: 5px 15px 5px 5px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.05);">
+                        <div class="nav-avatar" id="navAvatarInitials" style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-gradient); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">A</div>
+                        <div style="display: flex; flex-direction: column; line-height: 1.2;">
+                            <span id="navUsername" style="font-weight: 700; font-size: 0.85rem; color: #fff;">Azrael</span>
+                            <span id="navRole" style="font-size: 0.65rem; font-weight: 800; color: var(--accent); letter-spacing: 0.5px;">BOOSTER</span>
+                        </div>
+                    </div>
+                                        <div class="notification-wrapper" style="position: relative;">
+                        <button aria-label="Thông báo" id="notificationBtn" style="background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; transition: 0.2s; position: relative; margin-right: 10px;">
+                            <i class="fa-solid fa-bell"></i>
+                            <span id="notificationBadge" style="display: none; position: absolute; top: 6px; right: 8px; background: #ef4444; width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 5px #ef4444;"></span>
+                        </button>
+                        <div id="notificationDropdown" style="display: none; position: absolute; right: 0; top: calc(100% + 10px); background: #0f172a; width: 320px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1); z-index: 1000; overflow: hidden; flex-direction: column;">
+                            <div style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); font-weight: bold; font-size: 0.9rem; color: #fff; display: flex; justify-content: space-between; align-items: center;">
+                                Thông báo
+                                <button id="markAllReadBtn" style="background: transparent; border: none; color: var(--accent); font-size: 0.75rem; cursor: pointer;">Đánh dấu đã đọc</button>
+                            </div>
+                            <div id="notificationList" style="max-height: 350px; overflow-y: auto; padding: 0;">
+                                <div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">Không có thông báo</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button aria-label="Đăng xuất" id="navLogoutBtn" style="background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; transition: 0.2s;">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </div>
+            <button class="lp-menu-toggle" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="lpMobileNav"><span></span><span></span></button>
         </div>
     </header>
+    <nav class="lp-mobile-nav" id="lpMobileNav" aria-label="Điều hướng di động" hidden>
+        <a href="/index.html">Trang chủ</a><a href="/reviews.html">Đánh giá</a><a href="/index.html#dich-vu">Cày thuê</a><a href="napgame.html">Nạp game</a><a href="/checkscam.html">Check Scam</a><a href="/dashboard.html">Đơn cày / Đơn nạp</a><a href="/profile.html">Hồ sơ tài khoản</a><a href="login.html?form=login" id="lpMobileAccount">Đăng nhập / Đăng ký</a>
+    </nav>
 
     <div class="ng-detail-container">
 
         <!-- BREADCRUMB -->
-        <nav class="ng-breadcrumb">
-            <a href="/index.html"><i class="fa-solid fa-house"></i> Home</a>
+        <nav class="ng-breadcrumb" aria-label="Điều hướng đường dẫn">
+            <a href="/index.html"><i class="fa-solid fa-house"></i> Trang chủ</a>
             <i class="fa-solid fa-chevron-right"></i>
             <a href="napgame.html">Nạp Game</a>
             <i class="fa-solid fa-chevron-right"></i>
@@ -54,6 +86,13 @@
             </div>
         </div>
 
+        <!-- CHECKOUT STEPS -->
+        <nav class="ng-order-steps" aria-label="Các bước tạo đơn">
+            <a class="ng-order-step is-current" href="#packageBlock"><span>01</span><strong>Chọn gói</strong></a><i aria-hidden="true"></i>
+            <a class="ng-order-step" href="#orderInfoBlock"><span>02</span><strong>Thông tin game</strong></a><i aria-hidden="true"></i>
+            <a class="ng-order-step" href="#paymentBlock"><span>03</span><strong>Thanh toán</strong></a>
+        </nav>
+
         <!-- 2-COLUMN LAYOUT -->
         <div class="ng-detail-layout">
 
@@ -61,19 +100,21 @@
             <div class="ng-col-left">
 
                 <!-- Chọn gói nạp -->
-                <div class="ng-detail-block">
+                <div class="ng-detail-block" id="packageBlock">
                     <div class="ng-block-title"><i class="fa-solid fa-layer-group"></i> Chọn gói nạp</div>
-                    <div class="ng-pkg-tabs">
-                        <button class="ng-tab-btn active" data-tab="all">Tất cả</button>
-                        <button class="ng-tab-btn" data-tab="monthly">Thẻ tháng/Pack</button>
-                        <button class="ng-tab-btn" data-tab="battlepass">Battle Pass</button>
+                    <div class="ng-pkg-tabs" role="group" aria-label="Lọc gói nạp">
+                        <button class="ng-tab-btn active" data-tab="all" type="button" aria-pressed="true">Tất cả</button>
+                        <button class="ng-tab-btn" data-tab="topup" type="button" aria-pressed="false">Gói nạp</button>
+                        <button class="ng-tab-btn" data-tab="monthly" type="button" aria-pressed="false">Thẻ tháng</button>
+                        <button class="ng-tab-btn" data-tab="battlepass" type="button" aria-pressed="false">Battle Pass</button>
                     </div>
                     <div class="ng-pkg-grid" id="pkgGrid" role="radiogroup" aria-label="Chọn gói nạp"><div class="ng-loading-state" role="status">Đang tải gói nạp...</div></div><p class="ng-field-error" id="packageError" role="alert" hidden></p>
                 </div>
 
                 <!-- Thông tin đơn hàng -->
-                <div class="ng-detail-block">
+                <div class="ng-detail-block" id="orderInfoBlock">
                     <div class="ng-block-title"><i class="fa-solid fa-circle-info"></i> Thông tin đơn hàng (Nạp Login)</div>
+                    <div class="ng-credential-note" role="note"><i class="fa-solid fa-lock" aria-hidden="true"></i><span>Chỉ nhập thông tin vào các trường riêng của đơn. Không gửi mật khẩu hoặc mã OTP qua ghi chú hay chat.</span></div>
                     <div class="ng-form-grid">
                         <div class="ng-form-group">
                             <label for="formServer">Máy chủ (Server) <span class="required">*</span></label>
@@ -104,7 +145,7 @@
                         </div>
                         <div class="ng-form-group ng-full-row">
                             <label for="formPhone">SĐT Zalo liên hệ <span class="required">*</span></label>
-                            <input type="text" id="formPhone" inputmode="tel" autocomplete="tel" aria-describedby="phoneError" placeholder="Nhập SĐT Zalo để nhận hỗ trợ (nếu cần)"><span class="ng-field-error" id="phoneError" hidden></span>
+                            <input type="text" id="formPhone" inputmode="tel" autocomplete="tel" aria-describedby="phoneError" placeholder="Nhập số điện thoại Zalo để shop liên hệ"><span class="ng-field-error" id="phoneError" hidden></span>
                         </div>
                         <div class="ng-form-group ng-full-row">
                             <label for="formNotes">Ghi chú đơn hàng (tuỳ chọn)</label>
@@ -114,14 +155,14 @@
                 </div>
 
                 <!-- Phương thức thanh toán -->
-                <div class="ng-detail-block">
+                <div class="ng-detail-block" id="paymentBlock">
                     <div class="ng-block-title"><i class="fa-solid fa-credit-card"></i> Phương thức thanh toán</div>
                     <div class="ng-payment-methods" aria-label="Kênh thanh toán được hỗ trợ">
-                        <div class="ng-pm-badge"><span style="color:#004B9D; font-weight:900;">VCB</span> Vietcombank</div>
-                        <div class="ng-pm-badge"><span style="color:#D82A2A;">MB</span> MBBank</div>
-                        <div class="ng-pm-badge"><span style="color:#0068B6;">VP</span> VPBank</div>
-                        <div class="ng-pm-badge"><i class="fa-solid fa-mobile-screen" style="color:#A50064;"></i> Momo</div>
-                        <div class="ng-pm-badge"><i class="fa-solid fa-mobile-screen" style="color:#005BAA;"></i> ZaloPay</div>
+                        <div class="ng-pm-badge">Vietcombank</div>
+                        <div class="ng-pm-badge">MBBank</div>
+                        <div class="ng-pm-badge">VPBank</div>
+                        <div class="ng-pm-badge">Momo</div>
+                        <div class="ng-pm-badge">ZaloPay</div>
                     </div>
                     <p class="ng-payment-note">
                         <i class="fa-solid fa-triangle-exclamation" ></i>
@@ -221,7 +262,7 @@
     <!-- MOBILE BOTTOM BAR -->
     <div class="ng-mobile-bar" id="mobileBar">
         <div class="ng-mobile-bar-price">
-            <div class="label">Tổng cộng</div>
+            <div class="label" id="mobileBarName">Gói đã chọn</div>
             <div class="amount" id="mobileBarPrice">Chọn gói</div>
         </div>
         <button class="ng-mobile-bar-btn" id="mobileBarBtn" onclick="submitDetailOrder()" disabled>
@@ -229,12 +270,20 @@
         </button>
     </div>
 
+    <!-- SHARED ACCOUNT DIALOG -->
+    <div class="lp-auth-overlay" id="lpAuthOverlay" hidden>
+      <section class="lp-auth-dialog" role="dialog" aria-modal="true" aria-labelledby="lpAuthDialogTitle">
+        <header class="lp-auth-dialog-header"><h2 id="lpAuthDialogTitle">Tài khoản NAMCUMZ</h2><button class="lp-auth-close" type="button" data-auth-close aria-label="Đóng đăng nhập">×</button></header>
+        <iframe class="lp-auth-frame" id="lpAuthFrame" title="Đăng nhập hoặc tạo tài khoản NAMCUMZ" referrerpolicy="same-origin"></iframe>
+      </section>
+    </div>
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/authMediaConfig.js"></script>
+    <script src="assets/js/landing.js?v=20261004-unified7" defer></script>
     <script src="assets/js/runtime-config.js"></script>
     <script src="assets/js/order-api.js"></script>
-    <script src="assets/js/app.js?v=20261002-ui"></script>
-    <script src="assets/js/napgame.js?v=20261002-media"></script>
+    <script src="assets/js/app.js?v=20261004-unified7"></script>
+    <script src="assets/js/napgame.js?v=20261004-unified7"></script>
 </body>
 </html>

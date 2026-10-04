@@ -1,0 +1,40 @@
+/* Booster profile storefront shell. */
+.booster-page{min-height:100vh;background:var(--ui-bg);color:var(--ui-text)}
+.booster-page .navbar{position:sticky;top:0;z-index:100;width:100%;border-bottom:1px solid var(--ui-border);background:rgba(11,16,24,.94);backdrop-filter:blur(14px)}
+.booster-page .nav-container{display:flex;width:min(calc(100% - 40px),1200px);min-height:72px;align-items:center;justify-content:space-between;gap:24px;margin:0 auto}
+.booster-page .logo{display:inline-flex;min-height:44px;align-items:center;gap:10px;color:var(--ui-text);font-size:16px;font-weight:700;letter-spacing:.02em;white-space:nowrap}
+.booster-page .logo img{width:34px!important;height:34px!important;flex:0 0 34px;border-radius:9px;object-fit:cover}
+.booster-page .nav-links{display:flex;align-items:center;gap:8px;margin-left:auto}
+.booster-page .nav-link{display:inline-flex;min-height:44px;align-items:center;gap:8px;padding:8px 14px;border:1px solid transparent;border-radius:9px;color:var(--ui-muted);font-size:12px;font-weight:500;white-space:nowrap}
+.booster-page .nav-link:hover{border-color:var(--ui-border);background:var(--ui-surface);color:var(--ui-text)}
+.booster-page .menu-toggle{display:none;width:44px;height:44px;place-items:center;border:1px solid var(--ui-border);border-radius:9px;background:var(--ui-surface);color:var(--ui-text);cursor:pointer}
+.booster-page>.container{width:min(calc(100% - 48px),960px);flex:1;margin:0 auto;padding:48px 0 64px}
+.booster-page #profileContent{min-width:0}
+.booster-page #profileContent:has(>.alert){display:grid;min-height:min(520px,calc(100vh - 160px));align-content:center}
+.booster-page #profileContent>.alert{max-width:640px;margin:0 auto;padding:28px 32px;border:1px solid var(--ui-border);border-radius:16px;background:radial-gradient(ellipse at 50% 0,rgba(147,180,250,.08),transparent 60%),var(--ui-surface);color:var(--ui-muted);font-size:14px;line-height:1.7;text-align:center;box-shadow:var(--ui-shadow)}
+.booster-page #profileContent>.alert::before{display:grid;width:44px;height:44px;place-items:center;margin:0 auto 14px;border:1px solid color-mix(in srgb,var(--ui-accent) 32%,transparent);border-radius:12px;background:color-mix(in srgb,var(--ui-accent) 10%,var(--ui-surface));color:var(--ui-accent);content:'i';font-size:20px;font-weight:700}
+.booster-page .profile-header{margin-bottom:32px;border-radius:16px}
+.booster-page .profile-stats{flex-wrap:wrap}
+.booster-page .section-title{margin:0 0 18px;color:var(--ui-text);font-size:18px;font-weight:600;letter-spacing:0}
+.booster-page #reviewsContainer>.review-card{padding:22px;border-radius:12px}
+.booster-page #reviewsContainer>.review-card:last-child{margin-bottom:0}
+@media(max-width:1024px){
+ .booster-page .nav-container{min-height:68px}
+ .booster-page .menu-toggle{display:grid}
+ .booster-page .nav-links{display:none;position:absolute;top:68px;right:16px;left:16px;align-items:stretch;flex-direction:column;gap:4px;padding:10px;border:1px solid var(--ui-border);border-radius:12px;background:var(--ui-surface);box-shadow:var(--ui-shadow)}
+ .booster-page .nav-links.active{display:flex}
+ .booster-page .nav-link{width:100%;padding-inline:12px}
+ .booster-page>.container{padding-top:36px}
+}
+@media(max-width:520px){
+ .booster-page .nav-container{width:calc(100% - 28px)}
+ .booster-page>.container{width:calc(100% - 32px);padding:28px 0 48px}
+ .booster-page #profileContent>.alert{margin:0 auto;padding:24px 20px}
+ .booster-page .profile-header{padding:32px 20px}
+ .booster-page .profile-stats{gap:18px}
+ .booster-page .stat-item{min-width:110px}
+}
+.booster-page #profileContent>.alert strong{display:block;color:var(--ui-text);font-size:16px}
+.booster-page #profileContent>.alert p{margin:8px auto 16px}
+.booster-page .booster-empty-link{display:inline-flex;min-height:44px;align-items:center;padding:8px 14px;border:1px solid var(--ui-border);border-radius:9px;background:var(--ui-surface-raised);color:var(--ui-accent);font-size:12px;font-weight:600}
+.booster-page .booster-empty-link:hover{border-color:var(--ui-accent);background:var(--ui-surface);transform:translateY(-1px)}

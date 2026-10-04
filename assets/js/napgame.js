@@ -10,28 +10,21 @@ const ZALO_LINK = 'https://zalo.me/0763550673';
 // ==========================================
 const GAMES_CATALOG = {
     featured: [
-        { id: 'genshin', name: 'Genshin Impact',    image: 'assets/images/games/genshin_card.jpg',  badge: '', badgeCls: 'badge-hot' },
-        { id: 'hsr',     name: 'Honkai Star Rail',  image: 'assets/images/games/hsr_card.jpg',      badge: '', badgeCls: 'badge-hot' },
-        { id: 'zzz',     name: 'Zenless Zone Zero', image: 'assets/images/games/zzz_card.jpg',      badge: '', badgeCls: 'badge-new' },
-        { id: 'wuwa',    name: 'Wuthering Waves',   image: 'assets/images/games/wuwa_card.jpg',     badge: '',    badgeCls: '' }
-    ],
-    login: [
-        { id: 'genshin', name: 'Genshin Impact', sub: 'Nạp Login', icon: 'assets/images/games/genshin_card.jpg' },
-        { id: 'hsr', name: 'Honkai Star Rail', sub: 'Nạp Login', icon: 'assets/images/games/hsr_card.jpg' },
-        { id: 'wuwa', name: 'Wuthering Waves', sub: 'Nạp Login', icon: 'assets/images/games/wuwa_card.jpg' },
-        { id: 'zzz', name: 'Zenless Zone Zero', sub: 'Nạp Login', icon: 'assets/images/games/zzz_card.jpg' }
+        { id: 'genshin', name: 'Genshin Impact', image: 'assets/images/games/genshin_card.jpg' },
+        { id: 'hsr', name: 'Honkai Star Rail', image: 'assets/images/games/hsr_card.jpg' },
+        { id: 'zzz', name: 'Zenless Zone Zero', image: 'assets/images/games/zzz_card.jpg' },
+        { id: 'wuwa', name: 'Wuthering Waves', image: 'assets/images/games/wuwa_card.jpg' }
     ]
-};
-const GAME_INFO = {
-    'genshin': { name: 'Genshin Impact', icon: 'assets/images/games/genshin_card.jpg', type: 'login' },
-    'genshin-login': { name: 'Genshin Impact', icon: 'assets/images/games/genshin_card.jpg', type: 'login' },
-    'hsr': { name: 'Honkai Star Rail', icon: 'assets/images/games/hsr_card.jpg', type: 'login' },
-    'hsr-login': { name: 'Honkai Star Rail', icon: 'assets/images/games/hsr_card.jpg', type: 'login' },
-    'zzz': { name: 'Zenless Zone Zero', icon: 'assets/images/games/zzz_card.jpg', type: 'login' },
-    'zzz-login': { name: 'Zenless Zone Zero', icon: 'assets/images/games/zzz_card.jpg', type: 'login' },
-    'wuwa': { name: 'Wuthering Waves', icon: 'assets/images/games/wuwa_card.jpg', type: 'login' },
-    'wuwa-login': { name: 'Wuthering Waves', icon: 'assets/images/games/wuwa_card.jpg', type: 'login' },
-    'default': { name: 'Game Top-up', icon: 'assets/images/logo.jpg', type: 'login' }
+};const GAME_INFO = {
+    'genshin': { name: 'Genshin Impact', icon: 'assets/images/games/genshin_icon.webp', type: 'login' },
+    'genshin-login': { name: 'Genshin Impact', icon: 'assets/images/games/genshin_icon.webp', type: 'login' },
+    'hsr': { name: 'Honkai Star Rail', icon: 'assets/images/games/hsr_icon.webp', type: 'login' },
+    'hsr-login': { name: 'Honkai Star Rail', icon: 'assets/images/games/hsr_icon.webp', type: 'login' },
+    'zzz': { name: 'Zenless Zone Zero', icon: 'assets/images/games/zzz_icon.webp', type: 'login' },
+    'zzz-login': { name: 'Zenless Zone Zero', icon: 'assets/images/games/zzz_icon.webp', type: 'login' },
+    'wuwa': { name: 'Wuthering Waves', icon: 'assets/images/games/wuwa_icon.webp', type: 'login' },
+    'wuwa-login': { name: 'Wuthering Waves', icon: 'assets/images/games/wuwa_icon.webp', type: 'login' },
+    'default': { name: 'Game Top-up', icon: 'assets/images/logo.webp', type: 'login' }
 };
 
 // ============================================================
@@ -133,7 +126,6 @@ function resetSlideTimer() {
 async function initCatalogPage() {
     startSlider();
     showCatalogMessage('gridFeatured', 'Đang tải danh mục...');
-    showCatalogMessage('gridLogin', 'Đang tải danh mục...');
     document.querySelectorAll('a[href*="zalo.me"]').forEach(a => a.href = ZALO_LINK);
 
     let activeGames;
@@ -145,41 +137,19 @@ async function initCatalogPage() {
     } catch (error) {
         console.error('Không tải được catalog nạp game:', error);
         showCatalogMessage('gridFeatured', 'Danh mục nạp game đang tạm thời không khả dụng. Vui lòng thử lại sau.');
-        showCatalogMessage('gridLogin', 'Danh mục nạp game đang tạm thời không khả dụng. Vui lòng thử lại sau.');
         return;
     }
 
     const availableFeatured = GAMES_CATALOG.featured.filter(game => activeGames.has(game.name));
-    const availableLogin = GAMES_CATALOG.login.filter(game => activeGames.has(game.name));
     renderPortrait(availableFeatured);
-    renderHorizontal(availableLogin, 'gridLogin');
     if (!availableFeatured.length) showCatalogMessage('gridFeatured', 'Hiện chưa có game nào mở bán.');
-    if (!availableLogin.length) showCatalogMessage('gridLogin', 'Hiện chưa có game nào mở bán.');
-
-    document.querySelectorAll('.ng-cat-tab').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.ng-cat-tab').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            const loginSec = document.getElementById('sectionLogin');
-            const featSec = document.getElementById('sectionFeatured');
-            if (btn.dataset.filter === 'all') {
-                renderPortrait(availableFeatured);
-                if (loginSec) loginSec.style.display = '';
-                if (featSec) featSec.style.display = '';
-            } else if (btn.dataset.filter === 'hot') {
-                renderPortrait(availableFeatured);
-                if (loginSec) loginSec.style.display = 'none';
-                if (featSec) featSec.style.display = '';
-            }
-        });
-    });
 
     const searchInput = document.getElementById('gameSearch');
     if (searchInput) {
         searchInput.addEventListener('input', event => {
             const query = event.target.value.toLowerCase().trim();
-            document.querySelectorAll('.ng-card-hz, .ng-card-portrait').forEach(card => {
-                const title = card.querySelector('.ng-card-hz-title, .ng-card-portrait-title');
+            document.querySelectorAll('.ng-card-portrait').forEach(card => {
+                const title = card.querySelector('.ng-card-portrait-title');
                 card.style.display = (title?.innerText || '').toLowerCase().includes(query) ? '' : 'none';
             });
         });
@@ -199,36 +169,40 @@ function renderPortrait(data) {
         </a>
     `).join('');
 }
-function renderHorizontal(data, containerId) {
-    const grid = document.getElementById(containerId);
-    if (!grid) return;
-    grid.innerHTML = data.map(game => `
-        <a href="napgame-detail.html?game=${game.id}" class="ng-card-hz">
-            <img src="${game.icon}" class="ng-card-hz-icon" alt="" onerror="this.src='assets/images/logo.jpg'">
-            <div class="ng-card-hz-info">
-                <div class="ng-card-hz-title">${game.name}</div>
-                <div class="ng-card-hz-sub">${game.sub}</div>
-                <div class="ng-card-hz-badges"><span class="ng-card-hz-badge badge-login">Login</span></div>
-            </div>
-        </a>
-    `).join('');
-}
 // 6. DETAIL PAGE LOGIC
 // ==========================================
 let currentSelectedPackage = null;
 let currentGameId = 'default';
 let activeTabFilter = 'all';
 
-function getPackagePresentation(packageId) {
+function getPackagePresentation(packageId, packageName) {
     for (const value of Object.values(GAME_PACKAGES)) {
         if (Array.isArray(value)) {
-            const match = value.find(item => item.id === packageId);
+            const match = value.find(item => item.id === packageId || (packageName && item.name === packageName));
             if (match) return match;
         }
     }
     return {};
 }
 
+// Pick game-specific catalog artwork when older rows contain only generic assets.
+function getPackageImage(gameName, packageId, packageName, tag) {
+    const presentation = getPackagePresentation(packageId, packageName);
+    if (presentation.img) return presentation.img;
+    const gameKey = Object.entries(GAME_INFO).find(([, info]) => info.name === gameName)?.[0]?.replace('-login', '');
+    if (gameKey && ['genshin', 'hsr', 'zzz', 'wuwa'].includes(gameKey)) {
+        const prefix = gameKey === 'genshin' ? 'crystals' : gameKey;
+        const match = String(packageName || '').match(/(?:^|\s)(60|300|980|1980|3280|6480)(?:\s|\+|$)/);
+        if (tag === 'monthly') {
+            const monthly = { genshin:'welkin.webp', hsr:'hsr_pass.webp', zzz:'zzz_pass.webp', wuwa:'wuwa_pass.webp' }[gameKey];
+            return `assets/images/games/${monthly}`;
+        }
+        if (tag === 'battlepass' && gameKey === 'hsr') return 'assets/images/games/hsr_bp.webp';
+        if (match) return `assets/images/games/${prefix}_${match[1]}.webp`;
+        if (gameKey === 'genshin') return 'assets/images/games/genshin_card.jpg';
+    }
+    return Object.values(GAME_INFO).find(info => info.name === gameName)?.icon || 'assets/images/logo.jpg';
+}
 // Load active catalog rows; names, ids, and prices always come from the database.
 async function loadActivePackages(gameName) {
     if (!supabaseClient) throw new Error('Chưa kết nối được danh mục nạp game.');
@@ -239,16 +213,34 @@ async function loadActivePackages(gameName) {
         .order('price', { ascending: true });
     if (error) throw error;
     return (data || []).filter(row => row && typeof row.name === 'string' && Number.isFinite(Number(row.price)) && Number(row.price) > 0).map(row => {
-        const presentation = getPackagePresentation(row.id);
+        const presentation = getPackagePresentation(row.id, row.name);
         return {
             ...presentation,
             id: row.id,
             name: row.name,
             price: Number(row.price),
-            img: presentation.img || Object.values(GAME_INFO).find(info => info.name === gameName)?.icon || 'assets/images/logo.jpg',
+            img: getPackageImage(gameName, row.id, row.name, presentation.tag || 'topup'),
             tag: presentation.tag || 'topup'
         };
     });
+}
+
+// Build an allowlisted, non-sensitive return URL for the selected top-up package.
+function buildTopupReturnPath(packageId) {
+    const supportedGames = ['genshin', 'genshin-login', 'hsr', 'hsr-login', 'zzz', 'zzz-login', 'wuwa', 'wuwa-login'];
+    if (!supportedGames.includes(currentGameId) || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(packageId || '')) return '';
+    const params = new URLSearchParams({ game: currentGameId, package: packageId });
+    return '/napgame-detail.html?' + params.toString();
+}
+
+// Return guests to the selected package after account authentication.
+function continueTopupAfterLogin() {
+    const returnPath = buildTopupReturnPath(currentSelectedPackage?.id);
+    if (!returnPath) {
+        showCheckoutMessage('Không thể giữ lại gói này. Vui lòng tải lại danh mục và chọn lại.');
+        return;
+    }
+    window.location.href = 'login.html?form=login&next=' + encodeURIComponent(returnPath);
 }
 
 function showCatalogMessage(containerId, message) {
@@ -264,13 +256,25 @@ function showCatalogMessage(containerId, message) {
 async function initDetailPage() {
     const params = new URLSearchParams(window.location.search);
     currentGameId = params.get('game') || 'default';
+    if (!Object.hasOwn(GAME_INFO, currentGameId) || currentGameId === 'default') {
+        document.title = 'Không tìm thấy game - NAMCUMZ';
+        document.getElementById('breadcrumbGame').textContent = 'Không tìm thấy game';
+        document.getElementById('detailGameName').textContent = 'Không tìm thấy game';
+        document.querySelector('.ng-detail-subtitle').textContent = 'Liên kết chưa đầy đủ hoặc game không có trong danh mục hiện tại.';
+        renderUnsupportedGame(null);
+        return;
+    }
     const gameInfo = GAME_INFO[currentGameId] || GAME_INFO.default;
+    const themeGameId = currentGameId.replace('-login', '');
+    document.body.dataset.game = themeGameId;
+    const detailHeader = document.querySelector('.ng-detail-header');
+    if (detailHeader) detailHeader.dataset.game = themeGameId;
 
     document.title = `${gameInfo.name} - Nạp Game | NAMCUMZ`;
     const breadcrumb = document.getElementById('breadcrumbGame');
     if (breadcrumb) breadcrumb.textContent = gameInfo.name;
     const icon = document.getElementById('detailGameIcon');
-    if (icon) { icon.src = gameInfo.icon; icon.onerror = () => icon.src = 'assets/images/logo.jpg'; }
+    if (icon) { icon.src = gameInfo.icon; icon.alt = gameInfo.name; icon.onerror = () => { icon.src = 'assets/images/logo.jpg'; }; }
     const cover = document.getElementById('detailGameCover');
     if (cover && GAMES_CATALOG.featured.some(game => game.id === currentGameId.replace('-login', ''))) {
         cover.style.backgroundImage = "url(assets/images/games/" + currentGameId.replace("-login", "") + "_banner.jpg)";
@@ -287,6 +291,8 @@ async function initDetailPage() {
         if (phone && !phone.value) phone.value = window.currentUser.phone || '';
     }
 
+    currentSelectedPackage = null;
+    const requestedPackageId = params.get('package') || '';
     let packages;
     try {
         packages = await loadActivePackages(gameInfo.name);
@@ -305,11 +311,15 @@ async function initDetailPage() {
         renderUnsupportedGame(gameInfo);
         return;
     }
+    const restoredPackage = requestedPackageId ? packages.find(pkg => pkg.id === requestedPackageId) : null;
+    if (restoredPackage) currentSelectedPackage = restoredPackage;
     renderPackages(packages, 'all');
+    if (restoredPackage) updateCart();
     document.querySelectorAll('.ng-tab-btn[data-tab]').forEach(button => {
         button.addEventListener('click', () => {
-            document.querySelectorAll('.ng-tab-btn[data-tab]').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.ng-tab-btn[data-tab]').forEach(tab => { tab.classList.remove('active'); tab.setAttribute('aria-pressed', 'false'); });
             button.classList.add('active');
+            button.setAttribute('aria-pressed', 'true');
             activeTabFilter = button.dataset.tab;
             renderPackages(packages, activeTabFilter);
         });
@@ -319,14 +329,21 @@ async function initDetailPage() {
     });
     renderReviews();
 }
+// Give unavailable catalogs a clear return path and prevent checkout.
 function renderUnsupportedGame(gameInfo) {
     currentSelectedPackage = null;
-    const grid = document.getElementById('pkgGrid');
-    if (grid) {
-        grid.innerHTML = `<div role="status" style="grid-column:1/-1;text-align:center;color:#555;padding:32px;">
-            Gói nạp cho ${gameInfo.name} đang được cập nhật. Vui lòng chọn game khác hoặc liên hệ Zalo để được hỗ trợ.
-        </div>`;
+    showCatalogMessage('pkgGrid', gameInfo
+        ? `Gói nạp cho ${gameInfo.name} đang được cập nhật. Vui lòng chọn game khác hoặc liên hệ Zalo để được hỗ trợ.`
+        : 'Chọn một game đang mở bán trong danh mục để xem các gói nạp.');
+    const status = document.querySelector('#pkgGrid .ng-catalog-status');
+    if (status) {
+        const link = document.createElement('a');
+        link.className = 'ng-support-link';
+        link.href = 'napgame.html';
+        link.textContent = '← Quay lại danh mục game';
+        status.append(document.createElement('br'), link);
     }
+    document.querySelectorAll('.ng-pkg-tabs, .ng-order-steps, #orderInfoBlock, #paymentBlock, .ng-col-right, .ng-mobile-bar').forEach(element => { element.hidden = true; });
     ['btnSubmitOrder', 'mobileBarBtn'].forEach(id => {
         const button = document.getElementById(id);
         if (button) button.disabled = true;
@@ -366,7 +383,8 @@ function renderPackages(packages, filter) {
         }
         const image = document.createElement('img');
         image.className = 'ng-pkg-img';
-        image.src = pkg.tag === 'monthly' ? 'assets/images/topup/pass.svg' : pkg.tag === 'battlepass' ? 'assets/images/topup/battlepass.svg' : 'assets/images/topup/crystals.svg';
+        image.src = pkg.img || (pkg.tag === 'monthly' ? 'assets/images/topup/pass.svg' : pkg.tag === 'battlepass' ? 'assets/images/topup/battlepass.svg' : 'assets/images/topup/crystals.svg');
+        image.onerror = () => { image.src = pkg.tag === 'monthly' ? 'assets/images/topup/pass.svg' : pkg.tag === 'battlepass' ? 'assets/images/topup/battlepass.svg' : 'assets/images/topup/crystals.svg'; };
         image.alt = '';
         image.loading = 'lazy';
         image.decoding = 'async';
@@ -417,13 +435,21 @@ function updateCart() {
     if (nameEl)  nameEl.textContent  = currentSelectedPackage.name;
     if (priceEl) priceEl.textContent = priceStr;
     if (totalEl) totalEl.textContent = priceStr;
-    if (imgEl) imgEl.src = currentSelectedPackage.tag === 'monthly' ? 'assets/images/topup/pass.svg' : currentSelectedPackage.tag === 'battlepass' ? 'assets/images/topup/battlepass.svg' : 'assets/images/topup/crystals.svg';
+    if (imgEl) {
+        imgEl.src = currentSelectedPackage.img || (currentSelectedPackage.tag === 'monthly' ? 'assets/images/topup/pass.svg' : currentSelectedPackage.tag === 'battlepass' ? 'assets/images/topup/battlepass.svg' : 'assets/images/topup/crystals.svg');
+        imgEl.onerror = () => { imgEl.src = 'assets/images/topup/crystals.svg'; };
+    }
     if (btnEl)   btnEl.disabled = false;
 
+    const mobileName = document.getElementById('mobileBarName');
     const mobilePrice = document.getElementById('mobileBarPrice');
+    if (mobileName) mobileName.textContent = currentSelectedPackage.name;
+    const mobileBar   = document.getElementById('mobileBar');
     const mobileBtn   = document.getElementById('mobileBarBtn');
+    if (mobileBar) mobileBar.classList.add('has-selection');
     if (mobilePrice) mobilePrice.textContent = priceStr;
     if (mobileBtn)   mobileBtn.disabled = false;
+    syncTopupAccountLink();
 }
 
 // Show a field error and connect it to the affected control.
@@ -466,17 +492,16 @@ async function submitDetailOrder() {
     const packageError = document.getElementById('packageError');
     if (packageError) packageError.hidden = true;
 
-    if (!window.currentUser?.id) {
-        showCheckoutMessage('Vui lòng đăng nhập để tạo đơn. Mở trang Đăng nhập ở đầu trang, sau đó quay lại gói đã chọn.');
-        document.getElementById('checkoutMessage')?.focus();
-        return;
-    }
     if (!currentSelectedPackage?.id) {
         if (packageError) {
             packageError.textContent = 'Vui lòng chọn một gói nạp.';
             packageError.hidden = false;
             packageError.scrollIntoView({ block: 'center', behavior: 'smooth' });
         }
+        return;
+    }
+    if (!window.currentUser?.id) {
+        continueTopupAfterLogin();
         return;
     }
 
@@ -511,7 +536,7 @@ async function submitDetailOrder() {
         }
         const order = await OrderAPI.topup(client, authData.user.id, currentSelectedPackage.id, server, loginMethod, account, password, phone, notes);
         showCheckoutMessage('Đã tạo đơn. Đang chuyển đến trang theo dõi...', 'success');
-        window.location.href = `dashboard.html?tab=history&order=${encodeURIComponent(order.id)}`;
+        window.location.href = `dashboard.html?order=${encodeURIComponent(order.id)}`;
     } catch (err) {
         console.error('Lỗi tạo đơn nạp game:', err);
         showCheckoutMessage(err.message?.includes('Authenticated owner required') ? 'Không xác định được chủ đơn. Vui lòng tải lại trang và thử lại; nếu vẫn lỗi, liên hệ CSKH.' : (err.message || 'Không thể tạo đơn. Vui lòng kiểm tra lại hoặc liên hệ Zalo.'));
@@ -525,17 +550,22 @@ async function submitDetailOrder() {
 // INIT ROUTER
 // ==========================================
 // Keep the shared top-up header aligned with the actual Supabase session.
-async function syncTopupAccountLink() {
-    const link = document.getElementById('ngAccountLink');
-    if (!link || !supabaseClient) return;
-    const { data, error } = await supabaseClient.auth.getUser();
-    const signedIn = !error && Boolean(data?.user?.id);
-    link.href = signedIn ? 'dashboard.html' : 'login.html';
-    link.innerHTML = signedIn ? '<i class="fa-solid fa-user" aria-hidden="true"></i> Tài khoản' : '<i class="fa-solid fa-user" aria-hidden="true"></i> Đăng nhập';
+function syncTopupAccountLink() {
+    const signedIn = Boolean(window.currentUser?.id);
+    const returnPath = currentSelectedPackage?.id ? buildTopupReturnPath(currentSelectedPackage.id) : window.location.pathname + window.location.search;
+    const href = signedIn ? '/dashboard.html' : '/login.html?form=login&next=' + encodeURIComponent(returnPath);
+    const name = localStorage.getItem('username') || window.currentUser?.user_metadata?.display_name || 'Tài khoản';
+    [document.getElementById('ngAccountLink'), document.getElementById('lpMobileAccount')].forEach(link => {
+        if (!link) return;
+        link.href = href;
+        link.textContent = signedIn ? name + ' / Đơn hàng' : 'Đăng nhập / Đăng ký';
+        link.title = signedIn ? 'Mở tài khoản và đơn hàng' : 'Đăng nhập để tiếp tục';
+    });
 }
+window.addEventListener('namcumz-auth-updated', syncTopupAccountLink);
 document.addEventListener('DOMContentLoaded', () => {
     syncTopupAccountLink();
-    if (supabaseClient) supabaseClient.auth.onAuthStateChange(() => { setTimeout(syncTopupAccountLink, 0); });
+
     initTicker();
     if (document.getElementById('sliderTrack')) initCatalogPage();
     if (document.getElementById('pkgGrid')) initDetailPage();

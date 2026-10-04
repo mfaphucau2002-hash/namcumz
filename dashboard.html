@@ -6,7 +6,7 @@
     <meta name="description" content="Theo dõi tiến độ, trao đổi và quản lý đơn Genshin tại Namcumz.">
     <meta name="robots" content="noindex, nofollow, noarchive">
     <title>NAMCUMZ - Bảng Điều Khiển</title>
-<link rel="stylesheet" href="assets/css/design-tokens.css?v=20261002-ui">
+<link rel="stylesheet" href="assets/css/design-tokens.css?v=20261004-mobile3">
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/jpeg" href="/assets/images/logo.jpg">
     <!-- FontAwesome -->
@@ -14,7 +14,7 @@
     <!-- CSS -->
     <link rel="stylesheet" href="assets/css/style.css">
 
-    <link rel="stylesheet" href="assets/css/ui.css?v=20261002-ui">
+    <link rel="stylesheet" href="assets/css/ui.css?v=20261004-dashboard2">
 </head>
 <body class="app-page dashboard-page">
     <!-- Header -->
@@ -30,6 +30,7 @@
                 <a href="/index.html" class="nav-link">
                     <i class="fa-solid fa-home"></i> Trang chủ
                 </a>
+                <a href="/dashboard.html?action=create-order" class="nav-link">Cày thuê</a>
                 <a href="/napgame.html" class="nav-link" style="color: #f59e0b; font-weight: 700;">
                     <i class="fa-solid fa-bolt"></i> Nạp Game
                 </a>
@@ -37,11 +38,11 @@
                     <i class="fa-solid fa-chart-line"></i> Bảng điều khiển
                 </a>
                 <a href="/checkscam.html" class="nav-link scam"><i class="fa-solid fa-shield-virus"></i> Check Scam</a>
-                <a href="#ordersGrid" class="nav-link">
-                    <i class="fa-solid fa-gamepad"></i> Đơn của tôi
+                <a href="/profile.html" class="nav-link">
+                    <i class="fa-solid fa-gamepad"></i> Hồ sơ
                 </a>
-                <a href="/login" class="nav-link" id="navAccountBtn">
-                    <i class="fa-solid fa-user"></i> Tài khoản
+                <a href="/login.html?form=register" class="nav-link" id="navAccountBtn">
+                    <i class="fa-solid fa-user"></i> Đăng nhập / Đăng ký
                 </a>
                 
                 <!-- Dynamic User Profile Area (Hidden by default, shown via JS) -->
@@ -79,13 +80,19 @@
     <!-- Main Content -->
     <main class="app-container" style="padding-top: 40px; min-height: 70vh;">
         <!-- New Dashboard Header -->
+        <section class="account-summary" id="accountSummary" aria-label="Tổng quan đơn hàng" hidden>
+            <article><span>TẤT CẢ</span><strong id="count-all-summary">0</strong><small>đơn hàng</small></article>
+            <article><span>ĐANG XỬ LÝ</span><strong id="count-active-summary">0</strong><small>đơn hàng</small></article>
+            <article><span>HOÀN THÀNH</span><strong id="count-complete-summary">0</strong><small>đơn hàng</small></article>
+        </section>
+
         <div class="dashboard-header-row animate-on-load" style="animation-delay: 0.1s;">
             <div style="display: flex; flex-direction: column;">
                 <div class="dashboard-title-group">
-                    <h1 class="dashboard-title">Quản lý đơn</h1>
+                    <h1 class="dashboard-title" id="dashboardTitle">Đơn hàng của bạn</h1>
                     <span class="order-count-badge" id="totalOrdersBadge">0 đơn</span>
                 </div>
-                <p class="dashboard-intro" id="dynamicSlogan">Theo dõi tiến độ và trao đổi cùng shop.</p>
+                <p class="dashboard-intro" id="dynamicSlogan">Đăng nhập để xem đơn, nhận cập nhật và trao đổi với shop.</p>
             </div>
             <div class="dashboard-toolbar">
                 <a href="/napgame.html" class="btn btn-outline">
@@ -97,6 +104,18 @@
             </div>
         </div>
 
+        <!-- GUEST ACCOUNT ENTRY -->
+        <section class="dashboard-guest-card" id="dashboardGuestCard" aria-labelledby="dashboardGuestTitle">
+            <div class="dashboard-guest-icon" aria-hidden="true"><i class="fa-solid fa-receipt"></i></div>
+            <p class="dashboard-guest-eyebrow">TÀI KHOẢN KHÁCH HÀNG</p>
+            <h2 id="dashboardGuestTitle">Đăng nhập để theo dõi đơn hàng</h2>
+            <p>Đăng nhập để xem trạng thái, tiến độ và trao đổi về các đơn hàng gắn với tài khoản của bạn.</p>
+            <div class="dashboard-guest-actions">
+                <a class="btn btn-primary" href="/login.html?form=login">Đăng nhập <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                <a class="btn btn-outline" href="/login.html?form=register">Tạo tài khoản</a>
+            </div>
+            <small>Đơn hàng chỉ hiển thị sau khi đăng nhập bằng đúng tài khoản.</small>
+        </section>
         <!-- Tabs -->
         <div class="tabs-container animate-on-load" style="animation-delay: 0.2s;">
             <button class="tab-btn active" onclick="window.filterByTab('all')" id="tab-all">Tất cả <span class="tab-count" id="count-all">0</span></button>
@@ -141,7 +160,7 @@
             </div>
             
             <!-- Right: Stats Sidebar -->
-            <div class="sidebar-panel" id="dynamicSidebar">
+            <div class="sidebar-panel" id="dynamicSidebar" hidden>
                 <!-- Injected via JS -->
             </div>
 
@@ -436,7 +455,7 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="assets/js/runtime-config.js"></script>
     <script src="assets/js/order-api.js"></script>
-    <script src="assets/js/app.js?v=20261002-ui"></script>
+    <script src="assets/js/app.js?v=20261004-unified7"></script>
     <script src="assets/js/ai-copilot.js"></script>
 </body>
 </html>

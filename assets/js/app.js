@@ -3,6 +3,7 @@ const SUPABASE_URL = 'https://vqnuutdmcekqkbdvawlw.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxbnV1dGRtY2VrcWtiZHZhd2x3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTgwNjIsImV4cCI6MjEwMDM3NDA2Mn0.T8_AdJOWEmf68oVrOjv8G51IScykzqhBnfHIi5LK-G4';
 
 let supabaseClient = null;
+Object.defineProperty(window, 'supabaseClient', { configurable: false, get: () => supabaseClient });
 let allOrders = [];
 let currentChatSub = null;
 let currentChatOrderId = null;
@@ -423,6 +424,11 @@ window.fetchOrders = async function() {
         window.getOrderById = function(id) { return allOrders.find(o => o.id === id); };
         
         window.applyFilters();
+        const requestedOrder = new URLSearchParams(window.location.search).get('order');
+        if (requestedOrder && /^[0-9a-f-]{36}$/i.test(requestedOrder)) {
+            const card = [...document.querySelectorAll('[data-order-id]')].find(element => element.dataset.orderId === requestedOrder);
+            if (card) { card.classList.add('ui-order-highlight'); card.scrollIntoView({block:'center', behavior:'smooth'}); }
+        }
         if(typeof window.updateDashboardStats === 'function') window.updateDashboardStats(allOrders.filter(o => !o.queue_only));
     } catch (error) {
         console.error("Lỗi tải đơn hàng:", error.message);
@@ -447,7 +453,9 @@ window.applyFilters = function() {
             if (order.cancelled) return false;
             if (currentTab !== 'all' && order.status !== currentTab) return false;
         }
-        if (currentService !== 'all' && order.content && !order.content.toLowerCase().includes(currentService.toLowerCase())) return false;
+        if (currentService === '[Nạp Game]') {
+            if (order.kind !== 'topup' && !String(order.content || '').includes('[Nạp Game]')) return false;
+        } else if (currentService !== 'all' && !String(order.content || '').toLowerCase().includes(currentService.toLowerCase())) return false;
         
         if (currentSearch) {
             const code = order.order_code ? order.order_code.toLowerCase() : '';
@@ -648,10 +656,17 @@ window.renderOrders = function(ordersToRender, containerId) {
         else if (order.status === 'tam_dung') calculatedProgress = 30;
 
         if (usesOrderRPC()) calculatedProgress = Math.min(100, Math.max(0, Number(order.progress) || 0));
+        let gameBadgeIcon = '';
+        const orderSearchText = ((order.content || '') + ' ' + (serviceGroup || '')).toLowerCase();
+        if (orderSearchText.includes('genshin')) gameBadgeIcon = 'assets/images/games/genshin_icon.webp';
+        else if (orderSearchText.includes('honkai') || orderSearchText.includes('hsr') || orderSearchText.includes('star rail')) gameBadgeIcon = 'assets/images/games/hsr_icon.webp';
+        else if (orderSearchText.includes('zenless') || orderSearchText.includes('zzz')) gameBadgeIcon = 'assets/images/games/zzz_icon.webp';
+        else if (orderSearchText.includes('wuthering') || orderSearchText.includes('wuwa')) gameBadgeIcon = 'assets/images/games/wuwa_icon.webp';
         const html = `
-            <article class="card order-card-modern">
-                <div class="oc-header">
-                    <div>
+            <article class="card order-card-modern" data-order-id="${escapeHtml(order.id)}">
+                <div class="oc-header" style="display:flex;align-items:flex-start;gap:12px;">
+                    ${gameBadgeIcon ? `<img src="${gameBadgeIcon}" alt="" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.3);" loading="lazy">` : ''}
+                    <div style="flex:1;min-width:0;">
                         <div class="oc-id">${escapeHtml(order.order_code || '#-----')}${order.kind === 'topup' ? ' <span style=\"background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;\"><i class=\"fa-solid fa-bolt\"></i> Nạp Game</span>' : ''}</div>
                         <h3 class="oc-title">${escapeHtml(displayTitle)}</h3>
                     </div>
@@ -745,14 +760,31 @@ window.renderOrders = function(ordersToRender, containerId) {
 };
 
 window.updateDashboardStats = function(orders) {
-    if(!document.getElementById('totalOrdersBadge')) return;
+    if(!document.getElementById('totalOrdersBadge') && !document.getElementById('count-all-summary')) return;
     let counts = { all: orders.length, cancelled: 0, cho_xu_ly: 0, dang_cay: 0, cho_nghiem_thu: 0, hoan_thanh: 0, tam_dung: 0 };
     orders.forEach(o => {
         if (o.cancelled) counts.cancelled++;
         else if (counts[o.status] !== undefined) counts[o.status]++;
     });
     
-    document.getElementById('totalOrdersBadge').innerText = `${orders.length} đơn`;
+    const isAuthenticated = Boolean(currentUser?.id);
+    document.body.classList.toggle('dashboard-authenticated', isAuthenticated);
+    const guestCard = document.getElementById('dashboardGuestCard');
+    if (guestCard) guestCard.hidden = isAuthenticated;
+    const accountSummary = document.getElementById('accountSummary');
+    const dashboardTitle = document.getElementById('dashboardTitle');
+    const dashboardSlogan = document.getElementById('dynamicSlogan');
+    if (accountSummary) accountSummary.hidden = !isAuthenticated;
+    if (dashboardTitle) dashboardTitle.textContent = localStorage.getItem('userRole') === 'booster' ? 'Công việc của bạn' : (localStorage.getItem('userRole') === 'admin' || localStorage.getItem('userRole') === 'super_admin' ? 'Quản lý đơn' : 'Đơn hàng của bạn');
+    if (dashboardSlogan) dashboardSlogan.textContent = isAuthenticated ? 'Theo dõi tiến độ và trao đổi cùng shop.' : 'Đăng nhập để xem đơn, nhận cập nhật và trao đổi với shop.';
+    const totalBadge = document.getElementById('totalOrdersBadge');
+    if (totalBadge) totalBadge.innerText = `${orders.length} đơn`;
+    const summaryAll = document.getElementById('count-all-summary');
+    const summaryActive = document.getElementById('count-active-summary');
+    const summaryComplete = document.getElementById('count-complete-summary');
+    if (summaryAll) summaryAll.textContent = String(counts.all);
+    if (summaryActive) summaryActive.textContent = String(counts.cho_xu_ly + counts.dang_cay + counts.cho_nghiem_thu);
+    if (summaryComplete) summaryComplete.textContent = String(counts.hoan_thanh);
     
     ['all', 'cho_xu_ly', 'dang_cay', 'cho_nghiem_thu', 'hoan_thanh', 'cancelled'].forEach(status => {
         const el = document.getElementById('count-' + status);
@@ -761,6 +793,7 @@ window.updateDashboardStats = function(orders) {
 
     const sidebar = document.getElementById('dynamicSidebar');
     if (!sidebar) return;
+    sidebar.hidden = !isAuthenticated;
 
     const userRole = localStorage.getItem('userRole') || 'guest';
     const currentUserId = localStorage.getItem('userId');
@@ -1330,15 +1363,16 @@ window.fetchOrderLogs = async function() {
 // --- INITIALIZATION SCRIPT ---
 
 function setupNavbar() {
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    window.dispatchEvent(new Event('namcumz-auth-updated'));
+    const isLoggedIn = Boolean(currentUser?.id);
     const userRole = localStorage.getItem('userRole') || 'guest';
     let currentUsername = localStorage.getItem('username');
     if (!currentUsername || currentUsername === 'null' || currentUsername === 'undefined') {
-        currentUsername = 'Người dùng';
-        if (userRole === 'admin' || userRole === 'super_admin') currentUsername = 'Admin';
+        currentUsername = currentUser?.user_metadata?.display_name || 'Người dùng';
+        if (!currentUser?.user_metadata?.display_name && (userRole === 'admin' || userRole === 'super_admin')) currentUsername = 'Admin';
     }
     
-    const navAccountBtn = document.getElementById('navAccountBtn');
+    const navAccountBtn = document.getElementById('navAccountBtn') || document.getElementById('ngAccountLink');
     const navUserProfile = document.getElementById('navUserProfile');
     const navUsername = document.getElementById('navUsername');
     const navRole = document.getElementById('navRole');
@@ -1499,10 +1533,16 @@ function bindEvents() {
         }
     }
 
+    // Resume the guest-requested order flow after a successful dashboard sign-in.
+    if (['/dashboard', '/dashboard.html'].includes(window.location.pathname) && new URLSearchParams(window.location.search).get('action') === 'create-order' && currentUser?.id) {
+        window.history.replaceState({}, '', '/dashboard.html');
+        window.setTimeout(() => window.openCreateOrderModal?.(), 0);
+    }
     const createOrderBtn = document.getElementById('createOrderBtn');
     const createOrderModal = document.getElementById('createOrderModal');
     if (createOrderBtn && createOrderModal) {
         createOrderBtn.addEventListener('click', () => {
+            if (!currentUser?.id) { window.location.href = '/login.html?form=register&next=%2Fdashboard.html%3Faction%3Dcreate-order'; return; }
             const form = document.getElementById('createOrderForm');
             if(form) form.reset();
             if(document.getElementById('calcExtraOptions')) document.getElementById('calcExtraOptions').style.display = 'none';
@@ -1513,6 +1553,7 @@ function bindEvents() {
 
     // Global function for empty-state button
     window.openCreateOrderModal = function() {
+        if (!currentUser?.id) { window.location.href = '/login.html?form=register&next=%2Fdashboard.html%3Faction%3Dcreate-order'; return; }
         const modal = document.getElementById('createOrderModal');
         if (modal) {
             const form = document.getElementById('createOrderForm');
@@ -1697,14 +1738,19 @@ function bindEvents() {
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG ĐĂNG NHẬP...';
             btn.disabled = true;
 
-            const { data, error } = await supabaseClient.auth.signInWithPassword({ email: email, password: pass });
-            if (error) {
-                alert('Tên tài khoản hoặc mật khẩu không đúng!');
-            } else {
-                setTimeout(() => { window.location.href = 'dashboard.html'; }, 500);
+            try {
+                const { error } = await supabaseClient.auth.signInWithPassword({ email: email, password: pass });
+                if (error) {
+                    alert('Tên tài khoản hoặc mật khẩu không đúng!');
+                } else {
+                    continueAfterAuthentication(window.NAMCUMZ_AUTH_NEXT || '/dashboard.html');
+                }
+            } catch (_) {
+                alert('Không kết nối được hệ thống đăng nhập. Vui lòng thử lại.');
+            } finally {
+                btn.innerHTML = 'ĐĂNG NHẬP';
+                btn.disabled = false;
             }
-            btn.innerHTML = 'ĐĂNG NHẬP';
-            btn.disabled = false;
         });
     }
     
@@ -1714,12 +1760,15 @@ function bindEvents() {
             if(!supabaseClient) return alert('Chưa tải xong kết nối, vui lòng thử lại.');
             googleLoginBtn.style.opacity = '0.7';
             googleLoginBtn.style.pointerEvents = 'none';
+            const embeddedAuth = document.documentElement.classList.contains('auth-embedded') && window.parent !== window;
             const { data, error } = await supabaseClient.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: window.location.origin + '/dashboard.html'
+                    redirectTo: window.location.origin + (window.NAMCUMZ_AUTH_NEXT || '/dashboard.html'),
+                    skipBrowserRedirect: embeddedAuth
                 }
             });
+            if (!error && embeddedAuth && data?.url) { window.parent.location.assign(data.url); return; }
             if(error) {
                 alert('Lỗi đăng nhập Google: ' + error.message);
                 googleLoginBtn.style.opacity = '1';
@@ -1762,7 +1811,7 @@ function bindEvents() {
                 }
                 if (data.session) {
                     alert('Đăng ký thành công! Đang đăng nhập...');
-                    setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
+                    setTimeout(() => continueAfterAuthentication(window.NAMCUMZ_AUTH_NEXT || '/dashboard.html'), 1000);
                 } else {
                     alert('Chưa có phiên đăng nhập. Hệ thống yêu cầu xác minh email; luồng tài khoản hiện tại cần được cấu hình trước khi đăng nhập.');
                 }
@@ -1993,28 +2042,49 @@ function bindEvents() {
 
 function initDynamicSlogan() {
     const slogan = document.getElementById('dynamicSlogan');
-    if (slogan) slogan.textContent = 'Theo dõi tiến độ và trao đổi cùng shop.';
+    if (slogan) slogan.textContent = currentUser?.id ? 'Theo dõi tiến độ và trao đổi cùng shop.' : 'Đăng nhập để xem đơn, nhận cập nhật và trao đổi với shop.';
+}
+
+// Continue successful auth at the top-level page when this form is embedded by the storefront.
+function continueAfterAuthentication(destination) {
+    const target = destination || '/dashboard.html';
+    const embedded = document.documentElement.classList.contains('auth-embedded') && window.parent !== window;
+    if (embedded) {
+        try {
+            if (document.referrer && new URL(document.referrer).origin === window.location.origin) {
+                window.parent.location.replace(target);
+                return;
+            }
+        } catch (_) {}
+    }
+    window.location.replace(target);
 }
 
 async function initSupabaseLogic() {
     if(!supabaseClient) return;
-    if (!(await verifyDatabaseContract())) return;
     
     injectDynamicModals();
     setupNavbar();
     bindEvents();
     initDynamicSlogan();
     
-    supabaseClient.auth.onAuthStateChange(async (event, session) => {
+    let authSequence = 0;
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+        const sequence = ++authSequence;
+        window.setTimeout(async () => {
+        if (sequence !== authSequence) return;
         if (session && session.user) {
             localStorage.setItem('isLoggedIn', 'true');
             localStorage.setItem('userId', session.user.id);
+            if (currentUser?.id !== session.user.id) localStorage.removeItem('username');
             currentUser = session.user;
             verifiedRole = 'customer';
             localStorage.setItem('userRole', 'customer');
+            setupNavbar();
             
             try {
                 const { data } = await supabaseClient.from('user_roles').select('username, role').eq('id', session.user.id).single();
+                if (sequence !== authSequence) return;
                 if (data) {
                     localStorage.setItem('username', data.username || '');
                     verifiedRole = data.role || 'customer';
@@ -2023,7 +2093,15 @@ async function initSupabaseLogic() {
             } catch (e) {
                 console.error("Lỗi lấy thông tin user_roles:", e);
             }
+            if (sequence !== authSequence) return;
             setupNavbar();
+            const shouldResumeOrder = ['/dashboard', '/dashboard.html'].includes(window.location.pathname) && new URLSearchParams(window.location.search).get('action') === 'create-order';
+            if (window.NAMCUMZ_AUTH_NEXT) {
+                continueAfterAuthentication(window.NAMCUMZ_AUTH_NEXT);
+            } else if (shouldResumeOrder) {
+                window.history.replaceState({}, '', '/dashboard.html');
+                window.setTimeout(() => window.openCreateOrderModal?.(), 0);
+            }
             if (typeof window.fetchOrders === 'function') window.fetchOrders();
         } else if (event === 'SIGNED_OUT' || (event === 'INITIAL_SESSION' && !session)) {
             localStorage.removeItem('isLoggedIn');
@@ -2035,8 +2113,10 @@ async function initSupabaseLogic() {
             setupNavbar();
             if (typeof window.fetchOrders === 'function') window.fetchOrders();
         }
+        }, 0);
     });
 
+    await verifyDatabaseContract();
     window.fetchOrders();
     window.fetchLeaderboard();
 }

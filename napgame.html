@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/design-tokens.css">
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/napgame.css?v=20261002-media">
+    <link rel="stylesheet" href="assets/css/napgame.css?v=20261004-unified7">
     <link rel="stylesheet" href="assets/css/ui.css">
 </head>
 <body class="ng-page">
@@ -21,20 +21,43 @@
             <img src="assets/images/logo.jpg" alt="Logo" class="ng-brand-logo">
             NAMCUMZ
         </a>
-        <nav class="lp-nav" id="lpNav">
-            <a href="/index.html">Trang chủ</a>
-            <a href="/index.html#dich-vu">Cày Thuê</a>
-            <a href="napgame.html" aria-current="page">Nạp Game</a>
-        </nav>
+        <nav class="lp-nav" id="lpNav"><a href="/index.html">Trang chủ</a><a href="/reviews.html">Đánh giá</a><a href="/index.html#dich-vu">Cày thuê</a><a href="/faq.html">Hướng dẫn</a><a href="/luu-y.html">Lưu ý trước khi đặt</a><a href="napgame.html" aria-current="page">Nạp game</a><a href="/dashboard.html">Bảng điều khiển</a><a href="/profile.html">Hồ sơ</a></nav>
         <div class="lp-actions">
-            <a href="login.html" class="lp-btn-primary" id="ngAccountLink">
-                <i class="fa-solid fa-user"></i> Đăng nhập
-            </a>
+            <a href="login.html?form=login" class="lp-btn-primary" id="ngAccountLink"><i class="fa-solid fa-user"></i> Đăng nhập / Đăng ký</a>
+<div id="navUserProfile" style="display: none; align-items: center; gap: 16px; margin-left: 20px;">
+                    <div style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); padding: 5px 15px 5px 5px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.05);">
+                        <div class="nav-avatar" id="navAvatarInitials" style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-gradient); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">A</div>
+                        <div style="display: flex; flex-direction: column; line-height: 1.2;">
+                            <span id="navUsername" style="font-weight: 700; font-size: 0.85rem; color: #fff;">Azrael</span>
+                            <span id="navRole" style="font-size: 0.65rem; font-weight: 800; color: var(--accent); letter-spacing: 0.5px;">BOOSTER</span>
+                        </div>
+                    </div>
+                                        <div class="notification-wrapper" style="position: relative;">
+                        <button aria-label="Thông báo" id="notificationBtn" style="background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; transition: 0.2s; position: relative; margin-right: 10px;">
+                            <i class="fa-solid fa-bell"></i>
+                            <span id="notificationBadge" style="display: none; position: absolute; top: 6px; right: 8px; background: #ef4444; width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 5px #ef4444;"></span>
+                        </button>
+                        <div id="notificationDropdown" style="display: none; position: absolute; right: 0; top: calc(100% + 10px); background: #0f172a; width: 320px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1); z-index: 1000; overflow: hidden; flex-direction: column;">
+                            <div style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); font-weight: bold; font-size: 0.9rem; color: #fff; display: flex; justify-content: space-between; align-items: center;">
+                                Thông báo
+                                <button id="markAllReadBtn" style="background: transparent; border: none; color: var(--accent); font-size: 0.75rem; cursor: pointer;">Đánh dấu đã đọc</button>
+                            </div>
+                            <div id="notificationList" style="max-height: 350px; overflow-y: auto; padding: 0;">
+                                <div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">Không có thông báo</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button aria-label="Đăng xuất" id="navLogoutBtn" style="background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; transition: 0.2s;">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </div>
+            <button class="lp-menu-toggle" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="lpMobileNav"><span></span><span></span></button>
         </div>
     </header>
+    <nav class="lp-mobile-nav" id="lpMobileNav" aria-label="Điều hướng di động" hidden><a href="/index.html">Trang chủ</a><a href="/reviews.html">Đánh giá</a><a href="/index.html#dich-vu">Cày thuê</a><a href="/faq.html">Hướng dẫn sử dụng</a><a href="/luu-y.html">Lưu ý trước khi đặt</a><a href="napgame.html" aria-current="page">Nạp game</a><a href="/checkscam.html">Check Scam</a><a href="/dashboard.html">Đơn cày / Đơn nạp</a><a href="/profile.html">Hồ sơ tài khoản</a><a href="login.html?form=login" id="lpMobileAccount">Đăng nhập / Đăng ký</a></nav>
 
     <!-- 1. HERO SLIDER -->
-    <div class="ng-slider-wrapper">
+    <section class="ng-slider-wrapper" aria-label="Game nổi bật">
         <div class="ng-slider-container">
             <div class="ng-slider-track" id="sliderTrack">
                 <!-- Slide 1: HSR -->
@@ -95,7 +118,16 @@
                 <button class="ng-dot" aria-label="Xem game 4" onclick="goSlide(3)"></button>
             </div>
         </div>
-    </div>
+        <aside class="ng-quick-panel" aria-label="Chọn game nạp nhanh">
+            <div class="ng-quick-heading"><p class="ng-eyebrow">NẠP GAME NHANH</p><h2>Chọn game của bạn</h2></div>
+            <a href="napgame-detail.html?game=genshin"><img src="assets/images/games/genshin_icon.webp" alt="" width="42" height="42"><span><strong>Genshin Impact</strong><small>Xem gói nạp</small></span><b aria-hidden="true">↗</b></a>
+            <a href="napgame-detail.html?game=hsr"><img src="assets/images/games/hsr_icon.webp" alt="" width="42" height="42"><span><strong>Honkai: Star Rail</strong><small>Xem gói nạp</small></span><b aria-hidden="true">↗</b></a>
+            <a href="napgame-detail.html?game=zzz"><img src="assets/images/games/zzz_icon.webp" alt="" width="42" height="42"><span><strong>Zenless Zone Zero</strong><small>Xem gói nạp</small></span><b aria-hidden="true">↗</b></a>
+            <a href="napgame-detail.html?game=wuwa"><img src="assets/images/games/wuwa_icon.webp" alt="" width="42" height="42"><span><strong>Wuthering Waves</strong><small>Xem gói nạp</small></span><b aria-hidden="true">↗</b></a>
+            <a class="ng-quick-all" href="#sectionFeatured">Xem danh mục <span aria-hidden="true">→</span></a>
+        </aside>
+    </section>
+    <div class="ng-status-strip" aria-label="Thông tin nạp game"><span><i aria-hidden="true">✦</i> Giá theo catalog đang mở bán</span><b aria-hidden="true">·</b><span><i aria-hidden="true">◷</i> Theo dõi tiến độ trong tài khoản</span><b aria-hidden="true">·</b><span><i aria-hidden="true">↗</i> Hỗ trợ qua Zalo</span></div>
 
     <!-- 3. CATALOG CONTENT -->
     <div class="ng-catalog-wrap">
@@ -107,32 +139,19 @@
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input type="text" class="ng-search-input" id="gameSearch" placeholder="Tìm game bạn muốn nạp..." aria-label="Tìm game">
             </div>
-            <div class="ng-catalog-tabs">
-                <button class="ng-cat-tab active" data-filter="all">Tất cả Game</button>
-                <button class="ng-cat-tab" data-filter="hot">Game nổi bật</button>
-            </div>
+
         </div>
 
-        <!-- Section 1: Ưu đãi Độc Quyền -->
+        <!-- ACTIVE TOP-UP GAMES -->
         <div class="ng-section" id="sectionFeatured">
             <div class="ng-sec-header">
-                <div class="ng-sec-title">Game Nổi Bật</div>
+                <div class="ng-sec-title">Game đang mở bán</div>
                 <span class="ng-sec-sub">Các game có gói đang mở bán</span>
             </div>
             <div class="ng-grid-portrait" id="gridFeatured"><!-- JS --></div>
         </div>
 
 
-        <!-- Section 3: Nạp Login -->
-        <div class="ng-section" id="sectionLogin">
-            <div class="ng-sec-header">
-                <div class="ng-sec-title">Tất cả game nạp login</div>
-                <span class="ng-sec-sub">Thông tin và giá gói được tải từ catalog hiện hành</span>
-            </div>
-            <div class="ng-grid-horizontal" id="gridLogin"><!-- JS --></div>
-        </div>
-
-        <!-- Section 4: Profile -->
         <!-- SUPPORT -->
         <section class="ng-profile-box">
             <div class="ng-profile-content">
@@ -147,6 +166,11 @@
 
     <!-- FOOTER -->
     <footer class="lp-footer">
+        <div class="lp-footer-columns">
+            <div><a href="/" class="lp-logo"><img src="assets/images/logo.jpg" alt="" width="32" height="32"><span>NAMCUMZ</span></a><p>Cày thuê Genshin Impact và nạp game theo catalog đang mở bán. Trao đổi trực tiếp với shop về yêu cầu và tiến độ đơn.</p></div>
+            <div><h2>DỊCH VỤ</h2><a href="/index.html#dich-vu">Cày thuê Genshin</a><a href="/napgame.html">Danh mục nạp game</a><a href="/dashboard.html">Theo dõi đơn hàng</a></div>
+            <div><h2>HỖ TRỢ &amp; CHÍNH SÁCH</h2><a href="/faq.html">Hướng dẫn sử dụng</a><a href="/luu-y.html">Lưu ý trước khi đặt</a><a href="/reviews.html">Đánh giá đơn hàng</a><a href="/checkscam.html">Kiểm tra giao dịch</a><a href="/terms.html">Điều khoản</a><a href="/privacy.html">Chính sách bảo mật</a><a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">Zalo CSKH ↗</a></div>
+        </div>
         <p class="lp-footer-disclaimer">NAMCUMZ không liên kết với các nhà phát hành game. Vui lòng xác nhận gói, giá và phương thức thanh toán với shop trước khi giao dịch.</p>
         <p class="ng-footer-copy">© 2026 NAMCUMZ. All rights reserved.</p>
     </footer>
@@ -154,12 +178,20 @@
     <!-- CATALOG STATUS -->
 
 
+    <!-- SHARED ACCOUNT DIALOG -->
+    <div class="lp-auth-overlay" id="lpAuthOverlay" hidden>
+      <section class="lp-auth-dialog" role="dialog" aria-modal="true" aria-labelledby="lpAuthDialogTitle">
+        <header class="lp-auth-dialog-header"><h2 id="lpAuthDialogTitle">Tài khoản NAMCUMZ</h2><button class="lp-auth-close" type="button" data-auth-close aria-label="Đóng đăng nhập">×</button></header>
+        <iframe class="lp-auth-frame" id="lpAuthFrame" title="Đăng nhập hoặc tạo tài khoản NAMCUMZ" referrerpolicy="same-origin"></iframe>
+      </section>
+    </div>
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/authMediaConfig.js"></script>
+    <script src="assets/js/landing.js?v=20261004-unified7" defer></script>
     <script src="assets/js/runtime-config.js"></script>
     <script src="assets/js/order-api.js"></script>
-    <script src="assets/js/app.js?v=20261002-ui"></script>
-    <script src="assets/js/napgame.js?v=20261002-media"></script>
+    <script src="assets/js/app.js?v=20261004-unified7"></script>
+    <script src="assets/js/napgame.js?v=20261004-unified7"></script>
 </body>
 </html>
