@@ -165,17 +165,17 @@
       created_at: '2026-07-19T00:00:00Z'
     };
     state.wallet = {
-      balance: 125000,
-      checkin_balance: 500,
-      total_balance: 125500
+      balance: 0,
+      checkin_balance: 0,
+      total_balance: 0
     };
     state.vip = {
-      level: 'VIP 1',
-      level_name: 'Vàng',
-      total_spent: 800000,
+      level: 'MEMBER',
+      level_name: 'Thành viên',
+      total_spent: 0,
       next_threshold: 1000000,
-      remaining: 200000,
-      progress_percent: 80
+      remaining: 1000000,
+      progress_percent: 0
     };
     state.checkin = {
       checked_in_today: false,
@@ -183,24 +183,11 @@
       reward_amount: 500
     };
     state.counts = {
-      total_orders: 1,
-      boost_orders: 1,
+      total_orders: 0,
+      boost_orders: 0,
       topup_orders: 0
     };
-    state.orders = [
-      {
-        id: 'mock-1',
-        order_code: 'ORDER-E54FEA0',
-        kind: 'boost',
-        content: 'Genshin Impact - Cày La Hoàn 36 sao tầng 12',
-        game_server: 'Asia',
-        price: 200000,
-        paid_amount: 200000,
-        payment_status: 'PAID',
-        status: 'dang_cay',
-        created_at: new Date().toISOString()
-      }
-    ];
+    state.orders = [];
     state.transactions = [
       {
         id: 'tx-1',
@@ -386,7 +373,7 @@
     }
 
     if (usernameEl) {
-      usernameEl.textContent = user.display_name || user.username || 'NHÀ LỮ HÀNH';
+      usernameEl.textContent = user.display_name || user.username || 'DUCKCOP';
     }
 
     if (roleBadgeEl) {
@@ -404,7 +391,7 @@
         checkinBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> ĐÃ ĐIỂM DANH HÔM NAY';
       } else {
         checkinBtn.disabled = false;
-        checkinBtn.innerHTML = `<i class="fa-solid fa-gift"></i> ĐIỂM DANH NHẬN ${state.checkin.reward_amount}Đ`;
+        checkinBtn.innerHTML = `<i class="fa-solid fa-gift"></i> ĐIỂM DANH NHẬN ${state.checkin.reward_amount}đ`;
       }
     }
   }
@@ -417,11 +404,19 @@
     const vipProgressBar = document.getElementById('hubVipProgressBar');
 
     if (balEl) {
-      balEl.textContent = formatVND(state.wallet.balance);
+      if (!state.wallet.balance || state.wallet.balance === 0) {
+        balEl.innerHTML = '<span class="hub-vnd-symbol">☵</span> VNĐ';
+      } else {
+        balEl.innerHTML = `<span class="hub-vnd-symbol">☵</span> ${Number(state.wallet.balance).toLocaleString('vi-VN')} VNĐ`;
+      }
     }
 
     if (checkinBalEl) {
-      checkinBalEl.textContent = formatVND(state.wallet.checkin_balance);
+      if (!state.wallet.checkin_balance || state.wallet.checkin_balance === 0) {
+        checkinBalEl.innerHTML = '<span class="hub-vnd-symbol">☵</span> VNĐ';
+      } else {
+        checkinBalEl.innerHTML = `<span class="hub-vnd-symbol">☵</span> ${Number(state.wallet.checkin_balance).toLocaleString('vi-VN')} VNĐ`;
+      }
     }
 
     if (vipProgressText && vipProgressBar) {
@@ -429,8 +424,9 @@
         vipProgressText.textContent = `Đã đạt cấp bậc cao nhất: ${state.vip.level} (${state.vip.level_name})`;
         vipProgressBar.style.width = '100%';
       } else {
-        vipProgressText.textContent = `Còn thiếu ${formatVND(state.vip.remaining)} để lên ${state.vip.level === 'MEMBER' ? 'VIP 1' : (state.vip.level === 'VIP 1' ? 'VIP 2' : 'VIP 3')}`;
-        vipProgressBar.style.width = Math.max(3, state.vip.progress_percent) + '%';
+        const remainingStr = Number(state.vip.remaining).toLocaleString('vi-VN') + 'đ';
+        vipProgressText.textContent = `Còn thiếu ${remainingStr} để lên ${state.vip.level === 'MEMBER' ? 'VIP 1 - Vịt Tậ...' : (state.vip.level === 'VIP 1' ? 'VIP 2' : 'VIP 3')}`;
+        vipProgressBar.style.width = Math.max(0, state.vip.progress_percent) + '%';
       }
     }
 
@@ -632,9 +628,8 @@
 
       grid.innerHTML = `
         <div class="hub-empty-card">
-          <div class="hub-empty-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+          <div class="hub-empty-icon"><i class="fa-regular fa-clipboard"></i></div>
           <div class="hub-empty-text">${esc(emptyMsg)}</div>
-          <a class="hub-empty-action" href="${ctaLink}"><i class="fa-solid fa-bolt"></i> ${esc(ctaText)}</a>
         </div>
       `;
       return;

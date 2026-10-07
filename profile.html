@@ -28,7 +28,7 @@
                 </a>
                 <div class="hub-station-badge" aria-label="Trạng thái hệ thống">
                     <span class="hub-glow-dot" aria-hidden="true"></span>
-                    <span>USER HUB STATION // TRẠM THÀNH VIÊN</span>
+                    <span>USER HUD STATION // TRẠM THÀNH VIÊN</span>
                 </div>
             </div>
             <div class="hub-topbar-right">
@@ -56,14 +56,14 @@
                         <i class="fa-solid fa-camera" aria-hidden="true"></i>
                     </button>
                 </div>
-                <h1 id="hubUsername" class="hub-username">NHÀ LỮ HÀNH</h1>
+                <h1 id="hubUsername" class="hub-username">DUCKCOP</h1>
                 <div class="hub-role-badges">
                     <span id="hubRoleBadge" class="hub-badge-customer">KHÁCH HÀNG</span>
                     <span id="hubVipBadge" class="hub-badge-vip"><i class="fa-solid fa-crown" aria-hidden="true"></i> MEMBER</span>
                 </div>
                 <button type="button" id="hubCheckinBtn" class="hub-checkin-btn" aria-label="Điểm danh nhận thưởng hàng ngày">
                     <i class="fa-solid fa-gift" aria-hidden="true"></i>
-                    <span>ĐIỂM DANH NHẬN 500Đ</span>
+                    <span>ĐIỂM DANH NHẬN 500đ</span>
                 </button>
             </section>
 
@@ -72,15 +72,15 @@
                 <div class="hub-wallet-header">
                     <div class="hub-wallet-title">
                         <span class="hub-chip-icon" aria-hidden="true"></span>
-                        <i class="fa-solid fa-crown" aria-hidden="true"></i>
-                        <span>VIP CARD NAMCUMZ PAY</span>
+                        <span class="hub-wallet-vip-text"><i class="fa-solid fa-crown" aria-hidden="true"></i> VIP CARD</span>
+                        <span class="hub-wallet-shop-name">DUCK SHOP PAY</span>
                     </div>
                 </div>
                 <div class="hub-wallet-label">SỐ DƯ KHẢ DỤNG</div>
-                <div id="hubWalletBalance" class="hub-wallet-amount">0 VNĐ</div>
+                <div id="hubWalletBalance" class="hub-wallet-amount"><span class="hub-vnd-symbol">☵</span> VNĐ</div>
                 <div class="hub-wallet-sub">
                     <span class="hub-wallet-sub-title"><i class="fa-solid fa-gift" style="color: #ffb800;" aria-hidden="true"></i> Ví Điểm Danh (Mua Đồ):</span>
-                    <span id="hubCheckinBalance" class="hub-wallet-sub-val">0 VNĐ</span>
+                    <span id="hubCheckinBalance" class="hub-wallet-sub-val"><span class="hub-vnd-symbol">☵</span> VNĐ</span>
                 </div>
                 <div class="hub-vip-progress-box">
                     <div class="hub-vip-progress-head">
@@ -88,9 +88,9 @@
                         <button type="button" class="hub-vip-perks-link" onclick="window.openModal('hubVipPerksModal')">Xem quyền lợi &gt;</button>
                     </div>
                     <div class="hub-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-                        <div id="hubVipProgressBar" class="hub-progress-bar" style="width: 5%;"></div>
+                        <div id="hubVipProgressBar" class="hub-progress-bar" style="width: 0%;"></div>
                     </div>
-                    <div id="hubVipProgressText" class="hub-vip-progress-desc">Còn thiếu 1.000.000đ để lên VIP 1</div>
+                    <div id="hubVipProgressText" class="hub-vip-progress-desc">Còn thiếu 1.000.000đ để lên VIP 1 - Vịt Tậ...</div>
                 </div>
                 <div class="hub-wallet-actions">
                     <button type="button" class="hub-wallet-btn-deposit" data-open-deposit aria-label="Nạp tiền vào ví">
@@ -98,7 +98,7 @@
                         <span>Nạp Ngay</span>
                     </button>
                     <button type="button" class="hub-wallet-btn-history" data-hub-tab="wallet" aria-label="Xem biến động số dư">
-                        <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
+                        <span class="hub-icon-staggered">☷</span>
                         <span>Biến Động</span>
                     </button>
                 </div>
@@ -109,7 +109,6 @@
                 <button type="button" class="hub-nav-item active" data-hub-tab="orders">
                     <i class="fa-solid fa-gamepad" aria-hidden="true"></i>
                     <span>Đơn Hàng Của Tôi</span>
-                    <span id="hubOrdersNavBadge" class="hub-nav-badge">0</span>
                 </button>
                 <button type="button" class="hub-nav-item" data-hub-tab="wallet">
                     <i class="fa-solid fa-wallet" aria-hidden="true"></i>
@@ -141,19 +140,19 @@
             <section class="hub-info-card" aria-label="Thông tin định danh">
                 <div class="hub-info-row">
                     <span class="hub-info-label"><i class="fa-solid fa-id-badge" aria-hidden="true"></i> ID Khách:</span>
-                    <span id="hubInfoId" class="hub-info-value">#...</span>
+                    <span id="hubInfoId" class="hub-info-value">#121</span>
                 </div>
                 <div class="hub-info-row">
                     <span class="hub-info-label"><i class="fa-regular fa-envelope" aria-hidden="true"></i> Email:</span>
-                    <span id="hubInfoEmail" class="hub-info-value">...</span>
+                    <span id="hubInfoEmail" class="hub-info-value">mfaphucau2002@gmail.com</span>
                 </div>
                 <div class="hub-info-row">
                     <span class="hub-info-label"><i class="fa-solid fa-phone" aria-hidden="true"></i> SĐT:</span>
                     <span id="hubInfoPhone" class="hub-info-value hub-info-unverified">Chưa xác thực</span>
                 </div>
                 <div class="hub-info-row">
-                    <span class="hub-info-label"><i class="fa-regular fa-calendar-check" aria-hidden="true"></i> Gia nhập:</span>
-                    <span id="hubInfoJoined" class="hub-info-value">...</span>
+                    <span class="hub-info-label"><i class="fa-regular fa-clock" aria-hidden="true"></i> Gia nhập:</span>
+                    <span id="hubInfoJoined" class="hub-info-value">19/7/2026</span>
                 </div>
             </section>
         </aside>
@@ -184,7 +183,10 @@
                 </div>
 
                 <div id="hubOrdersList" class="hub-orders-grid">
-                    <!-- Orders dynamically injected via JS -->
+                    <div class="hub-empty-card">
+                        <div class="hub-empty-icon"><i class="fa-regular fa-clipboard"></i></div>
+                        <div class="hub-empty-text">Bạn chưa đặt đơn cày thuê nào.</div>
+                    </div>
                 </div>
             </div>
 
@@ -504,6 +506,19 @@
             </p>
         </div>
     </div>
+
+    <!-- FLOATING SUPPORT WIDGET (MATCHING IMAGE) -->
+    <aside class="hub-floating-support" aria-label="Hỗ trợ khách hàng trực tuyến">
+        <div class="hub-support-bubble" id="hubSupportBubble">
+            <span>🦆 Cần hỗ trợ cày game / nạp tiền? Chat với Vịt nhé!</span>
+            <button type="button" class="hub-support-bubble-close" onclick="document.getElementById('hubSupportBubble').style.display='none'" aria-label="Đóng tin nhắn hỗ trợ">&times;</button>
+        </div>
+        <div class="hub-support-avatar-wrapper" onclick="window.open('https://m.me/namcumz', '_blank')">
+            <img class="hub-support-avatar-img" src="/assets/images/logo.jpg" alt="CSKH Namcumz">
+            <span class="hub-support-badge-num">1</span>
+            <span class="hub-support-online-dot" aria-label="Đang trực tuyến"></span>
+        </div>
+    </aside>
 
     <!-- TOAST CONTAINER -->
     <div id="hubToastContainer" class="hub-toast-container" aria-live="polite"></div>
