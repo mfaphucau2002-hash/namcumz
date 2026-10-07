@@ -77,3 +77,62 @@ test('topup RPC validates arguments and transmits parameters',async()=>{
  assert.equal(called,true);
  assert.equal(res.id,'topup-order-1');
 });
+
+test('createDeposit sends p_amount only without p_request and validates limits', async () => {
+ const service = api();
+ let calledRpc = null;
+ let receivedPayload = null;
+ const client = {
+  rpc: async (name, payload) => {
+   calledRpc = name;
+   receivedPayload = payload;
+   return { data: { id: 'deposit-order-1', order_code: 'NCZ-DEP-001', amount: payload.p_amount } };
+  }
+ };
+
+ await assert.rejects(service.createDeposit(null, 'alice', 20000));
+ await assert.rejects(service.createDeposit(client, null, 20000));
+ await assert.rejects(service.createDeposit(client, 'alice', 5000), /tối thiểu/);
+ await assert.rejects(service.createDeposit(client, 'alice', 60000000), /tối đa/);
+
+ const order = await service.createDeposit(client, 'alice', 20000);
+ assert.equal(calledRpc, 'create_deposit_order');
+ assert.equal(receivedPayload.p_amount, 20000);
+ assert.deepEqual(Object.keys(receivedPayload), ['p_amount']);
+ assert.equal('p_request' in receivedPayload, false);
+ assert.equal(order.id, 'deposit-order-1');
+ assert.equal(order.amount, 20000);
+});
+
+test('claimDailyCheckin, payByWallet, and cancelPayment call direct RPCs without p_request', async () => {
+ const service = api();
+ const calls = [];
+ const client = {
+  rpc: async (name, payload) => {
+   calls.push({ name, payload });
+   if (name === 'claim_daily_checkin') return { data: { success: true, reward: 500 } };
+   if (name === 'pay_order_by_wallet') return { data: { success: true, order_id: payload.p_order_id, paid_amount: 50000 } };
+   if (name === 'cancel_order_payment') return { data: { success: true, order_id: payload.p_order_id, status: 'CANCELLED' } };
+   return { data: {} };
+  }
+ };
+
+ const checkin = await service.claimDailyCheckin(client, 'alice');
+ assert.equal(checkin.success, true);
+ assert.equal(checkin.reward, 500);
+
+ const pay = await service.payByWallet(client, 'alice', 'ord-123');
+ assert.equal(pay.success, true);
+ assert.equal(pay.order_id, 'ord-123');
+
+ const cancel = await service.cancelPayment(client, 'alice', 'ord-123');
+ assert.equal(cancel.success, true);
+ assert.equal(cancel.status, 'CANCELLED');
+
+ for (const call of calls) {
+  if (call.payload) {
+   assert.equal('p_request' in call.payload, false);
+  }
+ }
+});
+

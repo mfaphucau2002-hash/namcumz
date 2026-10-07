@@ -67,33 +67,62 @@
                 p_order: order.id, p_version: order.version, p_action: action, p_data: data
             });
         },
-        payByWallet(client, actor, orderId) {
-            if (!orderId) return Promise.reject(new Error('Mã đơn không hợp lệ.'));
-            return write(client, actor, 'pay_order_by_wallet', { p_order_id: orderId });
+        async payByWallet(client, actor, orderId) {
+            if (!client || !actor) throw new Error('Vui lòng đăng nhập trước khi thao tác.');
+            if (!orderId) throw new Error('Mã đơn không hợp lệ.');
+            const { data, error } = await client.rpc('pay_order_by_wallet', { p_order_id: orderId });
+            if (error) {
+                throw new Error(error.message || 'Không thể thanh toán bằng ví. Vui lòng thử lại.');
+            }
+            const res = typeof data === 'string' ? JSON.parse(data) : data;
+            return Array.isArray(res) ? res[0] : res;
         },
-        cancelPayment(client, actor, orderId) {
-            if (!orderId) return Promise.reject(new Error('Mã đơn không hợp lệ.'));
-            return write(client, actor, 'cancel_order_payment', { p_order_id: orderId });
+        async cancelPayment(client, actor, orderId) {
+            if (!client || !actor) throw new Error('Vui lòng đăng nhập trước khi thao tác.');
+            if (!orderId) throw new Error('Mã đơn không hợp lệ.');
+            const { data, error } = await client.rpc('cancel_order_payment', { p_order_id: orderId });
+            if (error) {
+                throw new Error(error.message || 'Không thể hủy thanh toán đơn.');
+            }
+            const res = typeof data === 'string' ? JSON.parse(data) : data;
+            return Array.isArray(res) ? res[0] : res;
         },
         async getPaymentInfo(client, orderIdentifier) {
             if (!client || !orderIdentifier) return null;
             const { data, error } = await client.rpc('get_order_payment_info', { p_order_identifier: String(orderIdentifier).trim() });
             if (error) throw error;
-            return typeof data === 'string' ? JSON.parse(data) : data;
+            const res = typeof data === 'string' ? JSON.parse(data) : data;
+            return Array.isArray(res) ? res[0] : res;
         },
-        createDeposit(client, actor, amount) {
+        async createDeposit(client, actor, amount) {
+            if (!client || !actor) throw new Error('Vui lòng đăng nhập trước khi thao tác.');
             const num = Number(amount);
-            if (!num || num < 10000) return Promise.reject(new Error('Số tiền nạp tối thiểu là 10.000 VNĐ.'));
-            return write(client, actor, 'create_deposit_order', { p_amount: num });
+            if (!num || num < 10000) throw new Error('Số tiền nạp tối thiểu là 10.000 VNĐ.');
+            if (num > 50000000) throw new Error('Số tiền nạp tối đa mỗi lần là 50.000.000 VNĐ.');
+            const { data, error } = await client.rpc('create_deposit_order', { p_amount: num });
+            if (error) {
+                throw new Error(error.code === 'PGRST202'
+                    ? 'Hệ thống chưa đồng bộ RPC nạp ví. Vui lòng thử lại sau.'
+                    : (error.message || 'Không thể tạo đơn nạp ví. Vui lòng thử lại.'));
+            }
+            const res = typeof data === 'string' ? JSON.parse(data) : data;
+            return Array.isArray(res) ? res[0] : res;
         },
-        claimDailyCheckin(client, actor) {
-            return write(client, actor, 'claim_daily_checkin', {});
+        async claimDailyCheckin(client, actor) {
+            if (!client || !actor) throw new Error('Vui lòng đăng nhập trước khi thao tác.');
+            const { data, error } = await client.rpc('claim_daily_checkin');
+            if (error) {
+                throw new Error(error.message || 'Không thể điểm danh. Vui lòng thử lại.');
+            }
+            const res = typeof data === 'string' ? JSON.parse(data) : data;
+            return Array.isArray(res) ? res[0] : res;
         },
         async getProfileSummary(client) {
             if (!client) throw new Error('Chưa kết nối cơ sở dữ liệu.');
             const { data, error } = await client.rpc('get_user_profile_summary');
             if (error) throw error;
-            return typeof data === 'string' ? JSON.parse(data) : data;
+            const res = typeof data === 'string' ? JSON.parse(data) : data;
+            return Array.isArray(res) ? res[0] : res;
         }
     };
 })();
