@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Trang thanh toán tự động bằng chuyển khoản ngân hàng và VietQR tại NAMCUMZ.">
+    <title id="pageTitle">Thanh toán đơn hàng - VietQR | NAMCUMZ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/design-tokens.css">
+    <link rel="stylesheet" href="assets/css/checkout.css">
+    <link rel="stylesheet" href="assets/css/ui.css">
+</head>
+<body class="chk-page">
+
+    <!-- HEADER NAVIGATION -->
+    <header class="chk-navbar" id="chkNavbar">
+        <a href="/index.html" class="chk-nav-logo">
+            <img src="assets/images/logo.jpg" alt="Logo" class="chk-brand-logo">
+            <span>NAMCUMZ</span>
+        </a>
+        <nav class="chk-nav-links" id="chkNavLinks">
+            <a href="/index.html">Trang chủ</a>
+            <a href="/caythue.html">Dịch Vụ Cày Thuê</a>
+            <a href="/napgame.html">Nạp Game</a>
+            <a href="/dashboard.html">Đơn hàng</a>
+            <a href="/reviews.html">Đánh giá</a>
+        </nav>
+        <div class="chk-nav-actions">
+            <a href="/dashboard.html" class="chk-nav-btn"><i class="fa-solid fa-list-check" aria-hidden="true"></i> Bảng điều khiển</a>
+        </div>
+    </header>
+
+    <!-- MAIN CHECKOUT CONTENT -->
+    <main class="chk-container">
+        
+        <!-- HEADER STATUS BAR -->
+        <div class="chk-header-bar">
+            <div class="chk-badge-pill">
+                <i class="fa-solid fa-bolt" aria-hidden="true"></i> THANH TOÁN ĐƠN HÀNG TỰ ĐỘNG
+            </div>
+            <h1 class="chk-title" id="chkPageTitle">Quét Mã VietQR Hoặc Chuyển Khoản</h1>
+            
+            <div class="chk-order-meta">
+                <span class="chk-meta-id">
+                    Mã đơn này: <strong class="chk-meta-pill" id="chkOrderCode">ĐANG TẢI...</strong>
+                </span>
+                <span class="chk-meta-status" id="chkMetaStatus" data-status="PENDING">
+                    <span class="chk-status-dot"></span> Chờ thanh toán
+                </span>
+            </div>
+        </div>
+
+        <!-- MAIN TWO-COLUMN LAYOUT (DARK GAMING THEME) -->
+        <div class="chk-layout">
+
+            <!-- LEFT COLUMN: VIETQR DARK CARD -->
+            <section class="chk-qr-col">
+                <div class="chk-card chk-card-glass chk-qr-card">
+                    <div class="chk-qr-card-header">
+                        <span class="chk-qr-header-title">MÃ VIETQR THANH TOÁN TỰ ĐỘNG</span>
+                        <span class="chk-vietqr-badge">Viet<strong>QR</strong></span>
+                    </div>
+
+                    <!-- WHITE QR BOX FOR OPTIMAL SCANNING ACCURACY -->
+                    <div class="chk-qr-box" id="chkQrBox">
+                        <img src="" alt="Mã VietQR thanh toán" id="chkQrImg" class="chk-qr-img" loading="lazy">
+                    </div>
+
+                    <div class="chk-qr-scan-title">
+                        <i class="fa-solid fa-bolt" aria-hidden="true"></i> Quét bằng app Ngân hàng / Ví bất kỳ
+                    </div>
+                    <div class="chk-qr-scan-subtitle">
+                        Tự động điền đúng STK, Số tiền và Nội dung chuyển khoản
+                    </div>
+
+                    <!-- SUPPORTED BANK CHIPS -->
+                    <div class="chk-bank-chips-grid">
+                        <span class="chk-bank-chip">MB</span>
+                        <span class="chk-bank-chip">VCB</span>
+                        <span class="chk-bank-chip">TCB</span>
+                        <span class="chk-bank-chip">VietinBank</span>
+                        <span class="chk-bank-chip">ACB</span>
+                        <span class="chk-bank-chip">VPB</span>
+                        <span class="chk-bank-chip">BIDV</span>
+                        <span class="chk-bank-chip">MoMo</span>
+                        <span class="chk-bank-chip">ZaloPay</span>
+                    </div>
+
+                    <!-- EXPIRY COUNTDOWN TIMER -->
+                    <div class="chk-timer-bar">
+                        <i class="fa-regular fa-clock" aria-hidden="true"></i>
+                        <span>Mã QR có hiệu lực trong:</span>
+                        <span class="chk-timer-digits" id="chkTimerDigits">15:00</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT COLUMN: STACKED DETAILS & TRANSFER INFO -->
+            <section class="chk-detail-col">
+
+                <!-- 1. DỊCH VỤ / GÓI NẠP ĐÃ CHỌN -->
+                <div class="chk-card chk-card-glass chk-service-card">
+                    <div class="chk-field-label">DỊCH VỤ / GÓI NẠP ĐÃ CHỌN:</div>
+                    <div class="chk-service-title" id="chkServiceName">Đang tải thông tin đơn hàng...</div>
+                    
+                    <div class="chk-service-subrow">
+                        <span class="chk-service-tag"><i class="fa-solid fa-tag" aria-hidden="true"></i> Gói dịch vụ</span>
+                        <span class="chk-service-price" id="chkSubPrice">0 đ</span>
+                    </div>
+
+                    <div class="chk-service-divider"></div>
+
+                    <div class="chk-service-gameinfo">
+                        <div class="chk-gameinfo-text">
+                            <i class="fa-solid fa-gamepad" aria-hidden="true"></i> <strong>Thông tin game:</strong> <span id="chkServer">Asia</span>
+                        </div>
+                        <div class="chk-contact-text">
+                            <i class="fa-solid fa-phone" aria-hidden="true"></i> <strong>Liên hệ / Hỗ trợ:</strong> <span id="chkContactPhone">CSKH Zalo 24/7</span>
+                        </div>
+                    </div>
+
+                    <div class="chk-total-row">
+                        <span class="chk-total-label">Tổng tiền thanh toán:</span>
+                        <span class="chk-total-amount" id="chkTotalPrice">0 ₫</span>
+                    </div>
+                </div>
+
+                <!-- 2. THANH TOÁN BẰNG SỐ DƯ VÍ (NẾU CÓ TÀI KHOẢN) -->
+                <div class="chk-card chk-card-glass chk-wallet-card" id="chkWalletOption">
+                    <div class="chk-wallet-header">
+                        <div class="chk-wallet-title">
+                            <i class="fa-solid fa-wallet" style="color: #f59e0b;" aria-hidden="true"></i> Thanh Toán Bằng Số Dư Ví
+                        </div>
+                        <div class="chk-wallet-balance" id="chkWalletBalance">Số dư ví: 0 đ</div>
+                    </div>
+                    <p class="chk-wallet-desc" id="chkWalletDesc">
+                        <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i> Bạn chưa đăng nhập. <a href="login.html?form=login">Đăng Nhập</a> để thanh toán bằng tiền trong ví.
+                    </p>
+                </div>
+
+                <!-- 3. NGÂN HÀNG THỤ HƯỞNG -->
+                <div class="chk-card chk-card-glass chk-info-card">
+                    <div class="chk-field-label">NGÂN HÀNG THỤ HƯỞNG:</div>
+                    <div class="chk-val-text" id="chkBankName">MBBANK (Ngân Hàng Quân Đội)</div>
+                </div>
+
+                <!-- 4. SỐ TÀI KHOẢN (STK) (CYAN HIGHLIGHT) -->
+                <div class="chk-card chk-card-glass chk-info-card">
+                    <div class="chk-row-flex">
+                        <div>
+                            <div class="chk-field-label">SỐ TÀI KHOẢN (STK):</div>
+                            <div class="chk-val-cyan" id="chkBankAccount">0763550673</div>
+                        </div>
+                        <button type="button" class="chk-btn-copy" id="btnCopyBankAcc" aria-label="Sao chép số tài khoản">
+                            <i class="fa-regular fa-copy" aria-hidden="true"></i> Sao Chép STK
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 5. CHỦ TÀI KHOẢN -->
+                <div class="chk-card chk-card-glass chk-info-card">
+                    <div class="chk-row-flex">
+                        <div>
+                            <div class="chk-field-label">CHỦ TÀI KHOẢN:</div>
+                            <div class="chk-val-text" id="chkAccountName" style="text-transform: uppercase;">NGUYEN HOANG NAM</div>
+                        </div>
+                        <button type="button" class="chk-btn-copy" id="btnCopyBankOwner" aria-label="Sao chép tên chủ tài khoản">
+                            <i class="fa-regular fa-copy" aria-hidden="true"></i> Sao Chép
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 6. NỘI DUNG CHUYỂN KHOẢN (BẮT BUỘC) (PROMINENT NEON PINK/RED BORDER) -->
+                <div class="chk-card chk-card-glass chk-memo-card">
+                    <div class="chk-row-flex">
+                        <div>
+                            <div class="chk-memo-label">
+                                <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> NỘI DUNG CHUYỂN KHOẢN (BẮT BUỘC):
+                            </div>
+                            <div class="chk-memo-val" id="chkTransferContent">NCZ ĐANG TẢI</div>
+                        </div>
+                        <button type="button" class="chk-btn-copy-memo" id="btnCopyMemo" aria-label="Sao chép nội dung chuyển khoản">
+                            <i class="fa-regular fa-copy" aria-hidden="true"></i> Sao Chép Mã
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 7. BLUE NOTICE BOX -->
+                <div class="chk-blue-notice">
+                    <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                    <div>
+                        Vui lòng chuyển khoản đúng <strong>Số Tài Khoản</strong> và chính xác <strong>Nội Dung Chuyển Khoản</strong> để hệ thống tự động xác nhận đơn hàng sau 1–3 phút.
+                    </div>
+                </div>
+
+                <!-- 8. LIVE PULSE MONITOR -->
+                <div class="chk-live-status-bar" id="chkStatusCard">
+                    <div class="chk-pulse-dot" id="chkSpinner"></div>
+                    <div class="chk-live-status-text" id="chkStatusText">
+                        <h4>Hệ thống đang tự động kiểm tra chuyển khoản...</h4>
+                        <p>Không cần tải lại trang. Đơn hàng sẽ tự động cập nhật ngay khi tiền vào tài khoản.</p>
+                    </div>
+                </div>
+
+                <!-- 9. GREEN GUARANTEE BOX -->
+                <div class="chk-green-guarantee">
+                    <div class="chk-guarantee-title">
+                        <i class="fa-solid fa-bolt" aria-hidden="true"></i> TỰ ĐỘNG DUYỆT ĐƠN TRONG 5 – 10 GIÂY
+                    </div>
+                    <p class="chk-guarantee-desc">
+                        Ngay khi bạn chuyển khoản thành công, hệ thống ngân hàng sẽ tự động xác nhận và <strong>gửi đơn hàng trực tiếp đến quản trị viên & thợ cày</strong> ngay lập tức. Bạn không cần thao tác thêm gì!
+                    </p>
+                </div>
+
+                <!-- FOOTNOTE -->
+                <div class="chk-footnote">
+                    <i class="fa-solid fa-lock" aria-hidden="true"></i> Bảo mật tuyệt đối. Hỗ trợ khách hàng 24/7 qua Zalo 0763550673.
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="chk-footer">
+        <div class="chk-footer-inner">
+            <div class="chk-footer-col">
+                <div class="chk-footer-brand">
+                    <img src="assets/images/logo.jpg" alt="Logo" class="chk-footer-logo"> NAMCUMZ
+                </div>
+                <p class="chk-footer-desc">Chuyên cung cấp dịch vụ cày thuê Genshin Impact, Honkai Star Rail, Wuthering Waves, ZZZ... Bảo mật 100%, hỗ trợ 24/7 qua Zalo.</p>
+            </div>
+            <div class="chk-footer-col">
+                <h5>ĐIỀU HƯỚNG</h5>
+                <ul>
+                    <li><a href="/index.html">Trang chủ</a></li>
+                    <li><a href="/napgame.html">Nạp game</a></li>
+                    <li><a href="/caythue.html">Cày thuê</a></li>
+                    <li><a href="/dashboard.html">Đơn hàng</a></li>
+                </ul>
+            </div>
+            <div class="chk-footer-col">
+                <h5>TRỢ GIÚP & BẢO MẬT</h5>
+                <ul>
+                    <li><a href="/luu-y.html">Quy trình giao nhận acc</a></li>
+                    <li><a href="/terms.html">Chính sách bảo hiểm nick</a></li>
+                    <li><a href="/checkscam.html">Kênh hỗ trợ 24/7</a></li>
+                    <li><a href="/faq.html">Câu hỏi thường gặp</a></li>
+                </ul>
+            </div>
+            <div class="chk-footer-col">
+                <h5>CAM KẾT UY TÍN</h5>
+                <ul>
+                    <li><i class="fa-solid fa-shield-halved" style="color: #10b981;"></i> Cày tay 100% an toàn</li>
+                    <li><i class="fa-solid fa-lock" style="color: #f59e0b;"></i> Bảo mật tài khoản & OTP</li>
+                    <li><i class="fa-solid fa-heart" style="color: #ff2a6d;"></i> Đền bù 100% nếu rủi ro</li>
+                </ul>
+            </div>
+        </div>
+        <div class="chk-footer-bottom">
+            <span>© 2026 NAMCUMZ. Tất cả quyền được bảo lưu.</span>
+            <span>Hỗ trợ kỹ thuật & Zalo CSKH: <strong>0763550673</strong></span>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/runtime-config.js"></script>
+    <script src="assets/js/payment-provider.js"></script>
+    <script src="assets/js/order-api.js"></script>
+    <script src="assets/js/checkout.js"></script>
+</body>
+</html>

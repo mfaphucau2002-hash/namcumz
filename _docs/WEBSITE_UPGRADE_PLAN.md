@@ -382,3 +382,8 @@ Vercel báo Ready; domain production mở trang dashboard và có tab **Đã h�
 | G8 | Đã phát hành, nghiệm thu một phần; workflow test và DB restore drill chưa làm/đã miễn. |
 
 Bản production mới nhất cho search/dialog/orders đã được Vercel deploy Ready (`c251ed2` là search guard; `eee5ec8` là order workflow UI). Không có test write lên đơn khách. **Không còn bước bắt buộc nào theo các lựa chọn miễn hiện tại**; phần tùy chọn còn lại là đo G7 sâu hơn bằng Web Vitals/API latency. Các mục waived không được xem là đạt.
+
+## Cập nhật G7 — 03/10/2026
+
+- Đo production mới: 12 GET/trang HTML; p50/p95 / 165.9/992.4 ms, /napgame.html 220.5/487.6 ms, trang detail 212.4/450.9 ms. REST catalog 27 mẫu sau warm-up: p50 214.9 ms, p95 318.2 ms. Điều kiện và giới hạn trong G7_PERFORMANCE_20261003.md.
+- PSI mobile bị HTTP 429, nên Core Web Vitals chưa có số liệu mới. Không coi HTTP timing là LCP/CLS/INP; G7 vẫn một phần chưa xác minh, không PASS.

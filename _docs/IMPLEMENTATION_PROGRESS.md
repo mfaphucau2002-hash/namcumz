@@ -1,5 +1,7 @@
 # Tiến độ triển khai — 30/09/2026
 
+> **Cập nhật 07/10/2026 — Member Center / User Hub:** Triển khai hoàn chỉnh trang User Profile / Member Center (/profile.html, assets/css/profile.css, assets/js/profile.js) đồng bộ gaming design token, điểm danh nhận thưởng hàng ngày, nạp ví VietQR tự động, biến động số dư, danh bạ tài khoản game và kho voucher. Đạt 42/42 tests và 68/68 offline checks.
+
 > **Cập nhật điều phối 01/10/2026:** Nhật ký dưới đây chứa các ghi nhận theo từng đợt, gồm cả thông tin trước đây mâu thuẫn về staging/production. Đừng suy ra trạng thái live chỉ từ các ghi nhận đó. Bảng cổng trong `WEBSITE_UPGRADE_PLAN.md` đã được sửa để phân biệt code có trong repo với nghiệm thu DB/deploy thực tế.
 
 
@@ -381,3 +383,10 @@ Theo yêu cầu của chủ shop ("loại bỏ phần nạp uid đi vì phần n
 - Chạy `_db/production_004_rollback_smoke.sql` tương đương trong SQL Editor với dữ liệu tổng hợp cho chính gói `FULL PACK GENSHIN IMPACT`: RPC tạo đơn thành công, trả `price = 3800000`, `status = cho_xu_ly`, `kind = topup`, `user_id` đúng; ciphertext có mặt và không trùng mật khẩu tổng hợp. Khối con cố ý ném exception để rollback toàn bộ đơn/log/credential/rate-limit.
 - Hậu kiểm production: số đơn 37 bằng số bản ghi backup 37; thông tin thử còn lại 0; giá và trạng thái của 37 đơn cũ đối chiếu với bản gốc sai lệch 0; role `authenticated` vẫn có quyền EXECUTE RPC. Website public vẫn tải đủ 8 gói Genshin, gồm FULL PACK, không có ảnh gói hỏng.
 - **Giới hạn:** chưa có phiên đăng nhập người mua trong in-app browser để gửi form frontend bằng phiên người dùng thật. Bài thử đã bao phủ RPC và dữ liệu production bằng giao dịch rollback; lần đặt hàng thực tiếp theo là kiểm tra cuối cùng của đường browser → PostgREST.
+## 03/10/2026 — G7 performance follow-up
+
+- Đã đo production bằng request chỉ đọc; không tạo/sửa đơn hoặc dữ liệu khách. Thời gian là request + tải hết body, lấy từ một máy/kết nối, không giả lập mobile.
+- Ba trang HTML: 12 GET mỗi trang, status 200. p50/p95: `/` 165.9/992.4 ms (9,033 B); `/napgame.html` 220.5/487.6 ms (8,532 B); `/napgame-detail.html?game=genshin` 212.4/450.9 ms (15,490 B). p95 là nearest-rank trên 12 mẫu nên bất định cao; có outlier.
+- Supabase production catalog: 32 GET tuần tự, bỏ 5 warm-up; status 200, body 1,245 B; p50 214.9 ms, p95 318.2 ms. Đây là anon/public GET chỉ đọc, không có tải đồng thời và không đại diện API ghi đơn.
+- Core Web Vitals: PageSpeed Insights mobile bị HTTP 429 cho cả ba trang; không có Lighthouse LCP/CLS/INP hoặc field data mới. Không suy ra CWV từ HTML timings. Không có Chrome/Edge local để chạy browser lab độc lập.
+- Báo cáo chi tiết tại `G7_PERFORMANCE_20261003.md`. Kết luận G7: HTTP/API baseline mới đã có; Core Web Vitals và tải đồng thời vẫn **chưa xác minh**, không đánh dấu G7 PASS.

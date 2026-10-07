@@ -236,3 +236,11 @@ ext values, and sends successful session/OAuth navigation to the top-level page.
 - Owner explicitly approved Vercel/Supabase dashboard access, frontend publication and production_005_order_identity.sql after automatic review initially denied dashboard access.
 - Production metadata before migration: orders 37; profiles with no usable name 2; prepare_order had nullable name SELECT. Applied function replacement with original function saved, explicit RLS/revoked client table access; no order/profile/role update performed.
 - Independent postcheck: orders 37; saved_functions 1; fallback_installed true; backup_rls true; authenticated backup read false. This is function metadata/data-count verification, not actual customer checkout E2E. Staging role/order workflows remain waived / not verified.
+
+### Release confirmation — 04/10/2026 16:07 Asia/Bangkok
+- Pushed af7b7cb to origin/main. Vercel deployment F2mfjuZMpigA5Z1gpStHcv7xXDmL is Ready, Production Current, custom domain namcumz.io.vn, source af7b7cb (8s build).
+- Reloaded https://namcumz.io.vn/napgame-detail?game=genshin: new shared dashboard/profile/farming navigation and login popup present. Popup iframe retains extensionless next route; package catalog renders. No runtime warnings/errors observed before login attempt.
+- Attempted login only with browser-autofilled existing credentials, without reading/exporting password or entering new credentials. Server rejected with invalid account/password; no retries. Actual signed-in cross-route rendering is not verified. Requested owner sign-in in deliverable tab, no password in chat.
+- New production screenshot saved as production-unified-topup-20261004.png in authorized visualization directory.
+- Production database identity migration verified independently: 37 orders before/after, original function saved once, fallback installed, RLS enabled on function backup, authenticated SELECT denied.
+- Full database backup/restore, staging role matrix, staging order workflow remain waived / not verified. Function backup is not a full database backup.

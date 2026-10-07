@@ -28,3 +28,8 @@ This verifies frontend presentation and local behavior. Previously waived full b
 ## Release
 
 Commit `6e5f552` was pushed to GitHub main. Vercel deployment `7FvEAdu2EpZ1pwSZBswnwyNjWVNN` is Ready. The production domain https://namcumz.io.vn/ was opened and visibly serves the new storefront, with no broken artwork images. Frontend redesign release is complete.
+## Superdesign canvas study — 2026-10-03
+
+- Created canvas project “NAMCUMZ Website Refresh — Current Brand” and imported homepage draft eb55c1b5-2d10-4016-bfb2-b190db2629e7 (v2). Preview: https://p.superdesign.dev/draft/eb55c1b5-2d10-4016-bfb2-b190db2629e7
+- The draft uses Tailwind utility classes and the approved uploaded logo/artwork URLs. The rendered preview was inspected; the homepage artwork and styling load. This is a canvas prototype, not a change to the production site.
+- Superdesign AI generation is blocked by the team's exhausted credits. No plan upgrade or purchase was made. The remaining nine flow pages have not been imported yet; do not treat the whole-site canvas design as complete.

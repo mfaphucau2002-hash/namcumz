@@ -51,3 +51,10 @@ Previous goal turn classification: progress (source edits, local tests and brows
 - Removed legacy automatic price calculator from RPC-backed production/staging creation because these orders use server-confirmed quotes. Quote/approval/payment workflow and OrderAPI payload unchanged. Dashboard farming navigation now opens the public category route.
 - Local fixture contains no auth/database scripts. Verified desktop/390/768 modal layout, summary input updates and no horizontal overflow.34 targeted regressions pass;62 static checks;95-file build.
 - Live release/preset verification pending. No order/payment was created. Staging role/order workflow remains waived / not verified; overall99% unproven.
+
+### Request layout production evidence
+- Commit a854868dd8c3402789e47228f91a7f8537607d2b; Vercel66yQ6qUETBNw3b7aGtVSoAUzuDHb Ready / Production,6s. Domain serves new form and farming category navigation.
+- Signed-in category events card opened modal with group Sự kiện, goal Nội dung sự kiện and matching summary label Sự kiện (Event). Legacy calcService absent. Back-to-categories link works. No submit, payment or order mutation. Warn/error log empty.
+- Live390 viewport: page375/modal343; live768: page753/modal721. Saved request-live-20261005.png in authorized visualization directory.
+- Evidence changed next action: dashboard briefly shows its initial guest card while session/profile are loading, then switches to authenticated view; next fix pending-auth state to avoid misleading sign-in prompts and continue order-detail route audit.
+- Current goal turn classification progress (source, tests, release and real-session evidence). Overall99% not established; goal remains active.

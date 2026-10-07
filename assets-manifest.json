@@ -1,0 +1,717 @@
+[
+  {
+    "id": "brand-logo",
+    "game": "global",
+    "type": "icon",
+    "source": "Original brand identity asset",
+    "source_type": "licensed/free",
+    "license_notes": "Namcumz brand identity logo, proprietary",
+    "local_path": "assets/images/logo.webp",
+    "used_in": [
+      "index.html",
+      "napgame.html",
+      "napgame-detail.html",
+      "dashboard.html",
+      "login.html",
+      "admin.html",
+      "booster.html",
+      "checkscam.html"
+    ],
+    "width": 256,
+    "height": 256
+  },
+  {
+    "id": "brand-logo-jpg",
+    "game": "global",
+    "type": "icon",
+    "source": "Original brand identity asset",
+    "source_type": "licensed/free",
+    "license_notes": "Namcumz brand identity logo fallback",
+    "local_path": "assets/images/logo.jpg",
+    "used_in": [
+      "favicon",
+      "fallback onerror"
+    ],
+    "width": 512,
+    "height": 512
+  },
+  {
+    "id": "hero-video-desktop",
+    "game": "global",
+    "type": "video",
+    "source": "https://mixkit.co/free-stock-video/stars-and-galaxies-in-space-through-apparent-auroras-30052/",
+    "source_type": "licensed/free",
+    "license_notes": "Mixkit Free License — Free for commercial and non-commercial use, no attribution required.",
+    "local_path": "assets/videos/hero/hero-video-desktop.mp4",
+    "used_in": [
+      "index.html (Hero desktop)"
+    ],
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "id": "hero-video-mobile",
+    "game": "global",
+    "type": "video",
+    "source": "https://mixkit.co/free-stock-video/stars-and-galaxies-in-space-through-apparent-auroras-30052/",
+    "source_type": "licensed/free",
+    "license_notes": "Mixkit Free License — Free for commercial and non-commercial use, optimized lightweight loop.",
+    "local_path": "assets/videos/hero/hero-video-mobile.mp4",
+    "used_in": [
+      "index.html (Hero mobile)"
+    ],
+    "width": 640,
+    "height": 360
+  },
+  {
+    "id": "hero-video-poster",
+    "game": "Genshin Impact",
+    "type": "hero",
+    "source": "HoYoverse official Genshin promotional artwork",
+    "source_type": "official",
+    "license_notes": "Official publisher promotional asset for game identification",
+    "local_path": "assets/videos/hero/hero-poster.webp",
+    "used_in": [
+      "index.html (Hero video poster fallback)"
+    ],
+    "width": 1920,
+    "height": 1080
+  },
+  {
+    "id": "auth-customer-login",
+    "game": "Genshin Impact",
+    "type": "hero",
+    "source": "HoYoverse official key art (Teyvat journey)",
+    "source_type": "official",
+    "license_notes": "Official publisher promotional key art for customer login backdrop",
+    "local_path": "assets/images/auth/customer-login.webp",
+    "used_in": [
+      "login.html (Customer login side panel)"
+    ],
+    "width": 900,
+    "height": 1200
+  },
+  {
+    "id": "auth-customer-register",
+    "game": "Honkai: Star Rail",
+    "type": "hero",
+    "source": "HoYoverse official key art (Astral Express)",
+    "source_type": "official",
+    "license_notes": "Official publisher promotional key art for registration side panel",
+    "local_path": "assets/images/auth/customer-register.webp",
+    "used_in": [
+      "login.html (Customer register side panel)"
+    ],
+    "width": 900,
+    "height": 1200
+  },
+  {
+    "id": "auth-booster-login",
+    "game": "Wuthering Waves",
+    "type": "hero",
+    "source": "Kuro Games official key art",
+    "source_type": "official",
+    "license_notes": "Official publisher promotional key art for booster portal",
+    "local_path": "assets/images/auth/booster-login.webp",
+    "used_in": [
+      "login.html (Booster portal side panel)"
+    ],
+    "width": 900,
+    "height": 1200
+  },
+  {
+    "id": "genshin-icon",
+    "game": "Genshin Impact",
+    "type": "icon",
+    "source": "https://genshin.hoyoverse.com/ — official Paimon app icon",
+    "source_type": "official",
+    "license_notes": "Official game client app icon, HoYoverse",
+    "local_path": "assets/images/games/genshin_icon.webp",
+    "used_in": [
+      "napgame.html",
+      "napgame-detail.html",
+      "dashboard.html",
+      "index.html"
+    ],
+    "width": 256,
+    "height": 256
+  },
+  {
+    "id": "hsr-icon",
+    "game": "Honkai Star Rail",
+    "type": "icon",
+    "source": "https://hsr.hoyoverse.com/ — official March 7th app icon",
+    "source_type": "official",
+    "license_notes": "Official game client app icon, HoYoverse",
+    "local_path": "assets/images/games/hsr_icon.webp",
+    "used_in": [
+      "napgame.html",
+      "napgame-detail.html",
+      "dashboard.html",
+      "index.html"
+    ],
+    "width": 256,
+    "height": 256
+  },
+  {
+    "id": "zzz-icon",
+    "game": "Zenless Zone Zero",
+    "type": "icon",
+    "source": "https://zenless.hoyoverse.com/ — official Bangboo app icon",
+    "source_type": "official",
+    "license_notes": "Official game client app icon, HoYoverse",
+    "local_path": "assets/images/games/zzz_icon.webp",
+    "used_in": [
+      "napgame.html",
+      "napgame-detail.html",
+      "dashboard.html",
+      "index.html"
+    ],
+    "width": 256,
+    "height": 256
+  },
+  {
+    "id": "wuwa-icon",
+    "game": "Wuthering Waves",
+    "type": "icon",
+    "source": "https://wutheringwaves.kurogames.com/ — official Rover/Crownless app icon",
+    "source_type": "official",
+    "license_notes": "Official game client app icon, Kuro Games",
+    "local_path": "assets/images/games/wuwa_icon.webp",
+    "used_in": [
+      "napgame.html",
+      "napgame-detail.html",
+      "dashboard.html",
+      "index.html"
+    ],
+    "width": 256,
+    "height": 256
+  },
+  {
+    "id": "genshin-card",
+    "game": "Genshin Impact",
+    "type": "card",
+    "source": "https://webstatic.hoyoverse.com/upload/uploadstatic/contentweb/20210428/2021042807203374622.jpg",
+    "source_type": "official",
+    "license_notes": "HoYoverse promotional artwork",
+    "local_path": "assets/images/games/genshin_card.jpg",
+    "used_in": [
+      "index.html",
+      "napgame.html"
+    ],
+    "width": 480,
+    "height": 600
+  },
+  {
+    "id": "genshin-banner",
+    "game": "Genshin Impact",
+    "type": "hero",
+    "source": "https://webstatic.hoyoverse.com/upload/uploadstatic/contentweb/20210428/2021042807203374622.jpg",
+    "source_type": "official",
+    "license_notes": "HoYoverse promotional artwork",
+    "local_path": "assets/images/games/genshin_banner.jpg",
+    "used_in": [
+      "index.html",
+      "napgame.html",
+      "napgame-detail.html"
+    ],
+    "width": 1200,
+    "height": 450
+  },
+  {
+    "id": "hsr-card",
+    "game": "Honkai Star Rail",
+    "type": "card",
+    "source": "https://fastcdn.hoyoverse.com/mi18n/hkrpg_global/m20260904hy5hcii9ds/upload/f0981b5c04af1c7a720d0bd65d958c52_1494770406828241360.png",
+    "source_type": "official",
+    "license_notes": "HoYoverse promotional artwork",
+    "local_path": "assets/images/games/hsr_card.jpg",
+    "used_in": [
+      "index.html",
+      "napgame.html"
+    ],
+    "width": 480,
+    "height": 600
+  },
+  {
+    "id": "hsr-banner",
+    "game": "Honkai Star Rail",
+    "type": "hero",
+    "source": "https://fastcdn.hoyoverse.com/mi18n/hkrpg_global/m20260904hy5hcii9ds/upload/f0981b5c04af1c7a720d0bd65d958c52_1494770406828241360.png",
+    "source_type": "official",
+    "license_notes": "HoYoverse promotional artwork",
+    "local_path": "assets/images/games/hsr_banner.jpg",
+    "used_in": [
+      "napgame.html",
+      "napgame-detail.html"
+    ],
+    "width": 1200,
+    "height": 450
+  },
+  {
+    "id": "zzz-card",
+    "game": "Zenless Zone Zero",
+    "type": "card",
+    "source": "https://fastcdn.hoyoverse.com/mi18n/nap_global/m20260825hy6h8swqv4/upload/736bac9d3d30580d780679cccf833745_2751676283033630192.jpg",
+    "source_type": "official",
+    "license_notes": "HoYoverse promotional artwork",
+    "local_path": "assets/images/games/zzz_card.jpg",
+    "used_in": [
+      "index.html",
+      "napgame.html"
+    ],
+    "width": 480,
+    "height": 600
+  },
+  {
+    "id": "zzz-banner",
+    "game": "Zenless Zone Zero",
+    "type": "hero",
+    "source": "https://fastcdn.hoyoverse.com/mi18n/nap_global/m20260825hy6h8swqv4/upload/736bac9d3d30580d780679cccf833745_2751676283033630192.jpg",
+    "source_type": "official",
+    "license_notes": "HoYoverse promotional artwork",
+    "local_path": "assets/images/games/zzz_banner.jpg",
+    "used_in": [
+      "napgame.html",
+      "napgame-detail.html"
+    ],
+    "width": 1200,
+    "height": 450
+  },
+  {
+    "id": "wuwa-card",
+    "game": "Wuthering Waves",
+    "type": "card",
+    "source": "https://wutheringwaves.kurogames.com/static4.0/assets/main-bg-7d3fbb99.jpg",
+    "source_type": "official",
+    "license_notes": "Kuro Games promotional artwork",
+    "local_path": "assets/images/games/wuwa_card.jpg",
+    "used_in": [
+      "index.html",
+      "napgame.html"
+    ],
+    "width": 480,
+    "height": 600
+  },
+  {
+    "id": "wuwa-banner",
+    "game": "Wuthering Waves",
+    "type": "hero",
+    "source": "https://wutheringwaves.kurogames.com/static4.0/assets/main-bg-7d3fbb99.jpg",
+    "source_type": "official",
+    "license_notes": "Kuro Games promotional artwork",
+    "local_path": "assets/images/games/wuwa_banner.jpg",
+    "used_in": [
+      "napgame.html",
+      "napgame-detail.html"
+    ],
+    "width": 1200,
+    "height": 450
+  },
+  {
+    "id": "crystals-60",
+    "game": "Genshin Impact",
+    "type": "currency",
+    "source": "Official in-game currency icon extracted from official client files, composed with tier scaling and radiant aura",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced in-game currency artwork",
+    "local_path": "assets/images/games/crystals_60.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "crystals-300",
+    "game": "Genshin Impact",
+    "type": "currency",
+    "source": "Official in-game currency icon extracted from official client files, composed with tier scaling and radiant aura",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced in-game currency artwork",
+    "local_path": "assets/images/games/crystals_300.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "crystals-980",
+    "game": "Genshin Impact",
+    "type": "currency",
+    "source": "Official in-game currency icon extracted from official client files, composed with tier scaling and radiant aura",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced in-game currency artwork",
+    "local_path": "assets/images/games/crystals_980.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "crystals-1980",
+    "game": "Genshin Impact",
+    "type": "currency",
+    "source": "Official in-game currency icon extracted from official client files, composed with tier scaling and radiant aura",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced in-game currency artwork",
+    "local_path": "assets/images/games/crystals_1980.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "crystals-3280",
+    "game": "Genshin Impact",
+    "type": "currency",
+    "source": "Official in-game currency icon extracted from official client files, composed with tier scaling and radiant aura",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced in-game currency artwork",
+    "local_path": "assets/images/games/crystals_3280.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "crystals-6480",
+    "game": "Genshin Impact",
+    "type": "currency",
+    "source": "Official in-game currency icon extracted from official client files, composed with tier scaling and radiant aura",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced in-game currency artwork",
+    "local_path": "assets/images/games/crystals_6480.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "hsr-60",
+    "game": "Honkai Star Rail",
+    "type": "currency",
+    "source": "Official in-game currency icon extracted from official client files, composed with tier scaling and radiant aura",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced in-game currency artwork",
+    "local_path": "assets/images/games/hsr_60.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "hsr-300",
+    "game": "Honkai Star Rail",
+    "type": "currency",
+    "source": "Official in-game currency icon extracted from official client files, composed with tier scaling and radiant aura",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced in-game currency artwork",
+    "local_path": "assets/images/games/hsr_300.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "hsr-980",
+    "game": "Honkai Star Rail",
+    "type": "currency",
+    "source": "Official in-game currency icon extracted from official client files, composed with tier scaling and radiant aura",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced in-game currency artwork",
+    "local_path": "assets/images/games/hsr_980.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "hsr-1980",
+    "game": "Honkai Star Rail",
+    "type": "currency",
+    "source": "Official in-game currency icon extracted from official client files, composed with tier scaling and radiant aura",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced in-game currency artwork",
+    "local_path": "assets/images/games/hsr_1980.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "hsr-3280",
+    "game": "Honkai Star Rail",
+    "type": "currency",
+    "source": "Official in-game currency icon extracted from official client files, composed with tier scaling and radiant aura",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced in-game currency artwork",
+    "local_path": "assets/images/games/hsr_3280.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "hsr-6480",
+    "game": "Honkai Star Rail",
+    "type": "currency",
+    "source": "Official in-game currency icon extracted from official client files, composed with tier scaling and radiant aura",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced in-game currency artwork",
+    "local_path": "assets/images/games/hsr_6480.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "zzz-60",
+    "game": "Zenless Zone Zero",
+    "type": "currency",
+    "source": "Official in-game currency icon extracted from official client files, composed with tier scaling and radiant aura",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced in-game currency artwork",
+    "local_path": "assets/images/games/zzz_60.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "zzz-300",
+    "game": "Zenless Zone Zero",
+    "type": "currency",
+    "source": "Official in-game currency icon extracted from official client files, composed with tier scaling and radiant aura",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced in-game currency artwork",
+    "local_path": "assets/images/games/zzz_300.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "zzz-980",
+    "game": "Zenless Zone Zero",
+    "type": "currency",
+    "source": "Official in-game currency icon extracted from official client files, composed with tier scaling and radiant aura",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced in-game currency artwork",
+    "local_path": "assets/images/games/zzz_980.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "zzz-1980",
+    "game": "Zenless Zone Zero",
+    "type": "currency",
+    "source": "Official in-game currency icon extracted from official client files, composed with tier scaling and radiant aura",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced in-game currency artwork",
+    "local_path": "assets/images/games/zzz_1980.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "zzz-3280",
+    "game": "Zenless Zone Zero",
+    "type": "currency",
+    "source": "Official in-game currency icon extracted from official client files, composed with tier scaling and radiant aura",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced in-game currency artwork",
+    "local_path": "assets/images/games/zzz_3280.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "zzz-6480",
+    "game": "Zenless Zone Zero",
+    "type": "currency",
+    "source": "Official in-game currency icon extracted from official client files, composed with tier scaling and radiant aura",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced in-game currency artwork",
+    "local_path": "assets/images/games/zzz_6480.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "wuwa-60",
+    "game": "Wuthering Waves",
+    "type": "currency",
+    "source": "Official in-game currency icon extracted from official client files, composed with tier scaling and radiant aura",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced in-game currency artwork",
+    "local_path": "assets/images/games/wuwa_60.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "wuwa-300",
+    "game": "Wuthering Waves",
+    "type": "currency",
+    "source": "Official in-game currency icon extracted from official client files, composed with tier scaling and radiant aura",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced in-game currency artwork",
+    "local_path": "assets/images/games/wuwa_300.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "wuwa-980",
+    "game": "Wuthering Waves",
+    "type": "currency",
+    "source": "Official in-game currency icon extracted from official client files, composed with tier scaling and radiant aura",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced in-game currency artwork",
+    "local_path": "assets/images/games/wuwa_980.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "wuwa-1980",
+    "game": "Wuthering Waves",
+    "type": "currency",
+    "source": "Official in-game currency icon extracted from official client files, composed with tier scaling and radiant aura",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced in-game currency artwork",
+    "local_path": "assets/images/games/wuwa_1980.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "wuwa-3280",
+    "game": "Wuthering Waves",
+    "type": "currency",
+    "source": "Official in-game currency icon extracted from official client files, composed with tier scaling and radiant aura",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced in-game currency artwork",
+    "local_path": "assets/images/games/wuwa_3280.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "wuwa-6480",
+    "game": "Wuthering Waves",
+    "type": "currency",
+    "source": "Official in-game currency icon extracted from official client files, composed with tier scaling and radiant aura",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced in-game currency artwork",
+    "local_path": "assets/images/games/wuwa_6480.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "genshin-welkin",
+    "game": "Genshin Impact",
+    "type": "currency",
+    "source": "Official in-game Blessing of the Welkin Moon icon",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced official monthly subscription artwork",
+    "local_path": "assets/images/games/welkin.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "hsr-pass",
+    "game": "Honkai Star Rail",
+    "type": "currency",
+    "source": "Official in-game Express Supply Pass icon",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced official monthly subscription artwork",
+    "local_path": "assets/images/games/hsr_pass.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "hsr-bp",
+    "game": "Honkai Star Rail",
+    "type": "currency",
+    "source": "Official in-game Nameless Glory (Battle Pass) icon",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced official monthly subscription artwork",
+    "local_path": "assets/images/games/hsr_bp.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "zzz-pass",
+    "game": "Zenless Zone Zero",
+    "type": "currency",
+    "source": "Official in-game Inter-Knot Membership (Thẻ Tháng Ổn Định) icon",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced official monthly subscription artwork",
+    "local_path": "assets/images/games/zzz_pass.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  },
+  {
+    "id": "wuwa-pass",
+    "game": "Wuthering Waves",
+    "type": "currency",
+    "source": "Official in-game Lunite Subscription (Thẻ Tháng Lunite) icon",
+    "source_type": "official",
+    "license_notes": "Publisher-sourced official monthly subscription artwork",
+    "local_path": "assets/images/games/wuwa_pass.webp",
+    "used_in": [
+      "napgame-detail.html (Package card selector)"
+    ],
+    "width": 180,
+    "height": 180
+  }
+]

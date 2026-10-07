@@ -66,6 +66,34 @@
             return write(client, actor, 'order_action', {
                 p_order: order.id, p_version: order.version, p_action: action, p_data: data
             });
+        },
+        payByWallet(client, actor, orderId) {
+            if (!orderId) return Promise.reject(new Error('Mã đơn không hợp lệ.'));
+            return write(client, actor, 'pay_order_by_wallet', { p_order_id: orderId });
+        },
+        cancelPayment(client, actor, orderId) {
+            if (!orderId) return Promise.reject(new Error('Mã đơn không hợp lệ.'));
+            return write(client, actor, 'cancel_order_payment', { p_order_id: orderId });
+        },
+        async getPaymentInfo(client, orderIdentifier) {
+            if (!client || !orderIdentifier) return null;
+            const { data, error } = await client.rpc('get_order_payment_info', { p_order_identifier: String(orderIdentifier).trim() });
+            if (error) throw error;
+            return typeof data === 'string' ? JSON.parse(data) : data;
+        },
+        createDeposit(client, actor, amount) {
+            const num = Number(amount);
+            if (!num || num < 10000) return Promise.reject(new Error('Số tiền nạp tối thiểu là 10.000 VNĐ.'));
+            return write(client, actor, 'create_deposit_order', { p_amount: num });
+        },
+        claimDailyCheckin(client, actor) {
+            return write(client, actor, 'claim_daily_checkin', {});
+        },
+        async getProfileSummary(client) {
+            if (!client) throw new Error('Chưa kết nối cơ sở dữ liệu.');
+            const { data, error } = await client.rpc('get_user_profile_summary');
+            if (error) throw error;
+            return typeof data === 'string' ? JSON.parse(data) : data;
         }
     };
 })();

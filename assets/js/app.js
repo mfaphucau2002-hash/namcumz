@@ -641,6 +641,9 @@ window.renderOrders = function(ordersToRender, containerId) {
                     if (!order.paid_amount) actions += button('cancel','Hủy đơn');
                 }
                 if (isOwner && order.status === 'cho_xu_ly' && order.price > 0 && !order.quote_accepted) actions += button('approve_quote','Chấp thuận giá');
+                if (isOwner && order.status === 'cho_xu_ly' && order.quote_accepted && Number(order.paid_amount || 0) < Number(order.price || 0)) {
+                    actions += '<a class="btn btn-action" style="background:var(--grad-emerald);color:#070912;font-weight:700;text-decoration:none;" href="checkout.html?order=' + encodeURIComponent(order.order_code || order.id) + '"><i class="fa-solid fa-qrcode"></i> Thanh toán VietQR</a>';
+                }
                 if ((isAdmin || isAssignedBooster) && order.status === 'dang_cay') {
                     actions += button('progress','Cập nhật tiến độ') + button('submit','Gửi nghiệm thu') + button('pause','Tạm dừng');
                 }

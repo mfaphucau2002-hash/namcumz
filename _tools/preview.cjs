@@ -12,9 +12,17 @@ function getStagingConfig() {
   return index < 1 ? ['', ''] : [line.slice(0,index).trim(),line.slice(index+1).trim()];
  }));
  if (values.NAMCUMZ_STAGING_URL !== stagingProjectUrl || !/^sb_publishable_[A-Za-z0-9_-]+$/.test(values.NAMCUMZ_STAGING_KEY || '')) return null;
- return `window.NAMCUMZ_CONFIG = ${JSON.stringify({environment:'staging',supabaseUrl:stagingProjectUrl,supabaseAnonKey:values.NAMCUMZ_STAGING_KEY,expectedDbVersion:'staging_004_credentials_encryption'})};`;
+ const bank = {
+  bankBin: '970422',
+  bankCode: 'MB',
+  bankName: 'MB Bank (Ngân hàng Quân Đội)',
+  accountNumber: '0763550673',
+  accountName: 'NGUYEN HOANG NAM',
+  expireMinutes: 15
+ };
+ return `window.NAMCUMZ_CONFIG = ${JSON.stringify({environment:'staging',supabaseUrl:stagingProjectUrl,supabaseAnonKey:values.NAMCUMZ_STAGING_KEY,expectedDbVersion:'staging_004_credentials_encryption',bank})};`;
 }
-const pages = new Set(['index.html','checkscam.html','terms.html','privacy.html','login.html','dashboard.html','admin.html','profile.html','booster.html','napgame.html','napgame-detail.html','robots.txt','sitemap.xml']);
+const pages = new Set(['index.html','caythue.html','reviews.html','checkscam.html','terms.html','privacy.html','login.html','dashboard.html','admin.html','profile.html','booster.html','napgame.html','napgame-detail.html','checkout.html','faq.html','luu-y.html','robots.txt','sitemap.xml']);
 const mime = {'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.jpg':'image/jpeg','.png':'image/png','.webp':'image/webp','.svg':'image/svg+xml','.ico':'image/x-icon','.txt':'text/plain; charset=utf-8','.xml':'application/xml; charset=utf-8','.woff2':'font/woff2','.mp4':'video/mp4'};
 http.createServer((req,res) => {
  if (!['GET','HEAD'].includes(req.method)) {res.writeHead(405);return res.end();}
@@ -38,4 +46,4 @@ http.createServer((req,res) => {
   res.writeHead(200,{'Content-Type':mime[path.extname(file)],'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
   res.end(req.method==='HEAD'?undefined:data);
  });
-}).listen(4173,'127.0.0.1',()=>console.log('Preview: http://127.0.0.1:4173 (staging configuration required)'));
+}).listen(Number(process.env.NAMCUMZ_PREVIEW_PORT)||4173,'127.0.0.1',()=>console.log('Preview: http://127.0.0.1:'+(Number(process.env.NAMCUMZ_PREVIEW_PORT)||4173)+' (staging configuration required)'));

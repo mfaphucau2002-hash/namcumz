@@ -1,34 +1,115 @@
 :root {
   color-scheme: dark;
-  --ui-bg: #0b1018;
-  --ui-surface: #121924;
-  --ui-surface-raised: #182130;
-  --ui-text: #edf2fa;
-  --ui-muted: #94a0b4;
-  --ui-border: rgba(255,255,255,.08);
-  --ui-border-hover: rgba(255,255,255,.18);
-  --ui-accent: #93b4fa;
-  --ui-success: #81c9af;
-  --ui-warning: #d9b77d;
-  --ui-danger: #ee9298;
-  --ui-font: 'Be Vietnam Pro', system-ui, sans-serif;
+
+  /* SURFACE ELEVATIONS */
+  --surface-0: #070912;
+  --surface-1: #0e121f;
+  --surface-2: #14192b;
+  --surface-raised: #182130;
+  --surface-glass: rgba(14, 18, 31, 0.85);
+  --surface-glass-border: rgba(112, 220, 229, 0.22);
+
+  /* BRAND & GAMING ACCENTS */
+  --brand-cyan: #70dce5;
+  --brand-cyan-glow: rgba(112, 220, 229, 0.35);
+  --brand-violet: #8b5cf6;
+  --brand-violet-glow: rgba(139, 92, 246, 0.35);
+  --brand-gold: #ffb800;
+  --brand-gold-glow: rgba(255, 184, 0, 0.35);
+
+  /* DYNAMIC GAMING GRADIENTS */
+  --grad-brand: linear-gradient(135deg, #00f0ff 0%, #8b5cf6 100%);
+  --grad-brand-glow: linear-gradient(135deg, #00f0ff 0%, #7c3aed 50%, #ec4899 100%);
+  --grad-aurora: linear-gradient(90deg, #00f0ff 0%, #a855f7 50%, #ec4899 100%);
+  --grad-gold: linear-gradient(135deg, #ffd700 0%, #f59e0b 100%);
+  --grad-emerald: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+  --grad-card-border: linear-gradient(135deg, rgba(0, 240, 255, 0.45) 0%, rgba(139, 92, 246, 0.35) 50%, rgba(236, 72, 153, 0.25) 100%);
+  --grad-card-surface: linear-gradient(160deg, rgba(20, 26, 48, 0.85) 0%, rgba(10, 13, 26, 0.95) 100%);
+  --grad-text-brand: linear-gradient(135deg, #70dce5 0%, #c084fc 50%, #f472b6 100%);
+
+  /* STATUS COLORS */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #38bdf8;
+
+  /* GAME-SPECIFIC ACCENTS */
+  --accent-genshin: #00e1d9;
+  --accent-hsr: #a78bfa;
+  --accent-zzz: #facc15;
+  --accent-wuwa: #38bdf8;
+
+  /* TYPOGRAPHY */
+  --font-main: 'Be Vietnam Pro', system-ui, sans-serif;
+  --font-heading: 'Be Vietnam Pro', system-ui, sans-serif;
+  --text-primary: #f5f7ff;
+  --text-secondary: #c5cde0;
+  --text-muted: #8d98af;
+
+  /* BORDERS */
+  --border-soft: rgba(255, 255, 255, 0.08);
+  --border-active: rgba(112, 220, 229, 0.36);
+  --border-hover: rgba(255, 255, 255, 0.18);
+
+  /* SHADOWS & GLOWS */
+  --shadow-card: 0 14px 36px rgba(0, 0, 0, 0.35);
+  --shadow-floating: 0 24px 64px rgba(0, 0, 0, 0.5);
+  --glow-brand: 0 0 24px rgba(112, 220, 229, 0.25);
+
+  /* RADII */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --radius-full: 9999px;
+
+  /* SPACING */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-6: 48px;
+  --space-8: 64px;
+
+  /* MOTION */
+  --motion-fast: 150ms;
+  --motion-normal: 240ms;
+  --motion-smooth: 400ms;
+  --ease-standard: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-out-cubic: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* UI COMPATIBILITY TOKENS */
+  --ui-bg: var(--surface-0);
+  --ui-surface: var(--surface-1);
+  --ui-surface-raised: var(--surface-raised);
+  --ui-text: var(--text-primary);
+  --ui-muted: var(--text-muted);
+  --ui-border: var(--border-soft);
+  --ui-border-hover: var(--border-hover);
+  --ui-accent: var(--brand-cyan);
+  --ui-success: var(--success);
+  --ui-warning: var(--warning);
+  --ui-danger: var(--danger);
+  --ui-font: var(--font-main);
   --ui-text-caption: .75rem;
   --ui-text-body: .9375rem;
   --ui-text-h2: 1.5rem;
   --ui-text-h1: clamp(1.75rem, 4vw, 2.5rem);
-  --ui-space-1: 8px;
-  --ui-space-2: 16px;
-  --ui-space-3: 24px;
-  --ui-space-4: 32px;
-  --ui-space-6: 48px;
-  --ui-space-8: 64px;
-  --ui-radius: 12px;
-  --ui-motion: 180ms;
-  --ui-ease: cubic-bezier(.2,.7,.2,1);
-  --ui-shadow: 0 24px 64px rgba(0,0,0,.3);
-  /* Compatibility names keep existing components on the same palette. */
+  --ui-space-1: var(--space-1);
+  --ui-space-2: var(--space-2);
+  --ui-space-3: var(--space-3);
+  --ui-space-4: var(--space-4);
+  --ui-space-6: var(--space-6);
+  --ui-space-8: var(--space-8);
+  --ui-radius: var(--radius-md);
+  --ui-motion: var(--motion-normal);
+  --ui-ease: var(--ease-standard);
+  --ui-shadow: var(--shadow-floating);
+
+  /* LEGACY COMPATIBILITY NAMES */
   --bg-dark: var(--ui-bg);
-  --bg-darker: #080d14;
+  --bg-darker: #05060b;
   --bg-main: var(--ui-bg);
   --bg-card: var(--ui-surface);
   --bg-secondary: var(--ui-surface-raised);
@@ -39,17 +120,15 @@
   --primary-light: var(--ui-accent);
   --secondary: var(--ui-success);
   --accent: var(--ui-accent);
-  --genshin-gold: var(--ui-warning);
+  --genshin-gold: var(--brand-gold);
   --text-light: var(--ui-text);
   --text-main: var(--ui-text);
-  --text-muted: var(--ui-muted);
   --status-dang-cay: var(--ui-success);
   --status-hoan-thanh: var(--ui-success);
   --status-tam-dung: var(--ui-danger);
   --status-cho-xu-ly: var(--ui-warning);
   --status-cho-nghiem-thu: var(--ui-accent);
-  --primary-gradient: var(--ui-surface-raised);
-  --font-main: var(--ui-font);
+  --primary-gradient: linear-gradient(135deg, var(--brand-cyan) 0%, var(--brand-violet) 100%);
   --font-heading: var(--ui-font);
   --transition: color var(--ui-motion) var(--ui-ease), background-color var(--ui-motion) var(--ui-ease), border-color var(--ui-motion) var(--ui-ease);
 }

@@ -535,8 +535,8 @@ async function submitDetailOrder() {
             throw new Error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại rồi thử tạo đơn.');
         }
         const order = await OrderAPI.topup(client, authData.user.id, currentSelectedPackage.id, server, loginMethod, account, password, phone, notes);
-        showCheckoutMessage('Đã tạo đơn. Đang chuyển đến trang theo dõi...', 'success');
-        window.location.href = `dashboard.html?order=${encodeURIComponent(order.id)}`;
+        showCheckoutMessage('Đã tạo đơn. Đang chuyển đến trang thanh toán...', 'success');
+        window.location.href = `checkout.html?order=${encodeURIComponent(order.order_code || order.id)}`;
     } catch (err) {
         console.error('Lỗi tạo đơn nạp game:', err);
         showCheckoutMessage(err.message?.includes('Authenticated owner required') ? 'Không xác định được chủ đơn. Vui lòng tải lại trang và thử lại; nếu vẫn lỗi, liên hệ CSKH.' : (err.message || 'Không thể tạo đơn. Vui lòng kiểm tra lại hoặc liên hệ Zalo.'));

@@ -65,6 +65,11 @@ setupLandingMenu();
 setupLandingCarousel();
 setupLandingAccountModal();
 setupLandingServiceSelection();
+setupLandingGateway();
+setupAnnouncementBar();
+setupLiveTicker();
+setupEcoMode();
+setupGameFilters();
 
 // Open local customer auth routes in an accessible dialog while preserving direct-link fallbacks.
 function setupLandingAccountModal() {
@@ -121,13 +126,14 @@ function setupLandingAccountModal() {
 function setupLandingCarousel() {
   const carousel = document.getElementById('lpHeroCarousel');
   const image = document.getElementById('lpHeroSlideImage');
+  const gameTag = document.getElementById('lpHeroGameTag');
   const controls = [...document.querySelectorAll('[data-hero-slide]')];
   if (!carousel || !image || controls.length < 2) return;
   const slides = [
-    {name:'Genshin Impact', src:'/assets/images/games/genshin_banner.jpg'},
-    {name:'Honkai: Star Rail', src:'/assets/images/games/hsr_banner.jpg'},
-    {name:'Zenless Zone Zero', src:'/assets/images/games/zzz_banner.jpg'},
-    {name:'Wuthering Waves', src:'/assets/images/games/wuwa_banner.jpg'}
+    {name:'Genshin Impact', src:'/assets/images/games/genshin_banner.jpg', tag:'GENSHIN IMPACT'},
+    {name:'Honkai: Star Rail', src:'/assets/images/games/hsr_banner.jpg', tag:'HONKAI: STAR RAIL'},
+    {name:'Zenless Zone Zero', src:'/assets/images/games/zzz_banner.jpg', tag:'ZENLESS ZONE ZERO'},
+    {name:'Wuthering Waves', src:'/assets/images/games/wuwa_banner.jpg', tag:'WUTHERING WAVES'}
   ];
   let active = 0;
   let timer;
@@ -135,6 +141,7 @@ function setupLandingCarousel() {
     active = (index + slides.length) % slides.length;
     image.src = slides[active].src;
     image.alt = `Ảnh ${slides[active].name}`;
+    if (gameTag) gameTag.textContent = slides[active].tag;
     controls.forEach((button, i) => button.setAttribute('aria-pressed', String(i === active)));
   };
   controls.forEach((button) => button.addEventListener('click', () => {
@@ -154,6 +161,7 @@ function setupLandingCarousel() {
   document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
   start();
 }
+
 // Carry only a short-lived service choice across same-tab navigation and the login dialog.
 function setupLandingServiceSelection() {
   document.addEventListener('click', event => {
@@ -162,4 +170,137 @@ function setupLandingServiceSelection() {
     if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
     try { sessionStorage.setItem('namcumz-service-preset', JSON.stringify({key:card.dataset.servicePreset,created:Date.now()})); } catch (_) { /* The form remains usable when storage is unavailable. */ }
   }, true);
+}
+
+// Gateway Boot Loader: subtle session-only initiation screen, safe timeout, never blocks repeats.
+function setupLandingGateway() {
+  const gateway = document.getElementById('lpGatewayScreen');
+  if (!gateway) return;
+  let isDone = false;
+  try {
+    isDone = sessionStorage.getItem('namcumz_gateway_done') === '1';
+  } catch (_) {}
+  if (isDone || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    gateway.remove();
+    return;
+  }
+  const bar = document.getElementById('lpGatewayProgress');
+  const text = document.getElementById('lpGatewayStatus');
+  const percent = document.getElementById('lpGatewayPercent');
+  const skipBtn = document.getElementById('lpGatewaySkip');
+
+  const finish = () => {
+    try { sessionStorage.setItem('namcumz_gateway_done', '1'); } catch (_) {}
+    gateway.classList.add('is-exiting');
+    setTimeout(() => { if (gateway.parentNode) gateway.remove(); }, 350);
+  };
+
+  if (skipBtn) {
+    skipBtn.addEventListener('click', finish);
+  }
+
+  const steps = [
+    { p: 25, t: 'Khởi tạo hệ thống NAMCUMZ Gateway...' },
+    { p: 60, t: 'Đồng bộ dịch vụ Genshin, Star Rail, ZZZ, WuWa...' },
+    { p: 85, t: 'Thiết lập kênh bảo mật PGP...' },
+    { p: 100, t: 'Sẵn sàng trải nghiệm!' }
+  ];
+
+  let progress = 0;
+  let stepIdx = 0;
+  const timer = setInterval(() => {
+    progress += 5;
+    if (percent) percent.textContent = progress + '%';
+    if (bar) bar.style.width = progress + '%';
+    if (stepIdx < steps.length && progress >= steps[stepIdx].p) {
+      if (text) text.textContent = steps[stepIdx].t;
+      stepIdx++;
+    }
+    if (progress >= 100) {
+      clearInterval(timer);
+      setTimeout(finish, 160);
+    }
+  }, 24);
+
+  // Safety fallback timeout: never block page longer than 1.5s under any circumstance
+  setTimeout(() => {
+    clearInterval(timer);
+    finish();
+  }, 1500);
+}
+
+// Global Announcement Bar: dismissable, remembers within the session.
+function setupAnnouncementBar() {
+  const bar = document.getElementById('lpAnnouncementBar');
+  const close = document.getElementById('lpAnnouncementClose');
+  if (!bar) return;
+  let isClosed = false;
+  try {
+    isClosed = sessionStorage.getItem('namcumz_announcement_closed') === '1';
+  } catch (_) {}
+  if (isClosed) {
+    bar.remove();
+    return;
+  }
+  if (close) {
+    close.addEventListener('click', () => {
+      bar.classList.add('is-closing');
+      try { sessionStorage.setItem('namcumz_announcement_closed', '1'); } catch (_) {}
+      setTimeout(() => bar.remove(), 250);
+    });
+  }
+}
+
+// Live Operational Activity Ticker: handles pause on hover/focus and smooth continuous flow.
+function setupLiveTicker() {
+  const ticker = document.getElementById('lpLiveTicker');
+  if (!ticker) return;
+  ticker.addEventListener('focusin', () => ticker.classList.add('is-paused'));
+  ticker.addEventListener('focusout', () => ticker.classList.remove('is-paused'));
+}
+
+// Eco Mode Toggle: allows smooth performance & battery conservation on low-power devices.
+function setupEcoMode() {
+  const toggle = document.getElementById('lpEcoToggle');
+  const apply = (on) => {
+    document.body.classList.toggle('perf-eco-mode', on);
+    if (toggle) {
+      toggle.setAttribute('aria-pressed', String(on));
+      toggle.classList.toggle('active', on);
+      const label = toggle.querySelector('.lp-eco-label');
+      if (label) label.textContent = on ? 'Mượt mà: Bật' : 'Mượt mà';
+    }
+  };
+  let isEco = false;
+  try {
+    isEco = localStorage.getItem('namcumz_eco_mode') === '1';
+  } catch (_) {}
+  apply(isEco);
+  if (toggle) {
+    toggle.addEventListener('click', () => {
+      const next = !document.body.classList.contains('perf-eco-mode');
+      try { localStorage.setItem('namcumz_eco_mode', next ? '1' : '0'); } catch (_) {}
+      apply(next);
+    });
+  }
+}
+
+// Interactive Game Tab Filter for Homepage Catalog.
+function setupGameFilters() {
+  const buttons = document.querySelectorAll('[data-game-filter]');
+  const cards = document.querySelectorAll('[data-game-target]');
+  if (!buttons.length) return;
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.gameFilter;
+      buttons.forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+      cards.forEach(card => {
+        if (target === 'all' || card.dataset.gameTarget === target) {
+          card.hidden = false;
+        } else {
+          card.hidden = true;
+        }
+      });
+    });
+  });
 }

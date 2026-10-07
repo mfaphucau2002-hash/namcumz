@@ -1,0 +1,1006 @@
+/* ==========================================================================
+   CHECKOUT PAGE STYLES - NAMCUMZ VIETQR AUTOMATED PAYMENT
+   Native Dark Gaming Theme + Vibrant Color-coded Badges & Accents
+   ========================================================================== */
+
+/* 0. NAVIGATION BAR & LOGO */
+.chk-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px max(24px, calc((100vw - 1160px) / 2));
+  background: rgba(14, 18, 31, 0.94);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border-soft, rgba(255, 255, 255, 0.08));
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  min-height: 64px;
+}
+
+.chk-nav-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: #f5f7ff;
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: 0.5px;
+}
+
+img.chk-brand-logo,
+.chk-brand-logo,
+.chk-nav-logo img {
+  width: 36px !important;
+  height: 36px !important;
+  max-width: 36px !important;
+  max-height: 36px !important;
+  border-radius: 8px;
+  object-fit: cover;
+  display: inline-block;
+  border: 1px solid var(--border-active, rgba(112, 220, 229, 0.36));
+}
+
+.chk-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.chk-nav-links a {
+  color: var(--text-secondary, #c5cde0);
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 600;
+  transition: color var(--motion-fast, 150ms) ease;
+}
+
+.chk-nav-links a:hover {
+  color: var(--brand-cyan, #70dce5);
+}
+
+.chk-nav-btn {
+  background: rgba(112, 220, 229, 0.12);
+  border: 1px solid var(--border-active, rgba(112, 220, 229, 0.36));
+  color: var(--brand-cyan, #70dce5);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm, 8px);
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all var(--motion-fast, 150ms) ease;
+}
+
+.chk-nav-btn:hover {
+  background: var(--brand-cyan, #70dce5);
+  color: #070912;
+  transform: translateY(-1px);
+}
+
+/* 1. CONTAINER & HERO HEADER */
+.chk-page {
+  background-color: var(--surface-0, #070912);
+  background-image: radial-gradient(circle at 50% 15%, rgba(112, 220, 229, 0.08) 0%, rgba(7, 9, 18, 0) 65%);
+  color: var(--text-primary, #f5f7ff);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Be Vietnam Pro', system-ui, sans-serif;
+  margin: 0;
+}
+
+.chk-container {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.chk-header-bar {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.chk-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 42, 109, 0.12);
+  border: 1px solid rgba(255, 42, 109, 0.4);
+  color: #ff4d7e;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 6px 18px;
+  border-radius: 9999px;
+  margin-bottom: 12px;
+}
+
+.chk-badge-pill i {
+  color: #ff2a6d;
+}
+
+.chk-title {
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+  font-weight: 800;
+  margin: 0 0 14px;
+  color: #ffffff;
+}
+
+.chk-order-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface-1, #0e121f);
+  border: 1px solid var(--border-soft, rgba(255, 255, 255, 0.08));
+  padding: 8px 18px;
+  border-radius: var(--radius-md, 12px);
+  font-size: 0.9rem;
+}
+
+.chk-meta-id {
+  color: var(--text-muted, #8d98af);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chk-meta-pill {
+  color: #00e5ff;
+  font-family: monospace;
+  font-size: 0.96rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  background: rgba(0, 229, 255, 0.08);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 229, 255, 0.25);
+}
+
+.chk-meta-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fbbf24;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.chk-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--warning, #f59e0b);
+  box-shadow: 0 0 8px var(--warning, #f59e0b);
+  animation: chk-pulse 1.8s infinite ease-in-out;
+}
+
+.chk-meta-status[data-status="PAID"] {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #34d399;
+}
+.chk-meta-status[data-status="PAID"] .chk-status-dot {
+  background: var(--success, #10b981);
+  box-shadow: 0 0 8px var(--success, #10b981);
+  animation: none;
+}
+
+/* 2. MAIN TWO-COLUMN LAYOUT */
+.chk-layout {
+  display: grid;
+  grid-template-columns: 390px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* 3. CARD SURFACES */
+.chk-card {
+  background: var(--surface-1, #0e121f);
+  border: 1px solid var(--border-soft, rgba(255, 255, 255, 0.08));
+  border-radius: var(--radius-lg, 16px);
+  padding: 20px 22px;
+  box-shadow: var(--shadow-card, 0 14px 36px rgba(0, 0, 0, 0.35));
+  position: relative;
+  overflow: hidden;
+}
+
+.chk-card-glass {
+  background: var(--grad-card-surface, linear-gradient(160deg, rgba(20, 26, 48, 0.88) 0%, rgba(10, 13, 26, 0.96) 100%));
+  border-color: var(--border-soft, rgba(255, 255, 255, 0.1));
+}
+
+/* 4. LEFT COLUMN - VIETQR CARD */
+.chk-qr-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chk-qr-card {
+  text-align: center;
+  padding: 24px 20px;
+}
+
+.chk-qr-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.chk-qr-header-title {
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: #cbd5e1;
+  letter-spacing: 0.5px;
+}
+
+.chk-vietqr-badge {
+  color: #e11d48;
+  font-weight: 900;
+  font-size: 1.05rem;
+  letter-spacing: -0.3px;
+}
+
+.chk-vietqr-badge strong {
+  color: #2563eb;
+}
+
+/* WHITE QR BOX FOR MAXIMUM CONTRAST & RELIABILITY */
+.chk-qr-box {
+  background: #ffffff;
+  padding: 14px;
+  border-radius: 14px;
+  display: inline-block;
+  margin: 0 auto 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  position: relative;
+  min-height: 250px;
+  min-width: 250px;
+}
+
+.chk-qr-img {
+  width: 230px;
+  height: 230px;
+  display: block;
+  object-fit: contain;
+  transition: opacity var(--motion-smooth, 400ms) ease;
+}
+
+.chk-qr-scan-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.chk-qr-scan-title i {
+  color: #facc15;
+}
+
+.chk-qr-scan-subtitle {
+  font-size: 0.84rem;
+  color: var(--text-secondary, #94a3b8);
+  margin-top: 4px;
+  margin-bottom: 14px;
+}
+
+/* Supported Bank Chips Grid */
+.chk-bank-chips-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 16px;
+}
+
+.chk-bank-chip {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.3px;
+}
+
+/* Expiry Timer Bar */
+.chk-timer-bar {
+  background: rgba(245, 158, 11, 0.09);
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #fbbf24;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.chk-timer-digits {
+  font-family: monospace;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #f59e0b;
+}
+
+/* 5. RIGHT COLUMN - STACKED CARDS */
+.chk-detail-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 5.1 Service / Order Details Card */
+.chk-service-card {
+  padding: 18px 20px;
+}
+
+.chk-field-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--text-muted, #8d98af);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.chk-service-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 8px;
+  line-height: 1.35;
+}
+
+.chk-service-subrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chk-service-tag {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chk-service-price {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #ff2a6d;
+}
+
+.chk-service-divider {
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  margin: 12px 0;
+}
+
+.chk-service-gameinfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.88rem;
+}
+
+.chk-gameinfo-text {
+  color: #cbd5e1;
+}
+.chk-gameinfo-text strong {
+  color: #facc15;
+}
+.chk-gameinfo-text i {
+  color: #facc15;
+  width: 18px;
+}
+
+.chk-contact-text {
+  color: #cbd5e1;
+}
+.chk-contact-text strong {
+  color: #38bdf8;
+}
+.chk-contact-text i {
+  color: #38bdf8;
+  width: 18px;
+}
+
+.chk-total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.chk-total-label {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.chk-total-amount {
+  font-size: 1.65rem;
+  font-weight: 900;
+  color: #ff2a6d;
+  letter-spacing: -0.5px;
+}
+
+/* 5.2 Wallet Payment Card */
+.chk-wallet-card {
+  background: rgba(139, 92, 246, 0.06);
+  border: 1px dashed rgba(139, 92, 246, 0.32);
+  padding: 16px 20px;
+}
+
+.chk-wallet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chk-wallet-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #c4b5fd;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chk-wallet-balance {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #10b981;
+}
+
+.chk-wallet-desc {
+  font-size: 0.84rem;
+  color: #94a3b8;
+  margin: 6px 0 0;
+  line-height: 1.45;
+}
+
+.chk-wallet-desc a {
+  color: #00e5ff;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+/* 5.3 Bank Account Information Cards */
+.chk-info-card {
+  padding: 14px 18px;
+}
+
+.chk-row-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.chk-val-text {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.3px;
+}
+
+/* CYAN HIGHLIGHT FOR STK */
+.chk-val-cyan {
+  font-size: 1.35rem;
+  font-family: monospace;
+  font-weight: 800;
+  color: #00e5ff;
+  letter-spacing: 1px;
+}
+
+/* 5.4 PROMINENT TRANSFER MEMO CARD (RED/PINK BORDER) */
+.chk-memo-card {
+  background: rgba(255, 42, 109, 0.07);
+  border: 1.5px solid #ff2a6d;
+  box-shadow: 0 0 20px rgba(255, 42, 109, 0.16);
+  padding: 16px 18px;
+}
+
+.chk-memo-label {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #ff6b95;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.chk-memo-val {
+  font-size: 1.35rem;
+  font-family: monospace;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 1.5px;
+}
+
+/* Copy Buttons */
+.chk-btn-copy {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-primary, #f5f7ff);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm, 8px);
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition: all var(--motion-fast, 150ms) ease;
+  white-space: nowrap;
+}
+
+.chk-btn-copy:hover {
+  background: rgba(0, 229, 255, 0.15);
+  border-color: #00e5ff;
+  color: #00e5ff;
+  transform: translateY(-1px);
+}
+
+.chk-btn-copy.copied {
+  background: var(--success, #10b981) !important;
+  border-color: var(--success, #10b981) !important;
+  color: #ffffff !important;
+}
+
+.chk-btn-copy-memo {
+  background: linear-gradient(135deg, #ff2a6d 0%, #e6004c 100%);
+  border: none;
+  color: #ffffff;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm, 8px);
+  font-size: 0.88rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(255, 42, 109, 0.35);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.chk-btn-copy-memo:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
+
+.chk-btn-copy-memo.copied {
+  background: var(--success, #10b981) !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4) !important;
+}
+
+/* 5.5 Blue Notice Box */
+.chk-blue-notice {
+  background: rgba(0, 150, 255, 0.08);
+  border: 1px solid rgba(0, 150, 255, 0.22);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  color: #7dd3fc;
+  line-height: 1.45;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-top: 4px;
+}
+
+.chk-blue-notice i {
+  color: #38bdf8;
+  font-size: 1rem;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+/* 5.6 Live Pulse Status Monitor */
+.chk-live-status-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface-2, #14192b);
+  border: 1px solid var(--border-soft, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  padding: 14px 18px;
+}
+
+.chk-pulse-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #00e5ff;
+  box-shadow: 0 0 10px #00e5ff;
+  animation: chk-pulse 1.6s infinite ease-in-out;
+  flex-shrink: 0;
+}
+
+.chk-live-status-text h4 {
+  margin: 0 0 3px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-primary, #f5f7ff);
+}
+
+.chk-live-status-text p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--text-muted, #8d98af);
+  line-height: 1.4;
+}
+
+/* 5.7 Green Guarantee Box */
+.chk-green-guarantee {
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 14px;
+  padding: 16px 20px;
+}
+
+.chk-guarantee-title {
+  color: #34d399;
+  font-size: 0.95rem;
+  font-weight: 800;
+  margin: 0 0 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chk-guarantee-desc {
+  color: #a7f3d0;
+  font-size: 0.84rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.chk-guarantee-desc strong {
+  color: #00e5ff;
+}
+
+.chk-footnote {
+  text-align: center;
+  color: #797597;
+  font-size: 0.82rem;
+  margin: 2px 0 0;
+}
+
+/* 6. FOOTER STYLES */
+.chk-footer {
+  margin-top: auto;
+  background: rgba(10, 13, 26, 0.96);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 48px 20px 24px;
+  font-size: 0.88rem;
+  color: var(--text-secondary, #94a3b8);
+}
+
+.chk-footer-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.2fr;
+  gap: 32px;
+  margin-bottom: 36px;
+}
+
+.chk-footer-brand {
+  font-weight: 800;
+  color: #ffffff;
+  font-size: 1.15rem;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chk-footer-logo {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.chk-footer-desc {
+  line-height: 1.6;
+  margin: 0;
+}
+
+.chk-footer-col h5 {
+  color: #ffffff;
+  font-size: 0.86rem;
+  font-weight: 800;
+  margin: 0 0 14px;
+  letter-spacing: 0.5px;
+}
+
+.chk-footer-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.chk-footer-col a {
+  color: var(--text-secondary, #94a3b8);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.chk-footer-col a:hover {
+  color: var(--brand-cyan, #70dce5);
+}
+
+.chk-footer-bottom {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  color: #64748b;
+}
+
+/* 7. PAYMENT SUCCESS MODAL (NON-RELOAD) */
+.chk-success-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 9, 18, 0.92);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: chk-fade-in 0.3s ease;
+}
+
+.chk-success-card {
+  background: #14192b;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7), 0 0 50px rgba(16, 185, 129, 0.2);
+  border-radius: 22px;
+  padding: 40px 32px;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+}
+
+.chk-check-icon {
+  width: 76px;
+  height: 76px;
+  background: rgba(16, 185, 129, 0.15);
+  border: 3px solid #10b981;
+  color: #10b981;
+  font-size: 2.2rem;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.35);
+  animation: chk-bounce-in 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chk-success-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 10px;
+}
+
+.chk-success-desc {
+  color: var(--text-secondary, #c5cde0);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0 0 24px;
+}
+
+.chk-success-details {
+  background: var(--surface-raised, #182130);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+.chk-success-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.chk-success-row span:first-child {
+  color: var(--text-muted, #8d98af);
+}
+
+.chk-success-row span:last-child {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.chk-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+  color: #070912;
+  font-weight: 800;
+  font-size: 1rem;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.15s ease;
+}
+
+.chk-btn-primary:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+/* 8. TOAST FEEDBACK */
+.chk-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--surface-raised, #182130);
+  border: 1px solid #00e5ff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 2000;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+
+.chk-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.chk-toast i {
+  color: #00e5ff;
+  font-size: 1.1rem;
+}
+
+/* 9. KEYFRAMES */
+@keyframes chk-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes chk-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.85); }
+}
+
+@keyframes chk-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes chk-bounce-in {
+  0% { transform: scale(0.3); opacity: 0; }
+  70% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ==========================================================================
+   MOBILE RESPONSIVENESS
+   ========================================================================== */
+@media (max-width: 880px) {
+  .chk-navbar {
+    padding: 10px 16px;
+  }
+
+  .chk-nav-links {
+    display: none;
+  }
+
+  .chk-container {
+    padding: 20px 14px 60px;
+  }
+
+  .chk-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .chk-card {
+    padding: 18px 16px;
+  }
+
+  .chk-qr-box {
+    min-height: 240px;
+    min-width: 240px;
+  }
+
+  .chk-qr-img {
+    width: 220px;
+    height: 220px;
+  }
+
+  .chk-val-cyan {
+    font-size: 1.15rem;
+  }
+
+  .chk-memo-val {
+    font-size: 1.18rem;
+  }
+
+  .chk-footer-inner {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .chk-footer-bottom {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .chk-toast {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    justify-content: center;
+  }
+}
