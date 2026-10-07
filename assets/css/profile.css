@@ -1445,6 +1445,32 @@
   }
 }
 
+@media (max-width: 480px) {
+  .hub-topbar-inner {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+  .hub-back-btn {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+  }
+  .hub-btn-deposit-top {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+  }
+  .hub-btn-logout-top {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+  .hub-floating-support {
+    bottom: 16px;
+    right: 16px;
+  }
+  .hub-support-bubble {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

@@ -106,6 +106,38 @@ img.chk-brand-logo,
   margin-bottom: 30px;
 }
 
+.chk-top-bar-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.chk-back-btn {
+  position: absolute;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all var(--motion-fast, 150ms) ease;
+}
+
+.chk-back-btn:hover {
+  background: rgba(112, 220, 229, 0.15);
+  border-color: #00e5ff;
+  color: #00e5ff;
+  transform: translateX(-2px);
+}
+
 .chk-badge-pill {
   display: inline-flex;
   align-items: center;
@@ -119,7 +151,6 @@ img.chk-brand-logo,
   letter-spacing: 0.8px;
   padding: 6px 18px;
   border-radius: 9999px;
-  margin-bottom: 12px;
 }
 
 .chk-badge-pill i {
@@ -270,6 +301,41 @@ img.chk-brand-logo,
   position: relative;
   min-height: 250px;
   min-width: 250px;
+  cursor: pointer;
+  transition: transform var(--motion-fast, 150ms) ease;
+}
+
+.chk-qr-box:hover {
+  transform: scale(1.015);
+}
+
+.chk-qr-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(14, 18, 31, 0.94);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  text-align: center;
+  color: #f87171;
+  font-weight: 800;
+  font-size: 0.95rem;
+  z-index: 5;
+}
+
+.chk-qr-overlay i {
+  font-size: 2rem;
+  color: #ef4444;
+}
+
+.chk-qr-overlay small {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: 600;
 }
 
 .chk-qr-img {
@@ -456,6 +522,27 @@ img.chk-brand-logo,
   font-weight: 900;
   color: #ff2a6d;
   letter-spacing: -0.5px;
+}
+
+.chk-order-detail-link-row {
+  margin-top: 10px;
+  text-align: right;
+}
+
+.chk-link-detail {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--brand-cyan, #70dce5);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color var(--motion-fast, 150ms) ease;
+}
+
+.chk-link-detail:hover {
+  color: #ffffff;
+  text-decoration: underline;
 }
 
 /* 5.2 Wallet Payment Card */
@@ -808,6 +895,76 @@ img.chk-brand-logo,
   max-width: 500px;
   width: 100%;
   text-align: center;
+  position: relative;
+}
+
+.chk-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  transition: all var(--motion-fast, 150ms) ease;
+}
+
+.chk-modal-close:hover {
+  background: rgba(239, 68, 68, 0.25);
+  color: #ffffff;
+}
+
+.chk-status-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.chk-btn-retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #ff2a6d 0%, #e6004c 100%);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.84rem;
+  padding: 8px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all var(--motion-fast, 150ms) ease;
+}
+
+.chk-btn-retry:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.chk-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #f1f5f9;
+  font-weight: 700;
+  font-size: 0.84rem;
+  padding: 8px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all var(--motion-fast, 150ms) ease;
+}
+
+.chk-btn-outline:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
 }
 
 .chk-check-icon {

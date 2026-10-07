@@ -36,8 +36,13 @@
         
         <!-- HEADER STATUS BAR -->
         <div class="chk-header-bar">
-            <div class="chk-badge-pill">
-                <i class="fa-solid fa-bolt" aria-hidden="true"></i> THANH TOÁN ĐƠN HÀNG TỰ ĐỘNG
+            <div class="chk-top-bar-row">
+                <a href="javascript:history.length>1?history.back():location.href='/index.html'" class="chk-back-btn" id="chkBackBtn" aria-label="Quay lại">
+                    <i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Quay lại
+                </a>
+                <div class="chk-badge-pill">
+                    <i class="fa-solid fa-bolt" aria-hidden="true"></i> THANH TOÁN ĐƠN HÀNG TỰ ĐỘNG
+                </div>
             </div>
             <h1 class="chk-title" id="chkPageTitle">Quét Mã VietQR Hoặc Chuyển Khoản</h1>
             
@@ -123,6 +128,12 @@
                     <div class="chk-total-row">
                         <span class="chk-total-label">Tổng tiền thanh toán:</span>
                         <span class="chk-total-amount" id="chkTotalPrice">0 ₫</span>
+                    </div>
+
+                    <div class="chk-order-detail-link-row">
+                        <a href="/dashboard.html" id="chkViewOrderDetail" class="chk-link-detail" target="_blank" rel="noopener">
+                            <i class="fa-solid fa-receipt" aria-hidden="true"></i> Xem chi tiết đơn trên Bảng điều khiển ↗
+                        </a>
                     </div>
                 </div>
 

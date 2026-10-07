@@ -403,21 +403,26 @@
     const vipProgressText = document.getElementById('hubVipProgressText');
     const vipProgressBar = document.getElementById('hubVipProgressBar');
 
+    const balVal = Number(state.wallet.balance || 0);
+    const checkinBalVal = Number(state.wallet.checkin_balance || 0);
+
     if (balEl) {
-      if (!state.wallet.balance || state.wallet.balance === 0) {
-        balEl.innerHTML = '<span class="hub-vnd-symbol">☵</span> VNĐ';
-      } else {
-        balEl.innerHTML = `<span class="hub-vnd-symbol">☵</span> ${Number(state.wallet.balance).toLocaleString('vi-VN')} VNĐ`;
-      }
+      balEl.innerHTML = `<span class="hub-vnd-symbol">☵</span> ${balVal.toLocaleString('vi-VN')} VNĐ`;
     }
 
     if (checkinBalEl) {
-      if (!state.wallet.checkin_balance || state.wallet.checkin_balance === 0) {
-        checkinBalEl.innerHTML = '<span class="hub-vnd-symbol">☵</span> VNĐ';
-      } else {
-        checkinBalEl.innerHTML = `<span class="hub-vnd-symbol">☵</span> ${Number(state.wallet.checkin_balance).toLocaleString('vi-VN')} VNĐ`;
-      }
+      checkinBalEl.innerHTML = `<span class="hub-vnd-symbol">☵</span> ${checkinBalVal.toLocaleString('vi-VN')} VNĐ`;
     }
+
+    // Update Wallet & Transactions Tab Stats
+    const statBal = document.getElementById('hubWalletBalanceStat');
+    if (statBal) statBal.textContent = formatVND(balVal);
+
+    const statCheckin = document.getElementById('hubCheckinBalanceStat');
+    if (statCheckin) statCheckin.textContent = formatVND(checkinBalVal);
+
+    const statVip = document.getElementById('hubVipLevelStat');
+    if (statVip) statVip.textContent = state.vip.level;
 
     if (vipProgressText && vipProgressBar) {
       if (state.vip.remaining <= 0) {
@@ -500,11 +505,18 @@
       });
     });
 
+    // Expose profileOrderDestination for order routing
+    window.profileOrderDestination = id => typeof id === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id) ? '/dashboard.html?order=' + encodeURIComponent(id) : '';
+
     // Handle deep-linking via hash
-    const hash = window.location.hash.replace('#', '');
-    if (hash && ['orders', 'wallet', 'vouchers', 'game-accounts', 'referral', 'security'].includes(hash)) {
-      switchTab(hash);
-    }
+    const handleHash = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && ['orders', 'wallet', 'vouchers', 'game-accounts', 'referral', 'security'].includes(hash)) {
+        switchTab(hash);
+      }
+    };
+    window.addEventListener('hashchange', handleHash);
+    handleHash();
   }
 
   function switchTab(tabKey) {
@@ -762,7 +774,7 @@
               <i class="fa-solid fa-qrcode"></i> Quét mã VietQR thanh toán ngay
             </a>
           ` : ''}
-          <a href="/dashboard.html" class="hub-wallet-btn-history" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <a href="${(typeof window.profileOrderDestination === 'function' ? window.profileOrderDestination(order.id) : '') || `/dashboard.html?order=${encodeURIComponent(order.id || order.order_code)}`}" class="hub-wallet-btn-history" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
             <i class="fa-solid fa-comments"></i> Mở Bảng điều khiển &amp; Trao đổi chi tiết ↗
           </a>
         </div>
@@ -1042,42 +1054,8 @@
       });
     });
 
-    // Preset Amount Buttons in Deposit Modal
-    document.querySelectorAll('.hub-deposit-preset-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const val = btn.getAttribute('data-amount');
-        const input = document.getElementById('depositCustomAmount');
-        if (input) input.value = val;
-      });
-    });
-
-    // Deposit Creation Flow
-    const createDepositBtn = document.getElementById('hubBtnCreateDeposit');
-    if (createDepositBtn) {
-      createDepositBtn.addEventListener('click', async () => {
-        const input = document.getElementById('depositCustomAmount');
-        const amount = Number(input?.value || 0);
-        if (!amount || amount < 10000) {
-          showToast('Số tiền nạp tối thiểu là 10.000 VNĐ!', 'error');
-          return;
-        }
-
-        createDepositBtn.disabled = true;
-        createDepositBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang tạo mã VietQR...';
-
-        try {
-          const client = window.supabaseClient;
-          const depositOrder = await window.OrderAPI.createDeposit(client, state.user.id, amount);
-
-          // Render VietQR Payment Screen in Modal
-          renderDepositPaymentScreen(depositOrder);
-        } catch (err) {
-          showToast(err.message || 'Không thể tạo đơn nạp ví.', 'error');
-          createDepositBtn.disabled = false;
-          createDepositBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Tạo mã nạp VietQR';
-        }
-      });
-    }
+    // Preset Amount & Deposit Creation Flow
+    initDepositModalEvents();
 
     // Add Game Account Form Submission
     const addGameForm = document.getElementById('hubAddGameAccountForm');
@@ -1216,6 +1194,42 @@
     });
   }
 
+  // Deposit Modal Event Binding (Extracted to prevent duplicate global listeners)
+  function initDepositModalEvents() {
+    document.querySelectorAll('.hub-deposit-preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const val = btn.getAttribute('data-amount');
+        const input = document.getElementById('depositCustomAmount');
+        if (input) input.value = val;
+      });
+    });
+
+    const createDepositBtn = document.getElementById('hubBtnCreateDeposit');
+    if (createDepositBtn) {
+      createDepositBtn.addEventListener('click', async () => {
+        const input = document.getElementById('depositCustomAmount');
+        const amount = Number(input?.value || 0);
+        if (!amount || amount < 10000) {
+          showToast('Số tiền nạp tối thiểu là 10.000 VNĐ!', 'error');
+          return;
+        }
+
+        createDepositBtn.disabled = true;
+        createDepositBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang tạo mã VietQR...';
+
+        try {
+          const client = window.supabaseClient;
+          const depositOrder = await window.OrderAPI.createDeposit(client, state.user.id, amount);
+          renderDepositPaymentScreen(depositOrder);
+        } catch (err) {
+          showToast(err.message || 'Không thể tạo đơn nạp ví.', 'error');
+          createDepositBtn.disabled = false;
+          createDepositBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Tạo mã nạp VietQR';
+        }
+      });
+    }
+  }
+
   // Render VietQR Payment in Deposit Modal
   function renderDepositPaymentScreen(order) {
     const body = document.getElementById('hubDepositModalBody');
@@ -1229,16 +1243,19 @@
       accountName: 'NGUYEN HOANG NAM'
     };
 
+    const transferContent = `NCZ ${order.payment_reference || order.order_code}`;
+
     let qrUrl = '';
     if (window.PaymentProvider?.VietQR) {
       qrUrl = window.PaymentProvider.VietQR.generateQuickLink({
         bankBin: bankConfig.bankBin,
         accountNumber: bankConfig.accountNumber,
+        accountName: bankConfig.accountName,
         amount: order.amount,
-        memo: `NCZ ${order.payment_reference}`
+        transferContent: transferContent
       });
     } else {
-      qrUrl = `https://img.vietqr.io/image/${bankConfig.bankBin}-${bankConfig.accountNumber}-compact.png?amount=${order.amount}&addInfo=${encodeURIComponent('NCZ ' + order.payment_reference)}&accountName=${encodeURIComponent(bankConfig.accountName)}`;
+      qrUrl = `https://img.vietqr.io/image/${bankConfig.bankBin}-${bankConfig.accountNumber}-compact2.png?amount=${order.amount}&addInfo=${encodeURIComponent(transferContent)}&accountName=${encodeURIComponent(bankConfig.accountName)}`;
     }
 
     body.innerHTML = `
@@ -1247,7 +1264,7 @@
           <i class="fa-solid fa-clock"></i> Vui lòng chuyển khoản đúng số tiền và nội dung bên dưới
         </div>
 
-        <div style="background: #fff; padding: 12px; border-radius: 12px; display: inline-block; box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);">
+        <div style="background: #fff; padding: 12px; border-radius: 12px; display: inline-block; box-shadow: 0 0 20px rgba(0, 240, 255, 0.3); cursor: pointer;" onclick="window.copyToClipboard('${transferContent}', 'Đã copy nội dung chuyển khoản!')" title="Nhấp để copy nội dung chuyển khoản">
           <img src="${qrUrl}" alt="VietQR Nạp Tiền" style="width: 200px; height: 200px; display: block; border-radius: 6px;">
         </div>
 
@@ -1277,10 +1294,16 @@
           <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 184, 0, 0.08); padding: 8px; border-radius: 8px; border: 1px dashed rgba(255, 184, 0, 0.3);">
             <div>
               <div style="font-size: 0.75rem; color: #ffb800; font-weight: 700;">NỘI DUNG CHUYỂN KHOẢN (BẮT BUỘC)</div>
-              <div style="font-family: monospace; font-weight: 900; color: #ffb800; font-size: 1.1rem;">NCZ ${esc(order.payment_reference)}</div>
+              <div style="font-family: monospace; font-weight: 900; color: #ffb800; font-size: 1.1rem;">${esc(transferContent)}</div>
             </div>
-            <button class="hub-order-btn-view" style="padding: 6px 12px; background: #ffb800; color: #000; font-weight: 800;" onclick="window.copyToClipboard('NCZ ${order.payment_reference}', 'Đã copy nội dung!')">Copy</button>
+            <button class="hub-order-btn-view" style="padding: 6px 12px; background: #ffb800; color: #000; font-weight: 800;" onclick="window.copyToClipboard('${transferContent}', 'Đã copy nội dung!')">Copy</button>
           </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: center; width: 100%; margin-top: 4px;">
+          <a href="/checkout.html?order=${encodeURIComponent(order.order_code)}" target="_blank" rel="noopener" style="color: var(--brand-cyan, #70dce5); font-size: 0.8125rem; font-weight: 700; text-decoration: underline; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-up-right-from-square"></i> Mở trang thanh toán riêng ↗
+          </a>
         </div>
 
         <div id="hubDepositStatusNotice" style="display: flex; align-items: center; gap: 8px; color: var(--brand-cyan); font-size: 0.875rem;">
@@ -1346,7 +1369,7 @@
         <i class="fa-solid fa-bolt"></i> Tạo mã nạp VietQR
       </button>
     `;
-    initEventListeners();
+    initDepositModalEvents();
   }
 
   // Modal Open / Close Helpers
@@ -1355,6 +1378,12 @@
     if (modal) {
       modal.classList.add('active');
       document.body.style.overflow = 'hidden';
+      if (!modal._hasBackdropListener) {
+        modal._hasBackdropListener = true;
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) closeModal(modalId);
+        });
+      }
     }
   }
 
@@ -1370,6 +1399,13 @@
       }
     }
   }
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const activeModal = document.querySelector('.hub-modal-overlay.active');
+      if (activeModal) closeModal(activeModal.id);
+    }
+  });
 
   window.openModal = openModal;
   window.closeModal = closeModal;

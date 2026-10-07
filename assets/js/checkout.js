@@ -121,6 +121,7 @@
     if (isTerminalState) return;
     isTerminalState = true;
     stopPolling();
+    if (countdownInterval) clearInterval(countdownInterval);
     const metaStatus = document.getElementById('chkMetaStatus');
     if (metaStatus) {
       metaStatus.dataset.status = 'EXPIRED';
@@ -128,10 +129,72 @@
     }
     const statusText = document.getElementById('chkStatusText');
     if (statusText) {
-      statusText.innerHTML = '<h4>Thanh toán đã hết hạn</h4><p>Vui lòng tạo lại đơn hàng hoặc quay về trang chủ.</p>';
+      statusText.innerHTML = `
+        <h4 style="color: #f87171;"><i class="fa-solid fa-hourglass-end"></i> Thanh toán đã hết hạn</h4>
+        <p style="margin-bottom: 12px;">Đơn hàng đã hết thời gian hiệu lực 15 phút. Vui lòng không tiếp tục chuyển khoản.</p>
+        <div class="chk-status-actions">
+          <a href="/napgame.html" class="chk-btn-retry"><i class="fa-solid fa-rotate-right"></i> Tạo lại đơn hàng</a>
+          <a href="/dashboard.html${currentOrder?.id ? `?order=${encodeURIComponent(currentOrder.id)}` : ''}" class="chk-btn-outline"><i class="fa-solid fa-receipt"></i> Xem chi tiết đơn</a>
+          <a href="/index.html" class="chk-btn-outline"><i class="fa-solid fa-house"></i> Về trang chủ</a>
+        </div>
+      `;
     }
     const spinner = document.getElementById('chkSpinner');
     if (spinner) spinner.style.display = 'none';
+
+    const qrBox = document.getElementById('chkQrBox');
+    if (qrBox && !qrBox.querySelector('.chk-qr-overlay')) {
+      const overlay = document.createElement('div');
+      overlay.className = 'chk-qr-overlay';
+      overlay.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i><span>MÃ QR ĐÃ HẾT HẠN</span><small>Vui lòng tạo đơn mới</small>';
+      qrBox.appendChild(overlay);
+    }
+  }
+
+  function handleOrderCancelled() {
+    if (isTerminalState) return;
+    isTerminalState = true;
+    stopPolling();
+    if (countdownInterval) clearInterval(countdownInterval);
+    const metaStatus = document.getElementById('chkMetaStatus');
+    if (metaStatus) {
+      metaStatus.dataset.status = 'CANCELLED';
+      metaStatus.innerHTML = '<span class="chk-status-dot"></span> Đã hủy';
+    }
+    const statusText = document.getElementById('chkStatusText');
+    if (statusText) {
+      statusText.innerHTML = `
+        <h4 style="color: #f87171;"><i class="fa-solid fa-ban"></i> Đơn hàng đã bị hủy</h4>
+        <p style="margin-bottom: 12px;">Đơn hàng này đã được đánh dấu hủy trong hệ thống.</p>
+        <div class="chk-status-actions">
+          <a href="/napgame.html" class="chk-btn-retry"><i class="fa-solid fa-plus"></i> Đặt đơn mới</a>
+          <a href="/dashboard.html${currentOrder?.id ? `?order=${encodeURIComponent(currentOrder.id)}` : ''}" class="chk-btn-outline"><i class="fa-solid fa-receipt"></i> Xem đơn hàng</a>
+          <a href="/index.html" class="chk-btn-outline"><i class="fa-solid fa-house"></i> Về trang chủ</a>
+        </div>
+      `;
+    }
+    const spinner = document.getElementById('chkSpinner');
+    if (spinner) spinner.style.display = 'none';
+
+    const qrBox = document.getElementById('chkQrBox');
+    if (qrBox && !qrBox.querySelector('.chk-qr-overlay')) {
+      const overlay = document.createElement('div');
+      overlay.className = 'chk-qr-overlay';
+      overlay.innerHTML = '<i class="fa-solid fa-ban"></i><span>ĐƠN HÀNG ĐÃ HỦY</span>';
+      qrBox.appendChild(overlay);
+    }
+  }
+
+  function handleOrderVerifying() {
+    const metaStatus = document.getElementById('chkMetaStatus');
+    if (metaStatus) {
+      metaStatus.dataset.status = 'VERIFYING';
+      metaStatus.innerHTML = '<span class="chk-status-dot"></span> Đang xác minh...';
+    }
+    const statusH4 = document.querySelector('#chkStatusText h4');
+    if (statusH4) statusH4.textContent = 'Đã phát hiện giao dịch! Đang xác minh...';
+    const statusP = document.querySelector('#chkStatusText p');
+    if (statusP) statusP.textContent = 'Hệ thống ngân hàng đang đối soát tự động, vui lòng chờ trong giây lát.';
   }
 
   // Render Order Data & Bank Information
@@ -210,14 +273,32 @@
       }
     }
 
+    // Update Order Detail link
+    const viewDetailLink = document.getElementById('chkViewOrderDetail');
+    if (viewDetailLink) {
+      viewDetailLink.href = `/dashboard.html?order=${encodeURIComponent(order.id || order.order_code)}`;
+    }
+
     // 5. Expiry Countdown
     if (order.expires_at) {
       startCountdown(order.expires_at);
     }
 
-    // 6. Check if already PAID
+    // 6. Check immediate initial states
     if (order.payment_status === 'PAID' || (order.price > 0 && order.paid_amount >= order.price)) {
       handlePaymentSuccess(order);
+      return;
+    }
+    if (order.cancelled || order.payment_status === 'CANCELLED' || order.status === 'da_huy') {
+      handleOrderCancelled();
+      return;
+    }
+    if (order.payment_status === 'EXPIRED') {
+      handleOrderExpired();
+      return;
+    }
+    if (order.payment_status === 'VERIFYING') {
+      handleOrderVerifying();
     }
   }
 
@@ -241,6 +322,7 @@
     modal.className = 'chk-success-modal';
     modal.innerHTML = `
       <div class="chk-success-card" role="dialog" aria-modal="true" aria-labelledby="chkSuccessTitle">
+        <button type="button" class="chk-modal-close" onclick="document.getElementById('chkSuccessModal')?.remove()" aria-label="Đóng">&times;</button>
         <div class="chk-check-icon">
           <i class="fa-solid fa-check" aria-hidden="true"></i>
         </div>
@@ -300,9 +382,10 @@
           if (updatedOrder.payment_status === 'PAID' || (updatedOrder.price > 0 && updatedOrder.paid_amount >= updatedOrder.price)) {
             handlePaymentSuccess(updatedOrder);
           } else if (updatedOrder.payment_status === 'VERIFYING') {
-            const statusH4 = document.querySelector('#chkStatusText h4');
-            if (statusH4) statusH4.textContent = 'Đã phát hiện giao dịch! Đang xác minh...';
-          } else if (updatedOrder.payment_status === 'EXPIRED' || updatedOrder.cancelled) {
+            handleOrderVerifying();
+          } else if (updatedOrder.cancelled || updatedOrder.payment_status === 'CANCELLED' || updatedOrder.status === 'da_huy') {
+            handleOrderCancelled();
+          } else if (updatedOrder.payment_status === 'EXPIRED') {
             handleOrderExpired();
           }
         }
@@ -405,7 +488,18 @@
       const titleEl = document.getElementById('chkPageTitle');
       if (titleEl) titleEl.textContent = 'Thiếu mã đơn hàng';
       const statusText = document.getElementById('chkStatusText');
-      if (statusText) statusText.innerHTML = '<h4>Không tìm thấy mã đơn hàng</h4><p>Vui lòng kiểm tra lại liên kết.</p>';
+      if (statusText) {
+        statusText.innerHTML = `
+          <h4 style="color: #f87171;"><i class="fa-solid fa-circle-exclamation"></i> Không tìm thấy mã đơn hàng</h4>
+          <p style="margin-bottom: 12px;">Vui lòng kiểm tra lại đường liên kết hoặc quay về trang chủ.</p>
+          <div class="chk-status-actions">
+            <a href="/index.html" class="chk-btn-outline"><i class="fa-solid fa-house"></i> Về trang chủ</a>
+            <a href="/dashboard.html" class="chk-btn-outline"><i class="fa-solid fa-receipt"></i> Bảng điều khiển</a>
+          </div>
+        `;
+      }
+      const spinner = document.getElementById('chkSpinner');
+      if (spinner) spinner.style.display = 'none';
       return;
     }
 
@@ -442,6 +536,27 @@
 
     renderOrder(order);
     startPolling(orderIdentifier);
+
+    // Bind QR Code Box click interaction
+    const qrBox = document.getElementById('chkQrBox');
+    if (qrBox) {
+      qrBox.setAttribute('role', 'button');
+      qrBox.setAttribute('tabindex', '0');
+      qrBox.setAttribute('aria-label', 'Nhấp để sao chép nội dung chuyển khoản');
+      const handleQrClick = () => {
+        const transferContent = document.getElementById('chkTransferContent')?.textContent || '';
+        if (transferContent && transferContent !== 'NCZ ĐANG TẢI') {
+          copyToClipboard(transferContent, null, `Đã sao chép nội dung chuyển khoản: ${transferContent}`);
+        }
+      };
+      qrBox.addEventListener('click', handleQrClick);
+      qrBox.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleQrClick();
+        }
+      });
+    }
 
     // Bind Copy Buttons
     document.getElementById('btnCopyBankAcc')?.addEventListener('click', function () {

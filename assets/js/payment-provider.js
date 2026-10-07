@@ -64,13 +64,17 @@
       accountName = '',
       amount = 0,
       transferContent = '',
+      memo = '',
+      content = '',
+      addInfo = '',
       template = 'compact2'
     }) {
       if (!accountNumber) throw new Error('Số tài khoản là bắt buộc');
       const cleanBin = String(bankBin).trim();
       const cleanAcc = String(accountNumber).trim();
       const cleanAmount = Math.max(0, Math.round(Number(amount) || 0));
-      const cleanContent = encodeURIComponent(String(transferContent || '').trim());
+      const rawContent = transferContent || memo || content || addInfo || '';
+      const cleanContent = encodeURIComponent(String(rawContent).trim());
       const cleanName = encodeURIComponent(String(accountName || '').trim());
 
       let url = `https://img.vietqr.io/image/${cleanBin}-${cleanAcc}-${template}.png?amount=${cleanAmount}&addInfo=${cleanContent}`;
