@@ -12,14 +12,37 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Chakra+Petch:wght@500;600;700;800&family=Exo+2:wght@600;700;800&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="/assets/css/home-page.css?v=20261009-brand2">
+<link rel="stylesheet" href="/assets/css/home-page.css?v=20261009-title-font1">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <script src="/assets/js/runtime-config.js" defer></script>
 <script src="/assets/js/public-auth.js?v=20261005-categories11" defer></script>
 <script src="/assets/js/landing.js?v=20261005-account12" defer></script>
 <script src="/assets/js/home-page.js?v=20261009-brand2" defer></script>
+<script src="/assets/js/homepage-intro.js?v=20261009-intro1" defer></script>
 </head>
 <body>
+
+<!-- BRAND INTRO -->
+<div id="lp-intro-screen" role="status" aria-label="NAMCUMZ đang khởi tạo">
+    <div class="intro-curtain intro-curtain-left" aria-hidden="true"></div>
+    <div class="intro-curtain intro-curtain-right" aria-hidden="true"></div>
+    <canvas id="intro-particles" aria-hidden="true"></canvas>
+    <div class="intro-center">
+        <div class="intro-logo-wrap"><img src="/assets/images/namcumz-wordmark.jpg" alt="NAMCUMZ Game Store"></div>
+        <div class="intro-ring-wrap" aria-hidden="true">
+            <svg class="intro-ring-svg" width="60" height="60" viewBox="0 0 60 60">
+                <defs><linearGradient id="intro-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#70dce5"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient></defs>
+                <circle class="intro-ring-bg" cx="30" cy="30" r="26"></circle>
+                <circle class="intro-ring-fill" id="lpIntroRing" cx="30" cy="30" r="26"></circle>
+            </svg>
+            <span id="lpIntroProgress">0</span>
+        </div>
+        <div class="intro-status-text">Đang khởi tạo cửa hàng game...</div>
+        <div class="intro-percent"><b id="lpIntroPercent">0</b>%</div>
+        <button class="lp-intro-skip" id="lpIntroSkip" type="button">Bỏ qua</button>
+    </div>
+</div>
+
 
 <!-- BACKGROUND AMBIENT & CELESTIAL WALLPAPER -->
 <img class="bg-video" id="duck-bg-video" src="/assets/images/duck/yaemiko.webp" alt="Hình nền NAMCUMZ" fetchpriority="high" decoding="async">
@@ -199,7 +222,7 @@
     <section class="section-padding" id="services">
         <div class="container">
             <!-- 1. CÁC GÓI CÀY THUÊ HOT -->
-            <h2 class="section-title">CÁC GÓI <span class="title-highlight">CÀY THUÊ HOT</span></h2>
+            <h2 class="section-title"><span class="title-highlight">CÁC GÓI CÀY THUÊ HOT</span></h2>
             <div class="divider-center"></div>
 
             <div id="game-list" class="modern-grid">

@@ -191,22 +191,30 @@ p, span, label, td, th {
 .text-center { text-align: center; }
 
 .section-title {
-    font-size: 2.3rem; 
-    text-align: center; 
+    font-size: clamp(2.7rem, 4.2vw, 3.6rem);
+    text-align: center;
     position: relative;
-    display: block; 
-    width: 100%; 
+    display: block;
+    width: 100%;
     letter-spacing: 1.5px;
     margin: 0 0 16px 0;
-    font-weight: 900; 
-    font-family: var(--font-display);
-    color: #ffffff;
+    font-weight: 400;
+    font-family: "Chakra Petch", "Be Vietnam Pro", sans-serif;
+    font-weight: 800;
     text-transform: uppercase;
-}
-.section-title .title-highlight {
-    background: linear-gradient(135deg, #e9d5ff 0%, #c084fc 50%, #d8b4fe 100%);
-    -webkit-background-clip: text;
+    background-image: linear-gradient(120deg, #ffffff 8%, #ff2f92 22%, #ff9d00 36%, #fff200 50%, #32ff62 64%, #00eaff 78%, #8a4dff 91%, #ff2f92 100%);
+    background-size: 200% auto;
+    background-position: 0% center;
+    color: #fff;
     -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: shine-flow 6s linear infinite;
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 14px rgba(112, 92, 255, 0.8));
+}
+
+.section-title .title-highlight {
+    -webkit-text-fill-color: inherit;
 }
 .divider-center {
     width: 90px; 
@@ -335,6 +343,13 @@ p, span, label, td, th {
     border-radius: 6px;
     object-fit: cover;
     object-position: center;
+    transition: transform 250ms ease, filter 250ms ease;
+}
+
+.lp-logo:hover .lp-brand-wordmark,
+.lp-logo:focus-visible .lp-brand-wordmark {
+    transform: scale(1.035);
+    filter: brightness(1.12) drop-shadow(0 0 7px rgba(112, 220, 229, 0.85)) drop-shadow(0 0 16px rgba(139, 92, 246, 0.75));
 }
 .lp-logo-badge {
     display: flex;
@@ -1561,7 +1576,7 @@ footer { text-align: center; padding: 80px 0 40px; background: #050505; border-t
 
     .anime-title { font-size: 1.8rem; line-height: 1.3; }
     .hero-desc { font-size: 1rem; margin-bottom: 30px; }
-    .section-title { font-size: 1.8rem; margin-bottom: 20px; }
+    .section-title { font-size: clamp(2.25rem, 7vw, 3rem); margin-bottom: 20px; }
     .section-title::before { font-size: 2.5rem; top: -15px; } 
     
     .section-padding { padding: 60px 0; } 
@@ -1929,7 +1944,7 @@ footer { text-align: center; padding: 80px 0 40px; background: #050505; border-t
     }
 
     /* 5. FIX LẠI CÁI CHỮ TIÊU ĐỀ BỊ QUÁ TO TRÊN MOBILE */
-    .section-title { font-size: 1.8rem !important; }
+    .section-title { font-size: clamp(2.25rem, 7vw, 3rem) !important; }
     .section-title::before { font-size: 2.2rem !important; top: -10px !important; }
     .anime-title { font-size: 1.8rem !important; }
 
@@ -1991,8 +2006,8 @@ footer { text-align: center; padding: 80px 0 40px; background: #050505; border-t
         background-color: var(--bg-dark);
     }
 
-    /* 3. Tắt Animation chạy màu chữ liên tục (Shine-flow) */
-    .section-title, .anime-title, .feature-text h3 {
+    /* 3. Giảm animation phụ trên mobile, giữ chuyển động màu ở tiêu đề chính */
+    .anime-title, .feature-text h3 {
         animation: none !important;
         background-position: 0% center !important;
     }
@@ -2244,6 +2259,8 @@ body.modal-open .cyber-ambient-bg::after {
     animation-play-state: paused !important;
 }
 body.perf-eco-mode .section-title,
+
+body.perf-eco-mode .lp-brand-wordmark,
 body.perf-eco-mode .anime-title,
 body.perf-eco-mode .pulse-anim,
 body.perf-eco-mode .feature-visual {
@@ -3008,10 +3025,10 @@ body.perf-eco-mode .feature-visual {
 
 /* --- HTML Style Block 0 --- */
 
-        html.duck-intro-done #duck-intro-screen {
+        html.lp-intro-done #lp-intro-screen {
             display: none !important;
         }
-        #duck-intro-screen {
+        #lp-intro-screen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: 99999999; overflow: hidden;
         }
@@ -3073,16 +3090,25 @@ body.perf-eco-mode .feature-visual {
             color: rgba(255,255,255,0.45); font-family: monospace; font-size: 0.78rem;
             margin-top: 8px; letter-spacing: 3px; font-weight: 600;
         }
-        .intro-percent b { color: #f472b6; font-size: 0.92rem; }
+        .intro-percent b { color: #70dce5; font-size: 0.92rem; }
+        html.lp-intro-active, html.lp-intro-active body { overflow: hidden; }
+        .intro-ring-wrap > span { position: relative; z-index: 1; color: #fff; font-family: var(--font-hud); font-size: 0.8rem; font-weight: 800; }
+        .lp-intro-skip {
+            margin-top: 18px; padding: 7px 14px; border: 1px solid rgba(255,255,255,0.25); border-radius: 999px;
+            background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.78); font: 600 0.75rem var(--font-heading);
+            cursor: pointer; transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease;
+        }
+        .lp-intro-skip:hover, .lp-intro-skip:focus-visible { background: rgba(112,220,229,0.16); border-color: var(--neon-cyan); color: #fff; }
+        @media (prefers-reduced-motion: reduce) { #lp-intro-screen { display: none !important; } }
 
-        #duck-intro-screen.intro-mobile {
+        #lp-intro-screen.intro-mobile {
             background: radial-gradient(circle at 50% 50%, #160a14 0%, #020205 75%);
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             transition: opacity 0.6s ease, filter 0.6s ease;
         }
-        #duck-intro-screen.intro-mobile .intro-curtain { display: none; }
-        #duck-intro-screen.intro-mobile .intro-center { position: relative; transform: none; top: 0; left: 0; }
-        #duck-intro-screen.intro-mobile.intro-exit-mobile { opacity: 0; filter: blur(6px); }
+        #lp-intro-screen.intro-mobile .intro-curtain { display: none; }
+        #lp-intro-screen.intro-mobile .intro-center { position: relative; transform: none; top: 0; left: 0; }
+        #lp-intro-screen.intro-mobile.intro-exit-mobile { opacity: 0; filter: blur(6px); }
     
 
 /* --- HTML Style Block 1 --- */
