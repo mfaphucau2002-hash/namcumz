@@ -185,6 +185,12 @@
     if (packageEmpty) packageEmpty.hidden = items.length > 0;
   }
 
+  // Scroll without motion when eco or reduced-motion mode is active.
+  function scrollToFarmingSection(element) {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches || document.body.classList.contains('perf-eco-mode');
+    element.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+  }
+
   // Keep category details synchronized with the URL for direct links and browser history.
   function showCategory(key, updateHistory) {
     const category = categories.find((item) => item.key === key);
@@ -204,7 +210,7 @@
       window.history.pushState({ farmingCategory: category.key }, '', url);
     }
     backButton?.focus({ preventScroll: true });
-    categoryDetail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    scrollToFarmingSection(categoryDetail);
   }
 
   // Return to the group cards while keeping back/forward navigation usable.
@@ -217,7 +223,7 @@
       url.searchParams.delete('category');
       window.history.pushState({ farmingCategory: null }, '', url);
     }
-    categoryGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    scrollToFarmingSection(categoryGrid);
     categoryGrid.querySelector('[data-category]')?.focus({ preventScroll: true });
   }
 
