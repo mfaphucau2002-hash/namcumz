@@ -3,762 +3,670 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="NAMCUMZ — Nền tảng Game Service Commerce & Boosting Platform. Cày thuê Genshin Impact, Honkai: Star Rail, Zenless Zone Zero, Wuthering Waves và nạp tiền tệ game chính hãng, bảo mật PGP, theo dõi tiến độ thời gian thực.">
+<meta name="description" content="Duck Streamer Shop — Cày Thuê & Nạp Game Số 1 VN. Nạp Genshin Impact, Honkai Star Rail, Zenless Zone Zero, Wuthering Waves, Liên Quân Mobile, Valorant...">
 <link rel="canonical" href="https://namcumz.io.vn/">
-<link rel="icon" type="image/jpeg" href="/assets/images/logo.jpg">
-<title>NAMCUMZ — Cày Thuê &amp; Nạp Game Uy Tín | Tiến Độ Real-time</title>
+<link rel="icon" type="image/jpeg" href="/assets/images/duck/avt.jpg">
+<link rel="shortcut icon" type="image/jpeg" href="/assets/images/duck/avt.jpg">
+<title>Duck Streamer Shop - Cày Thuê &amp; Nạp Game Số 1 VN</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/design-tokens.css">
-<link rel="stylesheet" href="/assets/css/style.css">
-<link rel="stylesheet" href="/assets/css/landing.css?v=20261007-v2">
-<link rel="stylesheet" href="/assets/css/ui.css?v=20261004-auth-modal6">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Chakra+Petch:wght@500;600;700;800&family=Exo+2:wght@600;700;800&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="/assets/css/duck-home.css?v=20261008-v1">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <script src="/assets/js/runtime-config.js" defer></script>
 <script src="/assets/js/public-auth.js?v=20261005-categories11" defer></script>
 <script src="/assets/js/landing.js?v=20261005-account12" defer></script>
-<script src="/assets/js/landing-ranking.js?v=20261005-categories11" defer></script>
+<script src="/assets/js/duck-home.js?v=20261008-v1" defer></script>
 </head>
-<body class="landing-page">
+<body>
 
-<!-- GATEWAY BOOT LOADER -->
-<div class="lp-gateway" id="lpGatewayScreen" role="dialog" aria-modal="true" aria-label="Khởi tạo NAMCUMZ Gateway">
-  <div class="lp-gateway-center">
-    <div class="lp-gateway-brand">
-      <img src="/assets/images/logo.webp" alt="NAMCUMZ" width="64" height="64" onerror="this.src='/assets/images/logo.jpg'">
-      <div class="lp-gateway-halo" aria-hidden="true"></div>
-    </div>
-    <div class="lp-gateway-title">NAMCUMZ GATEWAY</div>
-    <div class="lp-gateway-bar-track">
-      <div class="lp-gateway-bar-fill" id="lpGatewayProgress" style="width: 0%;"></div>
-    </div>
-    <div class="lp-gateway-meta">
-      <span class="lp-gateway-status" id="lpGatewayStatus">Khởi tạo hệ thống NAMCUMZ Gateway...</span>
-      <span class="lp-gateway-percent" id="lpGatewayPercent">0%</span>
-    </div>
-    <button type="button" class="lp-gateway-skip" id="lpGatewaySkip" aria-label="Bỏ qua màn hình chờ">Vào Ngay ›</button>
-  </div>
-</div>
+<!-- BACKGROUND AMBIENT & CELESTIAL WALLPAPER -->
+<img class="bg-video" id="duck-bg-video" src="/assets/images/duck/yaemiko.webp" alt="DuckStore Background" fetchpriority="high" decoding="async">
+<div class="bg-overlay"></div>
+<canvas id="anime-particles"></canvas>
+<div class="cyber-ambient-bg"></div>
 
-<!-- GLOBAL ANNOUNCEMENT BAR -->
+<!-- ================= GLOBAL ANNOUNCEMENT BAR ================= -->
 <aside class="lp-announcement-bar" id="lpAnnouncementBar" aria-label="Thông báo hệ thống">
-  <div class="lp-shell lp-announcement-inner">
-    <span class="lp-announcement-tag"><i aria-hidden="true">✦</i> CẬP NHẬT MỚI</span>
-    <p class="lp-announcement-text">
-      <strong>Genshin &amp; Star Rail:</strong> Các gói dịch vụ thám hiểm bản đồ mới &amp; nội dung mùa giải đã mở. Báo giá nhanh qua hệ thống.
-    </p>
-    <div class="lp-announcement-actions">
-      <a href="#dich-vu" class="lp-announcement-link">Xem Dịch Vụ <span aria-hidden="true">→</span></a>
-      <button type="button" class="lp-announcement-close" id="lpAnnouncementClose" aria-label="Đóng thông báo">×</button>
+    <div class="lp-announcement-inner">
+        <span class="lp-announcement-tag">✦ CẬP NHẬT MỚI</span>
+        <p class="lp-announcement-text">
+            <strong>Genshin &amp; Star Rail:</strong> Các gói dịch vụ thám hiểm bản đồ mới &amp; nội dung mùa giải đã mở. Báo giá nhanh qua hệ thống.
+        </p>
+        <div class="lp-announcement-actions">
+            <a href="/caythue.html" class="lp-announcement-link">Xem Dịch Vụ <span aria-hidden="true">&rarr;</span></a>
+            <button type="button" class="lp-announcement-close" id="lpAnnouncementClose" aria-label="Đóng thông báo">&times;</button>
+        </div>
     </div>
-  </div>
 </aside>
 
-<!-- HEADER -->
-<header class="lp-header">
-  <div class="lp-shell lp-header-inner">
-    <a class="lp-logo" href="/" aria-label="NAMCUMZ — trang chủ">
-      <div class="lp-logo-badge">
-        <img src="/assets/images/logo.webp" alt="" width="32" height="32" onerror="this.src='/assets/images/logo.jpg'">
-      </div>
-      <div class="lp-logo-text">
-        <span class="lp-logo-brand">NAMCUMZ</span>
-        <span class="lp-logo-tag">GAME STORE</span>
-      </div>
+<!-- ================= NAVIGATION BAR ================= -->
+<nav class="glass-nav" role="navigation" aria-label="Menu chính">
+    <a href="/" class="lp-logo" aria-label="NAMCUMZ GAME STORE — Trang chủ">
+        <div class="lp-logo-badge">
+            <img src="/assets/images/logo.webp" alt="NAMCUMZ" width="32" height="32" onerror="this.src='/assets/images/duck/avt.jpg'">
+        </div>
+        <div class="lp-logo-text">
+            <span class="lp-logo-brand">NAMCUMZ</span>
+            <span class="lp-logo-tag">GAME STORE</span>
+        </div>
     </a>
 
-    <nav class="lp-desktop-nav" aria-label="Điều hướng chính">
-      <a href="/" aria-current="page">Trang chủ</a>
-      <a href="/caythue.html">Cày thuê</a>
-      <a href="/napgame.html">Nạp game</a>
-      <a href="/dashboard.html">Đơn hàng</a>
-      <a href="/reviews.html">Đánh giá</a>
-      <a href="/profile.html">Hồ sơ</a>
-      <details class="lp-support-menu">
-        <summary>Hỗ trợ</summary>
-        <div>
-          <a href="/faq.html">Hướng dẫn sử dụng</a>
-          <a href="/luu-y.html">Lưu ý trước khi đặt</a>
-          <a href="#quy-trinh">Quy trình đặt đơn</a>
-          <a href="/checkscam.html">Kiểm tra giao dịch (Check Scam)</a>
-          <a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">Zalo CSKH ↗</a>
-        </div>
-      </details>
-    </nav>
-
-    <div class="lp-header-toolbar">
-      <button type="button" class="lp-eco-btn" id="lpEcoToggle" title="Bật/Tắt chế độ mượt mà" aria-pressed="false">
-        <span class="lp-eco-icon">⚡</span>
-        <span class="lp-eco-label">Mượt mà</span>
-      </button>
-
-      <a href="/faq.html" class="lp-nav-icon-btn lp-bell-btn" title="Hỗ trợ &amp; Thông báo" aria-label="Hỗ trợ và thông báo">
-        <span class="lp-bell-icon" aria-hidden="true">🔔</span>
-        <span class="lp-bell-badge" aria-hidden="true"></span>
-      </a>
-
-      <div class="lp-header-actions" id="lpAuthActions">
-        <a class="lp-text-link lp-login" href="/login.html?form=login">Đăng nhập</a>
-        <a class="lp-button lp-button-primary lp-header-cta" href="/dashboard?action=create-order" data-order-link>Tạo đơn <span aria-hidden="true">↗</span></a>
-      </div>
+    <div class="menu-toggle" id="mobile-menu" onclick="window.toggleMobileMenu(event)" role="button" aria-label="Mở Menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
     </div>
 
-    <button class="lp-menu-toggle" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="lpMobileNav">
-      <span></span>
-      <span></span>
-    </button>
-  </div>
+    <ul class="nav-links">
+        <li><a href="/caythue.html" data-text="Cày Thuê">CÀY THUÊ</a></li>
+        <li><a href="/napgame.html" data-text="Nạp Game">NẠP GAME</a></li>
+        <li><a href="/profile.html" data-text="Hồ Sơ">HỒ SƠ</a></li>
+        <li><a href="/napgame.html" id="nav-deposit" data-text="Nạp Tiền">NẠP TIỀN</a></li>
+        <li class="nav-dropdown">
+            <button type="button" class="nav-dropdown-toggle" onclick="toggleNavDropdown(event, this)" aria-haspopup="true" aria-expanded="false">
+                HỖ TRỢ <i class="fas fa-chevron-down nav-caret"></i>
+            </button>
+            <ul class="nav-submenu">
+                <li><a href="/dashboard.html" data-text="Đơn Hàng">ĐƠN HÀNG</a></li>
+                <li><a href="/reviews.html" data-text="Đánh Giá">ĐÁNH GIÁ</a></li>
+                <li><a href="/privacy.html" data-text="Bảo Mật &amp; Cam Kết">BẢO MẬT &amp; CAM KẾT</a></li>
+                <li><a href="/luu-y.html" data-text="Lưu Ý">LƯU Ý CẦN BIẾT</a></li>
+                <li><a href="/faq.html" data-text="Hỏi Đáp">HỎI ĐÁP</a></li>
+            </ul>
+        </li>
+        <li class="mobile-only-btn" style="padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.08);">
+            <button class="perf-toggle-btn lp-eco-btn" onclick="toggleEcoMode(event)" style="width: 100%; justify-content: center; height: 44px;">
+                <span class="lp-eco-icon">⚡</span>
+                <span class="perf-toggle-label">Chế độ Mượt mà / Tiết kiệm pin</span>
+            </button>
+        </li>
+        <li class="mobile-only-btn">
+            <a class="btn-nav lp-header-cta" href="/profile.html" id="lpMobileAccount" onclick="handleAuthOrProfile(event)" style="width: 100%; justify-content: center; padding: 12px; margin-top: 15px; min-height: 48px;">
+                <span class="btn-text">Tài khoản / Đơn hàng</span>
+            </a>
+        </li>
+    </ul>
 
-  <nav class="lp-mobile-nav" id="lpMobileNav" aria-label="Điều hướng di động" hidden>
-    <a href="/" aria-current="page">Trang chủ</a>
-    <a href="/caythue.html">Cày thuê</a>
-    <a href="/napgame.html">Nạp game</a>
-    <a href="/dashboard.html">Đơn hàng</a>
-    <a href="/reviews.html">Đánh giá</a>
-    <a href="/profile.html">Hồ sơ</a>
-    <a href="/faq.html">Hướng dẫn sử dụng</a>
-    <a href="/luu-y.html">Lưu ý trước khi đặt</a>
-    <a href="/checkscam.html">Kiểm tra giao dịch</a>
-    <a href="#quy-trinh">Quy trình đặt đơn</a>
-    <a href="/login.html?form=register" id="lpMobileAccount">Đăng nhập / Tạo tài khoản</a>
-  </nav>
-</header>
+    <div class="nav-account-group">
+        <button class="perf-toggle-btn lp-eco-btn" id="lpEcoToggle" onclick="toggleEcoMode(event)" title="Bật/Tắt hiệu ứng mượt mà">
+            <span class="lp-eco-icon">⚡</span>
+            <span class="perf-toggle-label">Mượt mà</span>
+        </button>
+
+        <a href="/faq.html" class="lp-bell-btn" id="notif-bell-btn" title="Hỗ trợ &amp; Thông báo" aria-label="Hỗ trợ và thông báo">
+            <span class="lp-bell-icon" aria-hidden="true">🔔</span>
+            <span class="lp-bell-badge" aria-hidden="true"></span>
+        </a>
+
+        <div class="lp-header-actions" id="lpAuthActions">
+            <a class="lp-button lp-button-primary lp-header-cta" href="/profile.html" id="lpAccountCta" onclick="handleAuthOrProfile(event)">
+                Tài khoản / Đơn hàng
+            </a>
+        </div>
+    </div>
+</nav>
 
 <main>
-  <!-- HERO CAMPAIGN SECTION -->
-  <section class="lp-hero-wrapper lp-shell" aria-labelledby="lpHeroTitle">
-    <div class="lp-hero-card">
-      <div class="lp-hero-copy">
-        <p class="lp-kicker"><span class="lp-kicker-line"></span> NỀN TẢNG THƯƠNG MẠI DỊCH VỤ GAME HÀNG ĐẦU</p>
-        <h1 id="lpHeroTitle">Cày Thuê &amp; Nạp Game.<br><em>Theo Dõi Tiến Độ Từng Bước.</em></h1>
-        <p class="lp-hero-description">
-          Dịch vụ uy tín cho Genshin Impact, Honkai: Star Rail, Zenless Zone Zero và Wuthering Waves. Báo giá công khai, 100% cày tay an toàn, mật khẩu tài khoản được mã hóa PGP server-side với RLS phân quyền tuyệt đối.
-        </p>
+    <!-- ================= HERO SECTION (BANNER SLIDER & TOP CHI TIÊU) ================= -->
+    <section class="section-padding" id="top-donate" style="padding: 30px 0 30px;">
+        <div class="container">
+            <div class="donate-layout-v2">
+                <!-- BANNER CAROUSEL (LEFT) -->
+                <div class="slider-wrapper-v2">
+                    <div class="slider-track" id="donate-slider">
+                        <img src="/assets/images/duck/banner2.jpg" alt="Thân Hình Thần Đúc" width="800" height="450" fetchpriority="high" decoding="async">
+                        <img src="/assets/images/duck/banner1.jpg" alt="Welcome to DuckStreamer" width="800" height="450" loading="lazy" decoding="async">
+                        <img src="/assets/images/duck/banner3.jpg" alt="Khi Gió Ấm Nhảy Múa" width="800" height="450" loading="lazy" decoding="async">
+                        <img src="/assets/images/duck/banner4.jpg" alt="Khuyến mãi 4" width="800" height="450" loading="lazy" decoding="async">
+                        <img src="/assets/images/duck/banner5.jpg" alt="Khuyến mãi 5" width="800" height="450" loading="lazy" decoding="async">
+                    </div>
+                    <div class="slider-dots" id="slider-dots"></div>
+                </div>
 
-        <div class="lp-hero-actions">
-          <a class="lp-button lp-button-primary" href="#dich-vu">Khám phá dịch vụ <span aria-hidden="true">↗</span></a>
-          <a class="lp-button lp-button-quiet" href="/napgame.html">Bảng giá nạp game <span aria-hidden="true">→</span></a>
-        </div>
+                <!-- TOP CHI TIÊU LEADERBOARD (RIGHT) -->
+                <div class="glass-panel leaderboard-sidebar">
+                    <button type="button" class="top-info-btn" onclick="window.location.href='/faq.html'" title="Thông tin phần thưởng">
+                        <i class="fas fa-question"></i>
+                    </button>
+                    <h3 class="inside-panel-title">👑 TOP CHI TIÊU</h3>
+                    <div class="divider-inside" style="margin-bottom: 25px;"></div>
 
-        <div class="lp-hero-trust-grid">
-          <div class="lp-trust-pill"><i aria-hidden="true">✓</i> <span><strong>Cày tay 100%</strong> (Không tool lậu)</span></div>
-          <div class="lp-trust-pill"><i aria-hidden="true">✓</i> <span><strong>Mã hóa PGP</strong> an toàn mật khẩu</span></div>
-          <div class="lp-trust-pill"><i aria-hidden="true">✓</i> <span><strong>Tiến độ trực tiếp</strong> kèm ảnh nghiệm thu</span></div>
-          <div class="lp-trust-pill"><i aria-hidden="true">✓</i> <span><strong>Hỗ trợ Zalo 24/7</strong> trao đổi 1-1</span></div>
-        </div>
-      </div>
+                    <div id="podium-container" style="display: flex; justify-content: center; align-items: flex-end; gap: 10px; margin-bottom: 30px; min-height: 140px;">
+                        <!-- Top 2 -->
+                        <div class="rank-2" style="text-align: center; margin-bottom: 10px;">
+                            <div class="top-avatar" style="position: relative;">
+                                <img src="/assets/images/duck/top_2_ayaka.png" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" alt="si***">
+                            </div>
+                            <h4 style="color: #fff; margin: 6px 0 2px; font-size: 0.95rem;">si***</h4>
+                            <div class="amount" style="font-family: var(--font-hud); font-weight: 800; font-size: 1.05rem;">3.366.000đ</div>
+                        </div>
 
-      <div class="lp-hero-showcase">
-        <!-- Interactive Carousel -->
-        <div class="lp-hero-art" id="lpHeroCarousel" role="region" aria-roledescription="carousel" aria-label="Game được hỗ trợ">
-          <span class="lp-hero-art-tag" id="lpHeroGameTag">GENSHIN IMPACT</span>
-          <img class="lp-hero-fallback" id="lpHeroSlideImage" src="/assets/images/games/genshin_banner.jpg" alt="Ảnh Genshin Impact" fetchpriority="high">
-          <div class="lp-carousel-dots" role="group" aria-label="Chọn hình game">
-            <button type="button" data-hero-slide="0" aria-label="Genshin Impact" aria-pressed="true"></button>
-            <button type="button" data-hero-slide="1" aria-label="Honkai: Star Rail" aria-pressed="false"></button>
-            <button type="button" data-hero-slide="2" aria-label="Zenless Zone Zero" aria-pressed="false"></button>
-            <button type="button" data-hero-slide="3" aria-label="Wuthering Waves" aria-pressed="false"></button>
-          </div>
-        </div>
+                        <!-- Top 1 (Center with Crown) -->
+                        <div class="rank-1" style="text-align: center; margin: 0 5px; transform: translateY(-15px); z-index: 10;">
+                            <div class="top-avatar" style="position: relative;">
+                                <i class="fas fa-crown crown-icon"></i>
+                                <img src="/assets/images/duck/top_1_ganyu.png" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" alt="Mi***">
+                            </div>
+                            <h4 style="color: #fbbf24 !important; margin: 6px 0 2px; font-size: 1.05rem;">Mi***</h4>
+                            <div class="amount" style="font-family: var(--font-hud); font-weight: 800; font-size: 1.25rem; color: #fbbf24;">5.008.200đ</div>
+                        </div>
 
-        <!-- Real Booster Ranking Panel -->
-        <aside class="lp-ranking-panel" aria-labelledby="lpRankingTitle">
-          <div class="lp-ranking-heading">
-            <span aria-hidden="true">♛</span>
-            <h2 id="lpRankingTitle">BOOSTER NỔI BẬT</h2>
-          </div>
-          <p class="lp-ranking-caption">Dữ liệu hoàn thành đơn thực tế từ hệ thống</p>
-          <div id="lpRankingList" aria-live="polite">
-            <p class="lp-ranking-state" role="status">Đang tải bảng xếp hạng…</p>
-          </div>
-          <p class="lp-ranking-footnote">Thông tin hồ sơ công khai của booster đang hoạt động.</p>
-        </aside>
-      </div>
-    </div>
-  </section>
+                        <!-- Top 3 -->
+                        <div class="rank-3" style="text-align: center; margin-bottom: 10px;">
+                            <div class="top-avatar" style="position: relative;">
+                                <img src="/assets/images/duck/top_3_miko.png" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" alt="Mi***">
+                            </div>
+                            <h4 style="color: #f59e0b !important; margin: 6px 0 2px; font-size: 0.95rem;">Mi***</h4>
+                            <div class="amount" style="font-family: var(--font-hud); font-weight: 800; font-size: 1.05rem; color: #f59e0b;">170.000đ</div>
+                        </div>
+                    </div>
 
-  <!-- LIVE OPERATIONAL ACTIVITY TICKER -->
-  <section class="lp-ticker-section lp-shell" aria-label="Nhịp thở hoạt động của hệ thống">
-    <div class="lp-ticker-bar" id="lpLiveTicker">
-      <div class="lp-ticker-badge">
-        <span class="lp-ticker-dot" aria-hidden="true"></span>
-        <span>TRỰC TUYẾN</span>
-      </div>
-      <div class="lp-ticker-track-wrap">
-        <div class="lp-ticker-track">
-          <div class="lp-ticker-item">
-            <span class="lp-ticker-pill">HỆ THỐNG</span>
-            <span>Trạng thái hoạt động bình thường • Booster sẵn sàng nhận đơn</span>
-          </div>
-          <div class="lp-ticker-item">
-            <span class="lp-ticker-pill">HOÀN THÀNH</span>
-            <span>Đơn <b>#NMC-71**</b> vừa hoàn thành • Genshin Impact: Thám hiểm bản đồ 100%</span>
-          </div>
-          <div class="lp-ticker-item">
-            <span class="lp-ticker-pill">BÁO GIÁ</span>
-            <span>Đơn <b>#NMC-69**</b> đã gửi báo giá • Honkai: Star Rail: La Hoàn Thâm Cảnh 36★</span>
-          </div>
-          <div class="lp-ticker-item">
-            <span class="lp-ticker-pill">ĐANG CÀY</span>
-            <span>Đơn <b>#NMC-74**</b> tiến độ 85% • Wuthering Waves: Tháp Thí Luyện</span>
-          </div>
-          <div class="lp-ticker-item">
-            <span class="lp-ticker-pill">NẠP GAME</span>
-            <span>Đơn <b>#NMC-72**</b> đã xác nhận tiền • Nạp Vé Tháng Không Nguyệt Chúc Phúc</span>
-          </div>
-          <div class="lp-ticker-item">
-            <span class="lp-ticker-pill">BẢO MẬT</span>
-            <span>100% Mật khẩu game được mã hóa PGP server-side qua pgcrypto</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAST GAME SELECTOR & TABS -->
-  <section class="lp-games-selector lp-shell" aria-labelledby="lpGameSelectorTitle">
-    <div class="lp-section-heading">
-      <p class="lp-kicker">CHỌN TỰA GAME / KHÁM PHÁ DANH MỤC</p>
-      <h2 id="lpGameSelectorTitle">4 Tựa Game Được <em>Hỗ Trợ Chuyên Sâu</em></h2>
-      <p>Chọn tựa game bạn đang chơi để xem đầy đủ các gói nạp tiền tệ chính hãng và dịch vụ cày thuê tối ưu.</p>
-    </div>
-
-    <div class="lp-filter-pills" role="tablist" aria-label="Bộ lọc game">
-      <button type="button" class="lp-filter-pill" data-game-filter="all" aria-pressed="true">Tất cả Game</button>
-      <button type="button" class="lp-filter-pill" data-game-filter="genshin" aria-pressed="false">Genshin Impact</button>
-      <button type="button" class="lp-filter-pill" data-game-filter="hsr" aria-pressed="false">Honkai: Star Rail</button>
-      <button type="button" class="lp-filter-pill" data-game-filter="zzz" aria-pressed="false">Zenless Zone Zero</button>
-      <button type="button" class="lp-filter-pill" data-game-filter="wuwa" aria-pressed="false">Wuthering Waves</button>
-    </div>
-
-    <div class="lp-game-grid">
-      <!-- Genshin -->
-      <a class="lp-game-card" href="/napgame-detail.html?game=genshin" data-game-target="genshin" aria-label="Khám phá dịch vụ Genshin Impact">
-        <img src="/assets/images/games/genshin_card.jpg" alt="Genshin Impact" loading="lazy">
-        <div class="lp-game-card-content">
-          <div class="lp-game-card-header">
-            <img src="/assets/images/games/genshin_icon.webp" alt="" width="28" height="28" loading="lazy">
-            <strong>Genshin Impact</strong>
-          </div>
-          <span class="lp-game-card-meta">12 Gói Nạp • 6 Nhóm Cày Thuê</span>
-          <span class="lp-game-card-action">
-            <span>Chọn Dịch Vụ</span>
-            <b aria-hidden="true">↗</b>
-          </span>
-        </div>
-      </a>
-
-      <!-- HSR -->
-      <a class="lp-game-card" href="/napgame-detail.html?game=hsr" data-game-target="hsr" aria-label="Khám phá dịch vụ Honkai Star Rail">
-        <img src="/assets/images/games/hsr_card.jpg" alt="Honkai: Star Rail" loading="lazy">
-        <div class="lp-game-card-content">
-          <div class="lp-game-card-header">
-            <img src="/assets/images/games/hsr_icon.webp" alt="" width="28" height="28" loading="lazy">
-            <strong>Honkai: Star Rail</strong>
-          </div>
-          <span class="lp-game-card-meta">12 Gói Nạp • Cày Map &amp; Sảnh Đường</span>
-          <span class="lp-game-card-action">
-            <span>Chọn Dịch Vụ</span>
-            <b aria-hidden="true">↗</b>
-          </span>
-        </div>
-      </a>
-
-      <!-- ZZZ -->
-      <a class="lp-game-card" href="/napgame-detail.html?game=zzz" data-game-target="zzz" aria-label="Khám phá dịch vụ Zenless Zone Zero">
-        <img src="/assets/images/games/zzz_card.jpg" alt="Zenless Zone Zero" loading="lazy">
-        <div class="lp-game-card-content">
-          <div class="lp-game-card-header">
-            <img src="/assets/images/games/zzz_icon.webp" alt="" width="28" height="28" loading="lazy">
-            <strong>Zenless Zone Zero</strong>
-          </div>
-          <span class="lp-game-card-meta">8 Gói Nạp • Hollow Zero &amp; Shiyu</span>
-          <span class="lp-game-card-action">
-            <span>Chọn Dịch Vụ</span>
-            <b aria-hidden="true">↗</b>
-          </span>
-        </div>
-      </a>
-
-      <!-- WuWa -->
-      <a class="lp-game-card" href="/napgame-detail.html?game=wuwa" data-game-target="wuwa" aria-label="Khám phá dịch vụ Wuthering Waves">
-        <img src="/assets/images/games/wuwa_card.jpg" alt="Wuthering Waves" loading="lazy">
-        <div class="lp-game-card-content">
-          <div class="lp-game-card-header">
-            <img src="/assets/images/games/wuwa_icon.webp" alt="" width="28" height="28" loading="lazy">
-            <strong>Wuthering Waves</strong>
-          </div>
-          <span class="lp-game-card-meta">8 Gói Nạp • Tháp &amp; Echo Farming</span>
-          <span class="lp-game-card-action">
-            <span>Chọn Dịch Vụ</span>
-            <b aria-hidden="true">↗</b>
-          </span>
-        </div>
-      </a>
-    </div>
-  </section>
-
-  <!-- FEATURED BOOSTING SERVICES V2 -->
-  <section class="lp-section lp-services-v2-section" id="dich-vu" aria-labelledby="lpServicesV2Title">
-    <div class="lp-shell">
-      <div class="lp-section-heading">
-        <p class="lp-kicker">OUR SERVICES / CÀY THUÊ CHUYÊN NGHIỆP</p>
-        <h2 id="lpServicesV2Title">Các Gói Cày Thuê <em>Tiêu Biểu</em></h2>
-        <p>Báo giá niêm yết tham khảo rõ ràng cho từng nội dung. Cam kết cày tay 100%, bảo hiểm tài khoản và cập nhật ảnh chụp nghiệm thu trước khi bàn giao.</p>
-      </div>
-
-      <div class="lp-services-v2-grid">
-        <!-- Card 1: Map -->
-        <a class="lp-service-v2-card" href="/dashboard?action=create-order" data-order-link data-service-preset="map">
-          <div class="lp-service-v2-art">
-            <img src="/assets/images/games/genshin_banner.jpg" alt="Khám phá bản đồ" loading="lazy" style="object-position:30%">
-            <span class="lp-service-badge hot">HOT</span>
-          </div>
-          <div class="lp-service-v2-body">
-            <span class="lp-service-v2-game">GENSHIN IMPACT</span>
-            <h3 class="lp-service-v2-title">Khám Phá Bản Đồ 100%</h3>
-            <div class="lp-service-v2-price-box">
-              <span class="lp-service-price-from">Giá tham khảo:</span>
-              <strong class="lp-service-price-value">Từ 50.000đ</strong>
+                    <div id="list-container" style="display: flex; flex-direction: column; gap: 8px;">
+                        <div class="rank-list-item">
+                            <div style="display: flex; align-items: center;">
+                                <span style="color: var(--text-muted); font-weight: bold; font-style: italic; width: 22px; font-size: 0.85rem;">#4</span>
+                                <img src="/assets/images/duck/top_4_k.png" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; margin-right: 10px; border: 1.5px solid var(--neon-cyan);" alt="us***">
+                                <span style="color: #fff; font-weight: bold; font-size: 0.85rem;">us***</span>
+                            </div>
+                            <div style="color: var(--neon-cyan); font-weight: 800; font-family: var(--font-hud); font-size: 0.95rem;">170.000đ</div>
+                        </div>
+                        <div class="rank-list-item">
+                            <div style="display: flex; align-items: center;">
+                                <span style="color: var(--text-muted); font-weight: bold; font-style: italic; width: 22px; font-size: 0.85rem;">#5</span>
+                                <img src="/assets/images/duck/top_5_boy.png" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; margin-right: 10px; border: 1.5px solid var(--neon-cyan);" alt="Kh***">
+                                <span style="color: #fff; font-weight: bold; font-size: 0.85rem;">Kh***</span>
+                            </div>
+                            <div style="color: var(--neon-cyan); font-weight: 800; font-family: var(--font-hud); font-size: 0.95rem;">168.300đ</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="lp-service-v2-time">⏱ Ước tính: 1–3 ngày làm việc</div>
-            <ul class="lp-service-v2-checklist">
-              <li><i aria-hidden="true">✓</i> Cày tay 100% thám hiểm map</li>
-              <li><i aria-hidden="true">✓</i> Rương, điểm dịch chuyển, thần đồng</li>
-              <li><i aria-hidden="true">✓</i> Ảnh chụp nghiệm thu từng khu vực</li>
-            </ul>
-            <span class="lp-service-v2-btn">Yêu Cầu Báo Giá <b aria-hidden="true">›</b></span>
-          </div>
-        </a>
+        </div>
+    </section>
 
-        <!-- Card 2: Challenge -->
-        <a class="lp-service-v2-card" href="/dashboard?action=create-order" data-order-link data-service-preset="challenge">
-          <div class="lp-service-v2-art">
-            <img src="/assets/images/games/genshin_card.jpg" alt="Nội dung thử thách" loading="lazy" style="object-position:center">
-            <span class="lp-service-badge fast">SIÊU TỐC</span>
-          </div>
-          <div class="lp-service-v2-body">
-            <span class="lp-service-v2-game">GENSHIN IMPACT</span>
-            <h3 class="lp-service-v2-title">La Hoàn &amp; Endgame 36★</h3>
-            <div class="lp-service-v2-price-box">
-              <span class="lp-service-price-from">Giá tham khảo:</span>
-              <strong class="lp-service-price-value">Từ 40.000đ</strong>
+    <!-- ================= LIVE ORDERS TICKER SECTION ================= -->
+    <section class="cyber-ticker-section" id="live-orders-ticker">
+        <div class="container">
+            <div class="cyber-ticker-bar" id="cyber-ticker-bar">
+                <div class="ticker-header-badge">
+                    <span class="live-dot"></span>
+                    <span><i class="fas fa-bolt" style="color: var(--neon-cyan); margin-right: 4px;"></i> ĐƠN MỚI<span class="badge-full-txt"> NHẤT</span></span>
+                </div>
+
+                <div class="ticker-marquee-wrap" id="ticker-marquee-wrap">
+                    <div class="ticker-marquee-track" id="ticker-marquee-track"></div>
+                </div>
             </div>
-            <div class="lp-service-v2-time">⏱ Ước tính: Trong ngày (2–4h)</div>
-            <ul class="lp-service-v2-checklist">
-              <li><i aria-hidden="true">✓</i> Đạt 36 sao La Hoàn mùa hiện tại</li>
-              <li><i aria-hidden="true">✓</i> Tối ưu combo và trang bị nhân vật</li>
-              <li><i aria-hidden="true">✓</i> Hoàn tất và trả acc siêu nhanh</li>
-            </ul>
-            <span class="lp-service-v2-btn">Yêu Cầu Báo Giá <b aria-hidden="true">›</b></span>
-          </div>
-        </a>
+        </div>
+    </section>
 
-        <!-- Card 3: Resources -->
-        <a class="lp-service-v2-card" href="/dashboard?action=create-order" data-order-link data-service-preset="resources">
-          <div class="lp-service-v2-art">
-            <img src="/assets/images/games/genshin_banner.jpg" alt="Nhân vật & Tài nguyên" loading="lazy" style="object-position:70%">
-            <span class="lp-service-badge popular">PHỔ BIẾN</span>
-          </div>
-          <div class="lp-service-v2-body">
-            <span class="lp-service-v2-game">GENSHIN IMPACT</span>
-            <h3 class="lp-service-v2-title">Nhân Vật &amp; Farm Tài Nguyên</h3>
-            <div class="lp-service-v2-price-box">
-              <span class="lp-service-price-from">Giá tham khảo:</span>
-              <strong class="lp-service-price-value">Từ 60.000đ</strong>
+    <!-- ================= MAIN SERVICES SECTION ================= -->
+    <section class="section-padding" id="services">
+        <div class="container">
+            <!-- 1. CÁC GÓI CÀY THUÊ HOT -->
+            <h2 class="section-title">CÁC GÓI <span class="title-highlight">CÀY THUÊ HOT</span></h2>
+            <div class="divider-center"></div>
+
+            <div id="game-list" class="modern-grid">
+                <!-- 1. Genshin Impact -->
+                <div class="bento-game-card glass-card" onclick="window.location.href='/caythue.html?game=genshin'" style="cursor:pointer; padding: 0; border-radius: 16px;">
+                    <div class="card-thumb-wrap">
+                        <img src="/assets/images/duck/caythue_genshin.png" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);" alt="Cày Thuê Genshin Impact">
+                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 12, 24, 0.85) 0%, transparent 45%); pointer-events: none;"></div>
+                        <div style="position: absolute; top: 12px; right: 12px; z-index: 2;">
+                            <span class="hud-pill online"><span class="hud-dot"></span> • CÀY THUÊ 24/7</span>
+                        </div>
+                    </div>
+                    <div style="padding: 16px 18px; position: relative; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 1.05rem; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; border-left: 3px solid var(--neon-cyan); padding-left: 10px; line-height: 1.3;">
+                            CÀY THUÊ GENSHIN<br>IMPACT
+                        </h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">CHỌN DỊCH VỤ</span>
+                            <i class="fas fa-chevron-right" style="color: var(--neon-cyan); font-size: 0.9rem;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Wuthering Waves -->
+                <div class="bento-game-card glass-card" onclick="window.location.href='/caythue.html?game=wuwa'" style="cursor:pointer; padding: 0; border-radius: 16px;">
+                    <div class="card-thumb-wrap">
+                        <img src="/assets/images/duck/caythue_wuwa.jpeg" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);" alt="Cày Thuê Wuthering Waves">
+                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 12, 24, 0.85) 0%, transparent 45%); pointer-events: none;"></div>
+                        <div style="position: absolute; top: 12px; right: 12px; z-index: 2;">
+                            <span class="hud-pill online"><span class="hud-dot"></span> • CÀY THUÊ 24/7</span>
+                        </div>
+                    </div>
+                    <div style="padding: 16px 18px; position: relative; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 1.05rem; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; border-left: 3px solid var(--neon-cyan); padding-left: 10px; line-height: 1.3;">
+                            CÀY THUÊ WUTHERING<br>WAVES
+                        </h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">CHỌN DỊCH VỤ</span>
+                            <i class="fas fa-chevron-right" style="color: var(--neon-cyan); font-size: 0.9rem;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Zenless Zone Zero -->
+                <div class="bento-game-card glass-card" onclick="window.location.href='/caythue.html?game=zzz'" style="cursor:pointer; padding: 0; border-radius: 16px;">
+                    <div class="card-thumb-wrap">
+                        <img src="/assets/images/duck/caythue_zzz.jpg" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);" alt="Cày Thuê Zenless Zone Zero">
+                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 12, 24, 0.85) 0%, transparent 45%); pointer-events: none;"></div>
+                        <div style="position: absolute; top: 12px; right: 12px; z-index: 2;">
+                            <span class="hud-pill online"><span class="hud-dot"></span> • CÀY THUÊ 24/7</span>
+                        </div>
+                    </div>
+                    <div style="padding: 16px 18px; position: relative; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 1.05rem; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; border-left: 3px solid var(--neon-cyan); padding-left: 10px; line-height: 1.3;">
+                            CÀY THUÊ ZENLESS<br>ZONE ZERO
+                        </h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">CHỌN DỊCH VỤ</span>
+                            <i class="fas fa-chevron-right" style="color: var(--neon-cyan); font-size: 0.9rem;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Honkai: Star Rail -->
+                <div class="bento-game-card glass-card" onclick="window.location.href='/caythue.html?game=hsr'" style="cursor:pointer; padding: 0; border-radius: 16px;">
+                    <div class="card-thumb-wrap">
+                        <img src="/assets/images/duck/caythue_hsr.jpg" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);" alt="Cày Thuê Honkai: Star Rail">
+                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 12, 24, 0.85) 0%, transparent 45%); pointer-events: none;"></div>
+                        <div style="position: absolute; top: 12px; right: 12px; z-index: 2;">
+                            <span class="hud-pill online"><span class="hud-dot"></span> • CÀY THUÊ 24/7</span>
+                        </div>
+                    </div>
+                    <div style="padding: 16px 18px; position: relative; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 1.05rem; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; border-left: 3px solid var(--neon-cyan); padding-left: 10px; line-height: 1.3;">
+                            CÀY THUÊ HONKAI:<br>STAR RAIL
+                        </h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">CHỌN DỊCH VỤ</span>
+                            <i class="fas fa-chevron-right" style="color: var(--neon-cyan); font-size: 0.9rem;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Liên Quân Mobile -->
+                <div class="bento-game-card glass-card" onclick="window.location.href='/caythue.html?game=lienquan'" style="cursor:pointer; padding: 0; border-radius: 16px;">
+                    <div class="card-thumb-wrap">
+                        <img src="/assets/images/duck/caythue_lienquan.png" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);" alt="Cày Thuê Liên Quân Mobile">
+                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 12, 24, 0.85) 0%, transparent 45%); pointer-events: none;"></div>
+                        <div style="position: absolute; top: 12px; right: 12px; z-index: 2;">
+                            <span class="hud-pill online"><span class="hud-dot"></span> • CÀY THUÊ 24/7</span>
+                        </div>
+                    </div>
+                    <div style="padding: 16px 18px; position: relative; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 1.05rem; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; border-left: 3px solid var(--neon-cyan); padding-left: 10px; line-height: 1.3;">
+                            CÀY THUÊ LIÊN QUÂN<br>MOBILE
+                        </h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">CHỌN DỊCH VỤ</span>
+                            <i class="fas fa-chevron-right" style="color: var(--neon-cyan); font-size: 0.9rem;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Valorant -->
+                <div class="bento-game-card glass-card" onclick="window.location.href='/caythue.html?game=valorant'" style="cursor:pointer; padding: 0; border-radius: 16px;">
+                    <div class="card-thumb-wrap">
+                        <img src="/assets/images/duck/caythue_valorant.jpg" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);" alt="Cày Thuê Valorant">
+                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 12, 24, 0.85) 0%, transparent 45%); pointer-events: none;"></div>
+                        <div style="position: absolute; top: 12px; right: 12px; z-index: 2;">
+                            <span class="hud-pill online"><span class="hud-dot"></span> • CÀY THUÊ 24/7</span>
+                        </div>
+                    </div>
+                    <div style="padding: 16px 18px; position: relative; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 1.05rem; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; border-left: 3px solid var(--neon-cyan); padding-left: 10px; line-height: 1.3;">
+                            CÀY THUÊ VALORANT
+                        </h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">CHỌN DỊCH VỤ</span>
+                            <i class="fas fa-chevron-right" style="color: var(--neon-cyan); font-size: 0.9rem;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. Liên Minh Huyền Thoại -->
+                <div class="bento-game-card glass-card" onclick="window.location.href='/caythue.html?game=lol'" style="cursor:pointer; padding: 0; border-radius: 16px;">
+                    <div class="card-thumb-wrap">
+                        <img src="/assets/images/duck/caythue_lol.jpg" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);" alt="Liên Minh Huyền Thoại">
+                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 12, 24, 0.85) 0%, transparent 45%); pointer-events: none;"></div>
+                        <div style="position: absolute; top: 12px; right: 12px; z-index: 2;">
+                            <span class="hud-pill online"><span class="hud-dot"></span> • CÀY THUÊ 24/7</span>
+                        </div>
+                    </div>
+                    <div style="padding: 16px 18px; position: relative; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 1.05rem; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; border-left: 3px solid var(--neon-cyan); padding-left: 10px; line-height: 1.3;">
+                            LIÊN MINH HUYỀN<br>THOẠI
+                        </h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">CHỌN DỊCH VỤ</span>
+                            <i class="fas fa-chevron-right" style="color: var(--neon-cyan); font-size: 0.9rem;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. Mobile Legends: Bang Bang -->
+                <div class="bento-game-card glass-card" onclick="window.location.href='/caythue.html?game=mlbb'" style="cursor:pointer; padding: 0; border-radius: 16px;">
+                    <div class="card-thumb-wrap">
+                        <img src="/assets/images/duck/caythue_mlbb.jpg" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);" alt="Mobile Legends Bang Bang">
+                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 12, 24, 0.85) 0%, transparent 45%); pointer-events: none;"></div>
+                        <div style="position: absolute; top: 12px; right: 12px; z-index: 2;">
+                            <span class="hud-pill online"><span class="hud-dot"></span> • CÀY THUÊ 24/7</span>
+                        </div>
+                    </div>
+                    <div style="padding: 16px 18px; position: relative; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 1.05rem; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; border-left: 3px solid var(--neon-cyan); padding-left: 10px; line-height: 1.3;">
+                            MOBILE LENGEND:<br>BANG
+                        </h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">CHỌN DỊCH VỤ</span>
+                            <i class="fas fa-chevron-right" style="color: var(--neon-cyan); font-size: 0.9rem;"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="lp-service-v2-time">⏱ Ước tính: 1–2 ngày làm việc</div>
-            <ul class="lp-service-v2-checklist">
-              <li><i aria-hidden="true">✓</i> Đột phá thiên phú, boss, vũ khí</li>
-              <li><i aria-hidden="true">✓</i> Tuyệt đối không dùng nguyên thạch</li>
-              <li><i aria-hidden="true">✓</i> Báo cáo tiến độ nhựa minh bạch</li>
-            </ul>
-            <span class="lp-service-v2-btn">Yêu Cầu Báo Giá <b aria-hidden="true">›</b></span>
-          </div>
-        </a>
 
-        <!-- Card 4: Daily -->
-        <a class="lp-service-v2-card" href="/dashboard?action=create-order" data-order-link data-service-preset="daily">
-          <div class="lp-service-v2-art">
-            <img src="/assets/images/games/genshin_card.jpg" alt="Nhiệm vụ & Chăm acc" loading="lazy" style="object-position:70%">
-            <span class="lp-service-badge utility">TIỆN ÍCH</span>
-          </div>
-          <div class="lp-service-v2-body">
-            <span class="lp-service-v2-game">GENSHIN IMPACT</span>
-            <h3 class="lp-service-v2-title">Ủy Thác &amp; Chăm Tài Khoản</h3>
-            <div class="lp-service-v2-price-box">
-              <span class="lp-service-price-from">Giá tham khảo:</span>
-              <strong class="lp-service-price-value">Từ 25.000đ</strong>
+            <!-- 2. DỊCH VỤ NẠP GAME -->
+            <h2 class="section-title">DỊCH VỤ <span class="title-highlight">NẠP GAME</span></h2>
+            <div class="divider-center"></div>
+
+            <div id="recharge-game-list" class="modern-grid">
+                <!-- 1. Genshin Impact (Login) -->
+                <div class="bento-game-card glass-card" onclick="window.location.href='/napgame-detail.html?game=genshin&type=login'" style="cursor:pointer; padding: 0; border-radius: 16px;">
+                    <div class="card-thumb-wrap">
+                        <img src="/assets/images/duck/caythue_genshin.png" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);" alt="Genshin Impact (Login)">
+                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 12, 24, 0.85) 0%, transparent 45%); pointer-events: none;"></div>
+                        <div style="position: absolute; top: 12px; right: 12px; z-index: 2;">
+                            <span class="hud-pill hot"><span class="hud-dot"></span> • NẠP SIÊU TỐC</span>
+                        </div>
+                    </div>
+                    <div style="padding: 16px 18px; position: relative; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 1.05rem; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; border-left: 3px solid var(--neon-pink); padding-left: 10px; line-height: 1.3;">
+                            GENSHIN IMPACT (<br>LOGIN )
+                        </h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">CHỌN GÓI NẠP</span>
+                            <i class="fas fa-chevron-right" style="color: var(--neon-pink); font-size: 0.9rem;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Honkai Star Rail (Login) -->
+                <div class="bento-game-card glass-card" onclick="window.location.href='/napgame-detail.html?game=hsr&type=login'" style="cursor:pointer; padding: 0; border-radius: 16px;">
+                    <div class="card-thumb-wrap">
+                        <img src="/assets/images/duck/nap_hsr.webp" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);" alt="Honkai Star Rail (Login)">
+                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 12, 24, 0.85) 0%, transparent 45%); pointer-events: none;"></div>
+                        <div style="position: absolute; top: 12px; right: 12px; z-index: 2;">
+                            <span class="hud-pill hot"><span class="hud-dot"></span> • NẠP SIÊU TỐC</span>
+                        </div>
+                    </div>
+                    <div style="padding: 16px 18px; position: relative; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 1.05rem; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; border-left: 3px solid var(--neon-pink); padding-left: 10px; line-height: 1.3;">
+                            HONKAI STAR RAIL<br>(LOGIN)
+                        </h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">CHỌN GÓI NẠP</span>
+                            <i class="fas fa-chevron-right" style="color: var(--neon-pink); font-size: 0.9rem;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Zenless Zone Zero (Login) -->
+                <div class="bento-game-card glass-card" onclick="window.location.href='/napgame-detail.html?game=zzz&type=login'" style="cursor:pointer; padding: 0; border-radius: 16px;">
+                    <div class="card-thumb-wrap">
+                        <img src="/assets/images/duck/nap_zzz.gif" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);" alt="Zenless Zone Zero (Login)">
+                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 12, 24, 0.85) 0%, transparent 45%); pointer-events: none;"></div>
+                        <!-- Sticker 3D Siêu Nhanh -->
+                        <div style="position: absolute; top: 8px; right: 8px; z-index: 2; font-family: var(--font-hud); font-size: 0.9rem; font-weight: 900; color: #ff3366; background: #fff; border: 2px solid #ff3366; padding: 2px 10px; border-radius: 14px; transform: rotate(4deg); box-shadow: 0 4px 10px rgba(255,51,102,0.4);">
+                            Siêu Nhanh
+                        </div>
+                    </div>
+                    <div style="padding: 16px 18px; position: relative; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 1.05rem; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; border-left: 3px solid var(--neon-pink); padding-left: 10px; line-height: 1.3;">
+                            ZENLESS ZONE ZERO<br>(LOGIN)
+                        </h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">CHỌN GÓI NẠP</span>
+                            <i class="fas fa-chevron-right" style="color: var(--neon-pink); font-size: 0.9rem;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Wuthering Waves (Login) -->
+                <div class="bento-game-card glass-card" onclick="window.location.href='/napgame-detail.html?game=wuwa&type=login'" style="cursor:pointer; padding: 0; border-radius: 16px;">
+                    <div class="card-thumb-wrap">
+                        <img src="/assets/images/duck/nap_wuwa_login.webp" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);" alt="Wuthering Waves (Login)">
+                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 12, 24, 0.85) 0%, transparent 45%); pointer-events: none;"></div>
+                        <!-- 1ST Badge top-left -->
+                        <div style="position: absolute; top: 10px; left: 12px; z-index: 2; font-family: var(--font-display); font-size: 1.6rem; font-weight: 900; font-style: italic; color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.8), 2px 2px 0 #333;">
+                            1<span style="font-size: 0.9rem;">ST</span>
+                        </div>
+                        <div style="position: absolute; top: 12px; right: 12px; z-index: 2;">
+                            <span class="hud-pill hot"><span class="hud-dot"></span> • NẠP SIÊU TỐC</span>
+                        </div>
+                    </div>
+                    <div style="padding: 16px 18px; position: relative; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 1.05rem; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; border-left: 3px solid var(--neon-pink); padding-left: 10px; line-height: 1.3;">
+                            WUTHERING WAVES<br>(LOGIN)
+                        </h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">CHỌN GÓI NẠP</span>
+                            <i class="fas fa-chevron-right" style="color: var(--neon-pink); font-size: 0.9rem;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Wuthering Waves (UID) -->
+                <div class="bento-game-card glass-card" onclick="window.location.href='/napgame-detail.html?game=wuwa&type=uid'" style="cursor:pointer; padding: 0; border-radius: 16px;">
+                    <div class="card-thumb-wrap">
+                        <img src="/assets/images/duck/nap_wuwa_uid.webp" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);" alt="Wuthering Waves (UID)">
+                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 12, 24, 0.85) 0%, transparent 45%); pointer-events: none;"></div>
+                        <!-- 3.0 Badge top-left -->
+                        <div style="position: absolute; top: 10px; left: 12px; z-index: 2; font-family: var(--font-display); font-size: 1.8rem; font-weight: 900; color: #a3e635; text-shadow: 0 0 10px rgba(0,0,0,0.8), 2px 2px 0 #365314;">
+                            3.<span style="font-size: 1.1rem;">0</span>
+                        </div>
+                        <div style="position: absolute; top: 12px; right: 12px; z-index: 2;">
+                            <span class="hud-pill hot"><span class="hud-dot"></span> • NẠP SIÊU TỐC</span>
+                        </div>
+                    </div>
+                    <div style="padding: 16px 18px; position: relative; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 1.05rem; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; border-left: 3px solid var(--neon-pink); padding-left: 10px; line-height: 1.3;">
+                            WUTHERING WAVES<br>(UID)
+                        </h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">CHỌN GÓI NẠP</span>
+                            <i class="fas fa-chevron-right" style="color: var(--neon-pink); font-size: 0.9rem;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Where Winds Meet -->
+                <div class="bento-game-card glass-card" onclick="window.location.href='/napgame.html?game=where-winds-meet'" style="cursor:pointer; padding: 0; border-radius: 16px;">
+                    <div class="card-thumb-wrap">
+                        <img src="/assets/images/duck/nap_where_winds_meet.webp" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);" alt="Where Winds Meet">
+                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 12, 24, 0.85) 0%, transparent 45%); pointer-events: none;"></div>
+                        <div style="position: absolute; top: 12px; right: 12px; z-index: 2;">
+                            <span class="hud-pill hot"><span class="hud-dot"></span> • NẠP SIÊU TỐC</span>
+                        </div>
+                    </div>
+                    <div style="padding: 16px 18px; position: relative; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 1.05rem; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; border-left: 3px solid var(--neon-pink); padding-left: 10px; line-height: 1.3;">
+                            WHERE WINDS MEET
+                        </h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">CHỌN GÓI NẠP</span>
+                            <i class="fas fa-chevron-right" style="color: var(--neon-pink); font-size: 0.9rem;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. Neverness to Everness -->
+                <div class="bento-game-card glass-card" onclick="window.location.href='/napgame.html?game=neverness-to-everness'" style="cursor:pointer; padding: 0; border-radius: 16px;">
+                    <div class="card-thumb-wrap">
+                        <img src="/assets/images/duck/nap_nte.webp" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);" alt="Neverness to Everness">
+                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 12, 24, 0.85) 0%, transparent 45%); pointer-events: none;"></div>
+                        <div style="position: absolute; top: 12px; right: 12px; z-index: 2;">
+                            <span class="hud-pill hot"><span class="hud-dot"></span> • NẠP SIÊU TỐC</span>
+                        </div>
+                    </div>
+                    <div style="padding: 16px 18px; position: relative; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 1.05rem; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; border-left: 3px solid var(--neon-pink); padding-left: 10px; line-height: 1.3;">
+                            NEVERNESS TO<br>EVERNESS
+                        </h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">CHỌN GÓI NẠP</span>
+                            <i class="fas fa-chevron-right" style="color: var(--neon-pink); font-size: 0.9rem;"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="lp-service-v2-time">⏱ Ước tính: Theo ngày / gói tuần</div>
-            <ul class="lp-service-v2-checklist">
-              <li><i aria-hidden="true">✓</i> Ủy thác 4 nhiệm vụ hằng ngày</li>
-              <li><i aria-hidden="true">✓</i> Tiêu 160+ nhựa cô đặc/boss</li>
-              <li><i aria-hidden="true">✓</i> Điểm danh HoYoLAB đầy đủ</li>
-            </ul>
-            <span class="lp-service-v2-btn">Yêu Cầu Báo Giá <b aria-hidden="true">›</b></span>
-          </div>
-        </a>
-      </div>
 
-      <p style="text-align: center; margin: 0;">
-        <a class="lp-button lp-button-quiet" href="/caythue.html">
-          Xem toàn bộ 6 nhóm dịch vụ cày thuê <span aria-hidden="true">→</span>
-        </a>
-      </p>
-    </div>
-  </section>
+            <!-- 3. DANH MỤC MUA THẺ GAME -->
+            <h2 class="section-title">DANH MỤC <span class="title-highlight">MUA THẺ GAME</span></h2>
+            <div class="divider-center"></div>
 
-  <!-- FAST TOP-UP CURRENCY HUB -->
-  <section class="lp-section lp-topup-section" id="napgame" aria-labelledby="lpTopupTitle">
-    <div class="lp-shell">
-      <div class="lp-section-heading">
-        <p class="lp-kicker">FAST RECHARGE / TIỆN LỢI &amp; TIẾT KIỆM</p>
-        <h2 id="lpTopupTitle">Bảng Nạp Tiền Tệ Game <em>Chính Hãng</em></h2>
-        <p>Chọn game cần nạp để xem toàn bộ danh mục Đá Sáng Thế, Mộng Cảnh, Monochrome, Lunite và Thẻ Tháng. Hỗ trợ nạp qua UID an toàn hoặc Nạp Login bảo mật PGP.</p>
-      </div>
-
-      <div class="lp-topup-grid">
-        <!-- Topup Genshin -->
-        <div class="lp-topup-card">
-          <div class="lp-topup-banner">
-            <img src="/assets/images/games/genshin_banner.jpg" alt="Genshin Impact" loading="lazy">
-            <div class="lp-topup-icon-wrap">
-              <img src="/assets/images/games/genshin_icon.webp" alt="Genshin" width="44" height="44" loading="lazy">
+            <div id="card-game-list" class="modern-grid" style="margin-bottom: 90px;">
+                <!-- 1. Thẻ Garena -->
+                <div class="bento-game-card glass-card" onclick="window.location.href='/napgame.html?tab=the-game'" style="cursor:pointer; padding: 0; border-radius: 16px;">
+                    <div class="card-garena-thumb">
+                        <img src="/assets/images/duck/the_garena.webp" loading="lazy" style="width: auto !important; height: auto !important; max-width: 80% !important; max-height: 120px !important; object-fit: contain !important; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.6)); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);" alt="Thẻ Garena">
+                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 12, 24, 0.85) 0%, transparent 45%); pointer-events: none;"></div>
+                        <div style="position: absolute; top: 12px; right: 12px; z-index: 2;">
+                            <span class="hud-pill hot" style="border-color: #38bdf8; color: #38bdf8; background: rgba(56, 189, 248, 0.15);">
+                                <span class="hud-dot" style="background: #38bdf8;"></span> • GIẢM 3.00%
+                            </span>
+                        </div>
+                    </div>
+                    <div style="padding: 16px 18px; position: relative; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 1.05rem; font-weight: 800; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; border-left: 3px solid var(--neon-cyan); padding-left: 10px; line-height: 1.3;">
+                            THẺ GARENA
+                        </h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">MUA THẺ NGAY</span>
+                            <i class="fas fa-chevron-right" style="color: var(--neon-cyan); font-size: 0.9rem;"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="lp-topup-body">
-            <h3>Genshin Impact</h3>
-            <div class="lp-topup-types">
-              <span class="lp-topup-pill uid">Nạp UID</span>
-              <span class="lp-topup-pill login">Nạp Login PGP</span>
-            </div>
-            <div class="lp-topup-packages-preview">
-              <span class="lp-pkg-chip">Vé Tháng Không Nguyệt</span>
-              <span class="lp-pkg-chip">300 Đá</span>
-              <span class="lp-pkg-chip">980 Đá</span>
-              <span class="lp-pkg-chip">1980 Đá</span>
-              <span class="lp-pkg-chip">3280 Đá</span>
-              <span class="lp-pkg-chip">6480 Đá</span>
-            </div>
-            <a class="lp-topup-cta" href="/napgame-detail.html?game=genshin">
-              Xem Bảng Giá Nạp <span aria-hidden="true">↗</span>
-            </a>
-          </div>
         </div>
-
-        <!-- Topup HSR -->
-        <div class="lp-topup-card">
-          <div class="lp-topup-banner">
-            <img src="/assets/images/games/hsr_banner.jpg" alt="Honkai Star Rail" loading="lazy">
-            <div class="lp-topup-icon-wrap">
-              <img src="/assets/images/games/hsr_icon.webp" alt="HSR" width="44" height="44" loading="lazy">
-            </div>
-          </div>
-          <div class="lp-topup-body">
-            <h3>Honkai: Star Rail</h3>
-            <div class="lp-topup-types">
-              <span class="lp-topup-pill uid">Nạp UID</span>
-              <span class="lp-topup-pill login">Nạp Login PGP</span>
-            </div>
-            <div class="lp-topup-packages-preview">
-              <span class="lp-pkg-chip">Express Supply Pass</span>
-              <span class="lp-pkg-chip">Nameless Honor</span>
-              <span class="lp-pkg-chip">300 Mộng Cảnh</span>
-              <span class="lp-pkg-chip">980</span>
-              <span class="lp-pkg-chip">1980</span>
-              <span class="lp-pkg-chip">6480 Mộng Cảnh</span>
-            </div>
-            <a class="lp-topup-cta" href="/napgame-detail.html?game=hsr">
-              Xem Bảng Giá Nạp <span aria-hidden="true">↗</span>
-            </a>
-          </div>
-        </div>
-
-        <!-- Topup ZZZ -->
-        <div class="lp-topup-card">
-          <div class="lp-topup-banner">
-            <img src="/assets/images/games/zzz_banner.jpg" alt="Zenless Zone Zero" loading="lazy">
-            <div class="lp-topup-icon-wrap">
-              <img src="/assets/images/games/zzz_icon.webp" alt="ZZZ" width="44" height="44" loading="lazy">
-            </div>
-          </div>
-          <div class="lp-topup-body">
-            <h3>Zenless Zone Zero</h3>
-            <div class="lp-topup-types">
-              <span class="lp-topup-pill uid">Nạp UID</span>
-              <span class="lp-topup-pill login">Nạp Login PGP</span>
-            </div>
-            <div class="lp-topup-packages-preview">
-              <span class="lp-pkg-chip">Inter-Knot Membership</span>
-              <span class="lp-pkg-chip">New Eridu City Fund</span>
-              <span class="lp-pkg-chip">300 Monochrome</span>
-              <span class="lp-pkg-chip">980</span>
-              <span class="lp-pkg-chip">6480 Monochrome</span>
-            </div>
-            <a class="lp-topup-cta" href="/napgame-detail.html?game=zzz">
-              Xem Bảng Giá Nạp <span aria-hidden="true">↗</span>
-            </a>
-          </div>
-        </div>
-
-        <!-- Topup WuWa -->
-        <div class="lp-topup-card">
-          <div class="lp-topup-banner">
-            <img src="/assets/images/games/wuwa_banner.jpg" alt="Wuthering Waves" loading="lazy">
-            <div class="lp-topup-icon-wrap">
-              <img src="/assets/images/games/wuwa_icon.webp" alt="WuWa" width="44" height="44" loading="lazy">
-            </div>
-          </div>
-          <div class="lp-topup-body">
-            <h3>Wuthering Waves</h3>
-            <div class="lp-topup-types">
-              <span class="lp-topup-pill uid">Nạp UID</span>
-              <span class="lp-topup-pill login">Nạp Login PGP</span>
-            </div>
-            <div class="lp-topup-packages-preview">
-              <span class="lp-pkg-chip">Lunite Subscription</span>
-              <span class="lp-pkg-chip">Insider Channel</span>
-              <span class="lp-pkg-chip">300 Lunite</span>
-              <span class="lp-pkg-chip">980 Lunite</span>
-              <span class="lp-pkg-chip">3280</span>
-              <span class="lp-pkg-chip">6480 Lunite</span>
-            </div>
-            <a class="lp-topup-cta" href="/napgame-detail.html?game=wuwa">
-              Xem Bảng Giá Nạp <span aria-hidden="true">↗</span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 3-STEP ADVENTURER'S JOURNEY -->
-  <section class="lp-section lp-process" id="quy-trinh" aria-labelledby="lpProcessTitle">
-    <div class="lp-shell">
-      <div class="lp-section-heading">
-        <p class="lp-kicker">WORKFLOW / CÁCH BẮT ĐẦU</p>
-        <h2 id="lpProcessTitle">Hành Trình Đặt Đơn Trong <em>3 Bước</em></h2>
-        <p>Quy trình được thiết kế minh bạch, bảo vệ quyền lợi của khách hàng từ lúc gửi yêu cầu đến khi nghiệm thu.</p>
-      </div>
-
-      <div class="lp-steps-grid">
-        <div class="lp-step-v2">
-          <span class="lp-step-number">01</span>
-          <h3>Chọn Dịch Vụ &amp; Yêu Cầu</h3>
-          <p>Lựa chọn gói cày hoặc gói nạp game. Nhập thông tin máy chủ, mục tiêu cần thực hiện và deadline mong muốn trong form chuẩn.</p>
-        </div>
-
-        <div class="lp-step-v2">
-          <span class="lp-step-number">02</span>
-          <h3>Nhận Báo Giá &amp; Duyệt Đơn</h3>
-          <p>Shop kiểm tra yêu cầu và gửi mức giá chính xác. Bạn xem xét và duyệt giá trực tiếp trên Dashboard, sau đó chuyển khoản đối chiếu mã đơn.</p>
-        </div>
-
-        <div class="lp-step-v2">
-          <span class="lp-step-number">03</span>
-          <h3>Theo Dõi % &amp; Nghiệm Thu</h3>
-          <p>Booster cập nhật tiến độ theo thời gian thực và đăng tải ảnh bằng chứng. Bạn kiểm tra tài khoản, xác nhận nghiệm thu trước khi đóng đơn.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECURITY & CREDIBILITY MATRIX -->
-  <section class="lp-section lp-security-section" aria-labelledby="lpSecurityTitle">
-    <div class="lp-shell">
-      <div class="lp-section-heading">
-        <p class="lp-kicker">ZERO-TRUST SECURITY &amp; TRUST SIGNALS</p>
-        <h2 id="lpSecurityTitle">Tại Sao Bạn Có Thể <em>An Tâm Giao Phó</em>?</h2>
-        <p>Chúng tôi không dùng khẩu hiệu sáo rỗng. Mọi cam kết bảo vệ tài khoản đều được bảo chứng bằng giải pháp công nghệ máy chủ.</p>
-      </div>
-
-      <div class="lp-trust-matrix">
-        <div class="lp-trust-card">
-          <div class="lp-trust-icon">🔐</div>
-          <h3>Mã Hóa PGP Server-Side</h3>
-          <p>Mật khẩu game được mã hóa bằng pgcrypto hai chiều. Booster chỉ có quyền giải mã tạm thời khi tiến hành đăng nhập.</p>
-        </div>
-
-        <div class="lp-trust-card">
-          <div class="lp-trust-icon">🛡</div>
-          <h3>Chính Sách Bồi Thường</h3>
-          <p>Cam kết bồi thường 100% giá trị tài khoản nếu phát sinh sự cố vi phạm quy định trò chơi xuất phát từ lỗi của shop.</p>
-        </div>
-
-        <div class="lp-trust-card">
-          <div class="lp-trust-icon">⚡</div>
-          <h3>Cày Tay 100% Thuần Túy</h3>
-          <p>Tuyển thủ chuyên nghiệp thao tác tay hoàn toàn, không sử dụng bot, macro hay bất kỳ công cụ gian lận bên thứ ba nào.</p>
-        </div>
-
-        <div class="lp-trust-card">
-          <div class="lp-trust-icon">📸</div>
-          <h3>Nghiệm Thu Ảnh Minh Bạch</h3>
-          <p>Tất cả các rương mở, tầng la hoàn hay lượng đá nạp đều được lưu trữ ảnh chụp màn hình riêng biệt trong hệ thống.</p>
-        </div>
-      </div>
-
-      <!-- Checkscam Banner -->
-      <div class="lp-checkscam-banner">
-        <div class="lp-checkscam-content">
-          <strong>🔍 Kiểm tra thông tin thanh toán trên Checkscam.vn</strong>
-          <p>Đối chiếu số tài khoản nhận tiền và số điện thoại Zalo chính thức của chủ shop trước khi thực hiện bất kỳ giao dịch nào.</p>
-        </div>
-        <a class="lp-button lp-button-primary" href="/checkscam.html">
-          Kiểm Tra Giao Dịch <span aria-hidden="true">↗</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- VERIFIED REVIEWS & COMMUNITY -->
-  <section class="lp-section lp-reviews-section" id="danh-gia" aria-labelledby="lpReviewsTitle">
-    <div class="lp-shell">
-      <div class="lp-section-heading">
-        <p class="lp-kicker">COMMUNITY &amp; SOCIAL PROOF</p>
-        <h2 id="lpReviewsTitle">Đánh Giá Từ Khách Hàng <em>Thực Tế</em></h2>
-        <p>Phản hồi được gửi trực tiếp từ những đơn hàng đã hoàn tất nghiệm thu trong hệ thống tài khoản NAMCUMZ.</p>
-      </div>
-
-      <div class="lp-reviews-hub">
-        <div class="lp-reviews-score-card">
-          <div class="lp-score-stars" aria-label="5 trên 5 sao">★★★★★</div>
-          <div class="lp-score-number">5.0</div>
-          <div class="lp-score-label">Điểm tin cậy từ các đơn đã nghiệm thu</div>
-          <span class="lp-score-badge">✓ 100% Đơn Hoàn Tất Hài Lòng</span>
-        </div>
-
-        <div class="lp-reviews-narrative">
-          <h3>Mỗi Đánh Giá Gắn Liền Với Một Đơn Hàng Thật</h3>
-          <p>
-            Khác với các website tạo đánh giá ảo, hệ thống của NAMCUMZ chỉ cho phép gửi nhận xét và chấm sao sau khi đơn cày thuê hoặc nạp game đã chuyển sang trạng thái <strong>hoàn thành nghiệm thu</strong>. Bạn hoàn toàn có thể an tâm về tính chân thực của cộng đồng.
-          </p>
-          <a class="lp-button lp-button-quiet" href="/reviews.html">
-            Xem Trung Tâm Đánh Giá <span aria-hidden="true">→</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ ACCORDION -->
-  <section class="lp-section lp-faq-section" id="faq" aria-labelledby="lpFaqTitle">
-    <div class="lp-shell">
-      <div class="lp-section-heading">
-        <p class="lp-kicker">HELP CENTER / HỎI ĐÁP PHỔ BIẾN</p>
-        <h2 id="lpFaqTitle">Những Câu Hỏi <em>Thường Gặp</em></h2>
-        <p>Giải đáp nhanh những băn khoăn của bạn trước khi bắt đầu sử dụng dịch vụ.</p>
-      </div>
-
-      <div class="lp-faq-list">
-        <details class="lp-faq-item">
-          <summary>Nạp UID khác gì Nạp Login?</summary>
-          <div class="lp-faq-content">
-            <p><strong>Nạp UID:</strong> Bạn chỉ cần cung cấp UID trong game và Server. Shop nạp trực tiếp qua cổng thanh toán chính thức mà không cần đăng nhập vào tài khoản của bạn, an toàn tuyệt đối 100%.</p>
-            <p><strong>Nạp Login:</strong> Dành cho các gói ưu đãi giá đặc biệt. Bạn cung cấp thông tin đăng nhập, mật khẩu được hệ thống mã hóa PGP cấp máy chủ (pgcrypto), chỉ booster được phân công mới có thể đăng nhập để hoàn tất đơn.</p>
-          </div>
-        </details>
-
-        <details class="lp-faq-item">
-          <summary>Dịch vụ cày thuê có an toàn cho tài khoản game của tôi không?</summary>
-          <div class="lp-faq-content">
-            <p>Toàn bộ booster của NAMCUMZ được tuyển chọn kỹ lưỡng và ký cam kết chỉ thao tác 100% bằng tay, không sử dụng bất kỳ phần mềm hack, mod hay can thiệp file game. Shop có chính sách bảo hiểm đền bù rõ ràng nếu xảy ra sự cố từ phía shop.</p>
-          </div>
-        </details>
-
-        <details class="lp-faq-item">
-          <summary>Tôi có thể đăng nhập game khi Booster đang thực hiện đơn không?</summary>
-          <div class="lp-faq-content">
-            <p>Để tránh xung đột phiên đăng nhập và mất tiến độ làm nhiệm vụ, bạn vui lòng trao đổi với Booster qua khung chat đơn hàng trên Dashboard để thống nhất khung giờ chơi cá nhân.</p>
-          </div>
-        </details>
-
-        <details class="lp-faq-item">
-          <summary>Tôi nên làm gì sau khi đơn cày thuê hoàn thành?</summary>
-          <div class="lp-faq-content">
-            <p>Sau khi nhận thông báo hoàn tất và kiểm tra tài khoản, bạn xác nhận "Nghiệm thu" trên Dashboard. Tiếp đó, chúng tôi khuyến khích bạn vào cài đặt tài khoản của game để <strong>đăng xuất khỏi tất cả các thiết bị lạ</strong> và đổi mật khẩu mới để đảm bảo tính riêng tư tuyệt đối.</p>
-          </div>
-        </details>
-      </div>
-    </div>
-  </section>
-
-  <!-- FINAL CONVERSION CTA -->
-  <section class="lp-section lp-final-cta-section" id="lien-he" aria-labelledby="lpFinalCtaTitle">
-    <div class="lp-shell">
-      <div class="lp-final-cta-card">
-        <div class="lp-final-cta-content">
-          <p class="lp-kicker">SẴN SÀNG CHO HÀNH TRÌNH TIẾP THEO?</p>
-          <h2 id="lpFinalCtaTitle">Bắt Đầu Nhiệm Vụ Của Bạn <em>Ngay Hôm Nay</em>.</h2>
-          <p>Chọn dịch vụ cày thuê hoặc gói nạp game phù hợp. Đội ngũ NAMCUMZ sẵn sàng hỗ trợ bạn chinh phục mọi thử thách thế giới mở.</p>
-        </div>
-        <div class="lp-final-cta-buttons">
-          <a class="lp-button lp-button-primary" href="/dashboard?action=create-order" data-order-link>Tạo Đơn Ngay <span aria-hidden="true">↗</span></a>
-          <a class="lp-button lp-button-quiet" href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">Nhắn Zalo CSKH <span aria-hidden="true">↗</span></a>
-        </div>
-      </div>
-    </div>
-  </section>
+    </section>
 </main>
 
-<!-- FOOTER -->
-<footer class="lp-footer">
-  <div class="lp-shell">
-    <div class="lp-footer-columns">
-      <div>
-        <a class="lp-logo" href="/">
-          <img src="/assets/images/logo.webp" alt="" width="32" height="32" onerror="this.src='/assets/images/logo.jpg'">
-          <span>NAMCUMZ</span>
-        </a>
-        <p>
-          Nền tảng thương mại dịch vụ game chuyên nghiệp: Cày thuê &amp; Nạp tiền tệ chính hãng cho Genshin Impact, Honkai: Star Rail, Zenless Zone Zero và Wuthering Waves.
-        </p>
-      </div>
+<!-- ================= FLOATING FLASH SALE WIDGET ================= -->
+<div id="duck-flash-sale-pill-widget" class="active">
+    <div class="fsw-pill-card" onclick="window.location.href='/napgame.html'">
+        <div class="fsw-icon-wrap"><i class="fas fa-bolt"></i></div>
+        <div class="fsw-label-group">
+            <span class="fsw-title">FLASH SALE:</span>
+            <div class="fsw-timer-box" id="fsw-timer">01:37:41</div>
+        </div>
+        <button type="button" class="fsw-close-btn" onclick="closeFlashSaleWidget(event)" aria-label="Đóng flash sale">&times;</button>
+    </div>
+</div>
 
-      <div>
-        <h2>DỊCH VỤ TRỌNG TÂM</h2>
-        <a href="#dich-vu">Cày thuê thám hiểm &amp; La Hoàn</a>
-        <a href="/napgame.html">Danh mục nạp game chính hãng</a>
-        <a href="/caythue.html">Tất cả nhóm dịch vụ cày</a>
-        <a href="/dashboard.html">Bảng điều khiển &amp; Theo dõi đơn</a>
-      </div>
+<!-- ================= FLOATING CSKH DUCK WIDGET ================= -->
+<div class="duck-ai-floating-btn" id="duck-ai-btn">
+    <div id="duck-ai-tooltip" class="duck-ai-tooltip">
+        <span>🦆 Cần hỗ trợ cày game / nạp tiền? Chat với Vịt nhé!</span>
+        <button type="button" onclick="closeDuckAITooltip(event)" class="duck-tooltip-close" aria-label="Đóng tin nhắn">&times;</button>
+    </div>
+    <div class="duck-ai-avatar-wrap" onclick="toggleDuckAIWindow()">
+        <img class="duck-ai-avatar" src="/assets/images/duck/support_avatar.png" alt="Duck CSKH">
+        <span class="duck-ai-online-status-dot"></span>
+    </div>
+</div>
 
-      <div>
-        <h2>HỖ TRỢ &amp; PHÁP LÝ</h2>
-        <a href="/faq.html">Hướng dẫn sử dụng hệ thống</a>
-        <a href="/luu-y.html">Lưu ý bảo mật trước khi đặt</a>
-        <a href="/checkscam.html">Xác minh giao dịch (Check Scam)</a>
-        <a href="/reviews.html">Đánh giá từ khách hàng</a>
-        <a href="/terms.html">Điều khoản sử dụng</a>
-        <a href="/privacy.html">Chính sách bảo mật PGP</a>
-        <a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">Zalo CSKH 24/7 ↗</a>
-      </div>
+<!-- ================= FOOTER ================= -->
+<footer class="custom-footer">
+    <div class="container footer-grid">
+        <!-- Col 1: About -->
+        <div class="footer-col footer-about">
+            <a class="footer-logo-wrapper" href="/">
+                <img class="footer-logo-gif" src="/assets/images/duck/duckstore.png" alt="Duck Streamer Shop Logo">
+            </a>
+            <p class="footer-desc">
+                Cung cấp giải pháp cày thuê &amp; nạp game uy tín, hệ thống tự động 24/7, giao dịch an toàn - bảo mật tuyệt đối. Đồng hành cùng game thủ tối ưu trải nghiệm và chinh phục mọi đỉnh cao thế giới ảo.
+            </p>
+            <div class="footer-trust-pills">
+                <span class="footer-trust-pill"><i class="fas fa-shield-alt"></i> SSL 256-BIT</span>
+                <span class="footer-trust-pill"><i class="fas fa-bolt"></i> TỰ ĐỘNG 24/7</span>
+                <span class="footer-trust-pill"><i class="fas fa-lock"></i> 100% BẢO MẬT</span>
+            </div>
+            <div class="footer-socials">
+                <a href="https://www.facebook.com/duckstreamershop/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.tiktok.com/@duckstreamershop" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                <a href="https://www.youtube.com/@vtuber_2006" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="https://discord.com/invite/9aGaKU6Fev" target="_blank" rel="noopener noreferrer" aria-label="Discord"><i class="fab fa-discord"></i></a>
+            </div>
+        </div>
+
+        <!-- Col 2: Services & Policy -->
+        <div class="footer-col footer-services">
+            <h3 class="footer-heading" style="border-left: 3px solid var(--neon-cyan); padding-left: 10px;">DỊCH VỤ &amp; CHÍNH SÁCH</h3>
+            <ul class="footer-links-list">
+                <li><a href="/#services"><i class="fas fa-star" style="color: var(--neon-cyan);"></i> Cày Thuê Game Hot</a></li>
+                <li><a href="/#recharge-game-list"><i class="fas fa-gem" style="color: var(--neon-cyan);"></i> Dịch Vụ Nạp Game</a></li>
+                <li><a href="/luu-y.html"><i class="fas fa-wrench" style="color: var(--neon-cyan);"></i> Những Điều Cần Lưu Ý</a></li>
+                <li><a href="/privacy.html"><i class="fas fa-shield-halved" style="color: var(--neon-cyan);"></i> Chính Sách Bảo Mật</a></li>
+                <li><a href="/faq.html"><i class="fas fa-question-circle" style="color: var(--neon-cyan);"></i> FAQ - Hỏi Đáp</a></li>
+                <li><a href="https://www.facebook.com/profile.php?id=61586327944651" target="_blank" rel="noopener noreferrer"><i class="fas fa-headset" style="color: var(--neon-cyan);"></i> Trung Tâm Hỗ Trợ</a></li>
+            </ul>
+        </div>
+
+        <!-- Col 3: Contact & Support 24/7 -->
+        <div class="footer-col footer-contact">
+            <h3 class="footer-heading" style="border-left: 3px solid var(--neon-cyan); padding-left: 10px;">HỖ TRỢ KHÁCH HÀNG 24/7</h3>
+            <div class="contact-box" onclick="window.open('tel:0377415507')" style="cursor: pointer;">
+                <div class="contact-icon" style="background: rgba(0, 242, 254, 0.15); color: var(--neon-cyan);"><i class="fas fa-phone-alt"></i></div>
+                <div class="contact-info">
+                    <span class="contact-label">HOTLINE HỖ TRỢ</span>
+                    <span class="contact-value" style="font-family: var(--font-hud); font-weight: 800; font-size: 1.1rem; letter-spacing: 0.5px;">0377.415.507 &amp;<br>0789.239.156</span>
+                </div>
+            </div>
+
+            <div class="contact-box" onclick="window.open('https://zalo.me/0377415507', '_blank')" style="cursor: pointer;">
+                <div class="contact-icon" style="background: rgba(247, 37, 133, 0.15); color: var(--neon-pink);"><i class="fas fa-comment-dots"></i></div>
+                <div class="contact-info">
+                    <span class="contact-label">ZALO TƯ VẤN NHANH</span>
+                    <span class="contact-value" style="font-family: var(--font-hud); font-weight: 800; font-size: 1.1rem; letter-spacing: 0.5px;">0377.415.507 &amp;<br>0789.239.156</span>
+                </div>
+            </div>
+
+            <div class="contact-box">
+                <div class="contact-icon" style="background: rgba(0, 242, 254, 0.15); color: var(--neon-cyan);"><i class="fas fa-clock"></i></div>
+                <div class="contact-info">
+                    <span class="contact-label">GIỜ LÀM VIỆC: 07:00 - 23:00</span>
+                    <span class="contact-status" style="color: #ef4444; font-weight: 700; font-size: 0.85rem;"><i class="fas fa-circle" style="font-size: 0.55rem; margin-right: 4px;"></i> ĐÃ ĐÓNG CỬA</span>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <p class="lp-disclaimer">
-      NAMCUMZ là đơn vị cung cấp dịch vụ độc lập, không liên kết chính thức hoặc được ủy quyền bởi HoYoverse hay Kuro Games. Mọi nhãn hiệu, logo và hình ảnh trò chơi thuộc quyền sở hữu của các nhà phát hành tương ứng.
-    </p>
-    <p class="lp-copyright">© 2026 NAMCUMZ. Toàn bộ quyền được bảo lưu.</p>
-  </div>
+    <!-- Bottom Copyright -->
+    <div class="footer-bottom container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.06);">
+        <p style="margin: 0; color: var(--text-muted); font-size: 0.85rem;">
+            &copy; 2026 <b>Duck Streamer Shop</b>. All rights reserved.
+        </p>
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-family: var(--font-hud); color: #10b981;">
+            <i class="fas fa-circle" style="font-size: 0.55rem; box-shadow: 0 0 8px #10b981;"></i> HỆ THỐNG HOẠT ĐỘNG BÌNH THƯỜNG
+        </div>
+    </div>
 </footer>
 
-<!-- QUICK SUPPORT FLOATING BUTTON -->
-<a class="lp-support-float" href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer" aria-label="Liên hệ Zalo CSKH">
-  <span>💬 Zalo CSKH</span>
-  <span aria-hidden="true">↗</span>
-</a>
-
-<!-- SAME-PAGE AUTH MODAL DIALOG -->
+<!-- ================= AUTH OVERLAY MODAL ================= -->
 <div class="lp-auth-overlay" id="lpAuthOverlay" hidden>
-  <section class="lp-auth-dialog" role="dialog" aria-modal="true" aria-labelledby="lpAuthDialogTitle">
-    <header class="lp-auth-dialog-header">
-      <h2 id="lpAuthDialogTitle">Tài khoản NAMCUMZ</h2>
-      <button class="lp-auth-close" type="button" data-auth-close aria-label="Đóng đăng nhập">×</button>
-    </header>
-    <iframe class="lp-auth-frame" id="lpAuthFrame" title="Đăng nhập hoặc tạo tài khoản NAMCUMZ" loading="eager" referrerpolicy="same-origin"></iframe>
-  </section>
+    <section class="lp-auth-dialog" role="dialog" aria-modal="true" aria-labelledby="lpAuthDialogTitle">
+        <header class="lp-auth-dialog-header">
+            <h2 id="lpAuthDialogTitle">Tài khoản Duck Streamer Shop</h2>
+            <button class="lp-auth-close" type="button" data-auth-close aria-label="Đóng đăng nhập">&times;</button>
+        </header>
+        <iframe class="lp-auth-frame" id="lpAuthFrame" title="Đăng nhập hoặc tạo tài khoản" loading="eager" referrerpolicy="same-origin"></iframe>
+    </section>
 </div>
 
 </body>
