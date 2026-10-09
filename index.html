@@ -12,12 +12,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Chakra+Petch:wght@500;600;700;800&family=Exo+2:wght@600;700;800&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="/assets/css/duck-home.css?v=20261009-brand2">
+<link rel="stylesheet" href="/assets/css/home-page.css?v=20261009-brand2">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <script src="/assets/js/runtime-config.js" defer></script>
 <script src="/assets/js/public-auth.js?v=20261005-categories11" defer></script>
 <script src="/assets/js/landing.js?v=20261005-account12" defer></script>
-<script src="/assets/js/duck-home.js?v=20261009-brand2" defer></script>
+<script src="/assets/js/home-page.js?v=20261009-brand2" defer></script>
 </head>
 <body>
 
@@ -44,13 +44,7 @@
 <!-- ================= NAVIGATION BAR ================= -->
 <nav class="glass-nav" role="navigation" aria-label="Menu chính">
     <a href="/" class="lp-logo" aria-label="NAMCUMZ GAME STORE — Trang chủ">
-        <div class="lp-logo-badge">
-            <img src="/assets/images/logo.webp" alt="NAMCUMZ" width="32" height="32" onerror="this.src='/assets/images/logo.jpg'">
-        </div>
-        <div class="lp-logo-text">
-            <span class="lp-logo-brand">NAMCUMZ</span>
-            <span class="lp-logo-tag">GAME STORE</span>
-        </div>
+        <img class="lp-brand-wordmark" src="/assets/images/namcumz-wordmark.jpg" alt="NAMCUMZ Game Store" width="180" height="48">
     </a>
 
     <div class="menu-toggle" id="mobile-menu" onclick="window.toggleMobileMenu(event)" role="button" aria-label="Mở Menu">
@@ -116,6 +110,7 @@
                 <!-- NAMCUMZ GAME ART CAROUSEL -->
                 <div class="slider-wrapper-v2">
                     <div class="slider-track" id="donate-slider">
+                        <img src="/assets/images/homepage-hero.png" alt="NAMCUMZ Game Store — Genshin Impact, Honkai: Star Rail, Wuthering Waves và Aniimo" width="1600" height="900" fetchpriority="high" decoding="async">
                         <img src="/assets/images/duck/banner2.jpg" alt="Thân Hình Thần Đúc" width="800" height="450" fetchpriority="high" decoding="async">
                         <img src="/assets/images/duck/banner3.jpg" alt="Khi Gió Ấm Nhảy Múa" width="800" height="450" loading="lazy" decoding="async">
                         <img src="/assets/images/duck/banner4.jpg" alt="Khuyến mãi 4" width="800" height="450" loading="lazy" decoding="async">
@@ -585,7 +580,7 @@
         <!-- Col 1: About -->
         <div class="footer-col footer-about">
             <a class="footer-logo-wrapper" href="/">
-                <img class="footer-logo-gif" src="/assets/images/logo.webp" alt="NAMCUMZ Game Store">
+                <img class="footer-logo-gif" src="/assets/images/namcumz-wordmark.jpg" alt="NAMCUMZ Game Store">
             </a>
             <p class="footer-desc">
                 Cung cấp giải pháp cày thuê &amp; nạp game uy tín, hệ thống tự động 24/7, giao dịch an toàn - bảo mật tuyệt đối. Đồng hành cùng game thủ tối ưu trải nghiệm và chinh phục mọi đỉnh cao thế giới ảo.

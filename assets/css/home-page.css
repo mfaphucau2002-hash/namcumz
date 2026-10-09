@@ -328,6 +328,14 @@ p, span, label, td, th {
     cursor: pointer;
     transition: transform 0.2s ease;
 }
+.lp-brand-wordmark {
+    display: block;
+    width: 180px;
+    height: 48px;
+    border-radius: 6px;
+    object-fit: cover;
+    object-position: center;
+}
 .lp-logo-badge {
     display: flex;
     align-items: center;
