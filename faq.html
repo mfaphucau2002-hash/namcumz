@@ -1,57 +1,680 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Hướng dẫn tài khoản, nạp game, dịch vụ Genshin, thanh toán và theo dõi đơn hàng NAMCUMZ.">
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://namcumz.io.vn/faq.html"><link rel="icon" type="image/jpeg" href="/assets/images/logo.jpg">
-<title>Hướng dẫn sử dụng & FAQ | NAMCUMZ</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/design-tokens.css"><link rel="stylesheet" href="/assets/css/style.css"><link rel="stylesheet" href="/assets/css/landing.css?v=20261004-faq1"><link rel="stylesheet" href="/assets/css/ui.css?v=20261004-mobile3">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-<script src="/assets/js/runtime-config.js" defer></script>
-<script src="/assets/js/public-auth.js?v=20261005-categories11" defer></script>
-<script src="/assets/js/landing.js?v=20261005-account12" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Hỏi đáp & Hướng dẫn sử dụng dịch vụ tại NAMCUMZ: Tài khoản, nạp game tốc độ, cày thuê an toàn và thanh toán tự động.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://namcumz.io.vn/faq.html">
+    <link rel="icon" type="image/jpeg" href="/assets/images/logo.jpg">
+    <title>Hỏi Đáp & Hướng Dẫn Sử Dụng (FAQ) | NAMCUMZ</title>
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS Stylesheets -->
+    <link rel="stylesheet" href="/assets/css/design-tokens.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/duck-home.css?v=20261009-hud1">
+    <link rel="stylesheet" href="/assets/css/faq.css?v=20261009-hud1">
+    <link rel="stylesheet" href="/assets/css/ui.css">
+
+    <!-- Supabase & Auth Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <script src="/assets/js/runtime-config.js" defer></script>
+    <script src="/assets/js/public-auth.js?v=20261005-categories11" defer></script>
+    <script src="/assets/js/landing.js?v=20261005-account12" defer></script>
+    <script src="/assets/js/duck-home.js?v=20261009-hud1" defer></script>
 </head>
 <body class="landing-page faq-page">
-<!-- HEADER -->
-<header class="lp-header"><div class="lp-shell lp-header-inner">
-<a class="lp-logo" href="/" aria-label="NAMCUMZ — trang chủ"><img src="/assets/images/logo.jpg" alt="" width="32" height="32"><span>NAMCUMZ</span></a>
-<nav class="lp-desktop-nav" aria-label="Điều hướng chính"><a href="/">Trang chủ</a><a href="/reviews.html">Đánh giá</a><a href="/napgame.html">Nạp game</a><details class="lp-support-menu"><summary>Hỗ trợ</summary><div><a href="/faq.html" aria-current="page">Hướng dẫn sử dụng</a><a href="/luu-y.html">Lưu ý trước khi đặt</a><a href="/checkscam.html">Kiểm tra giao dịch</a><a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">Zalo CSKH ↗</a></div></details></nav>
-<div class="lp-header-actions" id="lpAuthActions"><a class="lp-text-link lp-login" href="/login.html?form=login">Đăng nhập / Đăng ký</a><a class="lp-button lp-button-primary lp-header-cta" href="/login.html?form=register">Tạo đơn <span aria-hidden="true">↗</span></a></div>
-<button class="lp-menu-toggle" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="lpMobileNav"><span></span><span></span></button>
-</div><nav class="lp-mobile-nav" id="lpMobileNav" aria-label="Điều hướng di động" hidden><a href="/">Trang chủ</a><a href="/reviews.html">Đánh giá</a><a href="/napgame.html">Nạp game</a><a href="/faq.html" aria-current="page">Hướng dẫn sử dụng</a><a href="/luu-y.html">Lưu ý trước khi đặt</a><a href="/checkscam.html">Kiểm tra giao dịch</a><a href="/login.html?form=register" id="lpMobileAccount">Đăng nhập / Tạo tài khoản</a></nav></header>
-<main>
-<!-- FAQ INTRO -->
-<section class="faq-hero lp-shell" aria-labelledby="faqTitle"><p class="lp-kicker">KNOWLEDGE BASE / NAMCUMZ</p><h1 id="faqTitle">Hướng dẫn thao tác</h1><p>Thông tin tài khoản, dịch vụ đang mở, cách thanh toán và theo dõi đơn trên NAMCUMZ.</p><nav class="faq-jump-links" aria-label="Danh mục hướng dẫn"><a href="#account">Tài khoản</a><a href="#topup">Nạp game</a><a href="#service">Cày thuê &amp; đơn</a><a href="#safety">Thanh toán &amp; an toàn</a></nav></section>
-<!-- ACCOUNT FAQ -->
-<section class="faq-group lp-shell" id="account" aria-labelledby="faqAccountTitle"><div class="faq-group-heading"><p class="lp-kicker">01 / TÀI KHOẢN</p><h2 id="faqAccountTitle">Đăng nhập và đăng ký</h2></div>
-<details class="faq-item"><summary>Tạo tài khoản NAMCUMZ như thế nào?</summary><div class="faq-answer"><p>Chọn <a href="/login.html?form=register">Tạo tài khoản</a>, nhập tên đăng nhập (4–20 ký tự), tên hiển thị, mật khẩu và xác nhận mật khẩu, rồi đọc và đồng ý Điều khoản cùng Chính sách bảo mật. Tên đăng nhập không có dấu hoặc khoảng trắng; mật khẩu cần ít nhất 8 ký tự, có chữ và số.</p></div></details>
-<details class="faq-item"><summary>Tôi quên tên đăng nhập hoặc không vào được tài khoản thì sao?</summary><div class="faq-answer"><p>Ở trang đăng nhập, dùng nút <strong>Khôi phục tài khoản</strong> hoặc <strong>Bạn gặp vấn đề khi đăng nhập?</strong> để xem hướng dẫn trong hệ thống. Nếu vẫn chưa xử lý được, liên hệ <a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">CSKH qua Zalo</a>; không gửi mật khẩu hoặc mã OTP trong ghi chú hay tin nhắn.</p></div></details>
-</section>
-<!-- TOP-UP FAQ -->
-<section class="faq-group lp-shell" id="topup" aria-labelledby="faqTopupTitle"><div class="faq-group-heading"><p class="lp-kicker">02 / NẠP GAME</p><h2 id="faqTopupTitle">Catalog và đặt gói</h2></div>
-<details class="faq-item"><summary>Namcumz hiện nhận nạp những game nào?</summary><div class="faq-answer"><p>Catalog hiện có Genshin Impact, Honkai: Star Rail, Zenless Zone Zero và Wuthering Waves. Danh sách gói cùng giá đang mở bán được hiển thị trong <a href="/napgame.html">Danh mục nạp game</a>.</p></div></details>
-<details class="faq-item"><summary>Đơn nạp Login cần cung cấp những thông tin gì?</summary><div class="faq-answer"><p>Biểu mẫu đơn hiển thị máy chủ, phương thức đăng nhập, email/tên đăng nhập game, mật khẩu tài khoản game và số điện thoại Zalo để liên hệ. Chỉ nhập thông tin đăng nhập game vào đúng trường riêng của đơn nếu bạn chọn tiếp tục với dịch vụ Nạp Login. Không nhập mật khẩu hoặc mã OTP vào ghi chú hay gửi qua chat. Nếu bạn không muốn cung cấp thông tin đăng nhập, hãy dừng trước khi tạo đơn và hỏi CSKH về lựa chọn phù hợp.</p></div></details>
-<details class="faq-item"><summary>Giá hiển thị có cố định không?</summary><div class="faq-answer"><p>Hãy kiểm tra giá của gói đang chọn ngay trong catalog và phần tóm tắt đơn trước khi gửi. Nếu giá hoặc nội dung gói chưa rõ, liên hệ shop để xác nhận trước khi thanh toán.</p></div></details>
-</section>
-<!-- ORDERS AND SERVICES FAQ -->
-<section class="faq-group lp-shell" id="service" aria-labelledby="faqServiceTitle"><div class="faq-group-heading"><p class="lp-kicker">03 / DỊCH VỤ &amp; ĐƠN HÀNG</p><h2 id="faqServiceTitle">Chọn dịch vụ và theo dõi</h2></div>
-<details class="faq-item"><summary>Namcumz đang nhận cày thuê game nào?</summary><div class="faq-answer"><p>Dịch vụ cày thuê hiện được mở cho Genshin Impact, gồm các nhóm yêu cầu như khám phá bản đồ, nội dung thử thách, nhân vật/tài nguyên và nhiệm vụ/chăm tài khoản. Phạm vi và chi phí cụ thể được xác nhận theo yêu cầu của từng đơn.</p></div></details>
-<details class="faq-item"><summary>Xem tiến độ đơn ở đâu?</summary><div class="faq-answer"><p>Đăng nhập đúng tài khoản rồi mở <a href="/dashboard.html">Đơn hàng của bạn</a>. Trạng thái và trao đổi theo đơn được hiển thị trong khu vực tài khoản khi có đơn gắn với tài khoản đó.</p></div></details>
-<details class="faq-item"><summary>Tôi gửi đánh giá sau khi dùng dịch vụ ở đâu?</summary><div class="faq-answer"><p>Đánh giá được gửi từ đơn đã hoàn thành trong tài khoản. Trang <a href="/reviews.html">Đánh giá</a> hiện chưa có phản hồi công khai.</p></div></details>
-</section>
-<!-- PAYMENT AND SAFETY FAQ -->
-<section class="faq-group lp-shell" id="safety" aria-labelledby="faqSafetyTitle"><div class="faq-group-heading"><p class="lp-kicker">04 / THANH TOÁN &amp; AN TOÀN</p><h2 id="faqSafetyTitle">Trước khi gửi đơn</h2></div>
-<details class="faq-item"><summary>Nạp game bằng cách nào?</summary><div class="faq-answer"><p>Tạo đơn từ gói trong catalog trước. Theo hướng dẫn hiện trên trang đặt gói, sau khi tạo đơn admin sẽ liên hệ qua Zalo để gửi thông tin tài khoản nhận thanh toán; shop cập nhật trạng thái sau khi xác nhận. Chỉ chuyển khoản theo thông tin được xác nhận cho đơn của bạn.</p></div></details>
-<details class="faq-item"><summary>Namcumz có ví nạp tiền hoặc số dư tài khoản không?</summary><div class="faq-answer"><p>Hiện website không có chức năng nạp số dư vào ví. Đặt từng đơn qua catalog và kiểm tra hướng dẫn thanh toán của chính đơn đó.</p></div></details>
-<details class="faq-item"><summary>Tôi cần hỏi thêm thì liên hệ ai?</summary><div class="faq-answer"><p>Liên hệ <a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">Zalo CSKH NAMCUMZ</a> trước khi tạo đơn nếu bạn chưa rõ dịch vụ, thông tin cần cung cấp hoặc cách thanh toán.</p></div></details>
-</section>
-<!-- SUPPORT CTA -->
-<section class="lp-contact lp-shell" aria-labelledby="faqContactTitle"><div><p class="lp-kicker">CẦN HỖ TRỢ?</p><h2 id="faqContactTitle">Hỏi trước khi đặt đơn.</h2><p>Trao đổi với shop nếu yêu cầu của bạn chưa được giải đáp ở trên.</p></div><a class="lp-button lp-button-primary" href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">Liên hệ Zalo <span aria-hidden="true">↗</span></a></section>
-</main>
-<!-- FOOTER -->
-<footer class="lp-footer"><div class="lp-shell"><div class="lp-footer-top"><a class="lp-logo" href="/"><img src="/assets/images/logo.jpg" alt="" width="32" height="32"><span>NAMCUMZ</span></a><nav aria-label="Liên kết cuối trang"><a href="/">Trang chủ</a><a href="/napgame.html">Nạp game</a><a href="/reviews.html">Đánh giá</a><a href="/checkscam.html">Kiểm tra giao dịch</a><a href="/terms.html">Điều khoản</a><a href="/privacy.html">Bảo mật</a><a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">Zalo CSKH</a></nav></div><div class="lp-footer-columns"><div><a class="lp-logo" href="/"><img src="/assets/images/logo.jpg" alt="" width="32" height="32"><span>NAMCUMZ</span></a><p>Hướng dẫn dựa trên các dịch vụ và biểu mẫu đang có trên NAMCUMZ.</p></div><div><h2>DỊCH VỤ</h2><a href="/caythue.html">Cày thuê Genshin</a><a href="/napgame.html">Danh mục nạp game</a><a href="/dashboard.html">Theo dõi đơn hàng</a></div><div><h2>HỖ TRỢ &amp; CHÍNH SÁCH</h2><a href="/faq.html">Hướng dẫn sử dụng</a><a href="/luu-y.html">Lưu ý trước khi đặt</a><a href="/reviews.html">Đánh giá đơn hàng</a><a href="/checkscam.html">Kiểm tra giao dịch</a><a href="/terms.html">Điều khoản</a><a href="/privacy.html">Chính sách bảo mật</a><a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">Zalo CSKH ↗</a></div></div><p class="lp-disclaimer">Thông tin về gói, điều kiện và thanh toán được xác nhận theo catalog và từng đơn hàng.</p><p class="lp-copyright">© 2026 NAMCUMZ</p></div></footer>
-<a class="lp-support-float" href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer" aria-label="Liên hệ Zalo CSKH">Zalo <span aria-hidden="true">↗</span></a>
-</body></html>
+
+    <!-- ================= NAVIGATION BAR ================= -->
+    <nav class="glass-nav" role="navigation" aria-label="Menu chính">
+        <a href="/" class="lp-logo" aria-label="NAMCUMZ GAME STORE — Trang chủ">
+            <div class="lp-logo-badge">
+                <img src="/assets/images/logo.webp" alt="NAMCUMZ" width="32" height="32" onerror="this.src='/assets/images/duck/avt.jpg'">
+            </div>
+            <div class="lp-logo-text">
+                <span class="lp-logo-brand">NAMCUMZ</span>
+                <span class="lp-logo-tag">GAME STORE</span>
+            </div>
+        </a>
+
+        <div class="menu-toggle" id="mobile-menu" onclick="window.toggleMobileMenu(event)" role="button" aria-label="Mở Menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+
+        <ul class="nav-links">
+            <li><a href="/index.html" data-text="Trang Chủ">TRANG CHỦ</a></li>
+            <li><a href="/caythue.html" data-text="Cày Thuê">CÀY THUÊ</a></li>
+            <li><a href="/#recharge-game-list" data-text="Nạp Game">NẠP GAME</a></li>
+            <li><a href="/profile.html" data-text="Hồ Sơ">HỒ SƠ</a></li>
+            <li><a href="/profile.html?open=deposit" id="nav-deposit" data-text="Nạp Tiền">NẠP TIỀN</a></li>
+            <li class="nav-dropdown">
+                <button type="button" class="nav-dropdown-toggle active" onclick="toggleNavDropdown(event, this)" aria-haspopup="true" aria-expanded="false">
+                    HỖ TRỢ <i class="fas fa-chevron-down nav-caret"></i>
+                </button>
+                <ul class="nav-submenu">
+                    <li><a href="/dashboard.html" data-text="Đơn Hàng">ĐƠN HÀNG</a></li>
+                    <li><a href="/reviews.html" data-text="Đánh Giá">ĐÁNH GIÁ</a></li>
+                    <li><a href="/privacy.html" data-text="Bảo Mật &amp; Cam Kết">BẢO MẬT &amp; CAM KẾT</a></li>
+                    <li><a href="/luu-y.html" data-text="Lưu Ý">LƯU Ý CẦN BIẾT</a></li>
+                    <li><a href="/faq.html" data-text="Hỏi Đáp" class="active" aria-current="page">HỎI ĐÁP</a></li>
+                </ul>
+            </li>
+            <li class="mobile-only-btn" style="padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.08);">
+                <button class="perf-toggle-btn lp-eco-btn" onclick="toggleEcoMode(event)" style="width: 100%; justify-content: center; height: 44px;">
+                    <span class="lp-eco-icon">⚡</span>
+                    <span class="perf-toggle-label">Chế độ Mượt mà / Tiết kiệm pin</span>
+                </button>
+            </li>
+        </ul>
+
+        <div class="nav-actions" id="lpAuthActions">
+            <button class="perf-toggle-btn lp-eco-btn desktop-only-btn" onclick="toggleEcoMode(event)" title="Bật/Tắt hiệu ứng nền để tối ưu hiệu năng">
+                <span class="lp-eco-icon">⚡</span>
+                <span class="perf-toggle-label">Mượt mà</span>
+            </button>
+            <a href="/dashboard.html?section=notifications" class="nav-bell-btn desktop-only-btn" aria-label="Thông báo đơn hàng" title="Thông báo">
+                <i class="fas fa-bell"></i>
+                <span class="nav-bell-badge"></span>
+            </a>
+            <div id="navUserProfile" style="display: none; align-items: center; gap: 8px;">
+                <div class="nav-avatar-pill">
+                    <img src="/assets/images/duck/avt.jpg" alt="Avatar" class="nav-avatar" width="28" height="28" id="navAvatarImg">
+                    <span class="nav-username" id="navUsername">User</span>
+                </div>
+                <button type="button" class="nav-logout-btn" id="navLogoutBtn" title="Đăng xuất" aria-label="Đăng xuất">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+            <a href="/login.html" class="nav-auth-btn" id="navAuthBtn">
+                Tài khoản / Đơn hàng
+            </a>
+        </div>
+    </nav>
+
+    <!-- ================= MAIN FAQ CONTENT ================= -->
+    <main class="faq-container">
+        
+        <!-- 1. HERO SECTION -->
+        <header class="faq-hero-section">
+            <div class="faq-kicker">
+                <i class="fas fa-bolt"></i> KNOWLEDGE BASE • NAMCUMZ GAME STORE
+            </div>
+            <h1 class="faq-page-title">HỎI ĐÁP & HƯỚNG DẪN THAO TÁC</h1>
+            <p class="faq-subtitle">
+                Giải đáp mọi thắc mắc về tài khoản, nạp game tốc độ, quy trình cày thuê an toàn và phương thức thanh toán tự động tại NAMCUMZ.
+            </p>
+            <div class="faq-divider">
+                <span class="faq-divider-dot"></span>
+                <span class="faq-divider-line"></span>
+                <span class="faq-divider-dot"></span>
+            </div>
+
+            <!-- 2. REAL-TIME SEARCH BOX -->
+            <div class="faq-search-box">
+                <div class="faq-search-input-wrap">
+                    <i class="fas fa-search faq-search-icon"></i>
+                    <input type="text" id="faqSearchInput" class="faq-search-input" placeholder="Tìm nhanh câu hỏi hoặc từ khóa (vd: nạp game, tài khoản, hoàn tiền...)" autocomplete="off">
+                    <button type="button" id="faqSearchClear" class="faq-search-clear" aria-label="Xóa tìm kiếm">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3. CATEGORY FILTER PILLS -->
+            <nav class="faq-category-pills" aria-label="Lọc nhóm câu hỏi">
+                <button type="button" class="faq-pill-btn active" data-filter="all">
+                    <i class="fas fa-layer-group faq-pill-icon"></i> Tất cả
+                </button>
+                <button type="button" class="faq-pill-btn" data-filter="account">
+                    <i class="fas fa-user-shield faq-pill-icon"></i> 01 / Tài khoản
+                </button>
+                <button type="button" class="faq-pill-btn" data-filter="topup">
+                    <i class="fas fa-gem faq-pill-icon"></i> 02 / Nạp game
+                </button>
+                <button type="button" class="faq-pill-btn" data-filter="service">
+                    <i class="fas fa-gamepad faq-pill-icon"></i> 03 / Cày thuê
+                </button>
+                <button type="button" class="faq-pill-btn" data-filter="safety">
+                    <i class="fas fa-credit-card faq-pill-icon"></i> 04 / Thanh toán
+                </button>
+            </nav>
+        </header>
+
+        <!-- EMPTY SEARCH STATE -->
+        <div id="faqEmptyState" class="faq-empty-state">
+            <i class="fas fa-search-minus"></i>
+            <h3>Không tìm thấy câu hỏi phù hợp</h3>
+            <p>Vui lòng thử tìm với từ khóa khác hoặc liên hệ trực tiếp CSKH để được trợ giúp ngay.</p>
+        </div>
+
+        <!-- 4. FAQ GROUPS -->
+
+        <!-- GROUP 1: TÀI KHOẢN & ĐĂNG NHẬP -->
+        <section class="faq-group" id="account" data-category="account" aria-labelledby="headingAccount">
+            <div class="faq-group-header">
+                <span class="faq-group-bar"></span>
+                <div class="faq-group-title-wrap">
+                    <span class="faq-group-kicker">MỤC 01</span>
+                    <h2 class="faq-group-title" id="headingAccount">Tài Khoản &amp; Đăng Nhập</h2>
+                </div>
+            </div>
+
+            <div class="faq-list">
+                <details class="faq-item" open>
+                    <summary class="faq-summary">
+                        <div class="faq-summary-left">
+                            <span class="faq-q-badge">01</span>
+                            <span class="faq-question-text">Tạo tài khoản NAMCUMZ như thế nào?</span>
+                        </div>
+                        <i class="fas fa-chevron-down faq-chevron"></i>
+                    </summary>
+                    <div class="faq-answer">
+                        <p>
+                            Bạn bấm vào nút <strong>Tài khoản / Đơn hàng</strong> ở góc trên bên phải, hoặc chọn <a href="/login.html?form=register">Tạo tài khoản</a>. Nhập tên đăng nhập (4–20 ký tự, không dấu), mật khẩu (ít nhất 8 ký tự gồm chữ và số), sau đó xác nhận để đăng ký ngay lập tức.
+                        </p>
+                        <div class="faq-callout faq-callout-security">
+                            <i class="fas fa-shield-alt"></i>
+                            <div>
+                                Hệ thống tự động khởi tạo ví và danh bạ bảo mật sau khi bạn đăng ký tài khoản thành công.
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary class="faq-summary">
+                        <div class="faq-summary-left">
+                            <span class="faq-q-badge">02</span>
+                            <span class="faq-question-text">Tôi quên tên đăng nhập hoặc mật khẩu thì phải làm sao?</span>
+                        </div>
+                        <i class="fas fa-chevron-down faq-chevron"></i>
+                    </summary>
+                    <div class="faq-answer">
+                        <p>
+                            Tại giao diện đăng nhập, bạn có thể bấm vào dòng chữ <strong>"Bạn gặp vấn đề khi đăng nhập?"</strong> để yêu cầu hướng dẫn khôi phục. Nếu tài khoản có gắn số điện thoại/Zalo, bạn có thể nhắn tin trực tiếp cho <a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">CSKH qua Zalo 0763.550.673</a> để được hỗ trợ cấp lại quyền truy cập trong 5 phút.
+                        </p>
+                        <div class="faq-callout faq-callout-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <div>
+                                <strong>Lưu ý:</strong> Shop tuyệt đối không bao giờ chủ động hỏi mật khẩu đăng nhập cá nhân hay mã OTP ngân hàng của bạn.
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary class="faq-summary">
+                        <div class="faq-summary-left">
+                            <span class="faq-q-badge">03</span>
+                            <span class="faq-question-text">Dữ liệu tài khoản của tôi được bảo mật như thế nào?</span>
+                        </div>
+                        <i class="fas fa-chevron-down faq-chevron"></i>
+                    </summary>
+                    <div class="faq-answer">
+                        <p>
+                            Toàn bộ thông tin đăng nhập đơn hàng đều được mã hóa bằng thuật toán <strong>AES-256 / PGP End-to-End</strong> trên máy chủ trước khi lưu trữ. Chỉ có Admin và Booster được phân công mới có thể giải mã trong lúc thực hiện gói nạp. Sau khi đơn hoàn thành, hệ thống tự động xóa thông tin mật khẩu nhạy cảm.
+                        </p>
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <!-- GROUP 2: NẠP GAME & CATALOG -->
+        <section class="faq-group" id="topup" data-category="topup" aria-labelledby="headingTopup">
+            <div class="faq-group-header">
+                <span class="faq-group-bar"></span>
+                <div class="faq-group-title-wrap">
+                    <span class="faq-group-kicker">MỤC 02</span>
+                    <h2 class="faq-group-title" id="headingTopup">Nạp Game &amp; Đặt Gói Tốc Độ</h2>
+                </div>
+            </div>
+
+            <div class="faq-list">
+                <details class="faq-item">
+                    <summary class="faq-summary">
+                        <div class="faq-summary-left">
+                            <span class="faq-q-badge">04</span>
+                            <span class="faq-question-text">Namcumz hiện đang nhận nạp những tựa game nào?</span>
+                        </div>
+                        <i class="fas fa-chevron-down faq-chevron"></i>
+                    </summary>
+                    <div class="faq-answer">
+                        <p>
+                            Shop hiện hỗ trợ đầy đủ các tựa game hot nhất của HoYoverse &amp; Kuro Games:
+                        </p>
+                        <p>
+                            • <strong>Genshin Impact</strong> (Đá Sáng Thế, Không Nguyệt Chúc Phúc, Nhật Ký Hành Trình)<br>
+                            • <strong>Honkai: Star Rail</strong> (Mộng Cảnh, Express Supply Pass, Nameless Glory)<br>
+                            • <strong>Zenless Zone Zero</strong> (Polychrome, Thẻ Tháng Ổn Định)<br>
+                            • <strong>Wuthering Waves</strong> (Astrite, Lunite Subscription)
+                        </p>
+                        <p>
+                            Bạn có thể bấm vào <a href="/#recharge-game-list">Danh mục Nạp Game tại Trang chủ</a> để xem chi tiết từng gói và bảng giá chiết khấu.
+                        </p>
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary class="faq-summary">
+                        <div class="faq-summary-left">
+                            <span class="faq-q-badge">05</span>
+                            <span class="faq-question-text">Đơn nạp Login cần cung cấp những thông tin gì?</span>
+                        </div>
+                        <i class="fas fa-chevron-down faq-chevron"></i>
+                    </summary>
+                    <div class="faq-answer">
+                        <p>
+                            Khi tạo đơn Nạp Login, bạn chỉ cần điền:
+                        </p>
+                        <p>
+                            1. <strong>Tài khoản &amp; Mật khẩu game</strong> (Hoyoverse / Google / Khác).<br>
+                            2. <strong>UID Ingame</strong> (bắt buộc để shop kiểm tra đúng tài khoản trước khi nạp).<br>
+                            3. <strong>Máy chủ (Server)</strong>: Asia, America, Europe hoặc TW/HK/MO.<br>
+                            4. <strong>Số điện thoại / Zalo</strong> để shop liên hệ xin mã OTP xác thực thiết bị mới (nếu có).
+                        </p>
+                        <div class="faq-callout faq-callout-security">
+                            <i class="fas fa-check-circle"></i>
+                            <div>
+                                Cam kết chỉ login vào game để nạp tiền, tuyệt đối không đụng chạm vào tài nguyên, vũ khí hay nhân vật trong game của khách hàng.
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary class="faq-summary">
+                        <div class="faq-summary-left">
+                            <span class="faq-q-badge">06</span>
+                            <span class="faq-question-text">Thời gian hoàn thành đơn nạp game là bao lâu?</span>
+                        </div>
+                        <i class="fas fa-chevron-down faq-chevron"></i>
+                    </summary>
+                    <div class="faq-answer">
+                        <p>
+                            Thông thường mỗi gói nạp hoàn thành từ <strong>15 đến 30 phút</strong> sau khi nhận mã OTP từ quý khách. Vào những ngày đầu ra mắt bản cập nhật hoặc banner mới, thời gian có thể kéo dài hơn một chút do lượng đơn tăng đột biến.
+                        </p>
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary class="faq-summary">
+                        <div class="faq-summary-left">
+                            <span class="faq-q-badge">07</span>
+                            <span class="faq-question-text">Giá niêm yết trên website có phát sinh phụ phí không?</span>
+                        </div>
+                        <i class="fas fa-chevron-down faq-chevron"></i>
+                    </summary>
+                    <div class="faq-answer">
+                        <p>
+                            <strong>Hoàn toàn không.</strong> Giá hiển thị tại màn hình tóm tắt là giá trọn gói cuối cùng, không phụ thu bất kỳ khoản phí nào khác. Nếu bạn có mã giảm giá (coupon), giá thanh toán sẽ được giảm trực tiếp trên tổng đơn.
+                        </p>
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <!-- GROUP 3: CÀY THUÊ & DỊCH VỤ -->
+        <section class="faq-group" id="service" data-category="service" aria-labelledby="headingService">
+            <div class="faq-group-header">
+                <span class="faq-group-bar"></span>
+                <div class="faq-group-title-wrap">
+                    <span class="faq-group-kicker">MỤC 03</span>
+                    <h2 class="faq-group-title" id="headingService">Dịch Vụ Cày Thuê &amp; Theo Dõi Đơn</h2>
+                </div>
+            </div>
+
+            <div class="faq-list">
+                <details class="faq-item">
+                    <summary class="faq-summary">
+                        <div class="faq-summary-left">
+                            <span class="faq-q-badge">08</span>
+                            <span class="faq-question-text">Namcumz nhận cày thuê những nội dung nào?</span>
+                        </div>
+                        <i class="fas fa-chevron-down faq-chevron"></i>
+                    </summary>
+                    <div class="faq-answer">
+                        <p>
+                            Shop cung cấp dịch vụ cày thuê chuyên nghiệp cho Genshin Impact và các game tương tự:
+                        </p>
+                        <p>
+                            • <strong>Khám phá bản đồ</strong>: Full 100% rương, Thần Đồng, Cơ Quan, Nhiệm vụ Thế Giới.<br>
+                            • <strong>Nội dung thử thách</strong>: La Hoàn Thâm Cảnh (Abyss 36 sao), Nhà Hát Ảo Tưởng (Imaginarium Theater).<br>
+                            • <strong>Cày tài nguyên</strong>: Farm nguyên liệu đột phá nhân vật, Thánh Di Vật, Điểm Rèn Luyện.<br>
+                            • <strong>Chăm sóc tài khoản ngày / tuần / tháng</strong>: Xả nhựa, làm ủy thác hàng ngày, hoàn thành Battle Pass.
+                        </p>
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary class="faq-summary">
+                        <div class="faq-summary-left">
+                            <span class="faq-q-badge">09</span>
+                            <span class="faq-question-text">Làm sao để tôi theo dõi tiến độ cày thuê của mình?</span>
+                        </div>
+                        <i class="fas fa-chevron-down faq-chevron"></i>
+                    </summary>
+                    <div class="faq-answer">
+                        <p>
+                            Sau khi tạo đơn, bạn có thể truy cập trang <a href="/dashboard.html">Quản Lý Đơn Hàng</a>. Tại đây bạn sẽ thấy tiến độ thực hiện theo tỷ lệ phần trăm (%), nhật ký cập nhật của Booster, hình ảnh nghiệm thu thực tế và trạng thái thanh toán theo thời gian thực.
+                        </p>
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary class="faq-summary">
+                        <div class="faq-summary-left">
+                            <span class="faq-q-badge">10</span>
+                            <span class="faq-question-text">Tôi có thể trao đổi trực tiếp với người nhận cày đơn không?</span>
+                        </div>
+                        <i class="fas fa-chevron-down faq-chevron"></i>
+                    </summary>
+                    <div class="faq-answer">
+                        <p>
+                            Có. Mỗi đơn hàng trong hệ thống đều có khung <strong>Live Chat Đơn Hàng</strong> riêng biệt. Bạn có thể nhắn tin dặn dò thời gian đăng nhập, yêu cầu đặc biệt hoặc gửi ảnh trực tiếp cho Booster phụ trách mà không cần qua trung gian.
+                        </p>
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <!-- GROUP 4: THANH TOÁN & BẢO MẬT -->
+        <section class="faq-group" id="safety" data-category="safety" aria-labelledby="headingSafety">
+            <div class="faq-group-header">
+                <span class="faq-group-bar"></span>
+                <div class="faq-group-title-wrap">
+                    <span class="faq-group-kicker">MỤC 04</span>
+                    <h2 class="faq-group-title" id="headingSafety">Thanh Toán &amp; Cam Kết An Toàn</h2>
+                </div>
+            </div>
+
+            <div class="faq-list">
+                <details class="faq-item">
+                    <summary class="faq-summary">
+                        <div class="faq-summary-left">
+                            <span class="faq-q-badge">11</span>
+                            <span class="faq-question-text">Shop hỗ trợ những hình thức thanh toán nào?</span>
+                        </div>
+                        <i class="fas fa-chevron-down faq-chevron"></i>
+                    </summary>
+                    <div class="faq-answer">
+                        <p>
+                            Shop tích hợp cổng nạp <strong>VietQR Tự Động 24/7</strong>:
+                        </p>
+                        <p>
+                            • Quét mã VietQR bằng bất kỳ ứng dụng ngân hàng nào (Vietcombank, MB Bank, Techcombank, ACB...).<br>
+                            • Hệ thống tự động ghi nhận thanh toán và cộng số dư/kích hoạt đơn trong vòng <strong>5 - 15 giây</strong>.<br>
+                            • Không mất phí trung gian, kiểm tra giao dịch an toàn 100%.
+                        </p>
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary class="faq-summary">
+                        <div class="faq-summary-left">
+                            <span class="faq-q-badge">12</span>
+                            <span class="faq-question-text">Chính sách bảo hành và đền bù tài khoản như thế nào?</span>
+                        </div>
+                        <i class="fas fa-chevron-down faq-chevron"></i>
+                    </summary>
+                    <div class="faq-answer">
+                        <p>
+                            <strong>Cam kết đền bù 100%</strong> giá trị tài khoản nếu xảy ra bất kỳ sự cố nào liên quan đến âm đá, khóa tài khoản do lỗi từ phía gói nạp của shop. Nguồn nạp được thanh toán qua thẻ ngân hàng và hóa đơn chính ngạch của HoYoverse/Kuro Games, nói không với thẻ bẩn (cc chùa).
+                        </p>
+                        <div class="faq-callout faq-callout-security">
+                            <i class="fas fa-certificate"></i>
+                            <div>
+                                Xem chi tiết tại trang <a href="/privacy.html">Bảo Mật &amp; Cam Kết Dịch Vụ</a> của chúng tôi.
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <details class="faq-item">
+                    <summary class="faq-summary">
+                        <div class="faq-summary-left">
+                            <span class="faq-q-badge">13</span>
+                            <span class="faq-question-text">Tôi cần hỗ trợ nhanh hoặc tư vấn thì liên hệ qua đâu?</span>
+                        </div>
+                        <i class="fas fa-chevron-down faq-chevron"></i>
+                    </summary>
+                    <div class="faq-answer">
+                        <p>
+                            Bạn có thể liên hệ trực tiếp qua các kênh CSKH chính thức:
+                        </p>
+                        <p>
+                            • <strong>Zalo Hotline 1</strong>: <a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">0763.550.673</a> (Admin chính)<br>
+                            • <strong>Zalo Hotline 2</strong>: <a href="https://zalo.me/0377415507" target="_blank" rel="noopener noreferrer">0377.415.507</a> (Tư vấn kỹ thuật)<br>
+                            • <strong>Thời gian hoạt động</strong>: 07:00 – 23:00 hàng ngày (kể cả Thứ Bảy, Chủ Nhật và ngày Lễ).
+                        </p>
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <!-- 5. BOTTOM CTA BLOCK -->
+        <section class="faq-cta-card">
+            <div class="faq-cta-text">
+                <h3>Chưa tìm thấy câu trả lời bạn cần?</h3>
+                <p>Đội ngũ CSKH NAMCUMZ luôn túc trực 24/7 để tư vấn và hỗ trợ xử lý mọi yêu cầu của bạn.</p>
+            </div>
+            <div class="faq-cta-buttons">
+                <a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer" class="faq-btn-zalo">
+                    <i class="fas fa-comment-dots"></i> Chat Zalo CSKH
+                </a>
+                <a href="/dashboard.html" class="faq-btn-track">
+                    <i class="fas fa-search"></i> Tra Cứu Đơn Hàng
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ================= DUCKSTREAMER HUD FOOTER ================= -->
+    <footer class="duck-footer" id="duck-footer" role="contentinfo">
+        <div class="duck-footer-glow-line"></div>
+        <div class="container footer-content" style="max-width: 1240px; margin: 0 auto; padding: 40px 20px 20px;">
+            <div class="footer-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 32px;">
+                
+                <!-- Col 1: Brand & Socials -->
+                <div class="footer-col brand-col">
+                    <div class="footer-brand-wrap" style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                        <img src="/assets/images/duck/footer-brand.png" alt="DUCKSTREAMER.STORE" style="height: 38px; object-fit: contain;" onerror="this.src='/assets/images/logo.webp'">
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.6; margin-bottom: 16px;">
+                        Cung cấp giải pháp cày thuê &amp; nạp game uy tín, hệ thống tự động 24/7, giao dịch an toàn - bảo mật tuyệt đối. Đồng hành cùng game thủ tối ưu trải nghiệm và chinh phục mọi đỉnh cao thế giới ảo.
+                    </p>
+                    <div class="footer-badges" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;">
+                        <span class="f-badge"><i class="fas fa-shield-alt"></i> SSL 256-BIT</span>
+                        <span class="f-badge"><i class="fas fa-bolt"></i> TỰ ĐỘNG 24/7</span>
+                        <span class="f-badge"><i class="fas fa-lock"></i> 100% BẢO MẬT</span>
+                    </div>
+                    <div class="footer-socials" style="display: flex; gap: 10px;">
+                        <a href="#" class="f-social-btn" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="f-social-btn" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                        <a href="#" class="f-social-btn" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="f-social-btn" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                    </div>
+                </div>
+
+                <!-- Col 2: Services & Policies -->
+                <div class="footer-col links-col">
+                    <h3 class="footer-heading" style="color: #fff; font-size: 0.95rem; font-weight: 800; text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                        <span style="display: inline-block; width: 3px; height: 14px; background: #00f2fe; border-radius: 2px;"></span> DỊCH VỤ &amp; CHÍNH SÁCH
+                    </h3>
+                    <ul class="footer-links-list" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px;">
+                        <li><a href="/caythue.html"><i class="fas fa-star" style="color: #00f2fe; margin-right: 8px; font-size: 0.75rem;"></i> Cày Thuê Game Hot</a></li>
+                        <li><a href="/#recharge-game-list"><i class="fas fa-gem" style="color: #00f2fe; margin-right: 8px; font-size: 0.75rem;"></i> Dịch Vụ Nạp Game</a></li>
+                        <li><a href="/luu-y.html"><i class="fas fa-wrench" style="color: #00f2fe; margin-right: 8px; font-size: 0.75rem;"></i> Những Điều Cần Lưu Ý</a></li>
+                        <li><a href="/privacy.html"><i class="fas fa-shield-halved" style="color: #00f2fe; margin-right: 8px; font-size: 0.75rem;"></i> Chính Sách Bảo Mật</a></li>
+                        <li><a href="/faq.html"><i class="fas fa-question-circle" style="color: #00f2fe; margin-right: 8px; font-size: 0.75rem;"></i> FAQ - Hỏi Đáp</a></li>
+                        <li><a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer"><i class="fas fa-headset" style="color: #00f2fe; margin-right: 8px; font-size: 0.75rem;"></i> Trung Tâm Hỗ Trợ</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: 24/7 Hotline & Working Hours -->
+                <div class="footer-col contact-col">
+                    <h3 class="footer-heading" style="color: #fff; font-size: 0.95rem; font-weight: 800; text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                        <span style="display: inline-block; width: 3px; height: 14px; background: #00f2fe; border-radius: 2px;"></span> HỖ TRỢ KHÁCH HÀNG 24/7
+                    </h3>
+                    <div class="contact-card" style="margin-bottom: 10px;">
+                        <div class="contact-card-icon" style="background: rgba(0, 242, 254, 0.1); border-color: rgba(0, 242, 254, 0.3); color: #00f2fe;"><i class="fas fa-phone-alt"></i></div>
+                        <div>
+                            <span class="contact-label">HOTLINE HỖ TRỢ</span>
+                            <span class="contact-val">0377.415.507 &amp; 0789.239.156</span>
+                        </div>
+                    </div>
+                    <div class="contact-card" style="margin-bottom: 10px;">
+                        <div class="contact-card-icon" style="background: rgba(247, 37, 133, 0.1); border-color: rgba(247, 37, 133, 0.3); color: #f72585;"><i class="fas fa-comment"></i></div>
+                        <div>
+                            <span class="contact-label">ZALO TƯ VẤN NHANH</span>
+                            <span class="contact-val">0377.415.507 &amp; 0789.239.156</span>
+                        </div>
+                    </div>
+                    <div class="contact-card hours-card">
+                        <div class="contact-card-icon" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: #10b981;"><i class="fas fa-clock"></i></div>
+                        <div>
+                            <span class="contact-label">GIỜ LÀM VIỆC: 07:00 - 23:00</span>
+                            <span class="contact-status" style="color: #10b981; font-weight: 700; font-size: 0.85rem;"><i class="fas fa-circle" style="font-size: 0.55rem; margin-right: 4px;"></i> ĐANG MỞ CỬA</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Copyright -->
+            <div class="footer-bottom container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.06);">
+                <p style="margin: 0; color: var(--text-muted); font-size: 0.85rem;">
+                    &copy; 2026 <b>Duck Streamer Shop</b>. All rights reserved.
+                </p>
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-family: var(--font-hud); color: #10b981;">
+                    <i class="fas fa-circle" style="font-size: 0.55rem; box-shadow: 0 0 8px #10b981;"></i> HỆ THỐNG HOẠT ĐỘNG BÌNH THƯỜNG
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ================= FLOATING CSKH WIDGET ================= -->
+    <div class="duck-cskh-float" id="duckCskhFloat" style="position: fixed; bottom: 25px; right: 25px; z-index: 999; display: flex; align-items: center; gap: 10px;">
+        <div class="duck-cskh-bubble" id="duckCskhBubble" style="background: rgba(11, 15, 29, 0.95); border: 1px solid rgba(0, 242, 254, 0.35); border-radius: 999px; padding: 8px 16px; color: #fff; font-size: 0.8rem; font-weight: 600; box-shadow: 0 4px 20px rgba(0,0,0,0.5); backdrop-filter: blur(10px); display: flex; align-items: center; gap: 8px;">
+            <span>🦆 Cần hỗ trợ cày game / nạp tiền? Chat với Vịt nhé!</span>
+            <button type="button" onclick="document.getElementById('duckCskhBubble').style.display='none'" style="background: transparent; border: none; color: #94a3b8; cursor: pointer; padding: 0; font-size: 0.85rem;">✕</button>
+        </div>
+        <a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer" class="duck-cskh-btn" style="width: 52px; height: 52px; border-radius: 50%; border: 2px solid #00f2fe; box-shadow: 0 0 20px rgba(0, 242, 254, 0.5); overflow: hidden; display: block; position: relative; cursor: pointer; transition: transform 0.2s;" aria-label="Chat với CSKH Vịt">
+            <img src="/assets/images/duck/avt.jpg" alt="Vịt CSKH" style="width: 100%; height: 100%; object-fit: cover;">
+            <span class="duck-online-dot" style="position: absolute; bottom: 2px; right: 2px; width: 12px; height: 12px; border-radius: 50%; background: #10b981; border: 2px solid #0b0f1d;"></span>
+            <span class="duck-unread-badge" style="position: absolute; top: 0; right: 0; background: #ff2a6d; color: #fff; font-size: 9px; font-weight: 800; border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center;">1</span>
+        </a>
+    </div>
+
+    <!-- ================= INTERACTIVE FAQ JAVASCRIPT ================= -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('faqSearchInput');
+        const clearBtn = document.getElementById('faqSearchClear');
+        const pillButtons = document.querySelectorAll('.faq-pill-btn');
+        const faqGroups = document.querySelectorAll('.faq-group');
+        const faqItems = document.querySelectorAll('.faq-item');
+        const emptyState = document.getElementById('faqEmptyState');
+
+        let currentCategory = 'all';
+
+        // 1. Real-time Search Filter
+        function filterFaq() {
+            const query = (searchInput.value || '').trim().toLowerCase();
+            let visibleCount = 0;
+
+            if (query.length > 0) {
+                clearBtn.style.display = 'block';
+            } else {
+                clearBtn.style.display = 'none';
+            }
+
+            faqGroups.forEach(group => {
+                const groupCategory = group.dataset.category;
+                const matchCategory = (currentCategory === 'all' || currentCategory === groupCategory);
+                let groupVisibleItems = 0;
+
+                const items = group.querySelectorAll('.faq-item');
+                items.forEach(item => {
+                    const text = item.textContent.toLowerCase();
+                    const matchesQuery = query === '' || text.includes(query);
+
+                    if (matchCategory && matchesQuery) {
+                        item.style.display = '';
+                        groupVisibleItems++;
+                        visibleCount++;
+                        // Auto-open if query is specific
+                        if (query.length >= 3) {
+                            item.setAttribute('open', '');
+                        }
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                if (groupVisibleItems > 0) {
+                    group.style.display = '';
+                } else {
+                    group.style.display = 'none';
+                }
+            });
+
+            if (visibleCount === 0) {
+                emptyState.style.display = 'block';
+            } else {
+                emptyState.style.display = 'none';
+            }
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('input', filterFaq);
+        }
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function() {
+                searchInput.value = '';
+                filterFaq();
+                searchInput.focus();
+            });
+        }
+
+        // 2. Category Filter Pills
+        pillButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                pillButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentCategory = this.dataset.filter;
+                filterFaq();
+
+                // Smooth scroll to target group if not 'all'
+                if (currentCategory !== 'all') {
+                    const targetEl = document.getElementById(currentCategory);
+                    if (targetEl) {
+                        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            });
+        });
+
+        // 3. Smooth Exclusive Accordion: Auto-scroll when opening
+        faqItems.forEach(item => {
+            item.addEventListener('toggle', function() {
+                if (this.open) {
+                    const rect = this.getBoundingClientRect();
+                    if (rect.top < 80) {
+                        this.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>
