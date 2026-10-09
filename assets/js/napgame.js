@@ -381,12 +381,14 @@ async function initDetailPage() {
 
     const requestedPackageId = params.get('package') || '';
     let packages = (GAME_PACKAGES[themeGameId] || []).slice();
+    if (!packages.length) {
+        renderUnsupportedGame(gameInfo);
+        return;
+    }
     const restoredPackage = requestedPackageId ? packages.find(pkg => pkg.id === requestedPackageId) : null;
     currentSelectedPackage = restoredPackage || null;
-    if (packages.length) {
-        renderPackages(packages, 'all');
-        updateCart();
-    }
+    renderPackages(packages, 'all');
+    updateCart();
 
     try {
         const livePackages = await loadActivePackages(gameInfo.name);
