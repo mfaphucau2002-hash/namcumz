@@ -134,7 +134,7 @@
         <p style="margin-bottom: 12px;">Đơn hàng đã hết thời gian hiệu lực 15 phút. Vui lòng không tiếp tục chuyển khoản.</p>
         <div class="chk-status-actions">
           <a href="/napgame.html" class="chk-btn-retry"><i class="fa-solid fa-rotate-right"></i> Tạo lại đơn hàng</a>
-          <a href="/dashboard.html${currentOrder?.id ? `?order=${encodeURIComponent(currentOrder.id)}` : ''}" class="chk-btn-outline"><i class="fa-solid fa-receipt"></i> Xem chi tiết đơn</a>
+          <a href="/dashboard.html${currentOrder?.id ? `?order=${encodeURIComponent(currentOrder.id)}&section=chat` : ''}" class="chk-btn-outline"><i class="fa-solid fa-receipt"></i> Xem chi tiết đơn</a>
           <a href="/index.html" class="chk-btn-outline"><i class="fa-solid fa-house"></i> Về trang chủ</a>
         </div>
       `;
@@ -168,7 +168,7 @@
         <p style="margin-bottom: 12px;">Đơn hàng này đã được đánh dấu hủy trong hệ thống.</p>
         <div class="chk-status-actions">
           <a href="/napgame.html" class="chk-btn-retry"><i class="fa-solid fa-plus"></i> Đặt đơn mới</a>
-          <a href="/dashboard.html${currentOrder?.id ? `?order=${encodeURIComponent(currentOrder.id)}` : ''}" class="chk-btn-outline"><i class="fa-solid fa-receipt"></i> Xem đơn hàng</a>
+          <a href="/dashboard.html${currentOrder?.id ? `?order=${encodeURIComponent(currentOrder.id)}&section=chat` : ''}" class="chk-btn-outline"><i class="fa-solid fa-receipt"></i> Xem đơn hàng</a>
           <a href="/index.html" class="chk-btn-outline"><i class="fa-solid fa-house"></i> Về trang chủ</a>
         </div>
       `;
@@ -276,7 +276,7 @@
     // Update Order Detail link
     const viewDetailLink = document.getElementById('chkViewOrderDetail');
     if (viewDetailLink) {
-      viewDetailLink.href = `/dashboard.html?order=${encodeURIComponent(order.id || order.order_code)}`;
+      viewDetailLink.href = `/dashboard.html?order=${encodeURIComponent(order.id || order.order_code)}&section=chat`;
     }
 
     // 5. Expiry Countdown
@@ -348,8 +348,8 @@
             <span style="color: var(--success, #10b981);">ĐÃ THANH TOÁN (PAID)</span>
           </div>
         </div>
-        <a href="dashboard.html?order=${encodeURIComponent(order.id || order.order_code)}" class="chk-btn-primary">
-          <i class="fa-solid fa-table-columns" aria-hidden="true"></i> Theo dõi đơn hàng trong Bảng điều khiển
+        <a href="dashboard.html?order=${encodeURIComponent(order.id || order.order_code)}&section=chat" class="chk-btn-primary">
+          <i class="fa-solid fa-table-columns" aria-hidden="true"></i> Mở cuộc trò chuyện của đơn
         </a>
       </div>
     `;
@@ -494,7 +494,7 @@
           <p style="margin-bottom: 12px;">Vui lòng kiểm tra lại đường liên kết hoặc quay về trang chủ.</p>
           <div class="chk-status-actions">
             <a href="/index.html" class="chk-btn-outline"><i class="fa-solid fa-house"></i> Về trang chủ</a>
-            <a href="/dashboard.html" class="chk-btn-outline"><i class="fa-solid fa-receipt"></i> Bảng điều khiển</a>
+            <a href="/profile.html#orders" class="chk-btn-outline"><i class="fa-solid fa-receipt"></i> Hồ sơ / Đơn hàng</a>
           </div>
         `;
       }

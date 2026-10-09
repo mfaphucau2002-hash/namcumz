@@ -506,7 +506,7 @@
     });
 
     // Expose profileOrderDestination for order routing
-    window.profileOrderDestination = id => typeof id === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id) ? '/dashboard.html?order=' + encodeURIComponent(id) : '';
+    window.profileOrderDestination = id => typeof id === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id) ? '/dashboard.html?order=' + encodeURIComponent(id) + '&section=chat' : '';
 
     // Handle deep-linking via hash
     const handleHash = () => {
@@ -774,8 +774,8 @@
               <i class="fa-solid fa-qrcode"></i> Quét mã VietQR thanh toán ngay
             </a>
           ` : ''}
-          <a href="${(typeof window.profileOrderDestination === 'function' ? window.profileOrderDestination(order.id) : '') || `/dashboard.html?order=${encodeURIComponent(order.id || order.order_code)}`}" class="hub-wallet-btn-history" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
-            <i class="fa-solid fa-comments"></i> Mở Bảng điều khiển &amp; Trao đổi chi tiết ↗
+          <a href="${(typeof window.profileOrderDestination === 'function' ? window.profileOrderDestination(order.id) : '') || `/dashboard.html?order=${encodeURIComponent(order.id || order.order_code)}&section=chat`}" class="hub-wallet-btn-history" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <i class="fa-solid fa-comments"></i> Mở cuộc trò chuyện của đơn ↗
           </a>
         </div>
       </div>

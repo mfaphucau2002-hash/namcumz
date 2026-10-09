@@ -1,7 +1,7 @@
 // Same-origin detail destinations and keyboard-accessible account panels.
 (() => {
   const keys = ['my-orders', 'claim-order', 'settings'];
-  window.profileOrderDestination = id => typeof id === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id) ? '/dashboard?order=' + encodeURIComponent(id) : '';
+  window.profileOrderDestination = id => typeof id === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id) ? '/dashboard?order=' + encodeURIComponent(id) + '&section=chat' : '';
   window.switchTab = (key, trigger, updateUrl = true) => {
     if (!keys.includes(key)) return;
     const target = document.getElementById('tab-' + key);

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Theo dõi tiến độ, trao đổi và quản lý đơn Genshin tại Namcumz.">
     <meta name="robots" content="noindex, nofollow, noarchive">
-    <title>NAMCUMZ - Bảng Điều Khiển</title>
+    <title>NAMCUMZ - Trao đổi đơn hàng</title>
 <link rel="stylesheet" href="assets/css/design-tokens.css?v=20261004-mobile3">
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/jpeg" href="/assets/images/logo.jpg">
@@ -14,7 +14,7 @@
     <!-- CSS -->
     <link rel="stylesheet" href="assets/css/style.css">
 
-    <link rel="stylesheet" href="assets/css/ui.css?v=20261005-request13">
+    <link rel="stylesheet" href="assets/css/ui.css?v=20261010-profile-orders1">
 <link rel="stylesheet" href="/assets/css/order-request.css?v=20261005-request13">
 </head>
 <body class="app-page dashboard-page">
@@ -35,7 +35,7 @@
                 <a href="/napgame.html" class="nav-link" style="color: #f59e0b; font-weight: 700;">
                     <i class="fa-solid fa-bolt"></i> Nạp Game
                 </a>
-                <a href="/dashboard.html" class="nav-link active">
+                <a id="dashboardNavLink" href="/dashboard.html" class="nav-link active">
                     <i class="fa-solid fa-chart-line"></i> Bảng điều khiển
                 </a>
                 <a href="/checkscam.html" class="nav-link scam"><i class="fa-solid fa-shield-virus"></i> Check Scam</a>
@@ -90,7 +90,7 @@
         <div class="dashboard-header-row animate-on-load" style="animation-delay: 0.1s;">
             <div style="display: flex; flex-direction: column;">
                 <div class="dashboard-title-group">
-                    <h1 class="dashboard-title" id="dashboardTitle">Đơn hàng của bạn</h1>
+                    <h1 class="dashboard-title" id="dashboardTitle">Chi tiết đơn hàng</h1>
                     <span class="order-count-badge" id="totalOrdersBadge">0 đơn</span>
                 </div>
                 <p class="dashboard-intro" id="dynamicSlogan">Đăng nhập để xem đơn, nhận cập nhật và trao đổi với shop.</p>
@@ -457,7 +457,7 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="assets/js/runtime-config.js"></script>
     <script src="assets/js/order-api.js"></script>
-    <script src="assets/js/app.js?v=20261005-request13"></script>
+    <script src="assets/js/app.js?v=20261010-profile-orders1"></script>
     <script src="assets/js/ai-copilot.js"></script>
 <script src="/assets/js/order-request.js?v=20261005-request13" defer></script>
 </body>

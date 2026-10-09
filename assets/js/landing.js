@@ -9,7 +9,7 @@ function updateLandingAccountLinks() {
         actions.innerHTML = '';
         const accountLink = document.createElement('a');
         accountLink.className = 'lp-button lp-button-primary lp-header-cta';
-        accountLink.href = '/dashboard.html';
+        accountLink.href = '/profile.html#orders';
         const user = window.currentUser || window.NAMCUMZ_PUBLIC_USER;
         const cachedName = localStorage.getItem('userId') === user.id ? localStorage.getItem('username') : '';
         accountLink.textContent = (cachedName || user.user_metadata?.display_name || 'Tài khoản') + ' / Đơn hàng';
@@ -25,7 +25,7 @@ function updateLandingAccountLinks() {
       }
     }
     if (mobileAccount) {
-      mobileAccount.href = isLoggedIn ? '/dashboard.html' : '/login.html?form=login';
+      mobileAccount.href = isLoggedIn ? '/profile.html#orders' : '/login.html?form=login';
       mobileAccount.textContent = isLoggedIn ? 'Tài khoản / Đơn hàng' : 'Đăng nhập / Tạo tài khoản';
     }
     document.querySelectorAll('[data-order-link]').forEach((link) => {

@@ -472,6 +472,14 @@ window.openNotificationDestination = async function() {
     }
 };
 
+function redirectCustomerDashboardIndex() {
+    if (!['/dashboard', '/dashboard.html'].includes(window.location.pathname)) return false;
+    const query = new URLSearchParams(window.location.search);
+    if (query.has('order') || query.get('action') === 'create-order' || ['support', 'notifications'].includes(query.get('section'))) return false;
+    if (['booster', 'admin', 'super_admin'].includes(localStorage.getItem('userRole') || verifiedRole)) return false;
+    window.location.replace('/profile.html#orders');
+    return true;
+}
 window.applyFilters = function() {
     const searchEl = document.getElementById('searchInput');
     const serviceEl = document.getElementById('filterService');
@@ -481,7 +489,9 @@ window.applyFilters = function() {
     currentService = serviceEl ? serviceEl.value : 'all';
     currentSort = sortEl ? sortEl.value : 'newest';
     
+    const focusedOrderId = new URLSearchParams(window.location.search).get('order');
     let filtered = allOrders.filter(order => {
+        if (focusedOrderId && order.id !== focusedOrderId) return false;
         if (currentTab === 'cancelled') {
             if (!order.cancelled) return false;
         } else {
@@ -834,6 +844,27 @@ window.updateDashboardStats = function(orders) {
     sidebar.hidden = !isAuthenticated;
 
     const userRole = localStorage.getItem('userRole') || 'guest';
+    const dashboardQuery = new URLSearchParams(window.location.search);
+    const isOrderWorkspace = ['/dashboard', '/dashboard.html'].includes(window.location.pathname) && Boolean(dashboardQuery.get('order'));
+    document.body.classList.toggle('dashboard-order-focus', isOrderWorkspace);
+    if (isOrderWorkspace) {
+        const dashboardTitle = document.getElementById('dashboardTitle');
+        const dashboardSlogan = document.getElementById('dynamicSlogan');
+        if (dashboardTitle) dashboardTitle.textContent = 'Chi tiết đơn hàng';
+        if (dashboardSlogan) dashboardSlogan.textContent = 'Theo dõi trạng thái và trao đổi trực tiếp về đơn này.';
+        const dashboardNavLink = document.getElementById('dashboardNavLink');
+        if (dashboardNavLink) {
+            const isStaff = ['booster', 'admin', 'super_admin'].includes(userRole);
+            dashboardNavLink.href = isStaff ? '/dashboard.html' : '/profile.html#orders';
+            dashboardNavLink.textContent = isStaff ? 'Bảng điều khiển' : '← Hồ sơ / Đơn hàng';
+        }
+    } else {
+        const dashboardNavLink = document.getElementById('dashboardNavLink');
+        if (dashboardNavLink && !['booster', 'admin', 'super_admin'].includes(userRole)) {
+            dashboardNavLink.href = '/profile.html#orders';
+            dashboardNavLink.textContent = 'Hồ sơ / Đơn hàng';
+        }
+    }
     const currentUserId = localStorage.getItem('userId');
     const currentUsername = localStorage.getItem('username');
 
@@ -2221,6 +2252,7 @@ async function initSupabaseLogic() {
                 window.history.replaceState({}, '', '/dashboard.html');
                 window.setTimeout(() => window.openCreateOrderModal?.(), 0);
             }
+            if (!window.NAMCUMZ_AUTH_NEXT && !shouldResumeOrder && redirectCustomerDashboardIndex()) return;
             if (typeof window.fetchOrders === 'function') window.fetchOrders();
         } else if (event === 'SIGNED_OUT' || (event === 'INITIAL_SESSION' && !session)) {
             localStorage.removeItem('isLoggedIn');
@@ -2230,6 +2262,7 @@ async function initSupabaseLogic() {
             currentUser = null;
             verifiedRole = 'guest';
             setupNavbar();
+            if (redirectCustomerDashboardIndex()) return;
             if (typeof window.fetchOrders === 'function') window.fetchOrders();
         }
         }, 0);
