@@ -1,6 +1,6 @@
 /**
- * DUCK STREAMER SHOP — HOMEPAGE CORE SCRIPT
- * High-performance ambient particles, Banner slider, Podium, Live ticker, Eco mode, Widgets
+ * NAMCUMZ — HOMEPAGE CORE SCRIPT
+ * Ambient particles, game artwork carousel, Eco mode, and support widgets
  */
 
 (function() {
@@ -138,83 +138,16 @@
         }
     }
 
-    /* ================= 4. LIVE TICKER RUNNER ================= */
-    function initOrdersTicker() {
-        const track = document.getElementById('ticker-marquee-track');
-        if (!track) return;
-
-        // Default verified orders from footage
-        const orders = [
-            { user: "TU***0", action: "vừa mua", service: "[NẠP GAME] Không Nguyệt Chúc Phúc", price: "168.300đ", time: "Hôm qua", icon: "fa-gem" },
-            { user: "MI***8", action: "vừa mua", service: "[NẠP GAME] Nhật Ký Hành Trình Trân Châu", price: "168.300đ", time: "Hôm qua", icon: "fa-gem" },
-            { user: "SI***3", action: "vừa mua", service: "[CÀY THUÊ] Thám Hiểm Bản Đồ 100%", price: "250.000đ", time: "Hôm qua", icon: "fa-gamepad" },
-            { user: "KH***5", action: "vừa mua", service: "[NẠP GAME] 6480 Đá Sáng Thế", price: "1.990.000đ", time: "1 giờ trước", icon: "fa-gem" },
-            { user: "US***7", action: "vừa mua", service: "[CÀY THUÊ] La Hoàn Thâm Cảnh 36★", price: "70.000đ", time: "3 giờ trước", icon: "fa-gamepad" },
-            { user: "VI***1", action: "vừa mua", service: "[NẠP GAME] Welkin Moon x2", price: "198.000đ", time: "5 giờ trước", icon: "fa-gem" }
-        ];
-
-        function renderItem(o) {
-            return `
-                <div class="ticker-order-item">
-                    <span class="ticker-user-pill"><i class="fas fa-shield-alt"></i> ${o.user}</span>
-                    <span class="order-action-txt" style="color: var(--text-muted); font-size: 0.85rem;">${o.action}</span>
-                    <span class="ticker-service-title" title="${o.service}"><i class="fas ${o.icon}" style="color: var(--neon-cyan);"></i> ${o.service}</span>
-                    <div class="ticker-price-box"><i class="fas fa-coins" style="color: #fbbf24; font-size: 0.85rem;"></i> ${o.price}</div>
-                    <span class="ticker-time-tag"><i class="far fa-clock"></i> ${o.time}</span>
-                    <span class="ticker-divider">✦</span>
-                </div>
-            `;
-        }
-
-        const itemsHtml = orders.map(renderItem).join('');
-        // Duplicate twice for seamless -50% marquee loop
-        track.innerHTML = itemsHtml + itemsHtml;
-
-        document.addEventListener('visibilitychange', () => {
-            if (track) track.style.animationPlayState = document.hidden ? 'paused' : 'running';
-        });
-    }
-
-    /* ================= 5. FLASH SALE COUNTDOWN WIDGET ================= */
-    function initFlashSaleWidget() {
-        const widget = document.getElementById('duck-flash-sale-pill-widget');
-        const timerEl = document.getElementById('fsw-timer');
-        if (!widget || !timerEl) return;
-
-        let totalSeconds = 1 * 3600 + 37 * 60 + 41; // 01:37:41
-
-        function updateDisplay() {
-            if (totalSeconds <= 0) {
-                totalSeconds = 2 * 3600;
-            }
-            const h = Math.floor(totalSeconds / 3600);
-            const m = Math.floor((totalSeconds % 3600) / 60);
-            const s = totalSeconds % 60;
-            timerEl.textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-            totalSeconds--;
-        }
-
-        updateDisplay();
-        setInterval(updateDisplay, 1000);
-
-        widget.classList.add('active');
-
-        window.closeFlashSaleWidget = function(e) {
-            if (e) e.stopPropagation();
-            widget.style.display = 'none';
-        };
-    }
-
     /* ================= 6. FLOATING SUPPORT WIDGET ================= */
-    window.closeDuckAITooltip = function(e) {
+    window.closeNamcumzSupportTooltip = function(e) {
         if (e) e.stopPropagation();
-        const tooltip = document.getElementById('duck-ai-tooltip');
+        const tooltip = document.getElementById('namcumz-support-tooltip');
         if (tooltip) tooltip.style.display = 'none';
     };
 
-    window.toggleDuckAIWindow = function() {
+    window.toggleNamcumzSupportWindow = function() {
         // Open Zalo customer service
-        window.open('https://zalo.me/0377415507', '_blank');
+        window.open('https://zalo.me/0763550673', '_blank');
     };
 
     /* ================= 7. MOBILE MENU ================= */
@@ -376,8 +309,6 @@
         initAnimeParticles();
         initEcoMode();
         initBannerSlider();
-        initOrdersTicker();
-        initFlashSaleWidget();
         syncAuthState();
     });
 

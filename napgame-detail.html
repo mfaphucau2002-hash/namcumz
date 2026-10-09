@@ -20,7 +20,7 @@
     <nav class="glass-nav" role="navigation" aria-label="Menu chính">
         <a href="/" class="lp-logo" aria-label="NAMCUMZ GAME STORE — Trang chủ">
             <div class="lp-logo-badge">
-                <img src="/assets/images/logo.webp" alt="NAMCUMZ" width="32" height="32" onerror="this.src='/assets/images/duck/avt.jpg'">
+                <img src="/assets/images/logo.webp" alt="NAMCUMZ" width="32" height="32" onerror="this.src='/assets/images/logo.jpg'">
             </div>
             <div class="lp-logo-text">
                 <span class="lp-logo-brand">NAMCUMZ</span>
@@ -307,12 +307,12 @@
 
     <!-- ================= FLOATING CSKH DUCK WIDGET ================= -->
     <div class="duck-ai-floating-btn" id="duck-ai-btn">
-        <div id="duck-ai-tooltip" class="duck-ai-tooltip">
-            <span>🦆 Cần hỗ trợ cày game / nạp tiền? Chat với Vịt nhé!</span>
-            <button type="button" onclick="closeDuckAITooltip(event)" class="duck-tooltip-close" aria-label="Đóng tin nhắn">&times;</button>
+        <div id="namcumz-support-tooltip" class="duck-ai-tooltip">
+            <span>Cần hỗ trợ cày game hoặc nạp tiền? Liên hệ NAMCUMZ nhé!</span>
+            <button type="button" onclick="closeNamcumzSupportTooltip(event)" class="duck-tooltip-close" aria-label="Đóng tin nhắn">&times;</button>
         </div>
-        <div class="duck-ai-avatar-wrap" onclick="toggleDuckAIWindow()">
-            <img class="duck-ai-avatar" src="/assets/images/duck/support_avatar.png" alt="Duck CSKH">
+        <div class="duck-ai-avatar-wrap" onclick="toggleNamcumzSupportWindow()">
+            <img class="duck-ai-avatar" src="/assets/images/logo.webp" alt="NAMCUMZ hỗ trợ khách hàng">
             <span class="duck-ai-online-status-dot"></span>
             <span class="duck-ai-badge">1</span>
         </div>
@@ -324,7 +324,7 @@
             <!-- Col 1: About -->
             <div class="footer-col footer-about">
                 <a class="footer-logo-wrapper" href="/">
-                    <img class="footer-logo-gif" src="/assets/images/duck/duckstore.png" alt="Duck Streamer Shop Logo">
+                    <img class="footer-logo-gif" src="/assets/images/logo.webp" alt="NAMCUMZ Game Store">
                 </a>
                 <p class="footer-desc">
                     Cung cấp giải pháp cày thuê &amp; nạp game uy tín, hệ thống tự động 24/7, giao dịch an toàn - bảo mật tuyệt đối. Đồng hành cùng game thủ tối ưu trải nghiệm và chinh phục mọi đỉnh cao thế giới ảo.
@@ -335,8 +335,6 @@
                     <span class="footer-trust-pill"><i class="fas fa-lock"></i> 100% BẢO MẬT</span>
                 </div>
                 <div class="footer-socials">
-                    <a href="https://www.facebook.com/duckstreamershop/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.tiktok.com/@duckstreamershop" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
                     <a href="https://www.youtube.com/@vtuber_2006" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
                     <a href="https://discord.com/invite/9aGaKU6Fev" target="_blank" rel="noopener noreferrer" aria-label="Discord"><i class="fab fa-discord"></i></a>
                 </div>
@@ -387,7 +385,7 @@
         <!-- Bottom Copyright -->
         <div class="footer-bottom container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.06);">
             <p style="margin: 0; color: var(--text-muted); font-size: 0.85rem;">
-                &copy; 2026 <b>Duck Streamer Shop</b>. All rights reserved.
+                &copy; 2026 <b>NAMCUMZ</b>. All rights reserved.
             </p>
             <div style="display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-family: var(--font-hud); color: #10b981;">
                 <i class="fas fa-circle" style="font-size: 0.55rem; box-shadow: 0 0 8px #10b981;"></i> HỆ THỐNG HOẠT ĐỘNG BÌNH THƯỜNG
@@ -399,7 +397,7 @@
     <div class="lp-auth-overlay" id="lpAuthOverlay" hidden>
         <section class="lp-auth-dialog" role="dialog" aria-modal="true" aria-labelledby="lpAuthDialogTitle">
             <header class="lp-auth-dialog-header">
-                <h2 id="lpAuthDialogTitle">Tài khoản Duck Streamer Shop</h2>
+                <h2 id="lpAuthDialogTitle">Tài khoản NAMCUMZ</h2>
                 <button class="lp-auth-close" type="button" data-auth-close aria-label="Đóng đăng nhập">&times;</button>
             </header>
             <iframe class="lp-auth-frame" id="lpAuthFrame" title="Đăng nhập hoặc tạo tài khoản" loading="eager" referrerpolicy="same-origin"></iframe>

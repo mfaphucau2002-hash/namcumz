@@ -1,5 +1,5 @@
 /* ==============================================================================
-   DUCK STREAMER SHOP — HOMEPAGE COMPLETE STYLESHEET
+   NAMCUMZ — HOMEPAGE STYLESHEET
    Pixel-Perfect Match from Reference Footage
    ============================================================================== */
 
@@ -4060,13 +4060,15 @@ body.has-vip5-honor-banner .main-content {
                 /* ================= CSS BỐ CỤC V2 (PC) ================= */
                 .donate-layout-v2 {
                     display: grid;
-                    /* Tỷ lệ 7:3 (hoặc 2.3fr 1fr để bên trái cực to, bên phải hẹp như sidebar của sếp image_6db213.jpg) */
-                    grid-template-columns: 2.3fr 1fr;
+                    /* Single-column game art carousel */
+                    grid-template-columns: minmax(0, 1fr);
                     gap: 30px;
+                    max-width: 1280px;
+                    margin-inline: auto;
                     align-items: stretch;
                 }
 
-                /* Bo tròn mạnh và hẹp lại thành Sidebar */
+                /* NAMCUMZ hero carousel */
                 .leaderboard-sidebar {
                     border-radius: 20px !important;
                     border: 1.5px solid rgba(0, 242, 254, 0.18) !important;
@@ -4341,7 +4343,7 @@ body.has-vip5-honor-banner .main-content {
 
 /* --- HTML Style Block 5 --- */
 
-/* ================= CSS CHO DUCK FLOATING AI WIDGET ================= */
+/* ================= CSS CHO NAMCUMZ FLOATING SUPPORT WIDGET ================= */
 @media (prefers-reduced-motion: reduce) {
     *, ::before, ::after {
         animation-duration: 0.01ms !important;
@@ -5542,7 +5544,7 @@ body.has-vip5-honor-banner .main-content {
    THEMES ĐẶC BIỆT RIÊNG BIỆT CHO TỪNG CẤP VIP (1 -> 5)
    ========================================================================== */
 
-/* --- TIER 1: 🥉 VỊT TẬP BƠI (EMERALD MINT) --- */
+/* --- TIER 1: 🥉 THÀNH VIÊN MỚI (EMERALD MINT) --- */
 .vlu-tier-1 .vlu-modal-box {
     border-color: rgba(16, 185, 129, 0.4);
     box-shadow: 0 25px 70px rgba(0, 0, 0, 0.85), 0 0 35px rgba(16, 185, 129, 0.3);
@@ -5567,7 +5569,7 @@ body.has-vip5-honor-banner .main-content {
 }
 .vlu-tier-1 #vlu-unlock-icon { color: #10b981; }
 
-/* --- TIER 2: 🥈 VỊT CHIẾN BINH (CYBER CYAN & SILVER) --- */
+/* --- TIER 2: 🥈 THÀNH VIÊN BẠC (CYBER CYAN & SILVER) --- */
 .vlu-tier-2 .vlu-modal-box {
     border-color: rgba(6, 182, 212, 0.45);
     box-shadow: 0 25px 70px rgba(0, 0, 0, 0.85), 0 0 40px rgba(6, 182, 212, 0.35);
@@ -5592,7 +5594,7 @@ body.has-vip5-honor-banner .main-content {
 }
 .vlu-tier-2 #vlu-unlock-icon { color: #06b6d4; }
 
-/* --- TIER 3: 🥇 VỊT ĐẠI GIA (ROYAL 24K GOLD) --- */
+/* --- TIER 3: 🥇 THÀNH VIÊN VÀNG (ROYAL 24K GOLD) --- */
 .vlu-tier-3 .vlu-modal-box {
     border-color: rgba(234, 179, 8, 0.55);
     box-shadow: 0 25px 75px rgba(0, 0, 0, 0.85), 0 0 45px rgba(234, 179, 8, 0.4);
@@ -5618,7 +5620,7 @@ body.has-vip5-honor-banner .main-content {
 }
 .vlu-tier-3 #vlu-unlock-icon { color: #fde047; }
 
-/* --- TIER 4: 💎 VỊT KIM CƯƠNG (MYSTIC AMETHYST & COSMIC) --- */
+/* --- TIER 4: 💎 THÀNH VIÊN KIM CƯƠNG (MYSTIC AMETHYST & COSMIC) --- */
 .vlu-tier-4 .vlu-modal-box {
     border-color: rgba(168, 85, 247, 0.6);
     box-shadow: 0 25px 80px rgba(0, 0, 0, 0.85), 0 0 50px rgba(168, 85, 247, 0.45);
@@ -5643,7 +5645,7 @@ body.has-vip5-honor-banner .main-content {
 }
 .vlu-tier-4 #vlu-unlock-icon { color: #c084fc; }
 
-/* --- TIER 5: 👑 VỊT THẦN THOẠI (MYTHIC CRIMSON FLAME & HOLOGRAM) --- */
+/* --- TIER 5: 👑 THÀNH VIÊN HUYỀN THOẠI (MYTHIC CRIMSON FLAME & HOLOGRAM) --- */
 .vlu-tier-5 .vlu-modal-box {
     border-color: rgba(255, 8, 68, 0.7);
     box-shadow: 0 30px 90px rgba(0, 0, 0, 0.9), 0 0 60px rgba(255, 8, 68, 0.55), 0 0 30px rgba(251, 191, 36, 0.4);

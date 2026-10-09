@@ -430,7 +430,7 @@
         vipProgressBar.style.width = '100%';
       } else {
         const remainingStr = Number(state.vip.remaining).toLocaleString('vi-VN') + 'đ';
-        vipProgressText.textContent = `Còn thiếu ${remainingStr} để lên ${state.vip.level === 'MEMBER' ? 'VIP 1 - Vịt Tậ...' : (state.vip.level === 'VIP 1' ? 'VIP 2' : 'VIP 3')}`;
+        vipProgressText.textContent = `Còn thiếu ${remainingStr} để lên ${state.vip.level === 'MEMBER' ? 'VIP 1' : (state.vip.level === 'VIP 1' ? 'VIP 2' : 'VIP 3')}`;
         vipProgressBar.style.width = Math.max(0, state.vip.progress_percent) + '%';
       }
     }
