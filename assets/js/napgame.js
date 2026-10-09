@@ -1,3 +1,85 @@
+
+let currentQuantity = 1;
+
+window.changeQuantity = function(delta) {
+    currentQuantity = Math.max(1, Math.min(99, currentQuantity + delta));
+    const disp = document.getElementById('qtyDisplay');
+    if (disp) disp.textContent = currentQuantity;
+    updateCart();
+};
+
+window.togglePasswordVisibility = function() {
+    const input = document.getElementById('formPassword');
+    const icon = document.getElementById('pwdEyeIcon');
+    if (!input) return;
+    if (input.type === 'password') {
+        input.type = 'text';
+        if (icon) icon.className = 'fas fa-eye';
+    } else {
+        input.type = 'password';
+        if (icon) icon.className = 'fas fa-eye-slash';
+    }
+};
+
+window.toggleDescExpand = function(btn) {
+    const col = document.getElementById('descCollapsible');
+    if (!col) return;
+    if (col.style.display === 'none' || !col.style.display) {
+        col.style.display = 'block';
+        if (btn) btn.innerHTML = 'Thu gọn <i class="fas fa-chevron-up"></i>';
+    } else {
+        col.style.display = 'none';
+        if (btn) btn.innerHTML = 'Xem tất cả <i class="fas fa-chevron-down"></i>';
+    }
+};
+
+window.addToCartClick = function() {
+    if (!currentSelectedPackage?.id) {
+        alert('Vui lòng chọn một gói nạp trước khi thêm vào giỏ hàng.');
+        return;
+    }
+    alert(`Đã thêm gói "${currentSelectedPackage.name}" (Số lượng: ${currentQuantity}) vào giỏ hàng!`);
+};
+
+async function loadSavedAccounts() {
+    const select = document.getElementById('savedAccountSelect');
+    if (!select || !supabaseClient || !window.currentUser?.id) return;
+    try {
+        const { data, error } = await supabaseClient
+            .from('user_game_accounts')
+            .select('*')
+            .eq('user_id', window.currentUser.id);
+        if (!error && data && data.length) {
+            select.innerHTML = '<option value="">-- Chọn tài khoản đã lưu --</option>';
+            data.forEach(acc => {
+                const opt = document.createElement('option');
+                opt.value = JSON.stringify(acc);
+                opt.textContent = `${acc.account_identifier} (${acc.server || 'Asia'})`;
+                select.appendChild(opt);
+            });
+        }
+    } catch (_) {}
+}
+
+window.onSavedAccountSelect = function(sel) {
+    if (!sel || !sel.value) return;
+    try {
+        const acc = JSON.parse(sel.value);
+        if (acc.account_identifier) {
+            const userInp = document.getElementById('formUsername');
+            if (userInp) userInp.value = acc.account_identifier;
+        }
+        if (acc.ingame_name) {
+            const uidInp = document.getElementById('formUID');
+            if (uidInp) uidInp.value = acc.ingame_name;
+        }
+        if (acc.server) {
+            const srvInp = document.getElementById('formServer');
+            if (srvInp) srvInp.value = acc.server;
+        }
+    } catch (_) {}
+};
+
 /**
  * NAP GAME LOGIC - NAMCUMZ (V3 - Login Top-up Only)
  * 2-page: Catalog (napgame.html) + Detail (napgame-detail.html)
@@ -31,14 +113,16 @@ const GAMES_CATALOG = {
 const GAME_PACKAGES = {
     // ---------- GENSHIN IMPACT ----------
     'genshin': [
-        { id: '10000000-0000-0000-0000-000000000001', name: 'Không Nguyệt Chúc Phúc (Thẻ Tháng)', price:   85000, img: 'assets/images/games/welkin.webp',        tag: 'monthly',    desc: 'Thẻ tháng 30 ngày — 90 đá/ngày' },
-        { id: '10000000-0000-0000-0000-000000000002', name: '60 Đá Sáng Thế',                     price:   20000, img: 'assets/images/games/crystals_60.webp',   tag: 'topup',      desc: '' },
-        { id: '10000000-0000-0000-0000-000000000003', name: '300 + 30 Đá Sáng Thế',               price:   90000, img: 'assets/images/games/crystals_300.webp',  tag: 'topup',      desc: '' },
-        { id: '10000000-0000-0000-0000-000000000004', name: '980 + 110 Đá Sáng Thế',              price:  270000, img: 'assets/images/games/crystals_980.webp',  tag: 'topup',      desc: '' },
-        { id: '10000000-0000-0000-0000-000000000005', name: '1980 + 260 Đá Sáng Thế',             price:  570000, img: 'assets/images/games/crystals_1980.webp', tag: 'topup',      desc: '' },
-        { id: '10000000-0000-0000-0000-000000000006', name: '3280 + 600 Đá Sáng Thế',             price:  950000, img: 'assets/images/games/crystals_3280.webp', tag: 'topup',      desc: '' },
-        { id: '10000000-0000-0000-0000-000000000007', name: '6480 + 1600 Đá Sáng Thế',            price: 1850000, img: 'assets/images/games/crystals_6480.webp', tag: 'topup',      desc: '' },
-        { id: '10000000-0000-0000-0000-000000000008', name: 'FULL PACK GENSHIN IMPACT',           price: 3800000, img: 'assets/images/games/genshin_card.jpg',  tag: 'topup',      desc: 'Toàn bộ gói nạp lớn nhất' }
+        { id: '10000000-0000-0000-0000-000000000009', name: 'Nhật Ký Hành Trình Trân Châu',      price:  170000, img: 'assets/images/games/genshin_bp_pearl.webp',    tag: 'battlepass', desc: 'Nhật Ký Hành Trình' },
+        { id: '10000000-0000-0000-0000-000000000010', name: 'Bài Ca Trân Châu',                  price:  340000, img: 'assets/images/games/genshin_bp_hymn.webp',     tag: 'battlepass', desc: 'Bài Ca Trân Châu' },
+        { id: '10000000-0000-0000-0000-000000000001', name: 'Không Nguyệt Chúc Phúc',             price:   85000, img: 'assets/images/games/genshin_welkin.webp',     tag: 'monthly',    desc: 'Thẻ tháng 30 ngày' },
+        { id: '10000000-0000-0000-0000-000000000002', name: '60 Đá Sáng Thế',                     price:   20000, img: 'assets/images/games/genshin_crystals_60.webp',tag: 'topup',      desc: '' },
+        { id: '10000000-0000-0000-0000-000000000003', name: '300 + 30 Đá Sáng Thế',               price:   85000, img: 'assets/images/games/genshin_crystals_300.webp',tag: 'topup',      desc: '' },
+        { id: '10000000-0000-0000-0000-000000000004', name: '980 + 110 Đá Sáng Thế',              price:  255000, img: 'assets/images/games/genshin_crystals_980.webp',tag: 'topup',      desc: '' },
+        { id: '10000000-0000-0000-0000-000000000005', name: '1980 + 260 Đá Sáng Thế',             price:  510000, img: 'assets/images/games/genshin_crystals_1980.webp',tag: 'topup',     desc: '' },
+        { id: '10000000-0000-0000-0000-000000000006', name: '3280 + 600 Đá Sáng Thế',             price:  850000, img: 'assets/images/games/genshin_crystals_3280.webp',tag: 'topup',     desc: '' },
+        { id: '10000000-0000-0000-0000-000000000007', name: '6480 + 1600 Đá Sáng Thế',            price: 1700000, img: 'assets/images/games/genshin_crystals_6480.webp',tag: 'topup',     desc: '' },
+        { id: '10000000-0000-0000-0000-000000000008', name: 'Toàn Bộ Gói Đá Sáng Thế',           price: 3450000, img: 'assets/images/games/genshin_crystals_all.webp', tag: 'topup',    desc: 'Toàn bộ gói nạp lớn nhất' }
     ],
     'genshin-login': 'genshin',
 
@@ -203,26 +287,35 @@ function getPackageImage(gameName, packageId, packageName, tag) {
     }
     return Object.values(GAME_INFO).find(info => info.name === gameName)?.icon || 'assets/images/logo.jpg';
 }
-// Load active catalog rows; names, ids, and prices always come from the database.
+// Load active catalog rows; names, ids, and prices come from database, with fallback for offline/preview
 async function loadActivePackages(gameName) {
-    if (!supabaseClient) throw new Error('Chưa kết nối được danh mục nạp game.');
-    const { data, error } = await supabaseClient.from('packages')
-        .select('id,game,name,price,active')
-        .eq('game', gameName)
-        .eq('active', true)
-        .order('price', { ascending: true });
-    if (error) throw error;
-    return (data || []).filter(row => row && typeof row.name === 'string' && Number.isFinite(Number(row.price)) && Number(row.price) > 0).map(row => {
-        const presentation = getPackagePresentation(row.id, row.name);
-        return {
-            ...presentation,
-            id: row.id,
-            name: row.name,
-            price: Number(row.price),
-            img: getPackageImage(gameName, row.id, row.name, presentation.tag || 'topup'),
-            tag: presentation.tag || 'topup'
-        };
-    });
+    const gameKey = Object.entries(GAME_INFO).find(([, info]) => info.name === gameName)?.[0]?.replace('-login', '') || 'genshin';
+    if (!supabaseClient) {
+        return (GAME_PACKAGES[gameKey] || []).slice();
+    }
+    try {
+        const { data, error } = await supabaseClient.from('packages')
+            .select('id,game,name,price,active')
+            .eq('game', gameName)
+            .eq('active', true)
+            .order('price', { ascending: true });
+        if (error || !data || data.length === 0) {
+            return (GAME_PACKAGES[gameKey] || []).slice();
+        }
+        return data.filter(row => row && typeof row.name === 'string' && Number.isFinite(Number(row.price)) && Number(row.price) > 0).map(row => {
+            const presentation = getPackagePresentation(row.id, row.name);
+            return {
+                ...presentation,
+                id: row.id,
+                name: row.name,
+                price: Number(row.price),
+                img: getPackageImage(gameName, row.id, row.name, presentation.tag || 'topup'),
+                tag: presentation.tag || 'topup'
+            };
+        });
+    } catch (_) {
+        return (GAME_PACKAGES[gameKey] || []).slice();
+    }
 }
 
 // Build an allowlisted, non-sensitive return URL for the selected top-up package.
@@ -255,14 +348,9 @@ function showCatalogMessage(containerId, message) {
 
 async function initDetailPage() {
     const params = new URLSearchParams(window.location.search);
-    currentGameId = params.get('game') || 'default';
+    currentGameId = params.get('game') || 'genshin';
     if (!Object.hasOwn(GAME_INFO, currentGameId) || currentGameId === 'default') {
-        document.title = 'Không tìm thấy game - NAMCUMZ';
-        document.getElementById('breadcrumbGame').textContent = 'Không tìm thấy game';
-        document.getElementById('detailGameName').textContent = 'Không tìm thấy game';
-        document.querySelector('.ng-detail-subtitle').textContent = 'Liên kết chưa đầy đủ hoặc game không có trong danh mục hiện tại.';
-        renderUnsupportedGame(null);
-        return;
+        currentGameId = 'genshin';
     }
     const gameInfo = GAME_INFO[currentGameId] || GAME_INFO.default;
     const themeGameId = currentGameId.replace('-login', '');
@@ -291,30 +379,26 @@ async function initDetailPage() {
         if (phone && !phone.value) phone.value = window.currentUser.phone || '';
     }
 
-    currentSelectedPackage = null;
     const requestedPackageId = params.get('package') || '';
-    let packages;
-    try {
-        packages = await loadActivePackages(gameInfo.name);
-    } catch (error) {
-        console.error('Không tải được gói nạp:', error);
-        currentSelectedPackage = null;
-        showCatalogMessage('pkgGrid', 'Không tải được danh mục giá. Đơn hàng đang tạm khóa; vui lòng thử lại sau.');
-        ['btnSubmitOrder', 'mobileBarBtn'].forEach(id => {
-            const button = document.getElementById(id);
-            if (button) button.disabled = true;
-        });
-        return;
+    let packages = (GAME_PACKAGES[themeGameId] || []).slice();
+    const restoredPackage = requestedPackageId ? packages.find(pkg => pkg.id === requestedPackageId) : null;
+    currentSelectedPackage = restoredPackage || null;
+    if (packages.length) {
+        renderPackages(packages, 'all');
+        updateCart();
     }
 
-    if (!packages.length) {
-        renderUnsupportedGame(gameInfo);
-        return;
+    try {
+        const livePackages = await loadActivePackages(gameInfo.name);
+        if (livePackages && livePackages.length) {
+            packages = livePackages;
+            currentSelectedPackage = requestedPackageId ? packages.find(pkg => pkg.id === requestedPackageId) : (currentSelectedPackage || null);
+            renderPackages(packages, 'all');
+            updateCart();
+        }
+    } catch (error) {
+        console.warn('Lấy giá từ cache:', error);
     }
-    const restoredPackage = requestedPackageId ? packages.find(pkg => pkg.id === requestedPackageId) : null;
-    if (restoredPackage) currentSelectedPackage = restoredPackage;
-    renderPackages(packages, 'all');
-    if (restoredPackage) updateCart();
     document.querySelectorAll('.ng-tab-btn[data-tab]').forEach(button => {
         button.addEventListener('click', () => {
             document.querySelectorAll('.ng-tab-btn[data-tab]').forEach(tab => { tab.classList.remove('active'); tab.setAttribute('aria-pressed', 'false'); });
@@ -328,6 +412,7 @@ async function initDetailPage() {
         button.onclick = () => window.open(ZALO_LINK, '_blank');
     });
     renderReviews();
+    loadSavedAccounts();
 }
 // Give unavailable catalogs a clear return path and prevent checkout.
 function renderUnsupportedGame(gameInfo) {
@@ -375,12 +460,6 @@ function renderPackages(packages, filter) {
         radio.style.cssText = 'position:absolute;opacity:0;width:1px;height:1px;';
         radio.checked = currentSelectedPackage?.id === pkg.id;
         card.appendChild(radio);
-        if (pkg.tag === 'monthly' || pkg.tag === 'battlepass') {
-            const badge = document.createElement('span');
-            badge.className = 'ng-pkg-badge';
-            badge.textContent = pkg.tag === 'monthly' ? 'Thẻ Tháng' : 'BP';
-            card.appendChild(badge);
-        }
         const image = document.createElement('img');
         image.className = 'ng-pkg-img';
         image.src = pkg.img || (pkg.tag === 'monthly' ? 'assets/images/topup/pass.svg' : pkg.tag === 'battlepass' ? 'assets/images/topup/battlepass.svg' : 'assets/images/topup/crystals.svg');
@@ -393,7 +472,7 @@ function renderPackages(packages, filter) {
         packageName.textContent = pkg.name;
         const price = document.createElement('span');
         price.className = 'ng-pkg-price';
-        price.textContent = pkg.price.toLocaleString('vi-VN') + ' đ';
+        price.textContent = pkg.price.toLocaleString('vi-VN') + 'đ';
         card.append(image, packageName, price);
 
         radio.addEventListener('change', () => {
@@ -416,13 +495,23 @@ function renderReviews() {
     list.replaceChildren(note);
 }
 function updateCart() {
-    if (!currentSelectedPackage) return;
-    const packageError = document.getElementById('packageError');
-    if (packageError) packageError.hidden = true;
-    const priceStr = currentSelectedPackage.price.toLocaleString('vi-VN') + ' đ';
-
+    const summaryPkg = document.getElementById('summaryPkgName');
+    const summaryTotal = document.getElementById('summaryTotal');
     const emptyCt  = document.getElementById('emptyCart');
     const filledCt = document.getElementById('filledCart');
+
+    if (!currentSelectedPackage) {
+        if (emptyCt)  emptyCt.style.display  = '';
+        if (filledCt) filledCt.style.display = 'none';
+        if (summaryPkg) summaryPkg.textContent = 'Chưa chọn gói';
+        if (summaryTotal) summaryTotal.textContent = '0đ';
+        return;
+    }
+    const packageError = document.getElementById('packageError');
+    if (packageError) packageError.hidden = true;
+    const totalAmount = currentSelectedPackage.price * currentQuantity;
+    const priceStr = totalAmount.toLocaleString('vi-VN') + 'đ';
+
     if (emptyCt)  emptyCt.style.display  = 'none';
     if (filledCt) filledCt.style.display = '';
 
@@ -433,8 +522,10 @@ function updateCart() {
     const btnEl   = document.getElementById('btnSubmitOrder');
 
     if (nameEl)  nameEl.textContent  = currentSelectedPackage.name;
-    if (priceEl) priceEl.textContent = priceStr;
+    if (priceEl) priceEl.textContent = currentSelectedPackage.price.toLocaleString('vi-VN') + 'đ';
     if (totalEl) totalEl.textContent = priceStr;
+    if (summaryPkg) summaryPkg.textContent = currentSelectedPackage.name;
+    if (summaryTotal) summaryTotal.textContent = priceStr;
     if (imgEl) {
         imgEl.src = currentSelectedPackage.img || (currentSelectedPackage.tag === 'monthly' ? 'assets/images/topup/pass.svg' : currentSelectedPackage.tag === 'battlepass' ? 'assets/images/topup/battlepass.svg' : 'assets/images/topup/crystals.svg');
         imgEl.onerror = () => { imgEl.src = 'assets/images/topup/crystals.svg'; };
@@ -510,7 +601,15 @@ async function submitDetailOrder() {
     const account = (document.getElementById('formUsername')?.value || '').trim();
     const password = document.getElementById('formPassword')?.value || '';
     const phone = (document.getElementById('formPhone')?.value || '').trim();
-    const notes = (document.getElementById('formNotes')?.value || '').trim();
+    const rawNotes = (document.getElementById('formNotes')?.value || '').trim();
+    const uidVal = (document.getElementById('formUID')?.value || '').trim();
+    let notes = rawNotes;
+    if (uidVal) {
+        notes = `[UID: ${uidVal}] ` + (notes ? notes : '');
+    }
+    if (currentQuantity > 1) {
+        notes = `[SL: ${currentQuantity}] ` + (notes ? notes : '');
+    }
     let firstInvalid = null;
     if (!account) { setFieldError('formUsername', 'usernameError', 'Vui lòng nhập email hoặc tên đăng nhập.'); firstInvalid ||= 'formUsername'; }
     if (!password) { setFieldError('formPassword', 'passwordError', 'Vui lòng nhập mật khẩu tài khoản game.'); firstInvalid ||= 'formPassword'; }

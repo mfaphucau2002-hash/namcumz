@@ -12,6 +12,12 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/napgame.css?v=20261004-unified7">
     <link rel="stylesheet" href="assets/css/ui.css">
+    <script>
+        // Tạm thời điều hướng về mục Nạp game tại Trang chủ theo yêu cầu
+        if (window.location.pathname.endsWith('napgame.html') || window.location.pathname.endsWith('napgame')) {
+            window.location.replace('/#recharge-game-list');
+        }
+    </script>
 </head>
 <body class="ng-page">
 

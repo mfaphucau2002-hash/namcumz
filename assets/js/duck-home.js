@@ -228,6 +228,17 @@
         }
     };
 
+    document.querySelectorAll('.nav-links a').forEach(a => {
+        a.addEventListener('click', () => {
+            const nav = document.querySelector('.nav-links');
+            const toggle = document.getElementById('mobile-menu');
+            if (nav && toggle && nav.classList.contains('active')) {
+                nav.classList.remove('active');
+                toggle.classList.remove('is-active');
+            }
+        });
+    });
+
     /* ================= 8. NAV DROPDOWN & ANNOUNCEMENT BAR ================= */
     window.closeAnnouncementBar = function() {
         const bar = document.getElementById('lpAnnouncementBar');

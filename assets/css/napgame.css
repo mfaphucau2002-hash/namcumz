@@ -114,125 +114,663 @@ body.ng-page {
 .ng-stat-info h4 { margin: 0 0 2px; color: var(--ui-text); font-size: 15px; font-weight: 700; }
 .ng-stat-info p { margin: 0; color: var(--ui-muted); font-size: 12px; }
 
-/* DETAIL HEADER AND LAYOUT */
-.ng-detail-container { max-width: var(--ng-max); margin: 0 auto; padding: 32px 24px 88px; }
-.ng-breadcrumb { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; color: var(--ui-muted); font-size: 13px; }
-.ng-breadcrumb a { color: var(--ui-muted); text-decoration: none; }
-.ng-breadcrumb a:hover { color: var(--ui-accent); }
-.ng-breadcrumb i { font-size: 10px; }
-.ng-breadcrumb span { color: var(--ui-text); }
-.ng-detail-header { position: relative; display: flex; align-items: center; gap: 24px; min-height: 184px; margin-bottom: 24px; padding: 32px; overflow: hidden; background: var(--ui-surface); border: 1px solid var(--ui-border); border-radius: 16px; }
-.ng-detail-cover { position: absolute; inset: 0 0 0 auto; width: 55%; background-position: center; background-size: cover; opacity: .58; mask-image: linear-gradient(90deg, transparent, #000 35%); pointer-events: none; }
-.ng-detail-icon, .ng-detail-title { position: relative; z-index: 1; }
-.ng-detail-icon { width: 96px; height: 96px; flex: 0 0 96px; object-fit: cover; border: 1px solid var(--ui-border); border-radius: 16px; }
-.ng-detail-title { min-width: 0; }
-.ng-detail-title h1 { margin: 0 0 8px; color: var(--ui-text); font-size: clamp(24px, 3vw, 34px); font-weight: 700; line-height: 1.2; letter-spacing: -.03em; }
-.ng-detail-subtitle { margin: 0 0 16px; color: var(--ui-muted); font-size: 14px; }
-.ng-detail-meta { display: flex; flex-wrap: wrap; gap: 8px; }
-.ng-detail-type-badge { padding: 5px 9px; background: var(--ng-hover); border: 1px solid rgba(147, 180, 250, .25); border-radius: 6px; color: var(--ui-accent); font-size: 11px; font-weight: 700; }
-.ng-detail-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; align-items: start; gap: 24px; }
-.ng-col-left { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
-.ng-col-right { position: sticky; top: 88px; min-width: 0; }
-.ng-detail-block, .ng-summary-card { background: var(--ui-surface); border: 1px solid var(--ui-border); border-radius: 14px; }
-.ng-detail-block { padding: 24px; }
-.ng-block-title { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--ui-border); color: var(--ui-text); font-size: 16px; font-weight: 700; }
-.ng-block-title i { color: var(--ui-accent); }
+/* DETAIL HEADER AND LAYOUT (NAP GAME TOC DO - PIXEL-PERFECT MATCH) */
+body.ng-page {
+  background: radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.16) 0%, rgba(0, 242, 254, 0.08) 35%, transparent 65%), #050711 !important;
+  color: #f8fafc;
+  min-height: 100vh;
+}
 
-/* PACKAGE PICKER */
-.ng-pkg-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-.ng-tab-btn { min-height: 44px; padding: 8px 16px; background: var(--ui-surface-raised); border: 1px solid var(--ui-border); border-radius: 8px; color: var(--ui-muted); font-size: 13px; cursor: pointer; }
-.ng-tab-btn:hover, .ng-tab-btn.active { background: var(--ng-hover); border-color: var(--ui-accent); color: var(--ui-text); }
-.ng-tab-btn:active { background: var(--ng-active); transform: translateY(1px); }
-.ng-pkg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
-.ng-pkg-card { position: relative; display: block; min-height: 156px; padding: 16px; background: var(--ui-surface-raised); border: 1px solid var(--ui-border); border-radius: 10px; text-align: center; cursor: pointer; transition: border-color var(--ui-motion), background var(--ui-motion), transform var(--ui-motion), box-shadow var(--ui-motion); }
-.ng-pkg-card:hover { background: var(--ng-hover); border-color: var(--ui-accent); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.35); }
-.ng-pkg-card.selected { background: rgba(147, 180, 250, 0.08); border-color: var(--ui-accent); box-shadow: 0 0 16px rgba(147, 180, 250, 0.25); }
-.ng-pkg-card:active { background: var(--ng-active); transform: translateY(0); }
-.ng-pkg-card:focus-within { outline: 2px solid var(--ui-accent); outline-offset: 2px; }
-.ng-pkg-img { display: block; width: 76px; height: 76px; margin: 0 auto 10px; object-fit: contain; filter: drop-shadow(0 4px 10px rgba(0,0,0,.4)); transition: transform var(--ui-motion) var(--ui-ease), filter var(--ui-motion) var(--ui-ease); }
-.ng-pkg-card:hover .ng-pkg-img { transform: scale(1.08); filter: drop-shadow(0 6px 14px rgba(147, 180, 250, 0.35)); }
-.ng-pkg-card.selected .ng-pkg-img { transform: scale(1.05); filter: drop-shadow(0 6px 16px rgba(147, 180, 250, 0.5)); }
-.ng-pkg-name { display: block; min-height: 36px; margin-bottom: 8px; color: var(--ui-text); font-size: 13px; font-weight: 700; line-height: 1.4; }
-.ng-pkg-price { color: var(--ui-accent); font-size: 15px; font-weight: 700; }
-.ng-pkg-badge { position: absolute; top: -8px; right: -8px; padding: 2px 6px; background: var(--ui-surface-raised); border: 1px solid var(--ui-border); border-radius: 6px; color: var(--ui-accent); font-size: 10px; font-weight: 700; }
+#ngAccountLink {
+  display: none !important;
+}
 
-/* FORM AND INFORMATION */
-.ng-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-.ng-form-group { display: flex; flex-direction: column; min-width: 0; }
-.ng-full-row { grid-column: 1 / -1; }
-.ng-form-group label { margin-bottom: 8px; color: var(--ui-text); font-size: 13px; font-weight: 600; }
-.ng-form-group .required { color: var(--ui-danger); }
-.ng-form-group input, .ng-form-group select, .ng-promo-input { min-width: 0; min-height: 44px; padding: 8px 16px; background: var(--ui-surface-raised); border: 1px solid var(--ui-border); border-radius: 8px; color: var(--ui-text); font-size: 16px; }
-.ng-form-group input::placeholder, .ng-promo-input::placeholder { color: var(--ui-muted); }
-.ng-form-group input:hover, .ng-form-group select:hover, .ng-promo-input:hover { border-color: var(--ui-muted); }
-.ng-form-group input:focus, .ng-form-group select:focus, .ng-promo-input:focus { border-color: var(--ui-accent); outline: none; }
-.ng-form-group select option { background: var(--ui-surface-raised); }
-.ng-form-group [aria-invalid="true"], .ng-promo-input[aria-invalid="true"] { border-color: var(--ui-danger); }
-.ng-field-error { margin: 7px 0 0; color: var(--ui-danger); font-size: 12px; }
-.ng-field-error[hidden], .ng-checkout-message[hidden] { display: none; }
-.ng-loading-state { grid-column: 1 / -1; padding: 32px; border: 1px dashed var(--ui-border); border-radius: 10px; color: var(--ui-muted); }
-.ng-payment-methods { display: flex; flex-wrap: wrap; gap: 8px; }
-.ng-payment-note { margin: 16px 0 0; color: var(--ui-muted); font-size: 13px; }
-.ng-payment-note i { color: var(--ui-warning); }
-.ng-pm-badge { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: var(--ui-surface-raised); border: 1px solid var(--ui-border); border-radius: 8px; color: var(--ui-text); font-size: 13px; font-weight: 700; }
-.ng-desc-list { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; }
-.ng-desc-list li { display: flex; align-items: flex-start; gap: 8px; color: var(--ui-muted); font-size: 14px; line-height: 1.5; }
-.ng-desc-list li i { flex: 0 0 auto; margin-top: 2px; color: var(--ui-accent); }
-.ng-reviews { color: var(--ui-muted); font-size: 14px; }
+.napgame-header-section {
+  text-align: center;
+  padding: 35px 20px 22px;
+}
 
-/* FAQ */
-.ng-faq-list { display: flex; flex-direction: column; gap: 8px; }
-.ng-faq-item { overflow: hidden; background: var(--ui-surface-raised); border: 1px solid var(--ui-border); border-radius: 8px; }
-.ng-faq-question { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 48px; padding: 16px; background: transparent; border: 0; color: var(--ui-text); font-size: 14px; font-weight: 600; text-align: left; cursor: pointer; }
-.ng-faq-question::after { content: "⌄"; color: var(--ui-muted); font-size: 20px; transition: transform var(--ui-motion) var(--ui-ease); }
-.ng-faq-question:hover { background: var(--ng-hover); }
-.ng-faq-question:active { background: var(--ng-active); }
-.ng-faq-question.active::after { color: var(--ui-accent); transform: rotate(180deg); }
-.ng-faq-answer { max-height: 0; overflow: hidden; background: var(--ui-surface-raised); transition: max-height var(--ui-motion) var(--ui-ease); }
-.ng-faq-question.active + .ng-faq-answer { max-height: 240px; }
-.ng-faq-answer p { margin: 0; padding: 16px; color: var(--ui-muted); font-size: 14px; line-height: 1.6; }
+.napgame-page-title {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin: 0 auto 12px;
+  text-shadow: 0 0 20px rgba(139, 92, 246, 0.5), 0 0 35px rgba(0, 242, 254, 0.25);
+}
 
-/* SUMMARY */
-.ng-summary-card { overflow: hidden; }
-.ng-summary-head { display: flex; align-items: center; gap: 8px; padding: 16px 24px; border-bottom: 1px solid var(--ui-border); color: var(--ui-text); font-size: 15px; font-weight: 700; }
-.ng-summary-head i { color: var(--ui-accent); }
-.ng-summary-body { padding: 24px; }
-.ng-summary-empty { padding: 32px 0; color: var(--ui-muted); text-align: center; }
-.ng-summary-empty i { display: block; margin-bottom: 8px; font-size: 32px; }
-.ng-summary-empty p { margin: 0; font-size: 13px; }
-.ng-summary-help { color: var(--ui-muted); font-size: 12px; }
-.ng-summary-item { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
-.ng-summary-item-img { width: 52px; height: 52px; padding: 6px; object-fit: contain; background: var(--ui-surface-raised); border: 1px solid var(--ui-border); border-radius: 9px; }
-.ng-summary-item-info { min-width: 0; flex: 1; }
-.ng-summary-item-name { color: var(--ui-text); font-size: 14px; font-weight: 700; }
-.ng-summary-item-price { color: var(--ui-accent); font-size: 16px; font-weight: 700; }
-.ng-promo-row { display: flex; gap: 8px; margin-bottom: 16px; }
-.ng-promo-input { flex: 1; }
-.ng-promo-btn { min-height: 44px; padding: 8px 14px; background: var(--ui-surface-raised); border: 1px solid var(--ui-border); border-radius: 8px; color: var(--ui-text); font-size: 13px; font-weight: 700; white-space: nowrap; cursor: pointer; }
-.ng-promo-btn:hover { background: var(--ng-hover); border-color: var(--ui-accent); }
-.ng-promo-btn:active { background: var(--ng-active); transform: translateY(1px); }
-.ng-total-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 16px; padding: 16px 0; border-top: 1px solid var(--ui-border); }
-.ng-total-label { color: var(--ui-muted); font-size: 14px; }
-.ng-total-price { color: var(--ui-accent); font-size: 22px; font-weight: 700; white-space: nowrap; }
-.ng-checkout-message { margin: 0 0 16px; padding: 16px; background: rgba(238, 146, 152, .09); border: 1px solid rgba(238, 146, 152, .24); border-radius: 8px; color: var(--ui-danger); font-size: 13px; }
-.ng-checkout-message[data-state="success"] { background: rgba(129, 201, 175, .1); border-color: rgba(129, 201, 175, .25); color: var(--ui-success); }
-.ng-btn-checkout, .ng-btn-zalo { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 48px; padding: 10px 16px; border-radius: 9px; font-size: 14px; font-weight: 700; cursor: pointer; }
-.ng-btn-checkout { background: var(--ui-accent); border: 1px solid var(--ui-accent); color: var(--ui-bg); }
-.ng-btn-checkout:hover:not(:disabled) { background: var(--ui-text); border-color: var(--ui-text); transform: translateY(-2px); }
-.ng-btn-checkout:active:not(:disabled) { background: var(--ui-accent); transform: translateY(1px); }
-.ng-btn-checkout:disabled { background: var(--ui-surface-raised); border-color: var(--ui-border); color: var(--ui-muted); }
-.ng-btn-zalo { margin-top: 8px; background: transparent; border: 1px solid var(--ui-border); color: var(--ui-text); }
-.ng-btn-zalo:hover { background: var(--ng-hover); border-color: var(--ui-accent); }
-.ng-btn-zalo:active { background: var(--ng-active); transform: translateY(1px); }
-.ng-summary-trust { display: none; }
-.ng-mobile-bar { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 800; align-items: center; gap: 16px; padding: 8px 16px; background: var(--ui-surface); border-top: 1px solid var(--ui-border); }
-.ng-mobile-bar-price { flex: 1; min-width: 0; }
-.ng-mobile-bar-price .label { color: var(--ui-muted); font-size: 12px; }
-.ng-mobile-bar-price .amount { color: var(--ui-accent); font-size: 18px; font-weight: 700; }
-.ng-mobile-bar-btn { min-width: 120px; min-height: 44px; padding: 8px 16px; background: var(--ui-accent); border: 1px solid var(--ui-accent); border-radius: 8px; color: var(--ui-bg); font-weight: 700; cursor: pointer; }
-.ng-mobile-bar-btn:hover:not(:disabled) { background: var(--ui-text); border-color: var(--ui-text); }
-.ng-mobile-bar-btn:active:not(:disabled) { background: var(--ui-accent); transform: translateY(1px); }
-.ng-mobile-bar-btn:disabled { background: var(--ui-surface-raised); border-color: var(--ui-border); color: var(--ui-muted); }
+.divider-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 auto;
+  width: fit-content;
+}
+
+.divider-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 8px #ffffff, 0 0 12px #00f2fe;
+}
+
+.divider-line {
+  width: 45px;
+  height: 2px;
+  background: linear-gradient(90deg, #00f2fe, #38bdf8);
+  box-shadow: 0 0 10px #00f2fe;
+}
+
+.ng-detail-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+}
+
+.ng-detail-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 390px;
+  gap: 24px;
+  align-items: start;
+}
+
+.ng-col-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+}
+
+/* 1. CHON GOI NAP CONTAINER */
+.ng-panel-card {
+  background: rgba(11, 15, 29, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 242, 254, 0.32);
+  border-radius: 16px;
+  padding: 22px 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.ng-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #00f2fe;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 20px;
+}
+
+.ng-pkg-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.ng-pkg-card {
+  background: rgba(16, 22, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px 8px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.22s ease-in-out;
+  position: relative;
+  min-height: 140px;
+  text-decoration: none;
+  user-select: none;
+}
+
+.ng-pkg-card:hover {
+  border-color: rgba(0, 242, 254, 0.45);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 242, 254, 0.22);
+}
+
+.ng-pkg-card.selected {
+  border: 1.5px solid #00f2fe !important;
+  background: rgba(0, 242, 254, 0.08) !important;
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.35) !important;
+}
+
+.ng-pkg-img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));
+  transition: transform 0.2s;
+}
+
+.ng-pkg-card:hover .ng-pkg-img {
+  transform: scale(1.08);
+}
+
+.ng-pkg-name {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.3;
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+
+.ng-pkg-price {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #00f2fe;
+  text-shadow: 0 0 10px rgba(0, 242, 254, 0.45);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  letter-spacing: -0.2px;
+}
+
+.ng-pkg-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 2px 6px;
+  background: rgba(0, 242, 254, 0.15);
+  border: 1px solid rgba(0, 242, 254, 0.4);
+  border-radius: 4px;
+  color: #00f2fe;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+/* 2. MO TA CONTAINER */
+.ng-desc-card {
+  background: rgba(11, 15, 29, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 22px 24px;
+  margin-top: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.ng-desc-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+}
+
+.ng-desc-cyan-bar {
+  width: 3px;
+  height: 16px;
+  background: #00f2fe;
+  border-radius: 2px;
+  box-shadow: 0 0 8px #00f2fe;
+}
+
+.ng-desc-heading {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+}
+
+.ng-desc-warn {
+  color: #ff4d4f;
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.ng-desc-contact {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.ng-desc-zalo-link {
+  color: #00f2fe;
+  font-weight: 800;
+  text-decoration: underline;
+}
+
+.ng-desc-zalo-link:hover {
+  color: #38bdf8;
+}
+
+.ng-desc-p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  margin-bottom: 10px;
+}
+
+.ng-desc-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 16px auto 0;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.ng-desc-toggle-btn:hover {
+  color: #00f2fe;
+}
+
+/* 3. RIGHT COLUMN: THONG TIN NAP LOGIN */
+.ng-checkout-panel {
+  background: rgba(11, 15, 29, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1.5px solid rgba(247, 37, 133, 0.4);
+  border-radius: 16px;
+  padding: 22px 20px;
+  box-shadow: 0 0 30px rgba(247, 37, 133, 0.12), 0 10px 30px rgba(0,0,0,0.6);
+  position: sticky;
+  top: 90px;
+}
+
+.ng-form-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 20px;
+}
+
+.ng-form-title i {
+  color: #f72585;
+  text-shadow: 0 0 12px rgba(247, 37, 133, 0.6);
+}
+
+.ng-saved-acc-box {
+  border: 1px dashed rgba(245, 158, 11, 0.4);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  background: rgba(245, 158, 11, 0.03);
+}
+
+.ng-gold-label {
+  color: #f59e0b;
+  font-size: 0.72rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ng-saved-select {
+  width: 100%;
+  background: #080a14;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.82rem;
+  padding: 8px 12px;
+  outline: none;
+  cursor: pointer;
+}
+
+.ng-field-wrap {
+  margin-bottom: 12px;
+}
+
+.ng-input-pill {
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  height: 44px;
+  transition: border-color 0.2s;
+}
+
+.ng-pill-light {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+}
+
+.ng-pill-light .ng-pill-input {
+  color: #0f172a;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.ng-pill-light .ng-pill-input::placeholder {
+  color: #64748b;
+}
+
+.ng-pill-dark {
+  background: rgba(16, 22, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.ng-pill-dark .ng-pill-input {
+  color: #ffffff;
+  font-size: 0.85rem;
+}
+
+.ng-pill-dark .ng-pill-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.ng-pill-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+.ng-pill-icon {
+  font-size: 1rem;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.ng-eye-toggle {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 0.95rem;
+}
+
+.ng-sec-badge {
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 10px;
+}
+
+.ng-sec-badge i {
+  color: #10b981;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.ng-sec-badge-text {
+  color: #10b981;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.ng-qty-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.ng-qty-lbl {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.ng-qty-stepper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(16, 22, 42, 0.85);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  padding: 4px 8px;
+}
+
+.ng-qty-num {
+  color: #f72585;
+  font-size: 1.05rem;
+  font-weight: 800;
+  min-width: 20px;
+  text-align: center;
+}
+
+.ng-qty-step-btn {
+  background: rgba(255,255,255,0.06);
+  border: none;
+  color: #fff;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.ng-qty-step-btn:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+.ng-promo-box {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.ng-promo-inp {
+  flex: 1;
+  background: rgba(16, 22, 42, 0.85);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.8rem;
+  padding: 8px 12px;
+  outline: none;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+.ng-promo-inp::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.ng-promo-submit {
+  background: rgba(0, 242, 254, 0.1);
+  border: 1px solid #00f2fe;
+  border-radius: 8px;
+  color: #00f2fe;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.ng-promo-submit:hover {
+  background: #00f2fe;
+  color: #0b0f1d;
+}
+
+.ng-sum-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ng-sum-lbl {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.ng-sum-val {
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: right;
+}
+
+.ng-sum-total {
+  color: #ff2a6d;
+  font-size: 1.45rem;
+  font-weight: 800;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  text-shadow: 0 0 14px rgba(255, 42, 109, 0.5);
+}
+
+.ng-save-box {
+  border: 1px dashed rgba(245, 158, 11, 0.4);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+  background: rgba(245, 158, 11, 0.03);
+}
+
+.ng-save-chk-lbl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #f59e0b;
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ng-cta-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.ng-btn-cart {
+  background: #141829;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  flex: 0 0 42%;
+  text-transform: uppercase;
+  transition: all 0.2s;
+}
+
+.ng-btn-cart:hover {
+  background: #1e243d;
+  border-color: rgba(255,255,255,0.3);
+}
+
+.ng-btn-confirm {
+  background: linear-gradient(135deg, #d946ef 0%, #a855f7 50%, #8b5cf6 100%);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 800;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  flex: 1;
+  text-transform: uppercase;
+  box-shadow: 0 4px 20px rgba(168, 85, 247, 0.45);
+  transition: all 0.25s;
+}
+
+.ng-btn-confirm:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(168, 85, 247, 0.65);
+}
+
+.ng-btn-confirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ng-trust-note {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.72rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.ng-field-error {
+  margin: 6px 0 0;
+  color: #ff4d4f;
+  font-size: 12px;
+}
+
+.ng-field-error[hidden], .ng-checkout-message[hidden] {
+  display: none;
+}
+
+.ng-checkout-message {
+  margin: 0 0 14px;
+  padding: 12px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 8px;
+  color: #f87171;
+  font-size: 13px;
+}
+
+.ng-checkout-message[data-state="success"] {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.25);
+  color: #34d399;
+}
+
+.ng-loading-state {
+  grid-column: 1 / -1;
+  padding: 32px;
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+}
+
 
 /* RESPONSIVE */
 @media (max-width: 992px) {
@@ -550,3 +1088,128 @@ body.ng-page:has(.ng-detail-layout) .ng-zalo-float{display:none}
 .ng-page #navUserProfile button:hover{border-color:var(--ui-accent)!important;color:var(--ui-text)!important}
 @media(max-width:1100px){.ng-page .lp-nav{gap:8px}.ng-page .lp-nav a{font-size:11px}.ng-page #navRole{display:none}}
 @media(max-width:768px){.ng-page #navUserProfile .notification-wrapper{display:none}.ng-page #navUserProfile>div:first-child{gap:5px!important;padding:4px!important}.ng-page #navUsername{max-width:64px;font-size:11px!important}.ng-page #navUserProfile{gap:5px!important}.ng-page #navUserProfile .nav-avatar{width:26px!important;height:26px!important}.ng-page #navLogoutBtn{width:30px!important;height:36px!important}}
+
+/* ===================================================
+   DUCKSTREAMER HUD CYBER MATCH - HIGHEST SPECIFICITY
+   =================================================== */
+body.ng-hud-theme {
+  background: radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.16) 0%, rgba(0, 242, 254, 0.08) 35%, transparent 65%), #050711 !important;
+  color: #f8fafc;
+}
+
+body.ng-hud-theme .ng-detail-layout {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 360px !important;
+  gap: 22px !important;
+  align-items: start !important;
+}
+
+body.ng-hud-theme .ng-panel-card {
+  background: rgba(11, 15, 29, 0.85) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(0, 242, 254, 0.35) !important;
+  border-radius: 16px !important;
+  padding: 22px 24px !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+}
+
+body.ng-hud-theme .ng-pkg-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 14px !important;
+}
+
+body.ng-hud-theme .ng-pkg-card {
+  background: rgba(16, 22, 42, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 12px !important;
+  padding: 16px 8px 14px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  text-align: center !important;
+  cursor: pointer !important;
+  transition: all 0.22s ease-in-out !important;
+  position: relative !important;
+  min-height: 140px !important;
+  user-select: none !important;
+  box-sizing: border-box !important;
+}
+
+body.ng-hud-theme .ng-pkg-card::before,
+body.ng-hud-theme .ng-pkg-card::after {
+  display: none !important;
+  content: none !important;
+}
+
+body.ng-hud-theme .ng-pkg-card:hover {
+  border-color: rgba(0, 242, 254, 0.45) !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 6px 20px rgba(0, 242, 254, 0.22) !important;
+}
+
+body.ng-hud-theme .ng-pkg-card.selected {
+  border: 1.5px solid #00f2fe !important;
+  background: rgba(0, 242, 254, 0.08) !important;
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.35) !important;
+  transform: none !important;
+}
+
+body.ng-hud-theme .ng-pkg-img {
+  width: 52px !important;
+  height: 52px !important;
+  object-fit: contain !important;
+  margin-bottom: 8px !important;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6)) !important;
+  border: none !important;
+  border-radius: 0 !important;
+  display: block !important;
+}
+
+body.ng-hud-theme .ng-pkg-name {
+  font-size: 0.74rem !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  line-height: 1.3 !important;
+  min-height: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-bottom: 6px !important;
+}
+
+body.ng-hud-theme .ng-pkg-price {
+  font-size: 1.05rem !important;
+  font-weight: 800 !important;
+  color: #00f2fe !important;
+  text-shadow: 0 0 10px rgba(0, 242, 254, 0.45) !important;
+  font-family: 'Be Vietnam Pro', sans-serif !important;
+  letter-spacing: -0.2px !important;
+}
+
+body.ng-hud-theme .ng-checkout-panel {
+  background: rgba(11, 15, 29, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1.5px solid rgba(247, 37, 133, 0.45) !important;
+  border-radius: 16px !important;
+  padding: 22px 20px !important;
+  box-shadow: 0 0 30px rgba(247, 37, 133, 0.12), 0 10px 30px rgba(0,0,0,0.6) !important;
+}
+
+@media (max-width: 992px) {
+  body.ng-hud-theme .ng-detail-layout {
+    grid-template-columns: 1fr !important;
+  }
+  body.ng-hud-theme .ng-pkg-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+@media (max-width: 580px) {
+  body.ng-hud-theme .ng-pkg-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}

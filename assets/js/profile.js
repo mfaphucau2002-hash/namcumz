@@ -1006,6 +1006,10 @@
       btn.addEventListener('click', () => openModal('hubDepositModal'));
     });
 
+    if (new URLSearchParams(window.location.search).get('open') === 'deposit') {
+      openModal('hubDepositModal');
+    }
+
     document.querySelectorAll('[data-hub-logout]').forEach(btn => {
       btn.addEventListener('click', async () => {
         if (!confirm('Bạn có chắc muốn đăng xuất?')) return;

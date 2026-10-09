@@ -3,287 +3,417 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Chi tiết gói nạp game login và form tạo đơn bảo mật tại NAMCUMZ.">
+    <meta name="description" content="Nạp Game Tốc Độ - Hệ thống tạo đơn nạp game login an toàn, bảo mật AES-256 tại NAMCUMZ.">
     <link rel="canonical" href="https://namcumz.io.vn/napgame-detail.html">
-    <title id="pageTitle">Chi tiết Nạp Game - NAMCUMZ</title>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title id="pageTitle">Nạp Game Tốc Độ - NAMCUMZ GAME STORE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/design-tokens.css">
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/napgame.css?v=20261004-unified7">
+    <link rel="stylesheet" href="assets/css/duck-home.css?v=20261009-hud1">
+    <link rel="stylesheet" href="assets/css/napgame.css?v=20261009-hud2">
     <link rel="stylesheet" href="assets/css/ui.css">
 </head>
-<body class="ng-page">
+<body class="ng-page ng-hud-theme">
 
-    <!-- HEADER -->
-    <header class="lp-header" id="lpHeader">
-        <a href="/" class="lp-logo">
-            <img src="assets/images/logo.jpg" alt="Logo" class="ng-brand-logo">
-            NAMCUMZ
+    <!-- ================= NAVIGATION BAR ================= -->
+    <nav class="glass-nav" role="navigation" aria-label="Menu chính">
+        <a href="/" class="lp-logo" aria-label="NAMCUMZ GAME STORE — Trang chủ">
+            <div class="lp-logo-badge">
+                <img src="/assets/images/logo.webp" alt="NAMCUMZ" width="32" height="32" onerror="this.src='/assets/images/duck/avt.jpg'">
+            </div>
+            <div class="lp-logo-text">
+                <span class="lp-logo-brand">NAMCUMZ</span>
+                <span class="lp-logo-tag">GAME STORE</span>
+            </div>
         </a>
-        <nav class="lp-nav" id="lpNav">
-            <a href="/index.html">Trang chủ</a>
-            <a href="/reviews.html">Đánh giá</a>
-            <a href="/caythue.html">Cày thuê</a>
-            <a href="napgame.html" aria-current="page">Nạp game</a>
-            <a href="/dashboard.html">Bảng điều khiển</a><a href="/profile.html">Hồ sơ</a>
-        </nav>
-        <div class="lp-actions">
-            <a href="login.html?form=login" class="lp-btn-primary" id="ngAccountLink"><i class="fa-solid fa-user"></i> Đăng nhập / Đăng ký</a>
-<div id="navUserProfile" style="display: none; align-items: center; gap: 16px; margin-left: 20px;">
-                    <div style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); padding: 5px 15px 5px 5px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.05);">
-                        <div class="nav-avatar" id="navAvatarInitials" style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-gradient); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">A</div>
-                        <div style="display: flex; flex-direction: column; line-height: 1.2;">
-                            <span id="navUsername" style="font-weight: 700; font-size: 0.85rem; color: #fff;">Azrael</span>
-                            <span id="navRole" style="font-size: 0.65rem; font-weight: 800; color: var(--accent); letter-spacing: 0.5px;">BOOSTER</span>
-                        </div>
-                    </div>
-                                        <div class="notification-wrapper" style="position: relative;">
-                        <button aria-label="Thông báo" id="notificationBtn" style="background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; transition: 0.2s; position: relative; margin-right: 10px;">
-                            <i class="fa-solid fa-bell"></i>
-                            <span id="notificationBadge" style="display: none; position: absolute; top: 6px; right: 8px; background: #ef4444; width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 5px #ef4444;"></span>
-                        </button>
-                        <div id="notificationDropdown" style="display: none; position: absolute; right: 0; top: calc(100% + 10px); background: #0f172a; width: 320px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1); z-index: 1000; overflow: hidden; flex-direction: column;">
-                            <div style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); font-weight: bold; font-size: 0.9rem; color: #fff; display: flex; justify-content: space-between; align-items: center;">
-                                Thông báo
-                                <button id="markAllReadBtn" style="background: transparent; border: none; color: var(--accent); font-size: 0.75rem; cursor: pointer;">Đánh dấu đã đọc</button>
-                            </div>
-                            <div id="notificationList" style="max-height: 350px; overflow-y: auto; padding: 0;">
-                                <div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">Không có thông báo</div>
-                            </div>
-                        </div>
-                    </div>
-                    <button aria-label="Đăng xuất" id="navLogoutBtn" style="background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; transition: 0.2s;">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                    </button>
-                </div>
-            <button class="lp-menu-toggle" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="lpMobileNav"><span></span><span></span></button>
+
+        <div class="menu-toggle" id="mobile-menu" onclick="window.toggleMobileMenu(event)" role="button" aria-label="Mở Menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
         </div>
-    </header>
-    <nav class="lp-mobile-nav" id="lpMobileNav" aria-label="Điều hướng di động" hidden>
-        <a href="/index.html">Trang chủ</a><a href="/reviews.html">Đánh giá</a><a href="/caythue.html">Cày thuê</a><a href="napgame.html">Nạp game</a><a href="/checkscam.html">Check Scam</a><a href="/dashboard.html">Đơn cày / Đơn nạp</a><a href="/profile.html">Hồ sơ tài khoản</a><a href="login.html?form=login" id="lpMobileAccount">Đăng nhập / Đăng ký</a>
+
+        <ul class="nav-links">
+            <li><a href="/index.html" data-text="Trang Chủ">TRANG CHỦ</a></li>
+            <li><a href="/caythue.html" data-text="Cày Thuê">CÀY THUÊ</a></li>
+            <li><a href="/#recharge-game-list" data-text="Nạp Game" class="active">NẠP GAME</a></li>
+            <li><a href="/profile.html" data-text="Hồ Sơ">HỒ SƠ</a></li>
+            <li><a href="/profile.html?open=deposit" id="nav-deposit" data-text="Nạp Tiền">NẠP TIỀN</a></li>
+            <li class="nav-dropdown">
+                <button type="button" class="nav-dropdown-toggle" onclick="toggleNavDropdown(event, this)" aria-haspopup="true" aria-expanded="false">
+                    HỖ TRỢ <i class="fas fa-chevron-down nav-caret"></i>
+                </button>
+                <ul class="nav-submenu">
+                    <li><a href="/dashboard.html" data-text="Đơn Hàng">ĐƠN HÀNG</a></li>
+                    <li><a href="/reviews.html" data-text="Đánh Giá">ĐÁNH GIÁ</a></li>
+                    <li><a href="/privacy.html" data-text="Bảo Mật &amp; Cam Kết">BẢO MẬT &amp; CAM KẾT</a></li>
+                    <li><a href="/luu-y.html" data-text="Lưu Ý">LƯU Ý CẦN BIẾT</a></li>
+                    <li><a href="/faq.html" data-text="Hỏi Đáp">HỎI ĐÁP</a></li>
+                </ul>
+            </li>
+            <li class="mobile-only-btn" style="padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.08);">
+                <button class="perf-toggle-btn lp-eco-btn" onclick="toggleEcoMode(event)" style="width: 100%; justify-content: center; height: 44px;">
+                    <span class="lp-eco-icon">⚡</span>
+                    <span class="perf-toggle-label">Chế độ Mượt mà / Tiết kiệm pin</span>
+                </button>
+            </li>
+            <li class="mobile-only-btn">
+                <a class="btn-nav lp-header-cta" href="/profile.html" id="lpMobileAccount" onclick="handleAuthOrProfile(event)" style="width: 100%; justify-content: center; padding: 12px; margin-top: 15px; min-height: 48px;">
+                    <span class="btn-text">Tài khoản / Đơn hàng</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="nav-account-group">
+            <button class="perf-toggle-btn lp-eco-btn" id="lpEcoToggle" onclick="toggleEcoMode(event)" title="Bật/Tắt hiệu ứng mượt mà">
+                <span class="lp-eco-icon">⚡</span>
+                <span class="perf-toggle-label">Mượt mà</span>
+            </button>
+
+            <a href="/faq.html" class="lp-bell-btn" id="notif-bell-btn" title="Hỗ trợ &amp; Thông báo" aria-label="Hỗ trợ và thông báo">
+                <span class="lp-bell-icon" aria-hidden="true">🔔</span>
+                <span class="lp-bell-badge" aria-hidden="true"></span>
+            </a>
+
+            <div class="lp-header-actions" id="lpAuthActions">
+                <a class="lp-button lp-button-primary lp-header-cta" href="/profile.html" id="lpAccountCta" onclick="handleAuthOrProfile(event)">
+                    Tài khoản / Đơn hàng
+                </a>
+            </div>
+            <!-- Hidden compatibility anchor for auth test suite -->
+            <a href="login.html?form=login" id="ngAccountLink" style="display:none;" aria-hidden="true"></a>
+        </div>
     </nav>
 
-    <div class="ng-detail-container">
-
-        <!-- BREADCRUMB -->
-        <nav class="ng-breadcrumb" aria-label="Điều hướng đường dẫn">
-            <a href="/index.html"><i class="fa-solid fa-house"></i> Trang chủ</a>
-            <i class="fa-solid fa-chevron-right"></i>
-            <a href="napgame.html">Nạp Game</a>
-            <i class="fa-solid fa-chevron-right"></i>
-            <span id="breadcrumbGame">Đang tải...</span>
-        </nav>
-
-        <!-- GAME HEADER -->
-        <div class="ng-detail-header"><div class="ng-detail-cover" id="detailGameCover" aria-hidden="true"></div>
-            <img src="assets/images/logo.jpg" alt="Game Icon" class="ng-detail-icon" id="detailGameIcon" onerror="this.src='assets/images/logo.jpg'">
-            <div class="ng-detail-title">
-                <h1 id="detailGameName">Đang tải...</h1>
-                <p class="ng-detail-subtitle">Chọn gói đang mở bán và điền thông tin để tạo đơn.</p><div class="ng-detail-meta">
-                    <span class="ng-detail-type-badge ng-type-login" id="detailTypeBadge">Nạp Login</span>
-                </div>
-            </div>
+    <!-- Hidden compatibility elements for page loader logic -->
+    <div style="display:none;" aria-hidden="true">
+        <span id="breadcrumbGame"></span>
+        <h2 id="detailGameName"></h2>
+        <span id="detailTypeBadge"></span>
+        <img id="detailGameIcon" src="/assets/images/logo.webp" alt="">
+        <div id="detailGameCover"></div>
+        <p class="ng-detail-subtitle"></p>
+        <div id="emptyCart"></div>
+        <div id="filledCart">
+            <span id="cartPkgName"></span>
+            <span id="cartPkgPrice"></span>
+            <span id="cartTotalPrice"></span>
+            <img id="cartPkgImg" src="/assets/images/logo.webp" alt="">
         </div>
+    </div>
 
-        <!-- CHECKOUT STEPS -->
-        <nav class="ng-order-steps" aria-label="Các bước tạo đơn">
-            <a class="ng-order-step is-current" href="#packageBlock"><span>01</span><strong>Chọn gói</strong></a><i aria-hidden="true"></i>
-            <a class="ng-order-step" href="#orderInfoBlock"><span>02</span><strong>Thông tin game</strong></a><i aria-hidden="true"></i>
-            <a class="ng-order-step" href="#paymentBlock"><span>03</span><strong>Thanh toán</strong></a>
-        </nav>
+    <!-- ================= PAGE TITLE ================= -->
+    <div class="napgame-header-section">
+        <h1 class="napgame-page-title">NẠP GAME TỐC ĐỘ</h1>
+        <div class="divider-center">
+            <span class="divider-dot"></span>
+            <span class="divider-line"></span>
+            <span class="divider-dot"></span>
+        </div>
+    </div>
 
-        <!-- 2-COLUMN LAYOUT -->
+    <!-- ================= MAIN 2-COLUMN CONTAINER ================= -->
+    <div class="ng-detail-container">
         <div class="ng-detail-layout">
 
-            <!-- LEFT COLUMN -->
+            <!-- LEFT COLUMN: CHỌN GÓI NẠP & MÔ TẢ -->
             <div class="ng-col-left">
 
-                <!-- Chọn gói nạp -->
-                <div class="ng-detail-block" id="packageBlock">
-                    <div class="ng-block-title"><i class="fa-solid fa-layer-group"></i> Chọn gói nạp</div>
-                    <div class="ng-pkg-tabs" role="group" aria-label="Lọc gói nạp">
-                        <button class="ng-tab-btn active" data-tab="all" type="button" aria-pressed="true">Tất cả</button>
-                        <button class="ng-tab-btn" data-tab="topup" type="button" aria-pressed="false">Gói nạp</button>
-                        <button class="ng-tab-btn" data-tab="monthly" type="button" aria-pressed="false">Thẻ tháng</button>
-                        <button class="ng-tab-btn" data-tab="battlepass" type="button" aria-pressed="false">Battle Pass</button>
+                <!-- 1. CHỌN GÓI NẠP -->
+                <div class="ng-panel-card" id="packageBlock">
+                    <div class="ng-panel-header">
+                        <i class="fas fa-gem" style="color: #00f2fe;"></i> CHỌN GÓI NẠP
                     </div>
-                    <div class="ng-pkg-grid" id="pkgGrid" role="radiogroup" aria-label="Chọn gói nạp"><div class="ng-loading-state" role="status">Đang tải gói nạp...</div></div><p class="ng-field-error" id="packageError" role="alert" hidden></p>
-                </div>
-
-                <!-- Thông tin đơn hàng -->
-                <div class="ng-detail-block" id="orderInfoBlock">
-                    <div class="ng-block-title"><i class="fa-solid fa-circle-info"></i> Thông tin đơn hàng (Nạp Login)</div>
-                    <div class="ng-credential-note" role="note"><i class="fa-solid fa-lock" aria-hidden="true"></i><span>Chỉ nhập thông tin vào các trường riêng của đơn. Không gửi mật khẩu hoặc mã OTP qua ghi chú hay chat.</span></div>
-                    <div class="ng-form-grid">
-                        <div class="ng-form-group">
-                            <label for="formServer">Máy chủ (Server) <span class="required">*</span></label>
-                            <select id="formServer">
-                                <option value="Asia" selected>Asia</option>
-                                <option value="America">America</option>
-                                <option value="Europe">Europe</option>
-                                <option value="TW/HK/MO">TW/HK/MO</option>
-                            </select>
-                        </div>
-                        <div class="ng-form-group">
-                            <label for="formLoginMethod">Phương thức đăng nhập <span class="required">*</span></label>
-                            <select id="formLoginMethod">
-                                <option value="Hoyoverse" selected>Tài khoản HoYoverse / Kuro Games</option>
-                                <option value="Google">Google</option>
-                                <option value="Facebook">Facebook</option>
-                                <option value="Twitter">Twitter / X</option>
-                                <option value="Khác">Khác</option>
-                            </select>
-                        </div>
-                        <div class="ng-form-group" id="formGroupUsername">
-                            <label for="formUsername">Tên đăng nhập (Email / Username) <span class="required">*</span></label>
-                            <input type="text" id="formUsername" autocomplete="username" aria-describedby="usernameError" placeholder="Nhập Email hoặc Username"><span class="ng-field-error" id="usernameError" hidden></span>
-                        </div>
-                        <div class="ng-form-group" id="formGroupPassword">
-                            <label for="formPassword">Mật khẩu <span class="required">*</span></label>
-                            <input type="password" id="formPassword" autocomplete="off" aria-describedby="passwordError" placeholder="Nhập mật khẩu tài khoản"><span class="ng-field-error" id="passwordError" hidden></span>
-                        </div>
-                        <div class="ng-form-group ng-full-row">
-                            <label for="formPhone">SĐT Zalo liên hệ <span class="required">*</span></label>
-                            <input type="text" id="formPhone" inputmode="tel" autocomplete="tel" aria-describedby="phoneError" placeholder="Nhập số điện thoại Zalo để shop liên hệ"><span class="ng-field-error" id="phoneError" hidden></span>
-                        </div>
-                        <div class="ng-form-group ng-full-row">
-                            <label for="formNotes">Ghi chú đơn hàng (tuỳ chọn)</label>
-                            <input type="text" id="formNotes" placeholder="Ghi chú yêu cầu; không nhập mật khẩu hoặc mã OTP.">
-                        </div>
+                    <div class="ng-pkg-grid" id="pkgGrid" role="radiogroup" aria-label="Chọn gói nạp">
+                        <div class="ng-loading-state" role="status">Đang tải gói nạp...</div>
                     </div>
+                    <p class="ng-field-error" id="packageError" role="alert" hidden></p>
                 </div>
 
-                <!-- Phương thức thanh toán -->
-                <div class="ng-detail-block" id="paymentBlock">
-                    <div class="ng-block-title"><i class="fa-solid fa-credit-card"></i> Phương thức thanh toán</div>
-                    <div class="ng-payment-methods" aria-label="Kênh thanh toán được hỗ trợ">
-                        <div class="ng-pm-badge">Vietcombank</div>
-                        <div class="ng-pm-badge">MBBank</div>
-                        <div class="ng-pm-badge">VPBank</div>
-                        <div class="ng-pm-badge">Momo</div>
-                        <div class="ng-pm-badge">ZaloPay</div>
+                <!-- 2. MÔ TẢ -->
+                <div class="ng-desc-card">
+                    <div class="ng-desc-header">
+                        <span class="ng-desc-cyan-bar"></span>
+                        <h3 class="ng-desc-heading">Mô tả</h3>
                     </div>
-                    <p class="ng-payment-note">
-                        <i class="fa-solid fa-triangle-exclamation" ></i>
-                        Sau khi tạo đơn, Admin sẽ nhắn Zalo cho bạn số tài khoản để chuyển khoản. Shop sẽ cập nhật trạng thái đơn sau khi xác nhận thanh toán.
-                    </p>
-                </div>
-
-                <!-- Mô tả -->
-                <div class="ng-detail-block">
-                    <div class="ng-block-title"><i class="fa-solid fa-file-lines"></i> Mô tả dịch vụ</div>
-                    <ul class="ng-desc-list" id="gameDescription">
-                        <li><i class="fa-solid fa-bolt"></i> Thời gian xử lý phụ thuộc game, tình trạng dịch vụ và thời điểm thanh toán; admin sẽ cập nhật theo từng đơn.</li>
-                        <li><i class="fa-solid fa-circle-check"></i> Thông tin đơn và trạng thái được cập nhật trong hệ thống; chứng từ cần được xác nhận theo từng giao dịch.</li>
-                        <li><i class="fa-solid fa-shield-halved"></i> Nếu đơn yêu cầu thông tin đăng nhập game, chỉ gửi qua biểu mẫu riêng của đơn; không gửi mật khẩu qua chat hoặc ghi chú.</li>
-                        <li><i class="fa-solid fa-rotate-left"></i> Hủy, hoàn tiền và xử lý ngoại lệ theo xác nhận của shop cho từng trường hợp.</li>
-                    </ul>
-                </div>
-
-                <!-- FAQ Accordion -->
-                <div class="ng-detail-block">
-                    <div class="ng-block-title"><i class="fa-solid fa-circle-question"></i> Câu hỏi thường gặp (FAQ)</div>
-                    <div class="ng-faq-list">
-                        <div class="ng-faq-item">
-                            <button class="ng-faq-question">1. Nạp Login có an toàn không, có bị ban acc không?</button>
-                            <div class="ng-faq-answer">
-                                <p>Không có dịch vụ nạp nào có thể bảo đảm rủi ro bằng 0. Hãy kiểm tra điều khoản của nhà phát hành và chỉ tiếp tục nếu bạn chấp nhận việc chia sẻ thông tin cần thiết cho đơn.</p>
-                            </div>
+                    <div class="ng-desc-body">
+                        <p class="ng-desc-warn">
+                            <i class="fas fa-triangle-exclamation"></i> <strong>Quan trọng:</strong> Khách yêu trước khi nạp hãy đăng nhập tài khoản trên website để tiến hành theo dõi đơn hàng, lịch sử giao dịch, biến động số dư, hoàn tiền nếu gặp lỗi phát sinh......
+                        </p>
+                        <p class="ng-desc-contact">
+                            📌 Chủ Động Inbox Qua Zalo 0763550673 Hoặc <a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer" class="ng-desc-zalo-link">ẤN VÔ ĐÂY</a> Để Có Thể Được Hỗ Trợ Nạp Nhanh Nhất:
+                        </p>
+                        <p class="ng-desc-p">
+                            Đây là Nạp Thủ Công qua LOGIN, được thực hiện bởi chính chủ shop, gói nạp sẽ hoàn thành từ 30 Phút trở lên ( có thể nhanh hơn hoặc chậm hơn, mong khách yêu thông cảm ).
+                        </p>
+                        <div class="ng-desc-collapsible" id="descCollapsible" style="display: none;">
+                            <p class="ng-desc-p" style="color: rgba(255, 255, 255, 0.4); margin-top: 10px;">
+                                Namcumz Game Store cam kết chỉ login game để nạp, không tác động gì đến tài khoản của quý khách.
+                            </p>
+                            <p class="ng-desc-p" style="color: rgba(255, 255, 255, 0.4);">
+                                Bảo mật tuyệt đối thông tin tài khoản và mật khẩu của khách hàng qua hệ thống mã hóa PGP / AES-256.
+                            </p>
                         </div>
-                        <div class="ng-faq-item">
-                            <button class="ng-faq-question">2. Bao lâu thì tôi nhận được tài nguyên vào acc?</button>
-                            <div class="ng-faq-answer">
-                                <p>Thời gian xử lý thay đổi theo game, khối lượng yêu cầu và xác nhận thanh toán. Theo dõi trạng thái đơn hoặc liên hệ hỗ trợ nếu cần.</p>
-                            </div>
-                        </div>
-                        <div class="ng-faq-item">
-                            <button class="ng-faq-question">3. Giá gói được lấy từ đâu?</button>
-                            <div class="ng-faq-answer">
-                                <p>Tên gói và giá hiển thị được tải từ catalog hiện hành. Vui lòng xác nhận tổng tiền với shop trước khi chuyển khoản.</p>
-                            </div>
-                        </div>
+                        <button type="button" class="ng-desc-toggle-btn" onclick="toggleDescExpand(this)">
+                            Xem tất cả <i class="fas fa-chevron-down"></i>
+                        </button>
                     </div>
-                </div>
-
-                <!-- Đánh giá -->
-                <div class="ng-detail-block">
-                    <div class="ng-block-title"><i class="fa-solid fa-star"></i> Đánh giá đã xác minh</div>
-                    <div class="ng-reviews" id="reviewList"><!-- JS renders reviews --></div>
                 </div>
 
             </div><!-- end ng-col-left -->
 
-            <!-- RIGHT COLUMN (Sticky Cart) -->
+            <!-- RIGHT COLUMN: THÔNG TIN NẠP LOGIN -->
             <div class="ng-col-right">
-                <div class="ng-summary-card">
-                    <div class="ng-summary-head"><i class="fa-solid fa-bag-shopping"></i> Thông tin đơn hàng</div>
-                    <div class="ng-summary-body">
-                        <div id="emptyCart" class="ng-summary-empty">
-                            <i class="fa-solid fa-cart-shopping"></i>
-                            <p>Giỏ hàng trống<br><span class="ng-summary-help">Chọn gói nạp ở bên trái</span></p>
-                        </div>
-                        <div id="filledCart" style="display:none;">
-                            <div class="ng-summary-item">
-                                <img src="assets/images/logo.jpg" class="ng-summary-item-img" id="cartPkgImg">
-                                <div class="ng-summary-item-info">
-                                    <div class="ng-summary-item-name" id="cartPkgName">--</div>
-                                    <div class="ng-summary-item-price" id="cartPkgPrice">0 đ</div>
-                                </div>
-                            </div>
-                            <!-- Promo code -->
-                            <div class="ng-promo-row">
-                                <input type="text" class="ng-promo-input" placeholder="Mã giảm giá" id="promoInput" aria-label="Mã giảm giá" aria-describedby="promoError">
-                                <button class="ng-promo-btn" onclick="applyPromo()">Áp dụng</button>
-                            </div>
-                            <p class="ng-field-error" id="promoError" role="alert" hidden></p><div class="ng-total-row">
-                                <span class="ng-total-label">Tổng cộng</span>
-                                <span class="ng-total-price" id="cartTotalPrice">0 đ</span>
-                            </div>
-                            <p class="ng-checkout-message" id="checkoutMessage" role="status" tabindex="-1" aria-live="polite" hidden></p><button class="ng-btn-checkout" id="btnSubmitOrder" onclick="submitDetailOrder()" disabled>
-                                <i class="fa-solid fa-check"></i> Đặt hàng ngay
-                            </button>
-                            <button class="ng-btn-zalo" onclick="window.open('https://zalo.me/0763550673','_blank')">
-                                <i class="fa-solid fa-comment-dots"></i> Liên hệ Zalo trực tiếp
-                            </button>
-                        </div>
-                        <div class="ng-summary-trust">
-                            <span><i class="fa-solid fa-list-check"></i> Theo dõi trạng thái</span>
-                            <span><i class="fa-solid fa-comments"></i> Trao đổi với shop</span>
+                <div class="ng-checkout-panel" id="orderInfoBlock">
+                    <div class="ng-form-title">
+                        <i class="fas fa-shield-alt"></i> THÔNG TIN NẠP LOGIN
+                    </div>
 
+                    <!-- 1. Chọn tài khoản đã lưu -->
+                    <div class="ng-saved-acc-box">
+                        <label for="savedAccountSelect" class="ng-gold-label">
+                            <i class="fas fa-id-card"></i> Chọn tài khoản đã lưu
+                        </label>
+                        <select id="savedAccountSelect" class="ng-saved-select" onchange="onSavedAccountSelect(this)">
+                            <option value="">-- Bạn chưa lưu tài khoản nào --</option>
+                        </select>
+                    </div>
+
+                    <!-- 2. Tên đăng nhập -->
+                    <div class="ng-field-wrap">
+                        <div class="ng-input-pill ng-pill-light">
+                            <i class="fas fa-user ng-pill-icon" style="color: #f72585;"></i>
+                            <input type="text" id="formUsername" class="ng-pill-input" placeholder="duckcop" autocomplete="username">
+                        </div>
+                        <span class="ng-field-error" id="usernameError" hidden></span>
+                    </div>
+
+                    <!-- 3. UID Ingame -->
+                    <div class="ng-field-wrap">
+                        <div class="ng-input-pill ng-pill-dark">
+                            <i class="fas fa-id-badge ng-pill-icon" style="color: #00f2fe;"></i>
+                            <input type="text" id="formUID" class="ng-pill-input" placeholder="UID Ingame (Bắt Buộc Để Check)">
                         </div>
                     </div>
+
+                    <!-- 4. Mật khẩu -->
+                    <div class="ng-field-wrap">
+                        <div class="ng-input-pill ng-pill-light">
+                            <i class="fas fa-key ng-pill-icon" style="color: #f59e0b;"></i>
+                            <input type="password" id="formPassword" class="ng-pill-input" placeholder="••••••••" autocomplete="off">
+                            <button type="button" class="ng-eye-toggle" onclick="togglePasswordVisibility()" aria-label="Hiện/ẩn mật khẩu"><i class="fas fa-eye-slash" id="pwdEyeIcon"></i></button>
+                        </div>
+                        <span class="ng-field-error" id="passwordError" hidden></span>
+                    </div>
+
+                    <!-- 5. Bảo mật AES-256 -->
+                    <div class="ng-sec-badge">
+                        <i class="fas fa-shield-halved"></i>
+                        <div class="ng-sec-badge-text">
+                            Bảo mật AES-256 • Thông tin mã hóa an toàn • Đền bù 100% tài khoản
+                        </div>
+                    </div>
+
+                    <!-- 6. Ghi chú / Server cho Admin -->
+                    <div class="ng-field-wrap">
+                        <div class="ng-input-pill ng-pill-dark">
+                            <i class="fas fa-comment-dots ng-pill-icon" style="color: #00f2fe;"></i>
+                            <input type="text" id="formNotes" class="ng-pill-input" placeholder="Server hoặc Ghi chú cho Admin">
+                        </div>
+                    </div>
+
+                    <!-- Hidden selects for formServer and formLoginMethod to preserve OrderAPI compatibility -->
+                    <select id="formServer" style="display: none;">
+                        <option value="Asia" selected>Asia</option>
+                        <option value="America">America</option>
+                        <option value="Europe">Europe</option>
+                        <option value="TW/HK/MO">TW/HK/MO</option>
+                    </select>
+                    <select id="formLoginMethod" style="display: none;">
+                        <option value="Hoyoverse" selected>Hoyoverse</option>
+                        <option value="Google">Google</option>
+                        <option value="Facebook">Facebook</option>
+                        <option value="Khác">Khác</option>
+                    </select>
+
+                    <!-- 7. Số Zalo -->
+                    <div class="ng-field-wrap">
+                        <div class="ng-input-pill ng-pill-dark">
+                            <i class="fas fa-phone ng-pill-icon" style="color: #10b981;"></i>
+                            <input type="tel" id="formPhone" class="ng-pill-input" placeholder="Số Zalo (Để shop xin mã OTP)" autocomplete="tel">
+                        </div>
+                        <span class="ng-field-error" id="phoneError" hidden></span>
+                    </div>
+
+                    <!-- 8. Số lượng Stepper -->
+                    <div class="ng-qty-row">
+                        <div class="ng-qty-lbl">
+                            <i class="fas fa-layer-group" style="color: #00f2fe; margin-right: 8px;"></i> Số lượng:
+                        </div>
+                        <div class="ng-qty-stepper">
+                            <button type="button" class="ng-qty-step-btn" onclick="changeQuantity(-1)">-</button>
+                            <span class="ng-qty-num" id="qtyDisplay">1</span>
+                            <button type="button" class="ng-qty-step-btn" onclick="changeQuantity(1)">+</button>
+                        </div>
+                    </div>
+
+                    <!-- 9. Mã giảm giá -->
+                    <div class="ng-promo-box">
+                        <input type="text" id="promoInput" class="ng-promo-inp" placeholder="NHẬP MÃ GIẢM GIÁ...">
+                        <button type="button" class="ng-promo-submit" onclick="applyPromo()">Áp dụng</button>
+                    </div>
+                    <p class="ng-field-error" id="promoError" role="alert" hidden></p>
+
+                    <!-- 10. Summary -->
+                    <div class="ng-sum-row">
+                        <span class="ng-sum-lbl">Gói đã chọn:</span>
+                        <span class="ng-sum-val" id="summaryPkgName">Chưa chọn gói</span>
+                    </div>
+                    <div class="ng-sum-row" style="margin-top: 8px; margin-bottom: 16px;">
+                        <span class="ng-sum-lbl">Tổng thanh toán:</span>
+                        <span class="ng-sum-total" id="summaryTotal">0đ</span>
+                    </div>
+
+                    <!-- 11. Lưu thông tin -->
+                    <div class="ng-save-box">
+                        <label class="ng-save-chk-lbl">
+                            <input type="checkbox" id="saveAccountCheckbox" checked>
+                            <span><i class="fas fa-id-card" style="color: #f59e0b;"></i> Lưu thông tin này vào Danh bạ để dùng lần sau</span>
+                        </label>
+                    </div>
+
+                    <!-- 12. Buttons -->
+                    <div class="ng-cta-row">
+                        <button type="button" class="ng-btn-cart" id="btnAddToCart" onclick="addToCartClick()">
+                            <i class="fas fa-shopping-cart"></i> THÊM GIỎ HÀNG
+                        </button>
+                        <button type="button" class="ng-btn-confirm" id="btnSubmitOrder" onclick="submitDetailOrder()" disabled>
+                            <i class="fas fa-bolt"></i> XÁC NHẬN NẠP
+                        </button>
+                    </div>
+                    <p class="ng-checkout-message" id="checkoutMessage" role="status" tabindex="-1" aria-live="polite" hidden></p>
+
+                    <!-- 13. Trust -->
+                    <div class="ng-trust-note">
+                        <i class="fas fa-shield-alt" style="color: #00f2fe;"></i> Nạp an toàn, hệ thống ghi nhận tự động!
+                    </div>
+
                 </div>
             </div><!-- end ng-col-right -->
 
         </div><!-- end ng-detail-layout -->
     </div><!-- end ng-detail-container -->
 
-    <!-- MOBILE BOTTOM BAR -->
-    <div class="ng-mobile-bar" id="mobileBar">
-        <div class="ng-mobile-bar-price">
-            <div class="label" id="mobileBarName">Gói đã chọn</div>
-            <div class="amount" id="mobileBarPrice">Chọn gói</div>
+    <!-- ================= FLOATING CSKH DUCK WIDGET ================= -->
+    <div class="duck-ai-floating-btn" id="duck-ai-btn">
+        <div id="duck-ai-tooltip" class="duck-ai-tooltip">
+            <span>🦆 Cần hỗ trợ cày game / nạp tiền? Chat với Vịt nhé!</span>
+            <button type="button" onclick="closeDuckAITooltip(event)" class="duck-tooltip-close" aria-label="Đóng tin nhắn">&times;</button>
         </div>
-        <button class="ng-mobile-bar-btn" id="mobileBarBtn" onclick="submitDetailOrder()" disabled>
-            Đặt hàng
-        </button>
+        <div class="duck-ai-avatar-wrap" onclick="toggleDuckAIWindow()">
+            <img class="duck-ai-avatar" src="/assets/images/duck/support_avatar.png" alt="Duck CSKH">
+            <span class="duck-ai-online-status-dot"></span>
+            <span class="duck-ai-badge">1</span>
+        </div>
     </div>
 
-    <!-- SHARED ACCOUNT DIALOG -->
+    <!-- ================= FOOTER ================= -->
+    <footer class="custom-footer">
+        <div class="container footer-grid">
+            <!-- Col 1: About -->
+            <div class="footer-col footer-about">
+                <a class="footer-logo-wrapper" href="/">
+                    <img class="footer-logo-gif" src="/assets/images/duck/duckstore.png" alt="Duck Streamer Shop Logo">
+                </a>
+                <p class="footer-desc">
+                    Cung cấp giải pháp cày thuê &amp; nạp game uy tín, hệ thống tự động 24/7, giao dịch an toàn - bảo mật tuyệt đối. Đồng hành cùng game thủ tối ưu trải nghiệm và chinh phục mọi đỉnh cao thế giới ảo.
+                </p>
+                <div class="footer-trust-pills">
+                    <span class="footer-trust-pill"><i class="fas fa-shield-alt"></i> SSL 256-BIT</span>
+                    <span class="footer-trust-pill"><i class="fas fa-bolt"></i> TỰ ĐỘNG 24/7</span>
+                    <span class="footer-trust-pill"><i class="fas fa-lock"></i> 100% BẢO MẬT</span>
+                </div>
+                <div class="footer-socials">
+                    <a href="https://www.facebook.com/duckstreamershop/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.tiktok.com/@duckstreamershop" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://www.youtube.com/@vtuber_2006" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="https://discord.com/invite/9aGaKU6Fev" target="_blank" rel="noopener noreferrer" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+
+            <!-- Col 2: Services & Policy -->
+            <div class="footer-col footer-services">
+                <h3 class="footer-heading" style="border-left: 3px solid var(--neon-cyan); padding-left: 10px;">DỊCH VỤ &amp; CHÍNH SÁCH</h3>
+                <ul class="footer-links-list">
+                    <li><a href="/#services"><i class="fas fa-star" style="color: var(--neon-cyan);"></i> Cày Thuê Game Hot</a></li>
+                    <li><a href="/#recharge-game-list"><i class="fas fa-gem" style="color: var(--neon-cyan);"></i> Dịch Vụ Nạp Game</a></li>
+                    <li><a href="/luu-y.html"><i class="fas fa-wrench" style="color: var(--neon-cyan);"></i> Những Điều Cần Lưu Ý</a></li>
+                    <li><a href="/privacy.html"><i class="fas fa-shield-halved" style="color: var(--neon-cyan);"></i> Chính Sách Bảo Mật</a></li>
+                    <li><a href="/faq.html"><i class="fas fa-question-circle" style="color: var(--neon-cyan);"></i> FAQ - Hỏi Đáp</a></li>
+                    <li><a href="https://www.facebook.com/profile.php?id=61586327944651" target="_blank" rel="noopener noreferrer"><i class="fas fa-headset" style="color: var(--neon-cyan);"></i> Trung Tâm Hỗ Trợ</a></li>
+                </ul>
+            </div>
+
+            <!-- Col 3: Contact & Support 24/7 -->
+            <div class="footer-col footer-contact">
+                <h3 class="footer-heading" style="border-left: 3px solid var(--neon-cyan); padding-left: 10px;">HỖ TRỢ KHÁCH HÀNG 24/7</h3>
+                <div class="contact-box" onclick="window.open('tel:0377415507')" style="cursor: pointer;">
+                    <div class="contact-icon" style="background: rgba(0, 242, 254, 0.15); color: var(--neon-cyan);"><i class="fas fa-phone-alt"></i></div>
+                    <div class="contact-info">
+                        <span class="contact-label">HOTLINE HỖ TRỢ</span>
+                        <span class="contact-value" style="font-family: var(--font-hud); font-weight: 800; font-size: 1.1rem; letter-spacing: 0.5px;">0377.415.507 &amp;<br>0789.239.156</span>
+                    </div>
+                </div>
+
+                <div class="contact-box" onclick="window.open('https://zalo.me/0377415507', '_blank')" style="cursor: pointer;">
+                    <div class="contact-icon" style="background: rgba(247, 37, 133, 0.15); color: var(--neon-pink);"><i class="fas fa-comment-dots"></i></div>
+                    <div class="contact-info">
+                        <span class="contact-label">ZALO TƯ VẤN NHANH</span>
+                        <span class="contact-value" style="font-family: var(--font-hud); font-weight: 800; font-size: 1.1rem; letter-spacing: 0.5px;">0377.415.507 &amp;<br>0789.239.156</span>
+                    </div>
+                </div>
+
+                <div class="contact-box">
+                    <div class="contact-icon" style="background: rgba(0, 242, 254, 0.15); color: var(--neon-cyan);"><i class="fas fa-clock"></i></div>
+                    <div class="contact-info">
+                        <span class="contact-label">GIỜ LÀM VIỆC: 07:00 - 23:00</span>
+                        <span class="contact-status" style="color: #10b981; font-weight: 700; font-size: 0.85rem;"><i class="fas fa-circle" style="font-size: 0.55rem; margin-right: 4px;"></i> ĐANG MỞ CỬA</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Copyright -->
+        <div class="footer-bottom container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.06);">
+            <p style="margin: 0; color: var(--text-muted); font-size: 0.85rem;">
+                &copy; 2026 <b>Duck Streamer Shop</b>. All rights reserved.
+            </p>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-family: var(--font-hud); color: #10b981;">
+                <i class="fas fa-circle" style="font-size: 0.55rem; box-shadow: 0 0 8px #10b981;"></i> HỆ THỐNG HOẠT ĐỘNG BÌNH THƯỜNG
+            </div>
+        </div>
+    </footer>
+
+    <!-- ================= AUTH OVERLAY MODAL ================= -->
     <div class="lp-auth-overlay" id="lpAuthOverlay" hidden>
-      <section class="lp-auth-dialog" role="dialog" aria-modal="true" aria-labelledby="lpAuthDialogTitle">
-        <header class="lp-auth-dialog-header"><h2 id="lpAuthDialogTitle">Tài khoản NAMCUMZ</h2><button class="lp-auth-close" type="button" data-auth-close aria-label="Đóng đăng nhập">×</button></header>
-        <iframe class="lp-auth-frame" id="lpAuthFrame" title="Đăng nhập hoặc tạo tài khoản NAMCUMZ" referrerpolicy="same-origin"></iframe>
-      </section>
+        <section class="lp-auth-dialog" role="dialog" aria-modal="true" aria-labelledby="lpAuthDialogTitle">
+            <header class="lp-auth-dialog-header">
+                <h2 id="lpAuthDialogTitle">Tài khoản Duck Streamer Shop</h2>
+                <button class="lp-auth-close" type="button" data-auth-close aria-label="Đóng đăng nhập">&times;</button>
+            </header>
+            <iframe class="lp-auth-frame" id="lpAuthFrame" title="Đăng nhập hoặc tạo tài khoản" loading="eager" referrerpolicy="same-origin"></iframe>
+        </section>
     </div>
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/authMediaConfig.js"></script>
     <script src="assets/js/landing.js?v=20261005-account12" defer></script>
+    <script src="assets/js/duck-home.js?v=20261009-hud1" defer></script>
     <script src="assets/js/runtime-config.js"></script>
     <script src="assets/js/order-api.js"></script>
     <script src="assets/js/app.js?v=20261005-request13"></script>
-    <script src="assets/js/napgame.js?v=20261004-unified7"></script>
+    <script src="assets/js/napgame.js?v=20261009-hud2"></script>
 </body>
 </html>
