@@ -12,7 +12,7 @@ function updateLandingAccountLinks() {
         accountLink.href = '/profile.html#orders';
         const user = window.currentUser || window.NAMCUMZ_PUBLIC_USER;
         const cachedName = localStorage.getItem('userId') === user.id ? localStorage.getItem('username') : '';
-        accountLink.textContent = (cachedName || user.user_metadata?.display_name || 'Tài khoản') + ' / Đơn hàng';
+        accountLink.textContent = document.body.classList.contains('reviews-page') ? 'Đơn hàng' : (cachedName || user.user_metadata?.display_name || 'Tài khoản') + ' / Đơn hàng';
         actions.appendChild(accountLink);
       } else {
         const loginLink = actions.querySelector('.lp-login');
