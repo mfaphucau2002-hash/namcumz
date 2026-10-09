@@ -1,6 +1,25 @@
 (() => {
   'use strict';
 
+  const packageCatalog = [
+    ['Rừng mưa Sumeru', 'Cày 100% (quest, thần đồng, rương)', 'map'],
+    ['Phong Thần Đồng (66)', 'Dịch vụ thu thập theo khu vực Mondstadt.', 'map'],
+    ['Nham Thần Đồng (131)', 'Dịch vụ thu thập theo khu vực Liyue.', 'map'],
+    ['Lôi Thần Đồng (181)', 'Dịch vụ thu thập theo khu vực Inazuma.', 'map'],
+    ['Thảo Thần Đồng (271)', 'Thu thập Thảo Thần Đồng theo yêu cầu.', 'map'],
+    ['Thủy Thần Đồng (271)', 'Thu thập Thủy Thần Đồng theo yêu cầu.', 'map'],
+    ['Hỏa Thần Đồng (271)', 'Thu thập Hỏa Thần Đồng theo yêu cầu.', 'map'],
+    ['Nguyệt Thần Đồng', 'Danh mục đang được cập nhật, shop sẽ xác nhận phạm vi.', 'map'],
+    ['Mã Não Đỏ Thẫm', 'Làm nhiệm vụ và thu thập theo tiến độ bạn yêu cầu.', 'quest'],
+    ['Lưu Tinh Minh Thạch (83)', 'Thu thập Lưu Tinh Minh Thạch theo khu vực.', 'map'],
+    ['Cá Chép Thường Linh (50)', 'Thu thập vật phẩm và nhiệm vụ liên quan.', 'map'],
+    ['Sumeru Sa Mạc', 'Chạy 100% khu vực sa mạc theo phạm vi xác nhận.', 'map'],
+    ['Cày Map Fontaine (khu)', 'Chạy 100% một khu vực Fontaine theo yêu cầu.', 'map'],
+    ['Full Fontaine', 'Thần đồng, rương và nhiệm vụ theo phạm vi xác nhận.', 'map'],
+    ['Cày Map Natlan (khu)', 'Chạy 100% một khu vực Natlan theo yêu cầu.', 'map']
+  ];
+  const packagePageSize = 12;
+
   const catalog = {
     map: { title: 'THÁM HIỂM (MAP)', description: 'Chọn phạm vi thám hiểm để shop báo giá.', items: [
       ['Khám phá bản đồ', 'Theo khu vực và mục tiêu bạn ghi chú.'],
@@ -44,10 +63,72 @@
   const search = document.getElementById('farmingOptionSearch');
   const customGoal = document.getElementById('farmingCustomGoal');
   const requestLink = document.getElementById('farmingRequestLink');
+  const packageGrid = document.getElementById('farmingPackageGrid');
+  const packageSearch = document.getElementById('farmingPackageSearch');
+  const packageEmpty = document.getElementById('farmingPackageEmpty');
+  const pagination = document.getElementById('farmingPagination');
+  let activePackagePage = 1;
   if (!dialog || !title || !description || !options || !requestLink) return;
 
   let activeGroup = '';
   let selectedGoal = '';
+  let filteredPackages = packageCatalog.slice();
+
+  // Render searchable package cards and page controls.
+  function renderPackageListing() {
+    if (!packageGrid || !pagination) return;
+    const pageCount = Math.max(1, Math.ceil(filteredPackages.length / packagePageSize));
+    activePackagePage = Math.min(activePackagePage, pageCount);
+    packageGrid.replaceChildren();
+    filteredPackages.slice((activePackagePage - 1) * packagePageSize, activePackagePage * packagePageSize).forEach(([name, detail, group]) => {
+      const card = document.createElement('article');
+      card.className = 'farming-package-card';
+      const heading = document.createElement('h3');
+      heading.textContent = name;
+      const description = document.createElement('p');
+      description.textContent = detail;
+      const price = document.createElement('div');
+      price.className = 'farming-package-price';
+      const priceLabel = document.createElement('small');
+      priceLabel.textContent = 'ĐƠN GIÁ';
+      const priceValue = document.createElement('strong');
+      priceValue.textContent = 'Báo giá';
+      price.append(priceLabel, priceValue);
+      const action = document.createElement('button');
+      action.type = 'button';
+      action.className = 'lp-button lp-button-primary farming-package-order';
+      action.dataset.serviceOpen = group;
+      action.dataset.serviceGoal = name;
+      action.textContent = 'YÊU CẦU BÁO GIÁ';
+      card.append(heading, description, price, action);
+      packageGrid.append(card);
+    });
+    if (packageEmpty) packageEmpty.hidden = filteredPackages.length > 0;
+    pagination.replaceChildren();
+    if (pageCount < 2) return;
+    for (let page = 1; page <= pageCount; page += 1) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'farming-page-button';
+      button.textContent = String(page);
+      button.setAttribute('aria-current', String(page === activePackagePage));
+      button.setAttribute('aria-label', `Trang ${page}`);
+      button.addEventListener('click', () => {
+        activePackagePage = page;
+        renderPackageListing();
+        packageGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      pagination.append(button);
+    }
+  }
+
+  packageSearch?.addEventListener('input', () => {
+    const query = packageSearch.value.trim().toLocaleLowerCase('vi');
+    filteredPackages = packageCatalog.filter(([name, detail]) => `${name} ${detail}`.toLocaleLowerCase('vi').includes(query));
+    activePackagePage = 1;
+    renderPackageListing();
+  });
+  renderPackageListing();
 
   // Enable the existing quote flow only after the visitor chooses or describes a goal.
   function setRequestGoal(value) {
@@ -71,7 +152,7 @@
   }
 
   // Render the chosen category using safe text nodes and real order-group keys.
-  function openCatalog(groupKey) {
+  function openCatalog(groupKey, requestedGoal = '') {
     const group = catalog[groupKey];
     if (!group) return;
     activeGroup = groupKey;
@@ -107,14 +188,18 @@
       options.append(option);
     });
 
-    setRequestGoal('');
+    if (requestedGoal && customGoal) customGoal.value = requestedGoal;
+    setRequestGoal(requestedGoal);
     filterOptions();
     dialog.showModal();
     search?.focus();
   }
 
-  document.querySelectorAll('[data-service-open]').forEach((card) => {
-    card.addEventListener('click', () => openCatalog(card.dataset.serviceOpen));
+  document.addEventListener('click', (event) => {
+    const card = event.target.closest('[data-service-open]');
+    if (!card || !document.body.contains(card)) return;
+    event.preventDefault();
+    openCatalog(card.dataset.serviceOpen, card.dataset.serviceGoal || '');
   });
   document.querySelector('[data-farming-close]')?.addEventListener('click', () => dialog.close());
   search?.addEventListener('input', filterOptions);
