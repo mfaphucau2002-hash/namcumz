@@ -109,19 +109,77 @@
 </nav>
 
 <main>
-    <!-- ================= NAMCUMZ GAME ART HERO ================= -->
+    <!-- ================= HERO SECTION (BANNER SLIDER & TOP CHI TIÊU) ================= -->
     <section class="section-padding" id="top-donate" style="padding: 30px 0 30px;">
         <div class="container">
             <div class="donate-layout-v2">
                 <!-- NAMCUMZ GAME ART CAROUSEL -->
-                <div class="slider-wrapper-v2 namcumz-hero-carousel">
+                <div class="slider-wrapper-v2">
                     <div class="slider-track" id="donate-slider">
-                        <img src="/assets/images/games/genshin_banner.jpg" alt="Khám phá dịch vụ Genshin Impact tại NAMCUMZ" width="1200" height="675" fetchpriority="high" decoding="async">
-                        <img src="/assets/images/games/hsr_banner.jpg" alt="Nạp Honkai: Star Rail tại NAMCUMZ" width="1200" height="675" loading="lazy" decoding="async">
-                        <img src="/assets/images/games/zzz_banner.jpg" alt="Nạp Zenless Zone Zero tại NAMCUMZ" width="1200" height="675" loading="lazy" decoding="async">
-                        <img src="/assets/images/games/wuwa_banner.jpg" alt="Dịch vụ Wuthering Waves tại NAMCUMZ" width="1200" height="675" loading="lazy" decoding="async">
+                        <img src="/assets/images/games/genshin_banner.jpg" alt="Genshin Impact tại NAMCUMZ" width="1200" height="675" fetchpriority="high" decoding="async">
+                        <img src="/assets/images/games/hsr_banner.jpg" alt="Honkai: Star Rail tại NAMCUMZ" width="1200" height="675" loading="lazy" decoding="async">
+                        <img src="/assets/images/games/zzz_banner.jpg" alt="Zenless Zone Zero tại NAMCUMZ" width="1200" height="675" loading="lazy" decoding="async">
+                        <img src="/assets/images/games/wuwa_banner.jpg" alt="Wuthering Waves tại NAMCUMZ" width="1200" height="675" loading="lazy" decoding="async">
                     </div>
                     <div class="slider-dots" id="slider-dots"></div>
+                </div>
+                <!-- TOP CHI TIÊU LEADERBOARD (RIGHT) -->
+                <div class="glass-panel leaderboard-sidebar">
+                    <button type="button" class="top-info-btn" onclick="window.location.href='/faq.html'" title="Thông tin phần thưởng">
+                        <i class="fas fa-question"></i>
+                    </button>
+                    <h3 class="inside-panel-title">👑 TOP CHI TIÊU</h3>
+                    <p style="margin: -2px 0 12px; text-align: center; color: var(--text-muted); font-size: 0.72rem; letter-spacing: 0.08em;">DỮ LIỆU DEMO</p>
+                    <div class="divider-inside" style="margin-bottom: 25px;"></div>
+
+                    <div id="podium-container" style="display: flex; justify-content: center; align-items: flex-end; gap: 10px; margin-bottom: 30px; min-height: 140px;">
+                        <!-- Top 2 -->
+                        <div class="rank-2" style="text-align: center; margin-bottom: 10px;">
+                            <div class="top-avatar" style="position: relative;">
+                                <img src="/assets/images/logo.webp" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" alt="Demo***2">
+                            </div>
+                            <h4 style="color: #fff; margin: 6px 0 2px; font-size: 0.95rem;">Demo***2</h4>
+                            <div class="amount" style="font-family: var(--font-hud); font-weight: 800; font-size: 1.05rem;">3.366.000đ</div>
+                        </div>
+
+                        <!-- Top 1 (Center with Crown) -->
+                        <div class="rank-1" style="text-align: center; margin: 0 5px; transform: translateY(-15px); z-index: 10;">
+                            <div class="top-avatar" style="position: relative;">
+                                <i class="fas fa-crown crown-icon"></i>
+                                <img src="/assets/images/logo.webp" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" alt="Demo***1">
+                            </div>
+                            <h4 style="color: #fbbf24 !important; margin: 6px 0 2px; font-size: 1.05rem;">Demo***1</h4>
+                            <div class="amount" style="font-family: var(--font-hud); font-weight: 800; font-size: 1.25rem; color: #fbbf24;">5.008.200đ</div>
+                        </div>
+
+                        <!-- Top 3 -->
+                        <div class="rank-3" style="text-align: center; margin-bottom: 10px;">
+                            <div class="top-avatar" style="position: relative;">
+                                <img src="/assets/images/logo.webp" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" alt="Demo***3">
+                            </div>
+                            <h4 style="color: #f59e0b !important; margin: 6px 0 2px; font-size: 0.95rem;">Demo***3</h4>
+                            <div class="amount" style="font-family: var(--font-hud); font-weight: 800; font-size: 1.05rem; color: #f59e0b;">170.000đ</div>
+                        </div>
+                    </div>
+
+                    <div id="list-container" style="display: flex; flex-direction: column; gap: 8px;">
+                        <div class="rank-list-item">
+                            <div style="display: flex; align-items: center;">
+                                <span style="color: var(--text-muted); font-weight: bold; font-style: italic; width: 22px; font-size: 0.85rem;">#4</span>
+                                <img src="/assets/images/logo.webp" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; margin-right: 10px; border: 1.5px solid var(--neon-cyan);" alt="Demo***4">
+                                <span style="color: #fff; font-weight: bold; font-size: 0.85rem;">Demo***4</span>
+                            </div>
+                            <div style="color: var(--neon-cyan); font-weight: 800; font-family: var(--font-hud); font-size: 0.95rem;">170.000đ</div>
+                        </div>
+                        <div class="rank-list-item">
+                            <div style="display: flex; align-items: center;">
+                                <span style="color: var(--text-muted); font-weight: bold; font-style: italic; width: 22px; font-size: 0.85rem;">#5</span>
+                                <img src="/assets/images/logo.webp" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; margin-right: 10px; border: 1.5px solid var(--neon-cyan);" alt="Demo***5">
+                                <span style="color: #fff; font-weight: bold; font-size: 0.85rem;">Demo***5</span>
+                            </div>
+                            <div style="color: var(--neon-cyan); font-weight: 800; font-family: var(--font-hud); font-size: 0.95rem;">168.300đ</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -481,6 +539,18 @@
         </div>
     </section>
 </main>
+
+<!-- ================= FLOATING FLASH SALE WIDGET ================= -->
+<div id="duck-flash-sale-pill-widget" class="active">
+    <div class="fsw-pill-card" onclick="window.location.href='#recharge-game-list'">
+        <div class="fsw-icon-wrap"><i class="fas fa-bolt"></i></div>
+        <div class="fsw-label-group">
+            <span class="fsw-title">FLASH SALE:</span>
+            <div class="fsw-timer-box" id="fsw-timer">01:37:41</div>
+        </div>
+        <button type="button" class="fsw-close-btn" onclick="closeFlashSaleWidget(event)" aria-label="Đóng flash sale">&times;</button>
+    </div>
+</div>
 
 <!-- ================= FLOATING NAMCUMZ SUPPORT WIDGET ================= -->
 <div class="duck-ai-floating-btn" id="duck-ai-btn">

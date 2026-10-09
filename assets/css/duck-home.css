@@ -4061,10 +4061,8 @@ body.has-vip5-honor-banner .main-content {
                 .donate-layout-v2 {
                     display: grid;
                     /* Single-column game art carousel */
-                    grid-template-columns: minmax(0, 1fr);
+                    grid-template-columns: 2.3fr 1fr;
                     gap: 30px;
-                    max-width: 1280px;
-                    margin-inline: auto;
                     align-items: stretch;
                 }
 
