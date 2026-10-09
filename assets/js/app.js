@@ -1423,7 +1423,8 @@ function applyRequestedServicePreset() {
         if (!group || !goal) return;
         group.value = choices[selected.key][0];
         group.dispatchEvent(new Event('change', {bubbles:true}));
-        goal.value = choices[selected.key][1];
+        const requestedGoal = typeof selected.goal === 'string' ? selected.goal.trim().slice(0, 180) : '';
+        goal.value = requestedGoal || choices[selected.key][1];
     } catch (_) { /* Invalid/disabled storage must not stop order creation. */ }
 }
 

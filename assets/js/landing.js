@@ -168,7 +168,7 @@ function setupLandingServiceSelection() {
     const card = event.target.closest('[data-service-preset]');
     if (!card || !['map','challenge','resources','daily','quest','events'].includes(card.dataset.servicePreset)) return;
     if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
-    try { sessionStorage.setItem('namcumz-service-preset', JSON.stringify({key:card.dataset.servicePreset,created:Date.now()})); } catch (_) { /* The form remains usable when storage is unavailable. */ }
+    try { const preset = {key:card.dataset.servicePreset,created:Date.now()}; const goal = card.dataset.serviceGoal?.trim(); if (goal && goal.length <= 180) preset.goal = goal; sessionStorage.setItem('namcumz-service-preset', JSON.stringify(preset)); } catch (_) { /* The form remains usable when storage is unavailable. */ }
   }, true);
 }
 
