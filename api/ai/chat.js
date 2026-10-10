@@ -81,6 +81,13 @@ module.exports = async function handler(req, res) {
     });
     const payload = await resultResponse.json().catch(() => ({}));
     if (!resultResponse.ok) {
+      const providerError = payload.error || {};
+      console.error('Public Gemini API rejected request:', JSON.stringify({
+        httpStatus: resultResponse.status,
+        providerStatus: providerError.status || null,
+        providerCode: providerError.code || null,
+        providerMessage: String(providerError.message || '').slice(0, 300)
+      }));
       return res.status(resultResponse.status === 429 ? 503 : 502).json({ message: resultResponse.status === 429 ? 'Trợ lý AI đang bận. Vui lòng thử lại sau.' : 'Chưa kết nối được trợ lý AI.' });
     }
     const text = (payload.candidates || []).flatMap(candidate => candidate.content?.parts || []).map(part => part.text || '').join('').trim();
