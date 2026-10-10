@@ -1117,25 +1117,26 @@ body.ng-hud-theme .ng-panel-card {
 body.ng-hud-theme .ng-pkg-grid {
   display: grid !important;
   grid-template-columns: repeat(4, 1fr) !important;
-  gap: 14px !important;
+  gap: 16px !important;
 }
 
 body.ng-hud-theme .ng-pkg-card {
   background: rgba(16, 22, 42, 0.7) !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-radius: 12px !important;
-  padding: 16px 8px 14px !important;
+  border-radius: 14px !important;
+  padding: 14px 10px 14px !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
-  justify-content: space-between !important;
+  justify-content: flex-start !important;
   text-align: center !important;
   cursor: pointer !important;
   transition: all 0.22s ease-in-out !important;
   position: relative !important;
-  min-height: 140px !important;
+  min-height: 220px !important;
   user-select: none !important;
   box-sizing: border-box !important;
+  gap: 8px !important;
 }
 
 body.ng-hud-theme .ng-pkg-card::before,
@@ -1146,47 +1147,55 @@ body.ng-hud-theme .ng-pkg-card::after {
 
 body.ng-hud-theme .ng-pkg-card:hover {
   border-color: rgba(0, 242, 254, 0.45) !important;
-  transform: translateY(-3px) !important;
-  box-shadow: 0 6px 20px rgba(0, 242, 254, 0.22) !important;
+  transform: translateY(-4px) !important;
+  box-shadow: 0 8px 24px rgba(0, 242, 254, 0.25) !important;
 }
 
 body.ng-hud-theme .ng-pkg-card.selected {
   border: 1.5px solid #00f2fe !important;
-  background: rgba(0, 242, 254, 0.08) !important;
-  box-shadow: 0 0 20px rgba(0, 242, 254, 0.35) !important;
+  background: rgba(0, 242, 254, 0.1) !important;
+  box-shadow: 0 0 24px rgba(0, 242, 254, 0.4) !important;
   transform: none !important;
 }
 
 body.ng-hud-theme .ng-pkg-img {
-  width: 52px !important;
-  height: 52px !important;
+  width: 100% !important;
+  max-width: 140px !important;
+  height: auto !important;
+  aspect-ratio: 1 / 1 !important;
   object-fit: contain !important;
-  margin-bottom: 8px !important;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6)) !important;
+  margin-bottom: 4px !important;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.6)) !important;
   border: none !important;
-  border-radius: 0 !important;
+  border-radius: 8px !important;
   display: block !important;
+  transition: transform 0.22s ease-in-out !important;
+}
+
+body.ng-hud-theme .ng-pkg-card:hover .ng-pkg-img {
+  transform: scale(1.05) !important;
 }
 
 body.ng-hud-theme .ng-pkg-name {
-  font-size: 0.74rem !important;
+  font-size: 0.82rem !important;
   font-weight: 700 !important;
   color: #ffffff !important;
-  line-height: 1.3 !important;
-  min-height: 28px !important;
+  line-height: 1.35 !important;
+  min-height: 32px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  margin-bottom: 6px !important;
+  margin-bottom: 2px !important;
 }
 
 body.ng-hud-theme .ng-pkg-price {
-  font-size: 1.05rem !important;
+  font-size: 1.15rem !important;
   font-weight: 800 !important;
   color: #00f2fe !important;
   text-shadow: 0 0 10px rgba(0, 242, 254, 0.45) !important;
   font-family: 'Be Vietnam Pro', sans-serif !important;
   letter-spacing: -0.2px !important;
+  margin-top: auto !important;
 }
 
 body.ng-hud-theme .ng-checkout-panel {
@@ -1206,11 +1215,30 @@ body.ng-hud-theme .ng-checkout-panel {
   body.ng-hud-theme .ng-pkg-grid {
     grid-template-columns: repeat(3, 1fr) !important;
   }
+  body.ng-hud-theme .ng-pkg-img {
+    max-width: 140px !important;
+  }
 }
 
 @media (max-width: 580px) {
   body.ng-hud-theme .ng-pkg-grid {
     grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  body.ng-hud-theme .ng-pkg-card {
+    min-height: 195px !important;
+    padding: 10px 8px 12px !important;
+    gap: 6px !important;
+  }
+  body.ng-hud-theme .ng-pkg-img {
+    max-width: 120px !important;
+  }
+  body.ng-hud-theme .ng-pkg-name {
+    font-size: 0.76rem !important;
+    min-height: 28px !important;
+  }
+  body.ng-hud-theme .ng-pkg-price {
+    font-size: 1.05rem !important;
   }
 }
 
