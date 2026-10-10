@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Nạp Game Tốc Độ - Hệ thống tạo đơn nạp game login an toàn, bảo mật AES-256 tại NAMCUMZ.">
     <link rel="canonical" href="https://namcumz.io.vn/napgame-detail.html">
+    <link rel="icon" type="image/jpeg" href="/assets/images/logo.jpg">
     <title id="pageTitle">Nạp Game Tốc Độ - NAMCUMZ GAME STORE</title>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/design-tokens.css">
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/home-page.css?v=20261009-title-font1">
-    <link rel="stylesheet" href="assets/css/napgame.css?v=20261009-hud2">
+    <link rel="stylesheet" href="assets/css/home-page.css?v=20261010-mobile5">
+    <link rel="stylesheet" href="assets/css/napgame.css?v=20261010-mobile2">
     <link rel="stylesheet" href="assets/css/ui.css">
 </head>
 <body class="ng-page ng-hud-theme">
@@ -184,7 +185,7 @@
                     <div class="ng-field-wrap">
                         <div class="ng-input-pill ng-pill-light">
                             <i class="fas fa-user ng-pill-icon" style="color: #f72585;"></i>
-                            <input type="text" id="formUsername" class="ng-pill-input" placeholder="duckcop" autocomplete="username">
+                            <input type="text" id="formUsername" class="ng-pill-input" placeholder="Tài khoản / Email game" autocomplete="username">
                         </div>
                         <span class="ng-field-error" id="usernameError" hidden></span>
                     </div>
@@ -285,11 +286,8 @@
 
                     <!-- 12. Buttons -->
                     <div class="ng-cta-row">
-                        <button type="button" class="ng-btn-cart" id="btnAddToCart" onclick="addToCartClick()">
-                            <i class="fas fa-shopping-cart"></i> THÊM GIỎ HÀNG
-                        </button>
-                        <button type="button" class="ng-btn-confirm" id="btnSubmitOrder" onclick="submitDetailOrder()" disabled>
-                            <i class="fas fa-bolt"></i> XÁC NHẬN NẠP
+                        <button type="button" class="ng-btn-confirm" id="btnSubmitOrder" onclick="submitDetailOrder()" disabled style="width: 100%;">
+                            <i class="fas fa-bolt"></i> XÁC NHẬN NẠP NGAY
                         </button>
                     </div>
                     <p class="ng-checkout-message" id="checkoutMessage" role="status" tabindex="-1" aria-live="polite" hidden></p>
@@ -305,16 +303,16 @@
         </div><!-- end ng-detail-layout -->
     </div><!-- end ng-detail-container -->
 
-    <!-- ================= FLOATING CSKH DUCK WIDGET ================= -->
-    <div class="duck-ai-floating-btn" id="duck-ai-btn">
-        <div id="namcumz-support-tooltip" class="duck-ai-tooltip">
+    <!-- ================= FLOATING CSKH NAMCUMZ WIDGET ================= -->
+    <div class="nc-ai-floating-btn" id="nc-ai-btn">
+        <div id="namcumz-support-tooltip" class="nc-ai-tooltip">
             <span>Cần hỗ trợ cày game hoặc nạp tiền? Liên hệ NAMCUMZ nhé!</span>
-            <button type="button" onclick="closeNamcumzSupportTooltip(event)" class="duck-tooltip-close" aria-label="Đóng tin nhắn">&times;</button>
+            <button type="button" onclick="closeNamcumzSupportTooltip(event)" class="nc-tooltip-close" aria-label="Đóng tin nhắn">&times;</button>
         </div>
-        <div class="duck-ai-avatar-wrap" onclick="toggleNamcumzSupportWindow()">
-            <img class="duck-ai-avatar" src="/assets/images/logo.webp" alt="NAMCUMZ hỗ trợ khách hàng">
-            <span class="duck-ai-online-status-dot"></span>
-            <span class="duck-ai-badge">1</span>
+        <div class="nc-ai-avatar-wrap" onclick="toggleNamcumzSupportWindow()">
+            <img class="nc-ai-avatar" src="/assets/images/logo.webp" alt="NAMCUMZ hỗ trợ khách hàng">
+            <span class="nc-ai-online-status-dot"></span>
+            <span class="nc-ai-badge">1</span>
         </div>
     </div>
 
@@ -407,8 +405,8 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/authMediaConfig.js"></script>
-    <script src="assets/js/landing.js?v=20261005-account12" defer></script>
-    <script src="assets/js/home-page.js?v=20261009-hud1" defer></script>
+    <script src="assets/js/landing.js?v=20261010-ecomode1" defer></script>
+    <script src="assets/js/home-page.js?v=20261010-ecomode1" defer></script>
     <script src="assets/js/runtime-config.js"></script>
     <script src="assets/js/order-api.js"></script>
     <script src="assets/js/app.js?v=20261005-request13"></script>

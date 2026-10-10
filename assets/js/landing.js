@@ -260,28 +260,38 @@ function setupLiveTicker() {
 }
 
 // Eco Mode Toggle: allows smooth performance & battery conservation on low-power devices.
+function applyEcoMode(on) {
+  const isEco = Boolean(on);
+  document.body.classList.toggle('perf-eco-mode', isEco);
+  try {
+    localStorage.setItem('namcumz_eco_mode', isEco ? '1' : '0');
+  } catch (_) {}
+  const toggles = document.querySelectorAll('.perf-toggle-btn, #lpEcoToggle');
+  toggles.forEach((btn) => {
+    btn.setAttribute('aria-pressed', String(isEco));
+    btn.classList.toggle('active', isEco);
+  });
+  return isEco;
+}
+
+window.applyEcoMode = applyEcoMode;
+
+window.toggleEcoMode = function(event) {
+  if (event && typeof event.preventDefault === 'function') event.preventDefault();
+  const next = !document.body.classList.contains('perf-eco-mode');
+  return applyEcoMode(next);
+};
+
 function setupEcoMode() {
-  const toggle = document.getElementById('lpEcoToggle');
-  const apply = (on) => {
-    document.body.classList.toggle('perf-eco-mode', on);
-    if (toggle) {
-      toggle.setAttribute('aria-pressed', String(on));
-      toggle.classList.toggle('active', on);
-      const label = toggle.querySelector('.lp-eco-label');
-      if (label) label.textContent = on ? 'Mượt mà: Bật' : 'Mượt mà';
-    }
-  };
   let isEco = false;
   try {
-    isEco = localStorage.getItem('namcumz_eco_mode') === '1';
+    isEco = localStorage.getItem('namcumz_eco_mode') === '1' || localStorage.getItem('duck_eco_mode') === '1';
   } catch (_) {}
-  apply(isEco);
-  if (toggle) {
-    toggle.addEventListener('click', () => {
-      const next = !document.body.classList.contains('perf-eco-mode');
-      try { localStorage.setItem('namcumz_eco_mode', next ? '1' : '0'); } catch (_) {}
-      apply(next);
-    });
+  applyEcoMode(isEco);
+
+  const toggle = document.getElementById('lpEcoToggle');
+  if (toggle && !toggle.getAttribute('onclick')) {
+    toggle.addEventListener('click', window.toggleEcoMode);
   }
 }
 

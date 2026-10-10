@@ -22,8 +22,8 @@ function getStagingConfig() {
  };
  return `window.NAMCUMZ_CONFIG = ${JSON.stringify({environment:'staging',supabaseUrl:stagingProjectUrl,supabaseAnonKey:values.NAMCUMZ_STAGING_KEY,expectedDbVersion:'staging_004_credentials_encryption',bank})};`;
 }
-const pages = new Set(['index.html','caythue.html','reviews.html','checkscam.html','terms.html','privacy.html','login.html','dashboard.html','admin.html','profile.html','booster.html','napgame.html','napgame-detail.html','checkout.html','faq.html','luu-y.html','robots.txt','sitemap.xml']);
-const mime = {'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.jpg':'image/jpeg','.png':'image/png','.webp':'image/webp','.svg':'image/svg+xml','.ico':'image/x-icon','.txt':'text/plain; charset=utf-8','.xml':'application/xml; charset=utf-8','.woff2':'font/woff2','.mp4':'video/mp4'};
+const pages = new Set(['index.html','caythue.html','reviews.html','checkscam.html','terms.html','privacy.html','login.html','dashboard.html','admin.html','profile.html','booster.html','napgame.html','napgame-detail.html','checkout.html','faq.html','luu-y.html','robots.txt','sitemap.xml','favicon.ico']);
+const mime = {'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.jpg':'image/jpeg','.jpeg':'image/jpeg','.gif':'image/gif','.png':'image/png','.webp':'image/webp','.svg':'image/svg+xml','.ico':'image/x-icon','.txt':'text/plain; charset=utf-8','.xml':'application/xml; charset=utf-8','.woff2':'font/woff2','.mp4':'video/mp4'};
 http.createServer((req,res) => {
  if (!['GET','HEAD'].includes(req.method)) {res.writeHead(405);return res.end();}
  let name;

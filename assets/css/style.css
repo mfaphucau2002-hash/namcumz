@@ -1059,3 +1059,4 @@ textarea.order-dialog__input { min-height: 96px; resize: vertical; }
 @media (prefers-reduced-motion: reduce) {
     .order-action-dialog::backdrop, .order-dialog__panel, .order-action-toast { animation: none; transition: none; }
 }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }

@@ -4,9 +4,43 @@ import { readFile } from 'node:fs/promises';
 import { PGlite } from '@electric-sql/pglite';
 import PaymentProvider from '../assets/js/payment-provider.js';
 import PaymentService from '../api/lib/payment-service.js';
+import mockSimulator from '../api/payment/mock-simulate.js';
 
 const read = name => readFile(new URL('../_db/' + name, import.meta.url), 'utf8');
 
+test('webhook providers reject missing secrets and accept exact configured credentials', () => {
+  for (const provider of ['sepay', 'casso', 'mock']) {
+    assert.equal(PaymentProvider.verifyWebhook(provider, {}, '{}', ''), false, `${provider} must reject a missing secret`);
+  }
+  assert.equal(PaymentProvider.verifyWebhook('sepay', { authorization: 'Apikey test-secret' }, '{}', 'test-secret'), true);
+  assert.equal(PaymentProvider.verifyWebhook('casso', { 'secure-token': 'test-secret' }, '{}', 'test-secret'), true);
+  assert.equal(PaymentProvider.verifyWebhook('mock', { 'x-mock-secret': 'prefix-test-secret-suffix' }, '{}', 'test-secret'), false);
+  assert.equal(PaymentProvider.verifyWebhook('mock', { 'x-mock-secret': 'test-secret' }, '{}', 'test-secret'), true);
+});
+
+test('payment simulator remains disabled on Vercel production even with mock provider configured', async () => {
+  const previous = {
+    node: process.env.NODE_ENV,
+    vercel: process.env.VERCEL_ENV,
+    provider: process.env.PAYMENT_PROVIDER
+  };
+  process.env.NODE_ENV = 'production';
+  process.env.VERCEL_ENV = 'production';
+  process.env.PAYMENT_PROVIDER = 'mock';
+  const response = {
+    status(code) { this.statusCode = code; return this; },
+    json(body) { this.body = body; return this; }
+  };
+  try {
+    await mockSimulator({ method: 'POST', body: {} }, response);
+    assert.equal(response.statusCode, 403);
+    assert.equal(response.body.error, 'FORBIDDEN');
+  } finally {
+    if (previous.node === undefined) delete process.env.NODE_ENV; else process.env.NODE_ENV = previous.node;
+    if (previous.vercel === undefined) delete process.env.VERCEL_ENV; else process.env.VERCEL_ENV = previous.vercel;
+    if (previous.provider === undefined) delete process.env.PAYMENT_PROVIDER; else process.env.PAYMENT_PROVIDER = previous.provider;
+  }
+});
 test('Automated VietQR Payment, Transaction Verification, Anti-Duplicate & Wallet Test Suite', async t => {
   const db = new PGlite();
 

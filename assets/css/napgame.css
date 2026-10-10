@@ -1213,3 +1213,20 @@ body.ng-hud-theme .ng-checkout-panel {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 }
+
+@media (max-width: 768px) {
+  body.ng-hud-theme .ng-detail-container,
+  body.ng-hud-theme .ng-detail-layout,
+  body.ng-hud-theme .ng-col-left,
+  body.ng-hud-theme .ng-col-right {
+    box-sizing: border-box;
+    min-width: 0;
+    max-width: 100%;
+  }
+  body.ng-hud-theme .ng-detail-container { width: 100%; }
+}
+@media (max-width: 480px) {
+  body.ng-hud-theme .ng-promo-box { width: 100%; min-width: 0; box-sizing: border-box; }
+  body.ng-hud-theme .ng-promo-inp { min-width: 0; width: 0; }
+  body.ng-hud-theme .ng-promo-submit { flex: 0 0 auto; padding-inline: 10px; }
+}

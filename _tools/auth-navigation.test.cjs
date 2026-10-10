@@ -15,7 +15,7 @@ function harness(){
     continueAfterAuthentication:()=>{context.redirected=true;}};
   context.window={location:{pathname:'/napgame.html',search:''},dispatchEvent:e=>events.push(e.type),setTimeout:fn=>timers.push(fn),fetchOrders:()=>{},fetchLeaderboard:()=>{}};
   vm.createContext(context);
-  vm.runInContext("let notificationDestinationHandled = '';\n" + slice(app,'let notificationActor = null;','function injectDynamicModals() {') + slice(app,'async function initSupabaseLogic() {',"document.addEventListener('DOMContentLoaded'"), context);
+  vm.runInContext("let notificationDestinationHandled = '';\n" + slice(app,'function redirectCustomerDashboardIndex() {','window.applyFilters = function()') + slice(app,'let notificationActor = null;','function injectDynamicModals() {') + slice(app,'async function initSupabaseLogic() {',"document.addEventListener('DOMContentLoaded'"), context);
   return {context,storage,timers,pending,events,emit:(event,session)=>callback(event,session)};
 }
 test('auth listener and login binding survive a failed order database contract',async()=>{
@@ -86,7 +86,7 @@ test('top-up header uses dashboard account state for customer, booster and admin
 });
 test('dashboard top-up filter recognizes server kind without requiring a legacy content marker',()=>{
  const elements={filterService:{value:'[Nạp Game]'},filterSort:{value:'newest'},searchInput:{value:''}};let shown;
- const context={window:{renderOrders:rows=>shown=rows},document:{getElementById:id=>elements[id]},allOrders:[{id:'topup',kind:'topup',content:'[Asia] [Genshin Impact] 60 Đá',status:'cho_xu_ly'},{id:'farm',kind:'service',content:'Cày nhiệm vụ Genshin',status:'cho_xu_ly'},{id:'old',content:'[Nạp Game] Genshin',status:'cho_xu_ly'}],currentTab:'all',currentSearch:'',currentService:'all',currentSort:''};
+ const context={URLSearchParams,window:{location:{search:''},renderOrders:rows=>shown=rows},document:{getElementById:id=>elements[id]},allOrders:[{id:'topup',kind:'topup',content:'[Asia] [Genshin Impact] 60 Đá',status:'cho_xu_ly'},{id:'farm',kind:'service',content:'Cày nhiệm vụ Genshin',status:'cho_xu_ly'},{id:'old',content:'[Nạp Game] Genshin',status:'cho_xu_ly'}],currentTab:'all',currentSearch:'',currentService:'all',currentSort:''};
  vm.createContext(context);vm.runInContext(slice(app,'window.applyFilters = function()', 'window.filterByTab = function'),context);context.window.applyFilters();assert.deepEqual(Array.from(shown,row=>row.id),['topup','old']);
 });
 

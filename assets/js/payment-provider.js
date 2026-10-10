@@ -130,7 +130,7 @@
     name: 'sepay',
 
     verifyWebhook(headers = {}, rawBody, expectedSecret) {
-      if (!expectedSecret) return true; // Skip if no secret configured in dev
+      if (!expectedSecret) return false;
       const authHeader = headers['authorization'] || headers['Authorization'] || '';
       const apiKeyHeader = headers['x-api-key'] || headers['X-API-KEY'] || '';
       
@@ -169,7 +169,7 @@
     name: 'casso',
 
     verifyWebhook(headers = {}, rawBody, expectedSecret) {
-      if (!expectedSecret) return true;
+      if (!expectedSecret) return false;
       const token = headers['secure-token'] || headers['Secure-Token'] || '';
       return token === expectedSecret;
     },
@@ -202,9 +202,9 @@
     name: 'mock',
 
     verifyWebhook(headers = {}, rawBody, expectedSecret) {
-      if (!expectedSecret) return true;
+      if (!expectedSecret) return false;
       const secret = headers['x-mock-secret'] || headers['authorization'] || '';
-      return secret.includes(expectedSecret);
+      return secret === expectedSecret;
     },
 
     parseTransaction(payload = {}) {

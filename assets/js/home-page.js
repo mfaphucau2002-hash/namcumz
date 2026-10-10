@@ -62,26 +62,36 @@
     }
 
     /* ================= 2. ECO MODE TOGGLE ================= */
-    window.toggleEcoMode = function(e) {
-        if (e) e.preventDefault();
-        const isEco = document.body.classList.toggle('perf-eco-mode');
-        localStorage.setItem('duck_eco_mode', isEco ? '1' : '0');
-        const btns = document.querySelectorAll('.perf-toggle-btn');
-        btns.forEach(b => {
-            if (isEco) {
-                b.classList.add('active');
-            } else {
-                b.classList.remove('active');
-            }
-        });
-    };
+    if (typeof window.applyEcoMode !== 'function') {
+        window.applyEcoMode = function(on) {
+            const isEco = Boolean(on);
+            document.body.classList.toggle('perf-eco-mode', isEco);
+            try {
+                localStorage.setItem('namcumz_eco_mode', isEco ? '1' : '0');
+            } catch (_) {}
+            const btns = document.querySelectorAll('.perf-toggle-btn, #lpEcoToggle');
+            btns.forEach(b => {
+                b.setAttribute('aria-pressed', String(isEco));
+                b.classList.toggle('active', isEco);
+            });
+            return isEco;
+        };
+    }
+
+    if (typeof window.toggleEcoMode !== 'function') {
+        window.toggleEcoMode = function(e) {
+            if (e && typeof e.preventDefault === 'function') e.preventDefault();
+            const next = !document.body.classList.contains('perf-eco-mode');
+            return window.applyEcoMode(next);
+        };
+    }
 
     function initEcoMode() {
-        if (localStorage.getItem('duck_eco_mode') === '1') {
-            document.body.classList.add('perf-eco-mode');
-            const btns = document.querySelectorAll('.perf-toggle-btn');
-            btns.forEach(b => b.classList.add('active'));
-        }
+        let isEco = false;
+        try {
+            isEco = localStorage.getItem('namcumz_eco_mode') === '1' || localStorage.getItem('duck_eco_mode') === '1';
+        } catch (_) {}
+        window.applyEcoMode(isEco);
     }
 
     /* ================= 3. BANNER SLIDER ================= */
@@ -138,46 +148,9 @@
         }
     }
 
-    /* ================= 4. LIVE TICKER RUNNER ================= */
-    function initOrdersTicker() {
-        const track = document.getElementById('ticker-marquee-track');
-        if (!track) return;
-
-        // Default verified orders from footage
-        const orders = [
-            { user: "TU***0", action: "vừa mua", service: "[NẠP GAME] Không Nguyệt Chúc Phúc", price: "168.300đ", time: "Hôm qua", icon: "fa-gem" },
-            { user: "MI***8", action: "vừa mua", service: "[NẠP GAME] Nhật Ký Hành Trình Trân Châu", price: "168.300đ", time: "Hôm qua", icon: "fa-gem" },
-            { user: "SI***3", action: "vừa mua", service: "[CÀY THUÊ] Thám Hiểm Bản Đồ 100%", price: "250.000đ", time: "Hôm qua", icon: "fa-gamepad" },
-            { user: "KH***5", action: "vừa mua", service: "[NẠP GAME] 6480 Đá Sáng Thế", price: "1.990.000đ", time: "1 giờ trước", icon: "fa-gem" },
-            { user: "US***7", action: "vừa mua", service: "[CÀY THUÊ] La Hoàn Thâm Cảnh 36★", price: "70.000đ", time: "3 giờ trước", icon: "fa-gamepad" },
-            { user: "VI***1", action: "vừa mua", service: "[NẠP GAME] Welkin Moon x2", price: "198.000đ", time: "5 giờ trước", icon: "fa-gem" }
-        ];
-
-        function renderItem(o) {
-            return `
-                <div class="ticker-order-item">
-                    <span class="ticker-user-pill"><i class="fas fa-shield-alt"></i> ${o.user}</span>
-                    <span class="order-action-txt" style="color: var(--text-muted); font-size: 0.85rem;">${o.action}</span>
-                    <span class="ticker-service-title" title="${o.service}"><i class="fas ${o.icon}" style="color: var(--neon-cyan);"></i> ${o.service}</span>
-                    <div class="ticker-price-box"><i class="fas fa-coins" style="color: #fbbf24; font-size: 0.85rem;"></i> ${o.price}</div>
-                    <span class="ticker-time-tag"><i class="far fa-clock"></i> ${o.time}</span>
-                    <span class="ticker-divider">✦</span>
-                </div>
-            `;
-        }
-
-        const itemsHtml = orders.map(renderItem).join('');
-        // Duplicate twice for seamless -50% marquee loop
-        track.innerHTML = itemsHtml + itemsHtml;
-
-        document.addEventListener('visibilitychange', () => {
-            if (track) track.style.animationPlayState = document.hidden ? 'paused' : 'running';
-        });
-    }
-
     /* ================= 5. FLASH SALE COUNTDOWN WIDGET ================= */
     function initFlashSaleWidget() {
-        const widget = document.getElementById('duck-flash-sale-pill-widget');
+        const widget = document.getElementById('nc-flash-sale-pill-widget') || document.getElementById('duck-flash-sale-pill-widget');
         const timerEl = document.getElementById('fsw-timer');
         if (!widget || !timerEl) return;
 
@@ -376,7 +349,6 @@
         initAnimeParticles();
         initEcoMode();
         initBannerSlider();
-        initOrdersTicker();
         initFlashSaleWidget();
         syncAuthState();
     });

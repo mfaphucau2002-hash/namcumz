@@ -2359,3 +2359,15 @@ body.perf-eco-mode * {
     display: none !important;
   }
 }
+
+@media (max-width: 360px) {
+  .lp-header-actions { display: none; }
+}
+@media (max-width: 360px) {
+  body.landing-page { min-width: 0; width: 100%; }
+}
+
+@media (max-width: 800px) {
+  .lp-header-actions { display: none; }
+  .lp-menu-toggle { display: flex; }
+}

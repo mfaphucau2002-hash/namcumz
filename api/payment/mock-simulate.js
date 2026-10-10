@@ -19,8 +19,8 @@ function getSupabase() {
 }
 
 module.exports = async function handler(req, res) {
-  // Guard: NEVER active in production without explicit mock setting
-  if (process.env.NODE_ENV === 'production' && process.env.PAYMENT_PROVIDER !== 'mock') {
+  // Never expose a payment simulator on a production deployment.
+  if (process.env.VERCEL_ENV === 'production' || process.env.NODE_ENV === 'production') {
     return res.status(403).json({
       success: false,
       error: 'FORBIDDEN',

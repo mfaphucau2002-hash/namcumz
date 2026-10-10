@@ -545,3 +545,8 @@ body.faq-page {
     flex-shrink: 0;
   }
 }
+
+@media (max-width: 768px) {
+  .faq-container { width: 100%; min-width: 0; box-sizing: border-box; }
+  .faq-category-pills { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; }
+}

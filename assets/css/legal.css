@@ -6,3 +6,5 @@
 
 /* OWNER DISCLOSURE */
 .legal-owner{max-width:800px;margin-top:32px;padding:24px;border:1px solid var(--ui-border);border-radius:var(--ui-radius);background:var(--ui-surface)}.legal-owner strong{font-size:14px}.legal-owner p{margin:8px 0 0;color:var(--ui-muted);line-height:1.8;font-size:13px}.legal-owner a{color:var(--ui-accent);text-decoration:underline;text-underline-offset:3px}@media(max-width:375px){.legal-owner{padding:16px}}
+
+@media(max-width:768px){.legal-layout{min-width:0}.legal-toc{box-sizing:border-box;width:100%;min-width:0}}
