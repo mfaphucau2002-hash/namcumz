@@ -12,12 +12,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Chakra+Petch:wght@500;600;700;800&family=Exo+2:wght@600;700;800&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="/assets/css/home-page.css?v=20261010-mobile5">
+<link rel="stylesheet" href="/assets/css/home-page.css?v=20261011-ai-chat1">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <script src="/assets/js/runtime-config.js" defer></script>
 <script src="/assets/js/public-auth.js?v=20261005-categories11" defer></script>
 <script src="/assets/js/landing.js?v=20261010-ecomode1" defer></script>
 <script src="/assets/js/home-page.js?v=20261010-ticker1" defer></script>
+<script src="/assets/js/ai-chat.js?v=20261011-ai-chat1" defer></script>
 <script src="/assets/js/homepage-intro.js?v=20261009-intro1" defer></script>
 </head>
 <body>
@@ -586,18 +587,43 @@
     </div>
 </div>
 
-<!-- ================= FLOATING NAMCUMZ SUPPORT WIDGET ================= -->
+<!-- ================= FLOATING NAMCUMZ AI SUPPORT CHAT ================= -->
 <div class="nc-ai-floating-btn" id="nc-ai-btn">
     <div id="namcumz-support-tooltip" class="nc-ai-tooltip">
-        <span>Cần hỗ trợ cày game hoặc nạp tiền? Liên hệ NAMCUMZ nhé!</span>
+        <span>Chat với Trợ lý AI NAMCUMZ</span>
         <button type="button" onclick="closeNamcumzSupportTooltip(event)" class="nc-tooltip-close" aria-label="Đóng tin nhắn">&times;</button>
     </div>
-    <div class="nc-ai-avatar-wrap" onclick="toggleNamcumzSupportWindow()">
-        <img class="nc-ai-avatar" src="/assets/images/logo.webp" alt="NAMCUMZ hỗ trợ khách hàng">
-        <span class="nc-ai-online-status-dot"></span>
-    </div>
+    <button type="button" class="nc-ai-avatar-wrap" id="nc-ai-chat-toggle" aria-label="Mở chat AI NAMCUMZ" aria-expanded="false" aria-controls="nc-ai-chat">
+        <img class="nc-ai-avatar" src="/assets/images/logo.webp" alt="">
+        <span class="nc-ai-online-status-dot" aria-hidden="true"></span>
+    </button>
+    <section class="nc-ai-chat" id="nc-ai-chat" role="dialog" aria-modal="false" aria-labelledby="nc-ai-chat-title" hidden>
+        <header class="nc-ai-chat-header">
+            <div><strong id="nc-ai-chat-title">Trợ lý AI NAMCUMZ</strong><span>Hỗ trợ thông tin dịch vụ</span></div>
+            <button type="button" class="nc-ai-chat-close" id="nc-ai-chat-close" aria-label="Đóng chat">&times;</button>
+        </header>
+        <div class="nc-ai-chat-gate" id="nc-ai-chat-gate">
+            <div class="nc-ai-chat-gate-icon" aria-hidden="true"><i class="fas fa-shield-halved"></i></div>
+            <h3>Xác nhận trước khi chat</h3>
+            <p>Chatbot chỉ dành cho người từ đủ 18 tuổi. Tin nhắn của bạn sẽ được gửi tới Google Gemini để tạo câu trả lời. Với hạn mức không trả phí, Google có thể dùng nội dung để cải thiện dịch vụ và cho người đánh giá xem xét. Nội dung chỉ giữ trong phiên chat hiện tại trên trang này.</p>
+            <p class="nc-ai-chat-privacy">Không gửi mật khẩu, mã OTP, thông tin đăng nhập game hoặc dữ liệu nhạy cảm. AI có thể trả lời sai; cần hỗ trợ đơn hàng, hãy dùng <a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">Zalo CSKH</a>.</p>
+            <button type="button" id="nc-ai-chat-consent" class="nc-ai-chat-primary">Tôi đủ 18 tuổi và đồng ý tiếp tục</button>
+            <a class="nc-ai-chat-terms" href="https://ai.google.dev/gemini-api/terms?hl=en" target="_blank" rel="noopener noreferrer">Điều khoản xử lý dữ liệu của Google Gemini</a>
+        </div>
+        <div class="nc-ai-chat-body" id="nc-ai-chat-body" hidden>
+            <div class="nc-ai-chat-notice">Trợ lý AI có thể sai. Không gửi mật khẩu, OTP hoặc thông tin đăng nhập.</div>
+            <div class="nc-ai-chat-messages" id="nc-ai-chat-messages" role="log" aria-live="polite" aria-relevant="additions text">
+                <div class="nc-ai-chat-message is-assistant">Xin chào! Mình là trợ lý AI NAMCUMZ. Bạn cần hỏi thông tin dịch vụ nào?</div>
+            </div>
+            <form class="nc-ai-chat-form" id="nc-ai-chat-form">
+                <label class="sr-only" for="nc-ai-chat-input">Tin nhắn</label>
+                <textarea id="nc-ai-chat-input" rows="1" maxlength="600" placeholder="Nhập câu hỏi..." required></textarea>
+                <button type="submit" id="nc-ai-chat-send" aria-label="Gửi tin nhắn"><i class="fas fa-paper-plane"></i></button>
+            </form>
+            <div class="nc-ai-chat-footer">Đang xử lý qua Google Gemini · <a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">Liên hệ Zalo</a></div>
+        </div>
+    </section>
 </div>
-
 <!-- ================= FOOTER ================= -->
 <footer class="custom-footer">
     <div class="container footer-grid">

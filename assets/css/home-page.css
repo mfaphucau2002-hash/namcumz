@@ -6054,3 +6054,63 @@ body.has-vip5-honor-banner .main-content {
     pointer-events: auto;
   }
 }
+
+/* ================= AI SUPPORT CHAT ================= */
+.nc-ai-floating-btn { cursor: default; }
+.nc-ai-avatar-wrap { cursor: pointer; border: 0; color: inherit; }
+.nc-ai-chat[hidden] { display: none !important; }
+.nc-ai-chat {
+    position: absolute;
+    right: 0;
+    bottom: 76px;
+    display: flex;
+    flex-direction: column;
+    width: min(390px, calc(100vw - 32px));
+    height: min(570px, calc(100dvh - 125px));
+    min-height: 340px;
+    overflow: hidden;
+    color: var(--text-main);
+    background: var(--bg-surface-elevated);
+    border: 1px solid var(--glass-border);
+    border-radius: 18px;
+    box-shadow: 0 18px 60px rgba(0, 0, 0, .58), 0 0 26px rgba(0, 242, 254, .12);
+    font-family: 'Be Vietnam Pro', 'Nunito', sans-serif;
+    animation: ncChatOpen .22s ease;
+}
+@keyframes ncChatOpen { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+.nc-ai-chat-header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:15px 17px; background:linear-gradient(110deg,rgba(0,242,254,.1),rgba(139,92,246,.14)); border-bottom:1px solid var(--glass-border); }
+.nc-ai-chat-header div { display:flex; flex-direction:column; gap:3px; }
+.nc-ai-chat-header strong { font-size:15px; }
+.nc-ai-chat-header span { color:var(--text-muted); font-size:11px; }
+.nc-ai-chat-close { width:34px; height:34px; border:1px solid var(--glass-border); border-radius:10px; color:var(--text-main); background:rgba(255,255,255,.05); font-size:22px; cursor:pointer; transition:background .2s ease,transform .2s ease; }
+.nc-ai-chat-close:hover { background:rgba(255,255,255,.12); transform:scale(1.04); }
+.nc-ai-chat-gate { overflow:auto; padding:21px 20px 18px; }
+.nc-ai-chat-gate-icon { display:grid; place-items:center; width:42px; height:42px; color:var(--neon-cyan); background:rgba(0,242,254,.1); border:1px solid var(--glass-border); border-radius:13px; }
+.nc-ai-chat-gate h3 { margin:14px 0 8px; font-size:17px; }
+.nc-ai-chat-gate p { margin:8px 0; color:var(--text-muted); font-size:12px; line-height:1.65; }
+.nc-ai-chat-privacy { padding:10px 11px; background:rgba(251,191,36,.08); border:1px solid rgba(251,191,36,.2); border-radius:10px; }
+.nc-ai-chat a { color:var(--neon-cyan); text-decoration:underline; text-underline-offset:2px; }
+.nc-ai-chat-primary { width:100%; margin-top:8px; padding:11px 12px; color:#041014; background:linear-gradient(100deg,var(--neon-cyan),#79f6d1); border:0; border-radius:10px; font:700 13px 'Be Vietnam Pro','Nunito',sans-serif; cursor:pointer; transition:filter .2s ease,transform .2s ease; }
+.nc-ai-chat-primary:hover { filter:brightness(1.08); transform:translateY(-1px); }
+.nc-ai-chat-primary:disabled { opacity:.6; cursor:wait; }
+.nc-ai-chat-terms { display:block; margin-top:11px; text-align:center; font-size:10px; }
+.nc-ai-chat-body { display:flex; flex:1; flex-direction:column; min-height:0; }
+.nc-ai-chat-notice { padding:8px 13px; color:#f5d58a; background:rgba(251,191,36,.07); font-size:10px; line-height:1.45; text-align:center; }
+.nc-ai-chat-messages { display:flex; flex:1; flex-direction:column; gap:9px; overflow:auto; padding:14px; overscroll-behavior:contain; }
+.nc-ai-chat-message { max-width:88%; padding:10px 12px; border-radius:14px; color:var(--text-main); background:rgba(255,255,255,.07); font-size:12px; line-height:1.55; white-space:pre-wrap; overflow-wrap:anywhere; }
+.nc-ai-chat-message.is-user { align-self:flex-end; background:rgba(139,92,246,.24); border:1px solid rgba(139,92,246,.3); }
+.nc-ai-chat-message.is-assistant { align-self:flex-start; border:1px solid rgba(255,255,255,.07); }
+.nc-ai-chat-message.is-error { color:#fecaca; border-color:rgba(248,113,113,.28); }
+.nc-ai-chat-form { display:flex; align-items:flex-end; gap:8px; padding:10px 12px; border-top:1px solid var(--glass-border); }
+.nc-ai-chat-form textarea { flex:1; max-height:100px; min-height:40px; resize:vertical; padding:10px 11px; color:var(--text-main); background:rgba(255,255,255,.055); border:1px solid rgba(255,255,255,.12); border-radius:10px; font:12px/1.4 'Be Vietnam Pro','Nunito',sans-serif; outline:none; }
+.nc-ai-chat-form textarea:focus { border-color:var(--neon-cyan); box-shadow:0 0 0 2px rgba(0,242,254,.1); }
+.nc-ai-chat-form button { flex:0 0 40px; height:40px; color:#041014; background:var(--neon-cyan); border:0; border-radius:10px; cursor:pointer; transition:filter .2s ease,transform .2s ease; }
+.nc-ai-chat-form button:hover { filter:brightness(1.08); transform:translateY(-1px); }
+.nc-ai-chat-form button:disabled { opacity:.5; cursor:wait; }
+.nc-ai-chat-footer { padding:0 13px 10px; color:var(--text-dim); font-size:10px; text-align:center; }
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+@media (max-width: 480px) {
+    .nc-ai-floating-btn { right:16px; bottom:16px; }
+    .nc-ai-chat { right:-2px; bottom:72px; width:min(390px,calc(100vw - 24px)); height:min(600px,calc(100dvh - 105px)); min-height:300px; }
+}
