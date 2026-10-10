@@ -345,11 +345,27 @@
     });
 
     /* ================= INITIALIZATION ================= */
+    function initWorkingHoursStatus() {
+        const hour = new Date().getHours();
+        const isOpen = hour >= 7 && hour < 23;
+        const statusEls = document.querySelectorAll('.contact-status, #footerWorkingStatus');
+        statusEls.forEach(el => {
+            if (isOpen) {
+                el.style.color = '#10b981';
+                el.innerHTML = '<i class="fas fa-circle" style="font-size: 0.55rem; margin-right: 4px;"></i> ĐANG MỞ CỬA';
+            } else {
+                el.style.color = '#ef4444';
+                el.innerHTML = '<i class="fas fa-circle" style="font-size: 0.55rem; margin-right: 4px;"></i> ĐÃ ĐÓNG CỬA';
+            }
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         initAnimeParticles();
         initEcoMode();
         initBannerSlider();
         initFlashSaleWidget();
+        initWorkingHoursStatus();
         syncAuthState();
     });
 
