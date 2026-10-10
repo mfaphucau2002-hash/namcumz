@@ -148,7 +148,45 @@
         }
     }
 
-    /* ================= 5. FLASH SALE COUNTDOWN WIDGET ================= */
+        /* ================= 4. LIVE TICKER RUNNER ================= */
+    function initOrdersTicker() {
+        const track = document.getElementById('ticker-marquee-track');
+        if (!track) return;
+
+        const orders = [
+            { user: "TU***0", action: "vừa mua", service: "[NẠP GAME] Không Nguyệt Chúc Phúc", price: "85.000đ", time: "Vừa xong", icon: "fa-gem" },
+            { user: "MI***8", action: "vừa mua", service: "[NẠP GAME] Nhật Ký Hành Trình Trân Châu", price: "190.000đ", time: "1 phút trước", icon: "fa-gem" },
+            { user: "SI***3", action: "vừa đặt", service: "[CÀY THUÊ] Thám Hiểm Bản Đồ 100%", price: "250.000đ", time: "2 phút trước", icon: "fa-gamepad" },
+            { user: "KH***5", action: "vừa mua", service: "[NẠP GAME] 6480 Đá Sáng Thế", price: "1.680.000đ", time: "5 phút trước", icon: "fa-gem" },
+            { user: "US***7", action: "vừa đặt", service: "[CÀY THUÊ] La Hoàn Thâm Cảnh 36★", price: "70.000đ", time: "7 phút trước", icon: "fa-gamepad" },
+            { user: "VI***1", action: "vừa mua", service: "[NẠP GAME] Bài Ca Trân Châu", price: "380.000đ", time: "10 phút trước", icon: "fa-gem" },
+            { user: "HO***4", action: "vừa mua", service: "[NẠP GAME] 1980 Đá Sáng Thế", price: "550.000đ", time: "15 phút trước", icon: "fa-gem" },
+            { user: "AN***9", action: "vừa đặt", service: "[CÀY THUÊ] Nhiệm Vụ Ma Thần", price: "150.000đ", time: "20 phút trước", icon: "fa-gamepad" },
+            { user: "NA***2", action: "vừa mua", service: "[NẠP GAME] 3280 Đá Sáng Thế", price: "900.000đ", time: "25 phút trước", icon: "fa-gem" }
+        ];
+
+        function renderItem(o) {
+            return `
+                <div class="ticker-order-item" onclick="window.location.href='/profile.html'" style="cursor: pointer;" title="Nhấn để tra cứu đơn hàng">
+                    <span class="ticker-user-pill"><i class="fas fa-shield-alt"></i> ${o.user}</span>
+                    <span class="order-action-txt" style="color: var(--text-muted); font-size: 0.85rem;">${o.action}</span>
+                    <span class="ticker-service-title" title="${o.service}"><i class="fas ${o.icon}" style="color: var(--neon-cyan);"></i> ${o.service}</span>
+                    <div class="ticker-price-box"><i class="fas fa-coins" style="color: #fbbf24; font-size: 0.85rem;"></i> ${o.price}</div>
+                    <span class="ticker-time-tag"><i class="far fa-clock"></i> ${o.time}</span>
+                    <span class="ticker-divider">✦</span>
+                </div>
+            `;
+        }
+
+        const itemsHtml = orders.map(renderItem).join('');
+        track.innerHTML = itemsHtml + itemsHtml;
+
+        document.addEventListener('visibilitychange', () => {
+            if (track) track.style.animationPlayState = document.hidden ? 'paused' : 'running';
+        });
+    }
+
+/* ================= 5. FLASH SALE COUNTDOWN WIDGET ================= */
     function initFlashSaleWidget() {
         const widget = document.getElementById('nc-flash-sale-pill-widget') || document.getElementById('duck-flash-sale-pill-widget');
         const timerEl = document.getElementById('fsw-timer');
@@ -364,6 +402,7 @@
         initAnimeParticles();
         initEcoMode();
         initBannerSlider();
+        initOrdersTicker();
         initFlashSaleWidget();
         initWorkingHoursStatus();
         syncAuthState();

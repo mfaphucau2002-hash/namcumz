@@ -17,7 +17,7 @@
 <script src="/assets/js/runtime-config.js" defer></script>
 <script src="/assets/js/public-auth.js?v=20261005-categories11" defer></script>
 <script src="/assets/js/landing.js?v=20261010-ecomode1" defer></script>
-<script src="/assets/js/home-page.js?v=20261010-contact1" defer></script>
+<script src="/assets/js/home-page.js?v=20261010-ticker1" defer></script>
 <script src="/assets/js/homepage-intro.js?v=20261009-intro1" defer></script>
 </head>
 <body>
@@ -205,12 +205,15 @@
     </section>
 
     <!-- ================= LIVE ORDERS TICKER SECTION ================= -->
-    <section class="cyber-ticker-section" aria-label="Tra cứu đơn hàng">
+    <section class="cyber-ticker-section" id="live-orders-ticker" aria-label="Tra cứu đơn hàng">
         <div class="container">
-            <div class="cyber-ticker-bar">
-                <div class="ticker-header-badge"><span>TRA CỨU ĐƠN HÀNG</span></div>
-                <div class="ticker-marquee-wrap">
-                    <a href="/profile.html" class="ticker-service-title">Đăng nhập để xem trạng thái và lịch sử đơn hàng của bạn.</a>
+            <div class="cyber-ticker-bar" id="cyber-ticker-bar">
+                <a href="/profile.html" class="ticker-header-badge" style="text-decoration: none;" title="Xem tra cứu &amp; lịch sử đơn hàng">
+                    <span class="live-dot"></span>
+                    <span><i class="fas fa-bolt" style="color: var(--neon-cyan); margin-right: 4px;"></i> TRA CỨU<span class="badge-full-txt"> ĐƠN HÀNG</span></span>
+                </a>
+                <div class="ticker-marquee-wrap" id="ticker-marquee-wrap">
+                    <div class="ticker-marquee-track" id="ticker-marquee-track"></div>
                 </div>
             </div>
         </div>
