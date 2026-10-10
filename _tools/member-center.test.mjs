@@ -33,7 +33,7 @@ test('User Profile / Member Center: Check-in, Wallet Deposit, VIP and Security T
   const user2Id = crypto.randomUUID();
 
   for (const [id, name, email] of [
-    [user1Id, 'duckcop', 'duckcop@example.test'],
+    [user1Id, 'namcumz_member', 'namcumz_member@example.test'],
     [user2Id, 'guest2', 'guest2@example.test']
   ]) {
     await db.query('INSERT INTO auth.users(id, email, raw_user_meta_data) VALUES($1, $2, $3::jsonb)', [
@@ -163,7 +163,7 @@ test('User Profile / Member Center: Check-in, Wallet Deposit, VIP and Security T
     const accRes = await asUser(user1Id, async () => {
       const r = await db.query(
         `INSERT INTO public.user_game_accounts(user_id, game, uid, server, nickname, notes)
-         VALUES($1, 'Genshin Impact', '812345678', 'Asia', 'DuckCop', 'Acc chinh')
+         VALUES($1, 'Genshin Impact', '812345678', 'Asia', 'NamcumzMember', 'Acc chinh')
          RETURNING id`,
         [user1Id]
       );

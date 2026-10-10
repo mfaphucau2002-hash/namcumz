@@ -116,7 +116,7 @@
       }
 
       if (isPreviewParam && (!session || !session.user)) {
-        state.user = { id: '00000000-0000-0000-0000-000000000121', email: 'mfaphucau2002@gmail.com' };
+        state.user = { id: '00000000-0000-0000-0000-000000000121', email: 'member@namcumz.io.vn' };
         window.profileUserId = state.user.id;
         initNavigation();
         initEventListeners();
@@ -154,12 +154,12 @@
   function loadMockPreviewData() {
     state.profile = {
       id: '00000000-0000-0000-0000-000000000121',
-      username: 'DUCKCOP',
-      display_name: 'DUCKCOP',
+      username: 'NAMCUMZ',
+      display_name: 'NAMCUMZ',
       role: 'customer',
       avatar_url: '/assets/images/logo.jpg',
       bio: 'Nhà lữ hành cấp 60',
-      email: 'mfaphucau2002@gmail.com',
+      email: 'member@namcumz.io.vn',
       phone: '',
       user_number: 121,
       created_at: '2026-07-19T00:00:00Z'
@@ -234,7 +234,7 @@
         game: 'Genshin Impact',
         uid: '812345678',
         server: 'Asia',
-        nickname: 'DuckCop',
+        nickname: 'NAMCUMZ',
         notes: 'Acc chính La Hoàn'
       }
     ];
@@ -373,7 +373,7 @@
     }
 
     if (usernameEl) {
-      usernameEl.textContent = user.display_name || user.username || 'DUCKCOP';
+      usernameEl.textContent = user.display_name || user.username || 'NAMCUMZ';
     }
 
     if (roleBadgeEl) {
