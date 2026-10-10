@@ -294,8 +294,9 @@ function getPackageImage(gameName, packageId, packageName, tag) {
 // Load active catalog rows; names, ids, and prices come from database, with fallback for offline/preview
 async function loadActivePackages(gameName) {
     const gameKey = Object.entries(GAME_INFO).find(([, info]) => info.name === gameName)?.[0]?.replace('-login', '') || 'genshin';
+    const fallbackList = (GAME_PACKAGES[gameKey] || []).slice();
     if (!supabaseClient) {
-        return (GAME_PACKAGES[gameKey] || []).slice();
+        return fallbackList;
     }
     try {
         const { data, error } = await supabaseClient.from('packages')
@@ -304,9 +305,9 @@ async function loadActivePackages(gameName) {
             .eq('active', true)
             .order('price', { ascending: true });
         if (error || !data || data.length === 0) {
-            return (GAME_PACKAGES[gameKey] || []).slice();
+            return fallbackList;
         }
-        return data.filter(row => row && typeof row.name === 'string' && Number.isFinite(Number(row.price)) && Number(row.price) > 0).map(row => {
+        const dbPackages = data.filter(row => row && typeof row.name === 'string' && Number.isFinite(Number(row.price)) && Number(row.price) > 0).map(row => {
             const presentation = getPackagePresentation(row.id, row.name);
             return {
                 ...presentation,
@@ -317,8 +318,36 @@ async function loadActivePackages(gameName) {
                 tag: presentation.tag || 'topup'
             };
         });
+
+        const dbMap = new Map();
+        dbPackages.forEach(pkg => {
+            dbMap.set(pkg.id, pkg);
+            if (pkg.name) dbMap.set(pkg.name, pkg);
+        });
+
+        const result = [];
+        const seenIds = new Set();
+        fallbackList.forEach(fb => {
+            const dbMatch = dbMap.get(fb.id) || dbMap.get(fb.name);
+            if (dbMatch) {
+                result.push(dbMatch);
+                seenIds.add(dbMatch.id);
+            } else {
+                result.push(fb);
+                seenIds.add(fb.id);
+            }
+        });
+
+        dbPackages.forEach(pkg => {
+            if (!seenIds.has(pkg.id)) {
+                result.push(pkg);
+                seenIds.add(pkg.id);
+            }
+        });
+
+        return result;
     } catch (_) {
-        return (GAME_PACKAGES[gameKey] || []).slice();
+        return fallbackList;
     }
 }
 
