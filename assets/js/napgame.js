@@ -122,7 +122,7 @@ const GAME_PACKAGES = {
         { id: '10000000-0000-0000-0000-000000000005', name: '1980 Đá Sáng Thế',                   price:  550000, img: 'assets/images/games/genshin_crystals_1980.png',tag: 'topup',     desc: '' },
         { id: '10000000-0000-0000-0000-000000000006', name: '3280 Đá Sáng Thế',                   price:  900000, img: 'assets/images/games/genshin_crystals_3280.png',tag: 'topup',     desc: '' },
         { id: '10000000-0000-0000-0000-000000000007', name: '6480 Đá Sáng Thế',                   price: 1680000, img: 'assets/images/games/genshin_crystals_6480.png',tag: 'topup',     desc: '' },
-        { id: '10000000-0000-0000-0000-000000000008', name: 'Toàn Bộ Gói Đá Sáng Thế',           price: 3450000, img: 'assets/images/games/genshin_crystals_all.webp', tag: 'topup',    desc: 'Toàn bộ gói nạp lớn nhất' }
+        { id: '10000000-0000-0000-0000-000000000008', name: 'Toàn Bộ Gói Đá Sáng Thế',           price: 3450000, img: 'assets/images/games/genshin_crystals_all.jpg', tag: 'topup',    desc: 'Toàn bộ gói nạp lớn nhất' }
     ],
     'genshin-login': 'genshin',
 
@@ -287,6 +287,7 @@ function getPackageImage(gameName, packageId, packageName, tag) {
             if (gameKey === 'genshin') return `assets/images/games/genshin_crystals_${match[1]}.png`;
             return `assets/images/games/${prefix}_${match[1]}.webp`;
         }
+        if (gameKey === 'genshin' && /full\s*pack|toàn\s*bộ/i.test(packageName || '')) return 'assets/images/games/genshin_crystals_all.jpg';
         if (gameKey === 'genshin') return 'assets/images/games/genshin_card.jpg';
     }
     return Object.values(GAME_INFO).find(info => info.name === gameName)?.icon || 'assets/images/logo.jpg';
