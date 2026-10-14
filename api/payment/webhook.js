@@ -28,6 +28,9 @@ module.exports = async function handler(req, res) {
     });
   }
 
+  if ((process.env.VERCEL_ENV === 'production' || process.env.NODE_ENV === 'production') && process.env.PAYMENT_PROVIDER === 'mock') {
+    return res.status(503).json({success:false,error:'INVALID_PROVIDER_CONFIG'});
+  }
   try {
     const service = new PaymentService({
       provider: process.env.PAYMENT_PROVIDER || 'sepay',

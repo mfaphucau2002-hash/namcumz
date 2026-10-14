@@ -78,7 +78,7 @@ test('topup RPC validates arguments and transmits parameters',async()=>{
  assert.equal(res.id,'topup-order-1');
 });
 
-test('createDeposit sends p_amount only without p_request and validates limits', async () => {
+test('createDeposit sends stable request identity and validates limits', async () => {
  const service = api();
  let calledRpc = null;
  let receivedPayload = null;
@@ -98,8 +98,8 @@ test('createDeposit sends p_amount only without p_request and validates limits',
  const order = await service.createDeposit(client, 'alice', 20000);
  assert.equal(calledRpc, 'create_deposit_order');
  assert.equal(receivedPayload.p_amount, 20000);
- assert.deepEqual(Object.keys(receivedPayload), ['p_amount']);
- assert.equal('p_request' in receivedPayload, false);
+ assert.deepEqual(Object.keys(receivedPayload).sort(), ['p_amount','p_request']);
+ assert.ok(receivedPayload.p_request);
  assert.equal(order.id, 'deposit-order-1');
  assert.equal(order.amount, 20000);
 });

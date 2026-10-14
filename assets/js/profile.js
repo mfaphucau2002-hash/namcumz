@@ -724,8 +724,9 @@
     const content = document.getElementById('hubOrderDetailContent');
     if (!modal || !content) return;
 
-    const isPendingPayment = order.payment_status === 'PENDING' && order.price > 0 && !order.cancelled;
-    const canPayByWallet = isPendingPayment && state.wallet.balance >= order.price;
+    const due = Math.max(0, Number(order.price) - Number(order.paid_amount || 0));
+    const isPendingPayment = order.payment_status === 'PENDING' && order.quote_accepted === true && due > 0 && !order.cancelled && (!order.expires_at || new Date(order.expires_at) > new Date());
+    const canPayByWallet = isPendingPayment && order.kind !== 'deposit' && state.wallet.balance >= due;
 
     content.innerHTML = `
       <div style="display: flex; flex-direction: column; gap: 14px;">
@@ -760,7 +761,7 @@
 
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 10px;">
           <span style="font-weight: 700; color: var(--text-secondary);">TỔNG THANH TOÁN</span>
-          <span style="font-size: 1.25rem; font-weight: 900; color: #00f0ff;">${order.price ? formatVND(order.price) : 'Chờ báo giá'}</span>
+          <span style="font-size: 1.25rem; font-weight: 900; color: #00f0ff;">${order.price ? formatVND(due) : 'Chờ báo giá'}</span>
         </div>
 
         <div style="display: flex; gap: 10px; margin-top: 8px; flex-direction: column;">
@@ -784,7 +785,7 @@
     const payWalletBtn = document.getElementById('hubBtnPayOrderWallet');
     if (payWalletBtn) {
       payWalletBtn.addEventListener('click', async () => {
-        if (!confirm(`Xác nhận thanh toán ${formatVND(order.price)} từ số dư ví cho đơn hàng ${order.order_code}?`)) return;
+        if (!confirm(`Xác nhận thanh toán ${formatVND(due)} từ số dư ví cho đơn hàng ${order.order_code}?`)) return;
         payWalletBtn.disabled = true;
         payWalletBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý thanh toán...';
 

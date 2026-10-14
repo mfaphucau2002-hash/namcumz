@@ -2,6 +2,13 @@
 (function () {
     const pending = new Map();
     const inflight = new Map();
+    // Fail closed before every order or wallet mutation on an incompatible DB.
+    function requireWriteReady(client, actor) {
+        if (!client || !actor) throw new Error('Vui lòng đăng nhập trước khi thao tác.');
+        if (window.NAMCUMZ_CONFIG?.environment && window.NAMCUMZ_DB_READY !== true) {
+            throw new Error('Hệ thống đang bảo trì để đồng bộ cơ sở dữ liệu. Vui lòng thử lại sau.');
+        }
+    }
     async function write(client, actor, operation, payload) {
         if (!client || !actor) throw new Error('Vui lòng đăng nhập trước khi thao tác.');
         if (window.NAMCUMZ_CONFIG?.environment && window.NAMCUMZ_DB_READY !== true) {
@@ -54,7 +61,7 @@
                 p_server: server,
                 p_login_method: loginMethod || 'Hoyoverse',
                 p_account: account.trim(),
-                p_password: password.trim(),
+                p_password: password,
                 p_phone: phone.trim(),
                 p_notes: notes.trim()
             });
@@ -68,24 +75,28 @@
             });
         },
         async payByWallet(client, actor, orderId) {
-            if (!client || !actor) throw new Error('Vui lòng đăng nhập trước khi thao tác.');
+            requireWriteReady(client, actor);
             if (!orderId) throw new Error('Mã đơn không hợp lệ.');
             const { data, error } = await client.rpc('pay_order_by_wallet', { p_order_id: orderId });
             if (error) {
                 throw new Error(error.message || 'Không thể thanh toán bằng ví. Vui lòng thử lại.');
             }
             const res = typeof data === 'string' ? JSON.parse(data) : data;
-            return Array.isArray(res) ? res[0] : res;
+            const row = Array.isArray(res) ? res[0] : res;
+            if (row?.success !== true) throw new Error('Chưa xác nhận được thao tác. Vui lòng tải lại đơn.');
+            return row;
         },
         async cancelPayment(client, actor, orderId) {
-            if (!client || !actor) throw new Error('Vui lòng đăng nhập trước khi thao tác.');
+            requireWriteReady(client, actor);
             if (!orderId) throw new Error('Mã đơn không hợp lệ.');
             const { data, error } = await client.rpc('cancel_order_payment', { p_order_id: orderId });
             if (error) {
                 throw new Error(error.message || 'Không thể hủy thanh toán đơn.');
             }
             const res = typeof data === 'string' ? JSON.parse(data) : data;
-            return Array.isArray(res) ? res[0] : res;
+            const row = Array.isArray(res) ? res[0] : res;
+            if (row?.success !== true) throw new Error('Chưa xác nhận được thao tác. Vui lòng tải lại đơn.');
+            return row;
         },
         async getPaymentInfo(client, orderIdentifier) {
             if (!client || !orderIdentifier) return null;
@@ -95,21 +106,14 @@
             return Array.isArray(res) ? res[0] : res;
         },
         async createDeposit(client, actor, amount) {
-            if (!client || !actor) throw new Error('Vui lòng đăng nhập trước khi thao tác.');
+            requireWriteReady(client, actor);
             const num = Number(amount);
-            if (!num || num < 10000) throw new Error('Số tiền nạp tối thiểu là 10.000 VNĐ.');
+            if (!Number.isSafeInteger(num) || num < 10000) throw new Error('Số tiền nạp tối thiểu là 10.000 VNĐ.');
             if (num > 50000000) throw new Error('Số tiền nạp tối đa mỗi lần là 50.000.000 VNĐ.');
-            const { data, error } = await client.rpc('create_deposit_order', { p_amount: num });
-            if (error) {
-                throw new Error(error.code === 'PGRST202'
-                    ? 'Hệ thống chưa đồng bộ RPC nạp ví. Vui lòng thử lại sau.'
-                    : (error.message || 'Không thể tạo đơn nạp ví. Vui lòng thử lại.'));
-            }
-            const res = typeof data === 'string' ? JSON.parse(data) : data;
-            return Array.isArray(res) ? res[0] : res;
+            return write(client, actor, 'create_deposit_order', {p_amount:num});
         },
         async claimDailyCheckin(client, actor) {
-            if (!client || !actor) throw new Error('Vui lòng đăng nhập trước khi thao tác.');
+            requireWriteReady(client, actor);
             const { data, error } = await client.rpc('claim_daily_checkin');
             if (error) {
                 throw new Error(error.message || 'Không thể điểm danh. Vui lòng thử lại.');

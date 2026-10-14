@@ -34,8 +34,8 @@ BEGIN
     RAISE EXCEPTION 'Plaintext credential column still exists';
   END IF;
 
-  IF has_table_privilege('authenticated', 'public.order_credentials', 'SELECT')
-     OR has_table_privilege('anon', 'public.order_credentials', 'SELECT') THEN
+  IF has_any_column_privilege('authenticated', 'public.order_credentials', 'SELECT')
+     OR has_any_column_privilege('anon', 'public.order_credentials', 'SELECT') THEN
     RAISE EXCEPTION 'Direct credential table reads remain granted';
   END IF;
   IF to_regprocedure('public.get_order_credentials(uuid)') IS NULL
@@ -55,7 +55,6 @@ BEGIN
      OR NOT has_function_privilege('anon', 'public.app_contract_version()', 'EXECUTE') THEN
     RAISE EXCEPTION 'Contract probe missing or mis-granted';
   END IF;
+  RAISE NOTICE 'PASS: production_002 encryption metadata checks passed; runtime encryption and lifecycle NOT VERIFIED';
 END $verify$;
-ROLLBACK;
-
-SELECT 'PASS: production_002_credentials_encryption metadata verified' AS result;
+COMMIT;

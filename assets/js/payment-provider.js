@@ -153,7 +153,8 @@
 
       return {
         provider: 'sepay',
-        providerTransactionId: txnId || `SEPAY-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+        providerTransactionId: txnId,
+        direction: String(payload.transferType || '').toLowerCase(),
         bankCode,
         bankAccount,
         amount,
@@ -186,7 +187,8 @@
 
       return {
         provider: 'casso',
-        providerTransactionId: txnId || `CASSO-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+        providerTransactionId: txnId,
+        direction: amount > 0 ? 'in' : 'out',
         bankCode,
         bankAccount,
         amount,
@@ -210,6 +212,7 @@
     parseTransaction(payload = {}) {
       return {
         provider: 'mock',
+        direction: payload.direction || 'in',
         providerTransactionId: String(payload.providerTransactionId || payload.id || `MOCK-${Date.now()}`).trim(),
         bankCode: String(payload.bankCode || 'MB').trim(),
         bankAccount: String(payload.bankAccount || '0763550673').trim(),

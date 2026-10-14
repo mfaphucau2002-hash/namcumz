@@ -65,6 +65,9 @@ class PaymentService {
       };
     }
 
+    if (transaction.direction !== 'in' || !transaction.providerTransactionId || !transaction.bankAccount || transaction.bankAccount !== this.bankConfig.accountNumber || !Number.isSafeInteger(transaction.amount)) {
+      return {status:400,body:{success:false,error:'INVALID_PAYMENT_DESTINATION',message:'Giao dịch cần mã ngân hàng hợp lệ, chiều tiền vào và đúng tài khoản nhận.'}};
+    }
     if (!transaction.amount || transaction.amount <= 0) {
       return {
         status: 400,
@@ -142,7 +145,7 @@ class PaymentService {
           provider,
           providerTransactionId,
           bankCode || this.bankConfig.bankCode,
-          bankAccount || this.bankConfig.accountNumber,
+          bankAccount,
           amount,
           transferContent,
           JSON.stringify(rawPayload || {})
@@ -158,7 +161,7 @@ class PaymentService {
         p_provider: provider,
         p_provider_txn_id: providerTransactionId,
         p_bank_code: bankCode || this.bankConfig.bankCode,
-        p_bank_account: bankAccount || this.bankConfig.accountNumber,
+        p_bank_account: bankAccount,
         p_amount: amount,
         p_transfer_content: transferContent,
         p_raw_payload: rawPayload || {}
@@ -194,20 +197,7 @@ class PaymentService {
             errorMessage
           ]
         );
-      } else if (this.supabaseClient) {
-        await this.supabaseClient
-          .from('payment_webhook_events')
-          .insert({
-            provider,
-            event_id: eventId,
-            payload,
-            signature_valid: signatureValid,
-            processed,
-            processed_at: processed ? new Date().toISOString() : null,
-            error_message: errorMessage
-          })
-          .maybeSingle();
-      }
+      } // PostgREST wrapper records the event atomically with settlement.
     } catch (_) {
       // Non-blocking logging
     }

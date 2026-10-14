@@ -117,6 +117,9 @@ test('User Profile / Member Center: Check-in, Wallet Deposit, VIP and Security T
       { authorization: 'Apikey test-webhook-secret' },
       {
         id: 'DEPOSIT-TXN-' + Date.now(),
+        transferType: 'in',
+        accountNumber: '0763550673',
+        gateway: 'MB',
         transferAmount: 200000,
         content: `NCZ ${depositOrder.payment_reference}`
       }
@@ -144,6 +147,9 @@ test('User Profile / Member Center: Check-in, Wallet Deposit, VIP and Security T
       { authorization: 'Apikey test-webhook-secret' },
       {
         id: 'DEPOSIT-TXN-REPLAY-999',
+        transferType: 'in',
+        accountNumber: '0763550673',
+        gateway: 'MB',
         transferAmount: 200000,
         content: `NCZ ${depositOrder.payment_reference}`
       }

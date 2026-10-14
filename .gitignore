@@ -38,3 +38,6 @@ _docs/*_DRAFT_*.md
 
 # Temporary sanitized context for Superdesign
 .superdesign/
+
+# Local launch evidence and source snapshot (not a database backup)
+_backup/launch-*/

@@ -1,0 +1,443 @@
+/* ────────────────────────────────────────────────────────────────
+   theme-settings.css — Modal Cài đặt giao diện Namcumz
+   Thiết kế dark-native, dùng CSS custom properties hiện có.
+   ──────────────────────────────────────────────────────────────── */
+
+/* ── Overlay / backdrop ──────────────────────────────────────── */
+.ts-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: ts-overlay-in 200ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.ts-overlay--closing {
+  animation: ts-overlay-out 240ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes ts-overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes ts-overlay-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* ── Panel ───────────────────────────────────────────────────── */
+.ts-panel {
+  width: min(420px, 100%);
+  max-height: min(92dvh, 720px);
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-1, #0e121f);
+  border: 1px solid var(--border-soft, rgba(255,255,255,0.09));
+  border-radius: var(--radius-xl, 22px);
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.65);
+  animation: ts-panel-in 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  overflow: hidden;
+}
+
+.ts-overlay--closing .ts-panel {
+  animation: ts-panel-out 240ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes ts-panel-in {
+  from { opacity: 0; transform: translateY(24px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes ts-panel-out {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(12px) scale(0.97); }
+}
+
+/* ── Header ──────────────────────────────────────────────────── */
+.ts-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 20px 20px 16px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border-soft, rgba(255,255,255,0.08));
+}
+
+.ts-title {
+  font-family: var(--font-heading, 'Be Vietnam Pro', sans-serif);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-primary, #f5f7ff);
+  text-align: center;
+  margin: 0;
+}
+
+.ts-close {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm, 8px);
+  color: var(--text-muted, #8d98af);
+  cursor: pointer;
+  transition: background 150ms, color 150ms;
+}
+.ts-close:hover { background: var(--surface-raised, #182130); color: var(--text-primary, #f5f7ff); }
+.ts-close svg { width: 18px; height: 18px; }
+
+/* ── Scrollable body ─────────────────────────────────────────── */
+.ts-body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 8px 0 0;
+  flex: 1;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-soft, rgba(255,255,255,0.08)) transparent;
+}
+
+/* ── Section ─────────────────────────────────────────────────── */
+.ts-section {
+  padding: 14px 20px;
+}
+
+.ts-divider {
+  height: 1px;
+  background: var(--border-soft, rgba(255,255,255,0.08));
+  margin: 0 20px;
+}
+
+.ts-section-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary, #f5f7ff);
+}
+
+.ts-section-value {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-muted, #8d98af);
+}
+
+/* Dot indicator */
+.ts-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1.5px solid rgba(255,255,255,0.18);
+  transition: background 200ms;
+}
+.ts-dot--muted { background: var(--text-muted, #8d98af); }
+
+/* Icon */
+.ts-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--text-muted, #8d98af);
+}
+
+/* ── Swatches ────────────────────────────────────────────────── */
+.ts-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ts-swatch {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 120ms, border-color 120ms, box-shadow 120ms;
+  flex-shrink: 0;
+}
+
+.ts-swatch:hover {
+  transform: scale(1.12);
+  border-color: rgba(255,255,255,0.4);
+}
+
+.ts-swatch.is-active {
+  border-color: rgba(255,255,255,0.9);
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.25);
+}
+
+.ts-swatch svg {
+  width: 12px;
+  height: 12px;
+  color: #fff;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+}
+
+.ts-swatch--bg {
+  width: 44px;
+  height: 38px;
+  border-radius: 8px;
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+}
+
+.ts-swatch--bg.is-active {
+  border-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.28);
+}
+
+/* ── Toggle group (Sáng/Tối/Hệ thống) ─────────────────────── */
+.ts-toggle-group {
+  display: flex;
+  gap: 8px;
+}
+
+.ts-toggle {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 12px;
+  background: var(--surface-raised, #182130);
+  border: 1px solid var(--border-soft, rgba(255,255,255,0.08));
+  border-radius: var(--radius-sm, 8px);
+  color: var(--text-muted, #8d98af);
+  font: 500 12px/1 var(--font-main, 'Be Vietnam Pro', sans-serif);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 150ms, border-color 150ms, color 150ms, box-shadow 150ms;
+}
+
+.ts-toggle svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.ts-toggle:hover {
+  background: var(--surface-2, #14192b);
+  border-color: var(--border-hover, rgba(255,255,255,0.18));
+  color: var(--text-primary, #f5f7ff);
+}
+
+.ts-toggle.is-active {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1.5px solid var(--ui-accent, #70dce5);
+  color: var(--ui-accent, #70dce5);
+  box-shadow: 0 0 14px var(--brand-cyan-glow, rgba(112,220,229,0.22));
+}
+
+/* ── Chips (border radius) ──────────────────────────────────── */
+.ts-chips {
+  display: flex;
+  gap: 8px;
+}
+
+.ts-chip {
+  flex: 1;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-raised, #182130);
+  border: 1px solid var(--border-soft, rgba(255,255,255,0.08));
+  border-radius: var(--radius-sm, 8px);
+  color: var(--text-muted, #8d98af);
+  font: 500 12px/1 var(--font-main, 'Be Vietnam Pro', sans-serif);
+  cursor: pointer;
+  transition: background 150ms, border-color 150ms, color 150ms, box-shadow 150ms;
+}
+
+.ts-chip:hover {
+  background: var(--surface-2, #14192b);
+  border-color: var(--border-hover, rgba(255,255,255,0.18));
+  color: var(--text-primary, #f5f7ff);
+}
+
+.ts-chip.is-active {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1.5px solid var(--ui-accent, #70dce5);
+  color: var(--ui-accent, #70dce5);
+  font-weight: 700;
+  box-shadow: 0 0 14px var(--brand-cyan-glow, rgba(112,220,229,0.22));
+}
+
+/* ── Range slider ────────────────────────────────────────────── */
+.ts-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--surface-raised, #182130);
+  cursor: pointer;
+  outline: none;
+  margin: 8px 0 4px;
+  border: none;
+}
+
+/* Webkit thumb */
+.ts-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--ui-accent, #70dce5);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.08), 0 2px 8px rgba(0,0,0,0.4);
+  cursor: pointer;
+  transition: transform 120ms, box-shadow 120ms;
+}
+.ts-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 4px var(--brand-cyan-glow, rgba(112,220,229,0.35)), 0 2px 8px rgba(0,0,0,0.4);
+}
+
+/* Firefox thumb */
+.ts-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--ui-accent, #70dce5);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+.ts-hint {
+  font-size: 11px;
+  color: var(--text-muted, #8d98af);
+  line-height: 1.5;
+  margin-top: 6px;
+}
+
+/* ── Footer / Reset ──────────────────────────────────────────── */
+.ts-footer {
+  padding: 12px 20px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.ts-reset-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted, #8d98af);
+  font: 400 12px var(--font-main, 'Be Vietnam Pro', sans-serif);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: color 150ms;
+}
+.ts-reset-btn:hover { color: var(--text-primary, #f5f7ff); }
+
+/* ── Nút mở (gear icon ở nav) ───────────────────────────────── */
+.ts-open-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--border-soft, rgba(255,255,255,0.08));
+  border-radius: var(--radius-sm, 8px);
+  color: var(--text-muted, #8d98af);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 150ms, border-color 150ms, color 150ms, transform 200ms;
+}
+
+.ts-open-btn svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ts-open-btn:hover {
+  background: var(--surface-raised, #182130);
+  border-color: var(--border-hover, rgba(255,255,255,0.18));
+  color: var(--text-primary, #f5f7ff);
+}
+
+.ts-open-btn:hover svg {
+  transform: rotate(60deg);
+}
+
+/* ── Light mode overrides ────────────────────────────────────── */
+.theme-light .ts-panel {
+  background: #f8f9fa;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+.theme-light .ts-title { color: #111; }
+.theme-light .ts-section-label { color: #111; }
+.theme-light .ts-section-value { color: #555; }
+.theme-light .ts-hint { color: #666; }
+.theme-light .ts-divider { background: rgba(0,0,0,0.08); }
+.theme-light .ts-toggle, .theme-light .ts-chip {
+  background: #fff;
+  border-color: rgba(0,0,0,0.12);
+  color: #444;
+}
+.theme-light .ts-toggle:hover, .theme-light .ts-chip:hover {
+  background: #f0f0f0;
+  border-color: rgba(0,0,0,0.25);
+  color: #111;
+}
+.theme-light .ts-toggle.is-active, .theme-light .ts-chip.is-active {
+  background: rgba(0, 0, 0, 0.04);
+  border: 1.5px solid var(--ui-accent, #0284c7);
+  color: var(--ui-accent, #0284c7);
+  font-weight: 700;
+}
+.theme-light .ts-close { color: #555; }
+.theme-light .ts-close:hover { background: #eee; color: #111; }
+.theme-light .ts-reset-btn { color: #666; }
+.theme-light .ts-reset-btn:hover { color: #111; }
+.theme-light .ts-open-btn {
+  border-color: rgba(0,0,0,0.12);
+  color: #555;
+}
+.theme-light .ts-open-btn:hover {
+  background: rgba(0,0,0,0.06);
+  color: #111;
+}
+
+/* Floating fallback button */
+.ts-open-btn--float {
+  position: fixed;
+  bottom: 84px;
+  right: 20px;
+  z-index: 8999;
+  background: var(--surface-1, #0e121f) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .ts-panel { border-radius: var(--radius-lg, 16px) var(--radius-lg, 16px) 0 0; }
+  .ts-overlay { align-items: flex-end; padding: 0; }
+  .ts-panel { width: 100%; max-height: 85dvh; }
+}

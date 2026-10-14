@@ -111,7 +111,6 @@ BEGIN
     RAISE EXCEPTION 'order_credentials table missing or RLS not enabled';
   END IF;
 
+  RAISE NOTICE 'PASS: production_001 metadata checks passed; runtime access and E2E NOT VERIFIED';
 END $verify$;
-ROLLBACK;
-
-SELECT 'PASS: production_001_release is completely verified and ready for production traffic!' AS result;
+COMMIT;

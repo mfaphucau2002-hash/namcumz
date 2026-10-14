@@ -200,6 +200,7 @@
   // Render Order Data & Bank Information
   function renderOrder(order) {
     currentOrder = order;
+    const due = Math.max(0, Number(order.price) - Number(order.paid_amount || 0));
     const bank = getBankConfig();
 
     // 1. Header & Meta
@@ -217,7 +218,7 @@
     if (serviceNameEl) serviceNameEl.textContent = order.content ? order.content.split('\n')[0] : 'Gói nạp / Dịch vụ';
     if (serverEl) serverEl.textContent = order.game_server || 'Asia';
     if (summaryOrderCodeEl) summaryOrderCodeEl.textContent = order.order_code || '---';
-    if (totalPriceEl) totalPriceEl.textContent = formatMoney(order.price);
+    if (totalPriceEl) totalPriceEl.textContent = formatMoney(due);
     const subPriceEl = document.getElementById('chkSubPrice');
     if (subPriceEl) subPriceEl.textContent = formatMoney(order.price);
     const contactPhoneEl = document.getElementById('chkContactPhone');
@@ -245,7 +246,7 @@
           bankBin: bank.bankBin,
           accountNumber: bank.accountNumber,
           accountName: bank.accountName,
-          amount: order.price,
+          amount: due,
           transferContent: transferContent,
           template: 'compact2'
         });
@@ -259,7 +260,7 @@
             const emvco = window.PaymentProvider.VietQR.generateEmvCoPayload({
               bankBin: bank.bankBin,
               accountNumber: bank.accountNumber,
-              amount: order.price,
+              amount: due,
               transferContent: transferContent
             });
             const svgStr = window.PaymentProvider.VietQR.generateSvgQr(emvco, 250);
@@ -370,12 +371,6 @@
         let updatedOrder = null;
         if (window.OrderAPI && window.supabaseClient) {
           updatedOrder = await window.OrderAPI.getPaymentInfo(window.supabaseClient, orderIdentifier);
-        } else {
-          const res = await fetch(`/api/orders/status?orderCode=${encodeURIComponent(orderIdentifier)}`);
-          if (res.ok) {
-            const json = await res.json();
-            updatedOrder = json.data;
-          }
         }
 
         if (updatedOrder) {
@@ -429,9 +424,11 @@
 
   // Wallet payment handling (Section 18)
   async function checkUserWallet(client, user, order) {
+    if (order.kind === 'deposit') { const option = document.getElementById('chkWalletOption'); if (option) option.hidden = true; return; }
     const walletContainer = document.getElementById('chkWalletOption');
     if (!walletContainer || !client || !user?.id) return;
 
+    const due = Math.max(0, Number(order.price) - Number(order.paid_amount || 0));
     try {
       const { data: wallet } = await client
         .from('user_wallets')
@@ -450,24 +447,24 @@
         </div>
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px;">
           <p class="chk-wallet-desc" style="color: #9490b3; margin: 0; font-size: 0.84rem;">
-            ${balance < order.price ? '<i class="fa-solid fa-triangle-exclamation" style="color: #f59e0b;"></i> Số dư trong ví không đủ để thanh toán.' : '<i class="fa-solid fa-circle-check" style="color: #10b981;"></i> Số dư khả dụng, có thể thanh toán ngay.'}
+            ${balance < due ? '<i class="fa-solid fa-triangle-exclamation" style="color: #f59e0b;"></i> Số dư trong ví không đủ để thanh toán.' : '<i class="fa-solid fa-circle-check" style="color: #10b981;"></i> Số dư khả dụng, có thể thanh toán ngay.'}
           </p>
-          <button class="chk-copy-btn" id="btnPayWallet" ${balance < order.price ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : 'style="background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); color: #070912; font-weight: 800; border: none;"'}>
-            ${balance < order.price ? 'Số dư không đủ' : 'Thanh toán ngay'}
+          <button class="chk-copy-btn" id="btnPayWallet" ${balance < due ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : 'style="background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); color: #070912; font-weight: 800; border: none;"'}>
+            ${balance < due ? 'Số dư không đủ' : 'Thanh toán ngay'}
           </button>
         </div>
       `;
 
       const btnPayWallet = document.getElementById('btnPayWallet');
-      if (btnPayWallet && balance >= order.price) {
+      if (btnPayWallet && balance >= due) {
         btnPayWallet.addEventListener('click', async () => {
-          if (!confirm(`Xác nhận thanh toán ${formatMoney(order.price)} từ số dư tài khoản?`)) return;
+          if (!confirm(`Xác nhận thanh toán ${formatMoney(due)} từ số dư tài khoản?`)) return;
           btnPayWallet.disabled = true;
           btnPayWallet.textContent = 'Đang xử lý...';
           try {
             const res = await window.OrderAPI.payByWallet(client, user.id, order.id);
             if (res) {
-              handlePaymentSuccess({ ...order, paid_amount: order.price, payment_status: 'PAID' });
+              handlePaymentSuccess({ ...order, paid_amount: due, payment_status: 'PAID' });
             }
           } catch (err) {
             alert(err.message || 'Không thể thanh toán bằng số dư');
@@ -503,35 +500,23 @@
       return;
     }
 
-    // Fetch order data
+    // Require a verified session and matching database contract before displaying any QR.
     let order = null;
     try {
-      if (window.supabaseClient && window.OrderAPI) {
-        order = await window.OrderAPI.getPaymentInfo(window.supabaseClient, orderIdentifier);
-      }
-      if (!order) {
-        const res = await fetch(`/api/orders/status?orderCode=${encodeURIComponent(orderIdentifier)}`);
-        if (res.ok) {
-          const json = await res.json();
-          order = json.data;
-        }
-      }
-    } catch (err) {
-      console.error('Lỗi tải thông tin đơn:', err);
-    }
+      const client = await window.NAMCUMZ_CHECKOUT_READY;
+      if (!client || !window.OrderAPI) throw new Error('Checkout chưa sẵn sàng.');
+      order = await window.OrderAPI.getPaymentInfo(client, orderIdentifier);
+    } catch (_) {}
 
     if (!order) {
-      // Mock preview fallback for offline development
-      order = {
-        id: 'mock-order-id',
-        order_code: orderIdentifier.startsWith('DH-') ? orderIdentifier : `DH-${orderIdentifier}`,
-        payment_reference: `NCZ${orderIdentifier.substring(0, 7).toUpperCase().replace(/[^A-Z0-9]/g, '') || '8B4C9D'}`,
-        content: 'Nạp Game - Gói Thẻ Tháng (Demo)',
-        game_server: 'Asia',
-        price: 85000,
-        payment_status: 'PENDING',
-        expires_at: new Date(Date.now() + 15 * 60 * 1000).toISOString()
-      };
+      const status = document.getElementById('chkStatusText');
+      if (status) { status.setAttribute('role', 'alert'); status.textContent = 'Không thể xác minh đơn hàng. Hãy đăng nhập đúng tài khoản và tải lại trang; chưa chuyển tiền.'; }
+      const qr = document.getElementById('chkQrBox');
+      if (qr) qr.hidden = true;
+      document.querySelectorAll('#btnCopyBankAcc, #btnCopyBankOwner, #btnCopyMemo, #btnPayWallet').forEach(button => { button.disabled = true; });
+      const spinner = document.getElementById('chkSpinner');
+      if (spinner) spinner.style.display = 'none';
+      return;
     }
 
     renderOrder(order);

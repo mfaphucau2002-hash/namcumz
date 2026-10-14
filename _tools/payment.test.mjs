@@ -99,6 +99,8 @@ test('Automated VietQR Payment, Transaction Verification, Anti-Duplicate & Walle
     pgClient: db
   });
 
+  // Valid SePay receiving-account envelope for unrelated memo/amount/replay test cases.
+  const processIncoming = (headers,payload) => paymentService.processWebhook(headers,{gateway:'MB',accountNumber:'0763550673',transferType:'in',...payload});
   let createdOrder = null;
 
   // TEST 1: Create Order & Auto-generate Payment Reference + VietQR
@@ -157,7 +159,7 @@ test('Automated VietQR Payment, Transaction Verification, Anti-Duplicate & Walle
 
   // TEST 3: Reject Invalid Webhook Signature
   await t.test('3. Từ chối webhook có chữ ký / secret không hợp lệ (HTTP 401)', async () => {
-    const res = await paymentService.processWebhook(
+    const res = await processIncoming(
       { authorization: 'Apikey WRONG_KEY' },
       {
         id: 'TXN-FAIL-SIG',
@@ -176,7 +178,7 @@ test('Automated VietQR Payment, Transaction Verification, Anti-Duplicate & Walle
 
   // TEST 4: Reject Incorrect Transfer Content
   await t.test('4. Từ chối giao dịch có nội dung chuyển khoản không khớp', async () => {
-    const res = await paymentService.processWebhook(
+    const res = await processIncoming(
       { authorization: 'Apikey test-secret-123' },
       {
         id: 'TXN-WRONG-MEMO',
@@ -195,7 +197,7 @@ test('Automated VietQR Payment, Transaction Verification, Anti-Duplicate & Walle
 
   // TEST 5: Reject Insufficient Amount
   await t.test('5. Từ chối giao dịch thiếu tiền (INSUFFICIENT_AMOUNT)', async () => {
-    const res = await paymentService.processWebhook(
+    const res = await processIncoming(
       { authorization: 'Apikey test-secret-123' },
       {
         id: 'TXN-UNDERPAY',
@@ -215,11 +217,12 @@ test('Automated VietQR Payment, Transaction Verification, Anti-Duplicate & Walle
   // TEST 6: Successful Webhook -> Order transitions to PAID
   await t.test('6. Xử lý webhook hợp lệ: khớp amount, content và chuyển đơn sang PAID', async () => {
     const txnId = 'SEPAY-TXN-' + Date.now();
-    const res = await paymentService.processWebhook(
+    const res = await processIncoming(
       { authorization: 'Apikey test-secret-123' },
       {
         id: txnId,
         gateway: 'MB',
+        transferType: 'in',
         accountNumber: '0763550673',
         transferAmount: 85000,
         content: `CK DON HANG ${createdOrder.payment_reference}`,
@@ -253,7 +256,7 @@ test('Automated VietQR Payment, Transaction Verification, Anti-Duplicate & Walle
       await db.query('SELECT provider_transaction_id FROM public.payment_transactions WHERE matched_order_id = $1 LIMIT 1', [createdOrder.id])
     ).rows[0].provider_transaction_id;
 
-    const res = await paymentService.processWebhook(
+    const res = await processIncoming(
       { authorization: 'Apikey test-secret-123' },
       {
         id: existingTxnId,
@@ -270,7 +273,7 @@ test('Automated VietQR Payment, Transaction Verification, Anti-Duplicate & Walle
   // TEST 8: Cannot pay an already paid order with a new transaction
   await t.test('8. Ngăn chặn nạp tiền thừa / đơn đã thanh toán (ORDER_ALREADY_PAID)', async () => {
     const newTxnId = 'SEPAY-TXN-EXTRA-' + Date.now();
-    const res = await paymentService.processWebhook(
+    const res = await processIncoming(
       { authorization: 'Apikey test-secret-123' },
       {
         id: newTxnId,
@@ -301,7 +304,7 @@ test('Automated VietQR Payment, Transaction Verification, Anti-Duplicate & Walle
     );
 
     // Fire 2 simultaneous webhooks
-    const p1 = paymentService.processWebhook(
+    const p1 = processIncoming(
       { authorization: 'Apikey test-secret-123' },
       {
         id: 'RACE-1-' + Date.now(),
@@ -310,7 +313,7 @@ test('Automated VietQR Payment, Transaction Verification, Anti-Duplicate & Walle
       }
     );
 
-    const p2 = paymentService.processWebhook(
+    const p2 = processIncoming(
       { authorization: 'Apikey test-secret-123' },
       {
         id: 'RACE-2-' + Date.now(),
@@ -347,7 +350,7 @@ test('Automated VietQR Payment, Transaction Verification, Anti-Duplicate & Walle
     // Force order expiration back in time (> 15 minutes ago)
     await db.query("UPDATE public.orders SET expires_at = now() - INTERVAL '20 minutes' WHERE id = $1", [expOrder.id]);
 
-    const res = await paymentService.processWebhook(
+    const res = await processIncoming(
       { authorization: 'Apikey test-secret-123' },
       {
         id: 'EXP-TXN-' + Date.now(),
@@ -447,4 +450,14 @@ test('Automated VietQR Payment, Transaction Verification, Anti-Duplicate & Walle
     assert.equal(data.payment_status, 'PAID');
     assert.equal(data.account_password, undefined, 'Không bao giờ trả mật khẩu tài khoản');
   });
+});
+
+// Reject invalid bank envelopes before any database call; no valid defaults here.
+test('bank webhook rejects outgoing, wrong account, missing ID and missing destination',async()=>{
+ let calls=0;const service=new PaymentService({provider:'sepay',webhookSecret:'secret',pgClient:{query:async()=>{calls++;throw Error('Unexpected settlement');}}});
+ const valid={id:'bank-1',gateway:'MB',accountNumber:'0763550673',transferType:'in',transferAmount:20000,content:'NCZREF'};
+ for(const patch of [{transferType:'out'},{accountNumber:'999999'},{id:'',referenceCode:''},{accountNumber:'',subAccount:''},{transferType:''}]){
+  const response=await service.processWebhook({authorization:'Apikey secret'},{...valid,...patch});assert.equal(response.status,400);assert.equal(response.body.success,false);
+ }
+ assert.equal(calls,0);
 });

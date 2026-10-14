@@ -16,7 +16,7 @@ SELECT n.nspname,p.proname,pg_get_function_identity_arguments(p.oid) AS argument
  has_function_privilege('anon',p.oid,'EXECUTE') AS anon_execute,
  has_function_privilege('authenticated',p.oid,'EXECUTE') AS authenticated_execute
 FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace
-WHERE n.nspname='public' ORDER BY 1,2;
+WHERE n.nspname IN ('public','namcumz_private','auth','storage') ORDER BY 1,2;
 SELECT n.nspname,c.relname,t.tgname,pg_get_triggerdef(t.oid) AS definition
 FROM pg_trigger t JOIN pg_class c ON c.oid=t.tgrelid JOIN pg_namespace n ON n.oid=c.relnamespace
 WHERE NOT t.tgisinternal AND n.nspname IN ('public','auth') ORDER BY 1,2,3;
