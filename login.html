@@ -942,14 +942,23 @@
                 const contact = document.getElementById('recContact').value.trim();
                 const fullDesc = "YÊU CẦU KHÔI PHỤC TÀI KHOẢN\nTài khoản: " + user + "\nTên hiển thị: " + displayName + "\nMã đơn: " + order + "\nLiên hệ: " + contact;
                 try {
-                    if (!supabaseClient) { showToast('Chưa kết nối được hệ thống, vui lòng tải lại trang.', 'error'); return; }
-                    const { error } = await supabaseClient.from('support_tickets').insert([{ issue_type: 'Khôi phục tài khoản', description: fullDesc, status: 'open' }]);
-                    if(error) throw error;
-                    showToast('Đã gửi yêu cầu khôi phục thành công! Chúng tôi sẽ liên hệ sớm nhất.', 'success');
+                    let sent = false;
+                    if (supabaseClient) {
+                        const { error } = await supabaseClient.from('support_tickets').insert([{ issue_type: 'Khôi phục tài khoản', description: fullDesc, status: 'open' }]);
+                        if (!error) sent = true;
+                    }
+                    if (sent) {
+                        showToast('Đã gửi yêu cầu khôi phục thành công! Chúng tôi sẽ liên hệ sớm nhất.', 'success');
+                    } else {
+                        showToast('Đang kết nối Zalo CSKH để hỗ trợ xác minh khôi phục...', 'success');
+                        window.open('https://zalo.me/0763550673', '_blank');
+                    }
                     closeRecoveryModal();
                     recoveryForm.reset();
                 } catch (err) {
-                    showToast('Lỗi gửi yêu cầu: ' + err.message, 'error');
+                    showToast('Đang kết nối Zalo CSKH để hỗ trợ xác minh...', 'info');
+                    window.open('https://zalo.me/0763550673', '_blank');
+                    closeRecoveryModal();
                 }
                 btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Gửi yêu cầu khôi phục'; btn.disabled = false;
             });
@@ -991,20 +1000,25 @@
                 const fullDesc = `Tiêu đề: ${title}\nLiên hệ: ${contact}\nMã đơn: ${orderCode}\n\n${desc}`;
                 
                 try {
-                    // Try to insert directly if RLS allows anon insert
+                    let sent = false;
                     if(typeof supabaseClient !== 'undefined' && supabaseClient) {
                         const { error } = await supabaseClient.from('support_tickets').insert([
                             { issue_type: issue, description: fullDesc }
                         ]);
-                        if(error) throw error;
+                        if(!error) sent = true;
                     }
-                    showToast("Đã gửi yêu cầu hỗ trợ. NAMCUMZ sẽ phản hồi sớm nhất.", "success");
+                    if (sent) {
+                        showToast("Đã gửi yêu cầu hỗ trợ. NAMCUMZ sẽ phản hồi sớm nhất.", "success");
+                    } else {
+                        showToast("Đang kết nối tới Zalo CSKH để hỗ trợ trực tiếp...", "success");
+                        window.open('https://zalo.me/0763550673', '_blank');
+                    }
                     closeSupportModal();
                     supportForm.reset();
                 } catch (err) {
-                    // Fallback success UI if DB blocks anon inserts (since user requested fallback)
-                    console.warn(err);
-                    showToast("Không thể gửi yêu cầu lúc này. Vui lòng thử lại sau.", "error");
+                    showToast("Đang kết nối tới Zalo CSKH...", "info");
+                    window.open('https://zalo.me/0763550673', '_blank');
+                    closeSupportModal();
                 }
                 
                 btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Gửi yêu cầu hỗ trợ';

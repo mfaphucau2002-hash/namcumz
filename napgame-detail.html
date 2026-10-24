@@ -254,11 +254,13 @@
                             <i class="fas fa-layer-group" style="color: #00f2fe; margin-right: 8px;"></i> Số lượng:
                         </div>
                         <div class="ng-qty-stepper">
-                            <button type="button" class="ng-qty-step-btn" onclick="changeQuantity(-1)">-</button>
+                            <button type="button" class="ng-qty-step-btn" disabled style="opacity:0.4;cursor:not-allowed;" title="Cố định 1 gói / lượt nạp">-</button>
                             <span class="ng-qty-num" id="qtyDisplay">1</span>
-                            <button type="button" class="ng-qty-step-btn" onclick="changeQuantity(1)">+</button>
+                            <button type="button" class="ng-qty-step-btn" disabled style="opacity:0.4;cursor:not-allowed;" title="Cố định 1 gói / lượt nạp">+</button>
                         </div>
                     </div>
+
+                    <p style="font-size: 0.78rem; color: #9490b3; margin-top: 4px; margin-bottom: 12px;"><i class="fas fa-shield-halved" style="color: #10b981;"></i> Mỗi đơn nạp áp dụng cho 1 gói để đảm bảo an toàn tài khoản.</p>
 
                     <!-- 9. Mã giảm giá -->
                     <div class="ng-promo-box">

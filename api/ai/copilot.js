@@ -39,7 +39,7 @@ module.exports = async function handler(req, res) {
       .eq('id', orderId).maybeSingle();
     if (orderError || !order) return res.status(404).json({ message: 'Không tìm thấy đơn hàng.' });
 
-    const model = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
+    const model = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
     const aiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-goog-api-key': geminiKey },

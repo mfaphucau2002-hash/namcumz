@@ -502,6 +502,15 @@
 
             // Global functions for Orders
             window.editOrder = async (id) => {
+                if (['staging', 'production'].includes(window.NAMCUMZ_CONFIG?.environment)) {
+                    await window.showOrderDialog({
+                        title: 'Quản lý đơn hàng',
+                        message: 'Trong môi trường ' + (window.NAMCUMZ_CONFIG?.environment || 'production') + ', trạng thái, giá và điều phối đơn hàng tuân theo quy trình kiểm soát nghiệp vụ (RPC). Vui lòng thao tác và điều phối đơn tại Next.js Dashboard.',
+                        tone: 'info',
+                        confirmText: 'Đã hiểu'
+                    });
+                    return;
+                }
                 const { data, error } = await supabaseClient.from('orders').select('*').eq('id', id).single();
                 if(data) {
                     document.getElementById('modalTitle').textContent = 'SỬA ĐƠN HÀNG';

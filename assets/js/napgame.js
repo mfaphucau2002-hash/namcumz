@@ -2,7 +2,7 @@
 let currentQuantity = 1;
 
 window.changeQuantity = function(delta) {
-    currentQuantity = Math.max(1, Math.min(99, currentQuantity + delta));
+    currentQuantity = 1;
     const disp = document.getElementById('qtyDisplay');
     if (disp) disp.textContent = currentQuantity;
     updateCart();

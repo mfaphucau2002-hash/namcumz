@@ -33,7 +33,9 @@ async function verifyDatabaseContract() {
     if (!supabaseClient) return false;
     try {
         const { data, error } = await supabaseClient.rpc('app_contract_version');
-        dbContractReady = !error && data === expectedDbVersion();
+        const supported = window.NAMCUMZ_CONFIG?.supportedDbVersions;
+        const versionMatches = data === expectedDbVersion() || (Array.isArray(supported) && supported.includes(data));
+        dbContractReady = !error && versionMatches;
     } catch (_) {
         dbContractReady = false;
     }

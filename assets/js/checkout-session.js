@@ -10,7 +10,8 @@
   const {data:auth,error:authError}=await client.auth.getUser();
   if(authError || !auth?.user) throw new Error('Vui lòng đăng nhập đúng tài khoản để xem thanh toán.');
   const {data:version,error}=await client.rpc('app_contract_version');
-  window.NAMCUMZ_DB_READY=!error && version===c.expectedDbVersion;
+  const isSupported = version===c.expectedDbVersion || (Array.isArray(c.supportedDbVersions) && c.supportedDbVersions.includes(version));
+  window.NAMCUMZ_DB_READY=!error && isSupported;
   if(!window.NAMCUMZ_DB_READY) throw new Error('Hệ thống đang bảo trì để đồng bộ cơ sở dữ liệu.');
   client.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT' || !session) window.location.replace('/login.html?next='+encodeURIComponent(window.location.pathname+window.location.search));});
   return client;

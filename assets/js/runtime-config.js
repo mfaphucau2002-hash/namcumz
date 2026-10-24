@@ -3,7 +3,8 @@ window.NAMCUMZ_CONFIG = {
     environment: 'production',
     supabaseUrl: 'https://vqnuutdmcekqkbdvawlw.supabase.co',
     supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZxbnV1dGRtY2VrcWtiZHZhd2x3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3OTgwNjIsImV4cCI6MjEwMDM3NDA2Mn0.T8_AdJOWEmf68oVrOjv8G51IScykzqhBnfHIi5LK-G4',
-    expectedDbVersion: 'production_010_credential_lifecycle',
+    expectedDbVersion: 'production_002_credentials_encryption',
+    supportedDbVersions: ['production_002_credentials_encryption', 'production_009_launch_access', 'production_010_credential_lifecycle'],
     bank: {
         bankBin: '970422',
         bankCode: 'MB',

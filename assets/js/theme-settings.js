@@ -62,7 +62,30 @@
   const STORAGE_KEY = 'ncmz_theme';
 
   function loadPrefs() {
-    try { return Object.assign({}, DEFAULTS, JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')); }
+    try {
+      const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      const prefs = Object.assign({}, DEFAULTS, parsed);
+      if (typeof prefs.accentIndex !== 'number' || prefs.accentIndex < 0 || prefs.accentIndex >= ACCENT_COLORS.length) {
+        prefs.accentIndex = DEFAULTS.accentIndex;
+      }
+      if (typeof prefs.bgIndex !== 'number' || prefs.bgIndex < 0 || prefs.bgIndex >= BG_COLORS.length) {
+        prefs.bgIndex = DEFAULTS.bgIndex;
+      }
+      if (typeof prefs.radiusIndex !== 'number' || prefs.radiusIndex < 0 || prefs.radiusIndex >= RADIUS_STEPS.length) {
+        prefs.radiusIndex = DEFAULTS.radiusIndex;
+      }
+      if (typeof prefs.bgOpacity !== 'number' || isNaN(prefs.bgOpacity)) {
+        prefs.bgOpacity = DEFAULTS.bgOpacity;
+      } else {
+        prefs.bgOpacity = Math.max(0, Math.min(100, prefs.bgOpacity));
+      }
+      if (typeof prefs.bgBlur !== 'number' || isNaN(prefs.bgBlur)) {
+        prefs.bgBlur = DEFAULTS.bgBlur;
+      } else {
+        prefs.bgBlur = Math.max(0, Math.min(64, prefs.bgBlur));
+      }
+      return prefs;
+    }
     catch { return { ...DEFAULTS }; }
   }
 
@@ -80,7 +103,7 @@
   }
 
   function applyAccent(index, root) {
-    const c = ACCENT_COLORS[index];
+    const c = ACCENT_COLORS[index] || ACCENT_COLORS[DEFAULTS.accentIndex];
     root.style.setProperty('--ui-accent', c.value);
     root.style.setProperty('--brand-cyan', c.value);
     root.style.setProperty('--brand-cyan-glow', c.glow);
@@ -94,7 +117,7 @@
   }
 
   function applyBg(index, opacity, blur, root) {
-    const bg = BG_COLORS[index];
+    const bg = BG_COLORS[index] || BG_COLORS[DEFAULTS.bgIndex];
     const op = opacity / 100;
     root.style.setProperty('--surface-0', bg.surface0);
     root.style.setProperty('--surface-1', bg.surface1);
@@ -114,7 +137,8 @@
   }
 
   function applyRadius(index, root) {
-    const m = RADIUS_STEPS[index].multiplier;
+    const step = RADIUS_STEPS[index] || RADIUS_STEPS[DEFAULTS.radiusIndex];
+    const m = step.multiplier;
     // Với multiplier=0 → radius 0. Với 0.5 → nửa giá trị gốc. Với >0 → nội suy.
     // Thực tế UX tốt hơn: base cộng thêm bonus.
     // Công thức: result = base + (base * m) để radius luôn tăng dần
