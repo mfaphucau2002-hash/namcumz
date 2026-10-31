@@ -2298,6 +2298,26 @@ body.perf-eco-mode .feature-visual {
     border-color: rgba(247, 37, 133, 0.3);
     color: var(--neon-pink);
 }
+.hud-pill.cyan {
+    background: rgba(0, 242, 254, 0.1);
+    border-color: rgba(0, 242, 254, 0.3);
+    color: var(--neon-cyan);
+}
+.hud-pill.gold {
+    background: rgba(245, 158, 11, 0.12);
+    border-color: rgba(245, 158, 11, 0.35);
+    color: #fbbf24;
+}
+.hud-pill.sky {
+    background: rgba(56, 189, 248, 0.12);
+    border-color: rgba(56, 189, 248, 0.35);
+    color: #38bdf8;
+}
+.hud-pill.purple {
+    background: rgba(168, 85, 247, 0.12);
+    border-color: rgba(168, 85, 247, 0.35);
+    color: #a855f7;
+}
 .hud-dot {
     width: 6px;
     height: 6px;
@@ -2345,6 +2365,62 @@ body.perf-eco-mode .feature-visual {
 }
 .bento-game-card:hover::after {
     opacity: 1;
+}
+
+.bento-game-card h3 {
+    min-height: 2.75rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-wrap: balance;
+    word-break: break-word;
+    line-height: 1.3;
+}
+
+/* --- 4-COLUMN GRID FOR THẺ GAME --- */
+#card-game-list {
+    grid-template-columns: repeat(4, 1fr) !important;
+}
+@media (max-width: 1200px) and (min-width: 769px) {
+    #card-game-list {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+@media (max-width: 768px) and (min-width: 480px) {
+    #card-game-list {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* --- HUD PRICE ANCHOR --- */
+.card-price-anchor {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin-top: auto;
+    padding-top: 8px;
+    margin-bottom: 6px;
+    font-family: var(--font-hud, 'Chakra Petch', sans-serif);
+    letter-spacing: 0.3px;
+}
+.card-price-anchor.caythue {
+    color: #00f2fe;
+    text-shadow: 0 0 10px rgba(0, 242, 254, 0.4);
+}
+.card-price-anchor.napgame {
+    color: #fbbf24;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.35);
+}
+.card-price-anchor.thegame {
+    color: #38bdf8;
+    text-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+}
+.card-price-anchor i {
+    font-size: 0.72rem;
+    opacity: 0.9;
 }
 
 /* --- 3. CYBER INVENTORY / CART SECTION --- */
