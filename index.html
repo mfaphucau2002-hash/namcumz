@@ -154,6 +154,52 @@
                     <a href="/profile.html">Xem đơn của bạn</a>
                 </div>
             </div>
+            <!-- ================= CAM KẾT DỊCH VỤ (TRUST BADGES) ================= -->
+            <div class="trust-commitments-bar" aria-label="Cam kết dịch vụ NAMCUMZ">
+                <!-- 1. Xử Lý Siêu Tốc -->
+                <div class="trust-badge-item">
+                    <div class="trust-badge-icon" style="color: var(--neon-cyan); background: rgba(0, 242, 254, 0.1); border-color: rgba(0, 242, 254, 0.25);">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="trust-badge-text">
+                        <h4 class="trust-badge-title">Xử Lý Siêu Tốc</h4>
+                        <p class="trust-badge-desc">Hoàn thành đơn 5 - 15 phút, cập nhật liên tục.</p>
+                    </div>
+                </div>
+
+                <!-- 2. Nạp Chính Hãng -->
+                <div class="trust-badge-item">
+                    <div class="trust-badge-icon" style="color: #10b981; background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.25);">
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                    <div class="trust-badge-text">
+                        <h4 class="trust-badge-title">Nạp Chính Hãng</h4>
+                        <p class="trust-badge-desc">Đầy đủ hóa đơn, bảo hành không âm nguyên thạch/tiền.</p>
+                    </div>
+                </div>
+
+                <!-- 3. Bảo Mật Tài Khoản -->
+                <div class="trust-badge-item">
+                    <div class="trust-badge-icon" style="color: #f59e0b; background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.25);">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="trust-badge-text">
+                        <h4 class="trust-badge-title">Bảo Mật Tài Khoản</h4>
+                        <p class="trust-badge-desc">Mã hóa thông tin, xóa nhật ký đăng nhập sau khi xong.</p>
+                    </div>
+                </div>
+
+                <!-- 4. Hỗ Trợ Tận Tâm -->
+                <div class="trust-badge-item">
+                    <div class="trust-badge-icon" style="color: var(--neon-pink); background: rgba(247, 37, 133, 0.1); border-color: rgba(247, 37, 133, 0.25);">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <div class="trust-badge-text">
+                        <h4 class="trust-badge-title">Hỗ Trợ Tận Tâm</h4>
+                        <p class="trust-badge-desc">Phản hồi nhanh từ 07:00 - 23:00 mỗi ngày.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -710,25 +756,19 @@
             <div><strong id="nc-ai-chat-title">Trợ lý AI NAMCUMZ</strong><span>Hỗ trợ thông tin dịch vụ</span></div>
             <button type="button" class="nc-ai-chat-close" id="nc-ai-chat-close" aria-label="Đóng chat">&times;</button>
         </header>
-        <div class="nc-ai-chat-gate" id="nc-ai-chat-gate">
-            <div class="nc-ai-chat-gate-icon" aria-hidden="true"><i class="fas fa-shield-halved"></i></div>
-            <h3>Xác nhận trước khi chat</h3>
-            <p>Chatbot chỉ dành cho người từ đủ 18 tuổi. Tin nhắn của bạn sẽ được gửi tới Google Gemini để tạo câu trả lời. Với hạn mức không trả phí, Google có thể dùng nội dung để cải thiện dịch vụ và cho người đánh giá xem xét. Nội dung chỉ giữ trong phiên chat hiện tại trên trang này.</p>
-            <p class="nc-ai-chat-privacy">Không gửi mật khẩu, mã OTP, thông tin đăng nhập game hoặc dữ liệu nhạy cảm. AI có thể trả lời sai; cần hỗ trợ đơn hàng, hãy dùng <a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">Zalo CSKH</a>.</p>
-            <button type="button" id="nc-ai-chat-consent" class="nc-ai-chat-primary">Tôi đủ 18 tuổi và đồng ý tiếp tục</button>
-            <a class="nc-ai-chat-terms" href="https://ai.google.dev/gemini-api/terms?hl=en" target="_blank" rel="noopener noreferrer">Điều khoản xử lý dữ liệu của Google Gemini</a>
-        </div>
-        <div class="nc-ai-chat-body" id="nc-ai-chat-body" hidden>
-            <div class="nc-ai-chat-notice">Trợ lý AI có thể sai. Không gửi mật khẩu, OTP hoặc thông tin đăng nhập.</div>
+        <div class="nc-ai-chat-body" id="nc-ai-chat-body">
             <div class="nc-ai-chat-messages" id="nc-ai-chat-messages" role="log" aria-live="polite" aria-relevant="additions text">
-                <div class="nc-ai-chat-message is-assistant">Xin chào! Mình là trợ lý AI NAMCUMZ. Bạn cần hỏi thông tin dịch vụ nào?</div>
+                <div class="nc-ai-chat-message is-assistant">Xin chào! Mình là trợ lý AI NAMCUMZ. Bạn cần hỗ trợ thông tin gì về dịch vụ nạp game hoặc cày thuê hôm nay?</div>
+            </div>
+            <div class="nc-ai-chat-security-tip">
+                <span>⚠️ <strong>Lưu ý:</strong> Không gửi mật khẩu hoặc mã OTP vào khung chat. Cần hỗ trợ đơn gấp, vui lòng nhắn <a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">Zalo CSKH</a>.</span>
             </div>
             <form class="nc-ai-chat-form" id="nc-ai-chat-form">
                 <label class="sr-only" for="nc-ai-chat-input">Tin nhắn</label>
                 <textarea id="nc-ai-chat-input" rows="1" maxlength="600" placeholder="Nhập câu hỏi..." required></textarea>
                 <button type="submit" id="nc-ai-chat-send" aria-label="Gửi tin nhắn"><i class="fas fa-paper-plane"></i></button>
             </form>
-            <div class="nc-ai-chat-footer">Đang xử lý qua Google Gemini · <a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">Liên hệ Zalo</a></div>
+            <div class="nc-ai-chat-footer">Hỗ trợ tự động · <a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">Zalo CSKH: 0763.550.673</a></div>
         </div>
     </section>
 </div>

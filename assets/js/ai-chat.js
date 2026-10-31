@@ -2,14 +2,11 @@
 (function () {
     const endpoint = '/api/ai/chat';
     const messages = [];
-    let consentGranted = false;
     let sending = false;
 
     const chat = document.getElementById('nc-ai-chat');
     const toggle = document.getElementById('nc-ai-chat-toggle');
     const close = document.getElementById('nc-ai-chat-close');
-    const gate = document.getElementById('nc-ai-chat-gate');
-    const consentButton = document.getElementById('nc-ai-chat-consent');
     const body = document.getElementById('nc-ai-chat-body');
     const form = document.getElementById('nc-ai-chat-form');
     const input = document.getElementById('nc-ai-chat-input');
@@ -17,7 +14,7 @@
     const messageList = document.getElementById('nc-ai-chat-messages');
     const tooltip = document.getElementById('namcumz-support-tooltip');
 
-    if (!chat || !toggle || !gate || !form || !input || !messageList) return;
+    if (!chat || !toggle || !form || !input || !messageList) return;
 
     // Add a text-only message bubble to prevent HTML injection from model output or user input.
     function appendMessage(text, role, extraClass) {
@@ -29,15 +26,13 @@
         return item;
     }
 
-    // Open the panel and keep its age gate until server consent succeeds.
+    // Open the panel directly into the chat conversation.
     function openChat() {
         chat.hidden = false;
+        if (body) body.hidden = false;
         toggle.setAttribute('aria-expanded', 'true');
         if (tooltip) tooltip.style.display = 'none';
-        if (!consentGranted) {
-            gate.hidden = false;
-            body.hidden = true;
-        }
+        input.focus();
     }
 
     // Close the chat panel and restore focus to the launcher.
@@ -47,35 +42,11 @@
         toggle.focus();
     }
 
-    // Store a server-signed, short-lived consent cookie after the visitor attests age and data processing.
-    async function grantConsent() {
-        consentButton.disabled = true;
-        consentButton.textContent = 'Đang xác nhận…';
-        try {
-            const response = await fetch(endpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'consent', adult: true, googleProcessing: true })
-            });
-            const payload = await response.json().catch(() => ({}));
-            if (!response.ok) throw new Error(payload.message || 'Không thể xác nhận lúc này.');
-            consentGranted = true;
-            gate.hidden = true;
-            body.hidden = false;
-            input.focus();
-        } catch (error) {
-            appendMessage(error.message || 'Không thể kết nối. Vui lòng thử lại.', 'assistant', 'is-error');
-        } finally {
-            consentButton.disabled = false;
-            consentButton.textContent = 'Tôi đủ 18 tuổi và đồng ý tiếp tục';
-        }
-    }
-
     // Send one bounded user turn and retain only successful conversation turns in memory.
     async function sendMessage(event) {
         event.preventDefault();
         const text = input.value.trim();
-        if (!text || sending || !consentGranted) return;
+        if (!text || sending) return;
         sending = true;
         input.value = '';
         input.style.height = '';
@@ -105,11 +76,10 @@
         }
     }
 
-    // Let the existing floating avatar open the AI panel instead of sending visitors straight to Zalo.
+    // Let the existing floating avatar open the AI panel.
     window.toggleNamcumzSupportWindow = openChat;
     toggle.addEventListener('click', openChat);
     close?.addEventListener('click', closeChat);
-    consentButton?.addEventListener('click', grantConsent);
     form.addEventListener('submit', sendMessage);
     input.addEventListener('keydown', event => {
         if (event.key === 'Enter' && !event.shiftKey) {

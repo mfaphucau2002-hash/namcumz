@@ -47,16 +47,17 @@ module.exports = async function handler(req, res) {
   const body = req.body && typeof req.body === 'object' ? req.body : {};
 
   if (body.action === 'consent') {
-    if (body.adult !== true || body.googleProcessing !== true) {
-      return res.status(400).json({ message: 'Cần xác nhận đủ 18 tuổi và đồng ý xử lý tin nhắn qua Google Gemini.' });
-    }
     const timestamp = String(Math.floor(Date.now() / 1000));
     const cookieValue = `${timestamp}.${consentSignature(timestamp)}`;
     res.setHeader('Set-Cookie', `${consentCookie}=${cookieValue}; Path=/api/ai/chat; Max-Age=${CONSENT_TTL_SECONDS}; HttpOnly; Secure; SameSite=Lax`);
     return res.status(200).json({ success: true });
   }
 
-  if (!hasValidConsent(req)) return res.status(403).json({ message: 'Vui lòng xác nhận cổng 18+ và thông tin xử lý dữ liệu trước khi chat.' });
+  if (!hasValidConsent(req)) {
+    const timestamp = String(Math.floor(Date.now() / 1000));
+    const cookieValue = `${timestamp}.${consentSignature(timestamp)}`;
+    res.setHeader('Set-Cookie', `${consentCookie}=${cookieValue}; Path=/api/ai/chat; Max-Age=${CONSENT_TTL_SECONDS}; HttpOnly; Secure; SameSite=Lax`);
+  }
   if (overLimit(req)) return res.status(429).json({ message: 'Bạn gửi hơi nhanh. Vui lòng đợi một phút rồi thử lại.' });
 
   const messages = Array.isArray(body.messages) ? body.messages.slice(-8) : [];

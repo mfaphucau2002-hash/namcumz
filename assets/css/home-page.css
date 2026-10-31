@@ -6190,3 +6190,124 @@ body.has-vip5-honor-banner .main-content {
     .nc-ai-floating-btn { right:16px; bottom:16px; }
     .nc-ai-chat { right:-2px; bottom:72px; width:min(390px,calc(100vw - 24px)); height:min(600px,calc(100dvh - 105px)); min-height:300px; }
 }
+
+/* ================= TRUST COMMITMENT BADGES ================= */
+.trust-commitments-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 24px;
+    padding: 18px 22px;
+    background: rgba(10, 12, 24, 0.78);
+    border: 1px solid rgba(0, 242, 254, 0.16);
+    border-radius: 16px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 242, 254, 0.03);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.trust-commitments-bar:hover {
+    border-color: rgba(0, 242, 254, 0.35);
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.65), 0 0 25px rgba(0, 242, 254, 0.12);
+}
+.trust-badge-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 6px 8px;
+    border-radius: 12px;
+    transition: transform 0.25s ease, background 0.25s ease;
+}
+.trust-badge-item:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.03);
+}
+.trust-badge-icon {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    border: 1px solid;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+.trust-badge-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+.trust-badge-title {
+    font-family: var(--font-hud, 'Chakra Petch', sans-serif);
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #fff;
+    margin: 0;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+.trust-badge-desc {
+    font-size: 0.78rem;
+    color: var(--text-muted, #94a3b8);
+    margin: 0;
+    line-height: 1.4;
+}
+
+@media (max-width: 992px) {
+    .trust-commitments-bar {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+        padding: 16px;
+        margin-top: 20px;
+    }
+}
+@media (max-width: 480px) {
+    .trust-commitments-bar {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 12px 10px;
+        border-radius: 14px;
+    }
+    .trust-badge-item {
+        gap: 10px;
+        padding: 4px;
+    }
+    .trust-badge-icon {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+        font-size: 1rem;
+        border-radius: 10px;
+    }
+    .trust-badge-title {
+        font-size: 0.82rem;
+    }
+    .trust-badge-desc {
+        font-size: 0.7rem;
+        line-height: 1.35;
+    }
+}
+
+/* --- AI CHAT SECURITY TIP --- */
+.nc-ai-chat-security-tip {
+    margin: 6px 14px 10px;
+    padding: 8px 12px;
+    background: rgba(251, 191, 36, 0.08);
+    border: 1px solid rgba(251, 191, 36, 0.25);
+    border-radius: 9px;
+    font-size: 11px;
+    line-height: 1.45;
+    color: #fde68a;
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+}
+.nc-ai-chat-security-tip a {
+    color: var(--neon-cyan);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
