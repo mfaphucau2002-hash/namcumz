@@ -14,51 +14,103 @@
         let width = canvas.width = window.innerWidth;
         let height = canvas.height = window.innerHeight;
 
+        let isMobile = window.innerWidth < 768;
         let particles = [];
-        const count = Math.min(35, Math.floor(width / 45));
+        let isRunning = false;
+        let rafId = 0;
+        let lastFrameTime = 0;
 
-        for (let i = 0; i < count; i++) {
-            particles.push({
-                x: Math.random() * width,
-                y: Math.random() * height,
-                radius: Math.random() * 2 + 1,
-                color: Math.random() > 0.5 ? 'rgba(0, 242, 254, ' : 'rgba(247, 37, 133, ',
-                alpha: Math.random() * 0.6 + 0.2,
-                vx: (Math.random() - 0.5) * 0.4,
-                vy: (Math.random() - 0.5) * 0.4
-            });
+        function createParticles() {
+            particles = [];
+            isMobile = window.innerWidth < 768;
+            const rawCount = Math.floor(width / 45);
+            // Giảm 60% số lượng hạt trên thiết bị di động (giữ lại 40%)
+            const count = isMobile ? Math.max(5, Math.floor(rawCount * 0.4)) : Math.min(35, rawCount);
+
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    radius: isMobile ? (Math.random() * 1.6 + 0.8) : (Math.random() * 2 + 1),
+                    color: Math.random() > 0.5 ? 'rgba(0, 242, 254, ' : 'rgba(247, 37, 133, ',
+                    alpha: Math.random() * 0.6 + 0.2,
+                    vx: (Math.random() - 0.5) * (isMobile ? 0.25 : 0.4),
+                    vy: (Math.random() - 0.5) * (isMobile ? 0.25 : 0.4)
+                });
+            }
         }
+
+        createParticles();
 
         window.addEventListener('resize', () => {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
+            createParticles();
         }, { passive: true });
 
-        function render() {
-            if (document.body.classList.contains('perf-eco-mode') || document.hidden) {
-                requestAnimationFrame(render);
+        // Tần số quét: 30 FPS trên mobile để tiết kiệm pin và chống nóng máy; 60 FPS trên desktop
+        function tick(timestamp) {
+            if (!isRunning || document.hidden || document.body.classList.contains('perf-eco-mode')) {
+                isRunning = false;
                 return;
             }
-            ctx.clearRect(0, 0, width, height);
-            for (let i = 0; i < particles.length; i++) {
-                const p = particles[i];
-                p.x += p.vx;
-                p.y += p.vy;
-                if (p.x < 0) p.x = width;
-                if (p.x > width) p.x = 0;
-                if (p.y < 0) p.y = height;
-                if (p.y > height) p.y = 0;
 
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fillStyle = p.color + p.alpha + ')';
-                ctx.shadowBlur = 8;
-                ctx.shadowColor = p.color + '0.8)';
-                ctx.fill();
+            const targetInterval = isMobile ? 33.33 : 16.66; // 30 FPS vs 60 FPS
+            const elapsed = timestamp - lastFrameTime;
+
+            if (elapsed >= targetInterval) {
+                lastFrameTime = timestamp - (elapsed % targetInterval);
+
+                ctx.clearRect(0, 0, width, height);
+                for (let i = 0; i < particles.length; i++) {
+                    const p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < 0) p.x = width;
+                    if (p.x > width) p.x = 0;
+                    if (p.y < 0) p.y = height;
+                    if (p.y > height) p.y = 0;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color + p.alpha + ')';
+                    // Tắt shadowBlur trên mobile để tối ưu GPU fill-rate vượt bậc
+                    if (!isMobile) {
+                        ctx.shadowBlur = 8;
+                        ctx.shadowColor = p.color + '0.8)';
+                    }
+                    ctx.fill();
+                }
             }
-            requestAnimationFrame(render);
+
+            rafId = requestAnimationFrame(tick);
         }
-        render();
+
+        function startLoop() {
+            if (isRunning || document.hidden || document.body.classList.contains('perf-eco-mode')) return;
+            isRunning = true;
+            lastFrameTime = performance.now();
+            rafId = requestAnimationFrame(tick);
+        }
+
+        function stopLoop() {
+            isRunning = false;
+            if (rafId) {
+                cancelAnimationFrame(rafId);
+                rafId = 0;
+            }
+        }
+
+        // Page Visibility API: Dừng hoàn toàn vòng lặp khi chuyển tab
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                stopLoop();
+            } else {
+                startLoop();
+            }
+        });
+
+        startLoop();
     }
 
     /* ================= 2. ECO MODE TOGGLE ================= */
