@@ -286,6 +286,37 @@
         maintToastTimer = setTimeout(() => toast.classList.remove('is-visible'), 6000);
     };
 
+    
+    /* ================= 6C. SUPERDESIGN M1 CATEGORY TAB FILTER ================= */
+    window.filterHomeServices = function(category, btnEl) {
+        const tabs = document.querySelectorAll('.nc-sd1-filter-tab');
+        tabs.forEach(t => t.classList.toggle('active', t === btnEl || t.getAttribute('data-filter') === category));
+
+        const spotlight = document.getElementById('ncSpotlightGrid');
+        const caythueGrid = document.getElementById('game-list');
+        const caythueTitle = caythueGrid ? caythueGrid.previousElementSibling?.previousElementSibling : null;
+        const napgameGrid = document.getElementById('recharge-game-list');
+        const napgameTitle = document.getElementById('recharge-heading');
+        const cardGrid = document.getElementById('card-game-list');
+        const cardTitle = cardGrid ? cardGrid.previousElementSibling?.previousElementSibling : null;
+
+        const showAll = !category || category === 'all';
+        if (spotlight) spotlight.style.display = (showAll || category === 'caythue' || category === 'napgame') ? '' : 'none';
+
+        if (caythueGrid) caythueGrid.style.display = (showAll || category === 'caythue') ? '' : 'none';
+        if (caythueTitle && caythueTitle.classList.contains('section-title')) {
+            caythueTitle.style.display = (showAll || category === 'caythue') ? '' : 'none';
+        }
+
+        if (napgameGrid) napgameGrid.style.display = (showAll || category === 'napgame') ? '' : 'none';
+        if (napgameTitle) napgameTitle.style.display = (showAll || category === 'napgame') ? '' : 'none';
+
+        if (cardGrid) cardGrid.style.display = (showAll || category === 'thegame') ? '' : 'none';
+        if (cardTitle && cardTitle.classList.contains('section-title')) {
+            cardTitle.style.display = (showAll || category === 'thegame') ? '' : 'none';
+        }
+    };
+
     /* ================= 7. MOBILE MENU ================= */
     window.toggleMobileMenu = function(e) {
         if (e) e.preventDefault();
