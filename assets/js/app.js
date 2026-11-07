@@ -2200,10 +2200,10 @@ function initDynamicSlogan() {
 // Continue successful auth at the top-level page when this form is embedded by the storefront.
 function continueAfterAuthentication(destination) {
     const target = destination || '/profile.html';
-    const embedded = document.documentElement.classList.contains('auth-embedded') && window.parent !== window;
+    const embedded = (document.documentElement.classList.contains('auth-embedded') || window.parent !== window) && window.parent !== window;
     if (embedded) {
         try {
-            if (document.referrer && new URL(document.referrer).origin === window.location.origin) {
+            if ((document.referrer && new URL(document.referrer).origin === window.location.origin) || window.parent.location.origin === window.location.origin) {
                 window.parent.location.replace(target);
                 return;
             }

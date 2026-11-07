@@ -411,7 +411,7 @@
         const overlay = document.getElementById('lpAuthOverlay');
         const frame = document.getElementById('lpAuthFrame');
         if (overlay && frame) {
-            frame.src = '/login.html?form=login';
+            frame.src = '/login.html?form=login&embed=1';
             overlay.hidden = false;
         } else {
             window.location.href = '/login.html?form=login';
