@@ -466,7 +466,7 @@
       const btnPayWallet = document.getElementById('btnPayWallet');
       if (btnPayWallet && balance >= due) {
         btnPayWallet.addEventListener('click', async () => {
-          if (!confirm(`Xác nhận thanh toán ${formatMoney(due)} từ số dư tài khoản?`)) return;
+          if (!(typeof window.showNamcumzConfirm === 'function' ? await window.showNamcumzConfirm(`Xác nhận thanh toán ${formatMoney(due)} từ số dư tài khoản?`, { title: 'XÁC NHẬN THANH TOÁN VÍ', okText: 'THANH TOÁN NGAY', cancelText: 'HỦY' }) : confirm(`Xác nhận thanh toán ${formatMoney(due)} từ số dư tài khoản?`))) return;
           btnPayWallet.disabled = true;
           btnPayWallet.textContent = 'Đang xử lý...';
           try {

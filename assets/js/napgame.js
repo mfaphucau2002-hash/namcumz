@@ -122,14 +122,16 @@ const GAME_INFO = {
 const GAME_PACKAGES = {
     // ---------- GENSHIN IMPACT ----------
     'genshin': [
-        { id: '10000000-0000-0000-0000-000000000001', name: 'Không Nguyệt Chúc Phúc (Thẻ Tháng)', price:   85000, img: 'assets/images/games/genshin_welkin.png',       tag: 'monthly', desc: 'Thẻ tháng 30 ngày' },
-        { id: '10000000-0000-0000-0000-000000000002', name: '60 Đá Sáng Thế',                     price:   20000, img: 'assets/images/games/genshin_crystals_60.png',  tag: 'topup',   desc: '' },
-        { id: '10000000-0000-0000-0000-000000000003', name: '300 + 30 Đá Sáng Thế',               price:   90000, img: 'assets/images/games/genshin_crystals_300.png', tag: 'topup',   desc: '' },
-        { id: '10000000-0000-0000-0000-000000000004', name: '980 + 110 Đá Sáng Thế',              price:  270000, img: 'assets/images/games/genshin_crystals_980.png', tag: 'topup',   desc: '' },
-        { id: '10000000-0000-0000-0000-000000000005', name: '1980 + 260 Đá Sáng Thế',             price:  570000, img: 'assets/images/games/genshin_crystals_1980.png',tag: 'topup',   desc: '' },
-        { id: '10000000-0000-0000-0000-000000000006', name: '3280 + 600 Đá Sáng Thế',             price:  950000, img: 'assets/images/games/genshin_crystals_3280.png',tag: 'topup',   desc: '' },
-        { id: '10000000-0000-0000-0000-000000000007', name: '6480 + 1600 Đá Sáng Thế',            price: 1850000, img: 'assets/images/games/genshin_crystals_6480.png',tag: 'topup',   desc: '' },
-        { id: '10000000-0000-0000-0000-000000000008', name: 'FULL PACK GENSHIN IMPACT',           price: 3800000, img: 'assets/images/games/genshin_crystals_all.jpg', tag: 'topup',   desc: 'Trọn bộ tất cả các gói nạp đá' }
+        { id: '10000000-0000-0000-0000-000000000001', name: 'Không Nguyệt Chúc Phúc (Thẻ Tháng)', price:   85000, img: 'assets/images/games/genshin_welkin.png',       tag: 'monthly',    desc: 'Thẻ tháng 30 ngày' },
+        { id: '10000000-0000-0000-0000-000000000009', name: 'Nhật Ký Hành Trình Trân Châu',       price:  190000, img: 'assets/images/games/genshin_bp_pearl.png',     tag: 'battlepass', desc: 'Nhật Ký Hành Trình' },
+        { id: '10000000-0000-0000-0000-000000000010', name: 'Bài Ca Trân Châu',                   price:  380000, img: 'assets/images/games/genshin_bp_hymn.png',      tag: 'battlepass', desc: 'Bài Ca Trân Châu' },
+        { id: '10000000-0000-0000-0000-000000000002', name: '60 Đá Sáng Thế',                     price:   20000, img: 'assets/images/games/genshin_crystals_60.png',  tag: 'topup',      desc: '' },
+        { id: '10000000-0000-0000-0000-000000000003', name: '300 + 30 Đá Sáng Thế',               price:   90000, img: 'assets/images/games/genshin_crystals_300.png', tag: 'topup',      desc: '' },
+        { id: '10000000-0000-0000-0000-000000000004', name: '980 + 110 Đá Sáng Thế',              price:  270000, img: 'assets/images/games/genshin_crystals_980.png', tag: 'topup',      desc: '' },
+        { id: '10000000-0000-0000-0000-000000000005', name: '1980 + 260 Đá Sáng Thế',             price:  570000, img: 'assets/images/games/genshin_crystals_1980.png',tag: 'topup',      desc: '' },
+        { id: '10000000-0000-0000-0000-000000000006', name: '3280 + 600 Đá Sáng Thế',             price:  950000, img: 'assets/images/games/genshin_crystals_3280.png',tag: 'topup',      desc: '' },
+        { id: '10000000-0000-0000-0000-000000000007', name: '6480 + 1600 Đá Sáng Thế',            price: 1850000, img: 'assets/images/games/genshin_crystals_6480.png',tag: 'topup',      desc: '' },
+        { id: '10000000-0000-0000-0000-000000000008', name: 'FULL PACK GENSHIN IMPACT',           price: 3800000, img: 'assets/images/games/genshin_crystals_all.jpg', tag: 'topup',      desc: 'Trọn bộ tất cả các gói nạp đá' }
     ],
     'genshin-login': 'genshin',
 
@@ -244,7 +246,12 @@ function getPackageImage(gameName, packageId, packageName, tag) {
             const monthly = { genshin:'genshin_welkin.png', hsr:'hsr_pass.webp', zzz:'zzz_pass.webp', wuwa:'wuwa_pass.webp' }[gameKey];
             return `assets/images/games/${monthly}`;
         }
-        if (tag === 'battlepass' && gameKey === 'genshin') return 'assets/images/games/genshin_bp_pearl.png';
+        if (tag === 'battlepass' && gameKey === 'genshin') {
+            if (packageId === '10000000-0000-0000-0000-000000000010' || /bài\s*ca|hymn/i.test(packageName || '')) {
+                return 'assets/images/games/genshin_bp_hymn.png';
+            }
+            return 'assets/images/games/genshin_bp_pearl.png';
+        }
         if (tag === 'battlepass' && gameKey === 'hsr') return 'assets/images/games/hsr_bp.webp';
         if (match) {
             if (gameKey === 'genshin') return `assets/images/games/genshin_crystals_${match[1]}.png`;
@@ -291,15 +298,20 @@ async function loadActivePackages(gameName) {
         const dbMap = new Map();
         dbPackages.forEach(pkg => {
             dbMap.set(pkg.id, pkg);
+            if (pkg.name) dbMap.set(pkg.name, pkg);
         });
 
         const result = [];
         const seenIds = new Set();
         fallbackList.forEach(fb => {
-            const dbMatch = dbMap.get(fb.id);
+            const dbMatch = dbMap.get(fb.id) || dbMap.get(fb.name);
             if (dbMatch) {
                 result.push(dbMatch);
                 seenIds.add(dbMatch.id);
+                seenIds.add(fb.id);
+            } else {
+                result.push(fb);
+                seenIds.add(fb.id);
             }
         });
 

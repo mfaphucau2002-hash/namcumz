@@ -977,6 +977,8 @@ INSERT INTO public.packages (id, game, name, price, active, type) VALUES
   ('10000000-0000-0000-0000-000000000006', 'Genshin Impact', '3280 + 600 Đá Sáng Thế', 950000, true, 'login'),
   ('10000000-0000-0000-0000-000000000007', 'Genshin Impact', '6480 + 1600 Đá Sáng Thế', 1850000, true, 'login'),
   ('10000000-0000-0000-0000-000000000008', 'Genshin Impact', 'FULL PACK GENSHIN IMPACT', 3800000, true, 'login'),
+  ('10000000-0000-0000-0000-000000000009', 'Genshin Impact', 'Nhật Ký Hành Trình Trân Châu', 190000, true, 'login'),
+  ('10000000-0000-0000-0000-000000000010', 'Genshin Impact', 'Bài Ca Trân Châu', 380000, true, 'login'),
 
   ('20000000-0000-0000-0000-000000000001', 'Honkai Star Rail', 'Thẻ Tháng Express Supply Pass', 75000, true, 'login'),
   ('20000000-0000-0000-0000-000000000002', 'Honkai Star Rail', '60 Mộng Cảnh', 17000, true, 'login'),

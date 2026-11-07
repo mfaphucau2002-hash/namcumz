@@ -536,4 +536,177 @@
 
   // Expose để trang khác có thể mở modal nếu cần
   window.ThemeSettings = { open: openModal, close: closeModal, prefs: () => ({ ...prefs }) };
+
+  /* ─── In-Website Popup Modal (Thay thế window.alert / confirm) ────────── */
+
+  function ensurePopupStyles() {
+    if (document.getElementById('nc-popup-inline-style')) return;
+    const style = document.createElement('style');
+    style.id = 'nc-popup-inline-style';
+    style.textContent = `
+      .nc-popup-overlay{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(5,8,16,0.78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);animation:nc-popup-fade-in 180ms ease-out both}
+      .nc-popup-card{position:relative;width:min(420px,100%);background:linear-gradient(165deg,rgba(19,26,44,0.98) 0%,rgba(11,15,27,0.99) 100%);border:1px solid rgba(112,220,229,0.3);border-radius:20px;padding:28px 24px 22px;box-shadow:0 28px 70px rgba(0,0,0,0.75),0 0 32px rgba(112,220,229,0.14);color:#f5f7ff;font-family:'Be Vietnam Pro',system-ui,sans-serif;text-align:center;overflow:hidden}
+      .nc-popup-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--nc-popup-accent,#70dce5);margin-bottom:14px}
+      .nc-popup-icon{width:58px;height:58px;margin:0 auto 14px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(112,220,229,0.12);border:1.5px solid var(--nc-popup-accent,#70dce5);color:var(--nc-popup-accent,#70dce5)}
+      .nc-popup-icon svg{width:28px;height:28px}
+      .nc-popup-title{margin:0 0 8px;font-size:18px;font-weight:800;color:#fff}
+      .nc-popup-message{margin:0 0 22px;font-size:14.5px;line-height:1.58;color:#cbd5e1;white-space:pre-line;word-break:break-word}
+      .nc-popup-actions{display:flex;gap:10px;justify-content:center}
+      .nc-popup-btn{flex:1;min-height:44px;padding:10px 18px;border-radius:12px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;border:none;transition:transform 140ms ease,filter 140ms ease}
+      .nc-popup-btn--primary{background:linear-gradient(135deg,var(--nc-popup-accent,#70dce5) 0%,#3b82f6 100%);color:#06101e}
+      .nc-popup-card[data-variant="success"]{--nc-popup-accent:#10b981;border-color:rgba(16,185,129,0.38)}
+      .nc-popup-card[data-variant="success"] .nc-popup-btn--primary{background:linear-gradient(135deg,#10b981 0%,#059669 100%);color:#fff}
+      .nc-popup-card[data-variant="error"]{--nc-popup-accent:#f43f5e;border-color:rgba(244,63,94,0.38)}
+      .nc-popup-card[data-variant="error"] .nc-popup-btn--primary{background:linear-gradient(135deg,#f43f5e 0%,#e11d48 100%);color:#fff}
+      .nc-popup-card[data-variant="warning"]{--nc-popup-accent:#f59e0b;border-color:rgba(245,158,11,0.38)}
+      .nc-popup-card[data-variant="warning"] .nc-popup-btn--primary{background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);color:#1a0f00}
+      .nc-popup-btn--secondary{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);color:#cbd5e1}
+    `;
+    document.head.appendChild(style);
+  }
+
+  function inferPopupMeta(msg, customOpts) {
+    const text = String(msg || '');
+    let variant = customOpts?.variant || 'info';
+    let title = customOpts?.title || '';
+    if (!customOpts?.variant) {
+      if (/thành công|hoàn tất|đã lưu|đã tạo|đã cập nhật|đã gửi|đã sao chép/i.test(text)) {
+        variant = 'success';
+      } else if (/không đúng|không khớp|lỗi|thất bại|không thể|từ chối|hết hạn|không hợp lệ/i.test(text)) {
+        variant = 'error';
+      } else if (/vui lòng|chưa|cảnh báo|lưu ý|kiểm tra|xác nhận/i.test(text)) {
+        variant = 'warning';
+      }
+    }
+    if (!title) {
+      if (variant === 'success') {
+        title = /đăng ký/i.test(text) ? 'ĐĂNG KÝ THÀNH CÔNG' : 'THÔNG BÁO THÀNH CÔNG';
+      } else if (variant === 'error') {
+        title = 'CẦN KIỂM TRA LẠI';
+      } else if (variant === 'warning') {
+        title = 'LƯU Ý HỆ THỐNG';
+      } else {
+        title = 'THÔNG BÁO NAMCUMZ';
+      }
+    }
+    const icons = {
+      success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+      error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+      warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+      info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
+    };
+    return { variant, title, icon: icons[variant] || icons.info };
+  }
+
+  window.showNamcumzPopup = function (message, options = {}) {
+    if (typeof document === 'undefined' || !document.body || typeof document.body.appendChild !== 'function') {
+      return Promise.resolve(true);
+    }
+    ensurePopupStyles();
+    const existing = document.getElementById('ncStatusPopupOverlay');
+    if (existing) existing.remove();
+
+    const meta = inferPopupMeta(message, options);
+    const isConfirm = Boolean(options.confirm);
+    const okText = options.okText || (isConfirm ? 'XÁC NHẬN' : 'ĐÃ HIỂU');
+    const cancelText = options.cancelText || 'HỦY BỎ';
+
+    return new Promise((resolve) => {
+      const overlay = document.createElement('div');
+      overlay.id = 'ncStatusPopupOverlay';
+      overlay.className = 'nc-popup-overlay';
+      overlay.setAttribute('role', 'dialog');
+      overlay.setAttribute('aria-modal', 'true');
+
+      const card = document.createElement('div');
+      card.className = 'nc-popup-card';
+      card.setAttribute('data-variant', meta.variant);
+
+      const badge = document.createElement('div');
+      badge.className = 'nc-popup-badge';
+      badge.textContent = '● NAMCUMZ SYSTEM';
+
+      const iconWrap = document.createElement('div');
+      iconWrap.className = 'nc-popup-icon';
+      iconWrap.innerHTML = meta.icon;
+
+      const titleEl = document.createElement('h3');
+      titleEl.className = 'nc-popup-title';
+      titleEl.textContent = meta.title;
+
+      const msgEl = document.createElement('p');
+      msgEl.className = 'nc-popup-message';
+      msgEl.textContent = String(message ?? '');
+
+      const actions = document.createElement('div');
+      actions.className = 'nc-popup-actions';
+
+      let settled = false;
+      const closePopup = (result) => {
+        if (settled) return;
+        settled = true;
+        document.removeEventListener('keydown', onKey);
+        overlay.classList.add('is-closing');
+        setTimeout(() => {
+          overlay.remove();
+          resolve(result);
+        }, 150);
+      };
+
+      const onKey = (ev) => {
+        if (ev.key === 'Escape') {
+          ev.preventDefault();
+          closePopup(isConfirm ? false : true);
+        } else if (ev.key === 'Enter') {
+          ev.preventDefault();
+          closePopup(true);
+        }
+      };
+
+      if (isConfirm) {
+        const cancelBtn = document.createElement('button');
+        cancelBtn.type = 'button';
+        cancelBtn.className = 'nc-popup-btn nc-popup-btn--secondary';
+        cancelBtn.textContent = cancelText;
+        cancelBtn.addEventListener('click', () => closePopup(false));
+        actions.appendChild(cancelBtn);
+      }
+
+      const okBtn = document.createElement('button');
+      okBtn.type = 'button';
+      okBtn.className = 'nc-popup-btn nc-popup-btn--primary';
+      okBtn.textContent = okText;
+      okBtn.addEventListener('click', () => closePopup(true));
+      actions.appendChild(okBtn);
+
+      card.appendChild(badge);
+      card.appendChild(iconWrap);
+      card.appendChild(titleEl);
+      card.appendChild(msgEl);
+      card.appendChild(actions);
+      overlay.appendChild(card);
+
+      overlay.addEventListener('click', (ev) => {
+        if (ev.target === overlay) closePopup(isConfirm ? false : true);
+      });
+
+      document.addEventListener('keydown', onKey);
+      document.body.appendChild(overlay);
+      setTimeout(() => okBtn.focus(), 20);
+
+      if (options.autoCloseMs && Number(options.autoCloseMs) > 0) {
+        setTimeout(() => closePopup(true), Number(options.autoCloseMs));
+      }
+    });
+  };
+
+  window.showNamcumzConfirm = function (message, options = {}) {
+    return window.showNamcumzPopup(message, { ...options, confirm: true, variant: options.variant || 'warning', title: options.title || 'XÁC NHẬN THAO TÁC' });
+  };
+
+  if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof document.createElement === 'function') {
+    window.alert = function (msg) {
+      window.showNamcumzPopup(String(msg ?? ''));
+    };
+  }
 })();

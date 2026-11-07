@@ -441,3 +441,216 @@
   .ts-overlay { align-items: flex-end; padding: 0; }
   .ts-panel { width: 100%; max-height: 85dvh; }
 }
+
+/* ────────────────────────────────────────────────────────────────
+   In-Website Status & Confirm Popup Modal (Namcumz Native Dialog)
+   Replaces browser alert() / confirm() with an in-app glass dialog
+   ──────────────────────────────────────────────────────────────── */
+.nc-popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(5, 8, 16, 0.76);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: nc-popup-fade-in 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.nc-popup-overlay.is-closing {
+  animation: nc-popup-fade-out 160ms ease-in both;
+}
+
+@keyframes nc-popup-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes nc-popup-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+.nc-popup-card {
+  position: relative;
+  width: min(420px, 100%);
+  background: linear-gradient(165deg, rgba(19, 26, 44, 0.98) 0%, rgba(11, 15, 27, 0.99) 100%);
+  border: 1px solid rgba(112, 220, 229, 0.28);
+  border-radius: 20px;
+  padding: 28px 24px 22px;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.72), 0 0 32px rgba(112, 220, 229, 0.12);
+  color: #f5f7ff;
+  font-family: var(--font-main, 'Be Vietnam Pro', system-ui, sans-serif);
+  text-align: center;
+  animation: nc-popup-card-in 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  overflow: hidden;
+}
+
+.nc-popup-overlay.is-closing .nc-popup-card {
+  animation: nc-popup-card-out 160ms ease-in both;
+}
+
+@keyframes nc-popup-card-in {
+  from { opacity: 0; transform: translateY(18px) scale(0.94); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes nc-popup-card-out {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(10px) scale(0.96); }
+}
+
+.nc-popup-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 15%;
+  right: 15%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--nc-popup-accent, #70dce5), transparent);
+}
+
+.nc-popup-card[data-variant="success"] {
+  --nc-popup-accent: #10b981;
+  border-color: rgba(16, 185, 129, 0.35);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.72), 0 0 34px rgba(16, 185, 129, 0.16);
+}
+
+.nc-popup-card[data-variant="error"] {
+  --nc-popup-accent: #f43f5e;
+  border-color: rgba(244, 63, 94, 0.36);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.72), 0 0 34px rgba(244, 63, 94, 0.16);
+}
+
+.nc-popup-card[data-variant="warning"] {
+  --nc-popup-accent: #f59e0b;
+  border-color: rgba(245, 158, 11, 0.36);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.72), 0 0 34px rgba(245, 158, 11, 0.15);
+}
+
+.nc-popup-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--nc-popup-accent, #70dce5);
+  margin-bottom: 14px;
+}
+
+.nc-popup-icon {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(112, 220, 229, 0.12);
+  border: 1.5px solid var(--nc-popup-accent, #70dce5);
+  color: var(--nc-popup-accent, #70dce5);
+  box-shadow: 0 0 24px rgba(112, 220, 229, 0.22);
+}
+
+.nc-popup-card[data-variant="success"] .nc-popup-icon {
+  background: rgba(16, 185, 129, 0.14);
+  box-shadow: 0 0 24px rgba(16, 185, 129, 0.25);
+}
+
+.nc-popup-card[data-variant="error"] .nc-popup-icon {
+  background: rgba(244, 63, 94, 0.14);
+  box-shadow: 0 0 24px rgba(244, 63, 94, 0.25);
+}
+
+.nc-popup-card[data-variant="warning"] .nc-popup-icon {
+  background: rgba(245, 158, 11, 0.14);
+  box-shadow: 0 0 24px rgba(245, 158, 11, 0.25);
+}
+
+.nc-popup-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.nc-popup-title {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: #ffffff;
+}
+
+.nc-popup-message {
+  margin: 0 0 22px;
+  font-size: 14.5px;
+  line-height: 1.58;
+  color: #cbd5e1;
+  white-space: pre-line;
+  word-break: break-word;
+}
+
+.nc-popup-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.nc-popup-btn {
+  flex: 1;
+  min-height: 44px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: transform 140ms ease, filter 140ms ease, box-shadow 140ms ease;
+  border: none;
+}
+
+.nc-popup-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.07);
+}
+
+.nc-popup-btn:active {
+  transform: translateY(0);
+}
+
+.nc-popup-btn--primary {
+  background: linear-gradient(135deg, var(--nc-popup-accent, #70dce5) 0%, #3b82f6 100%);
+  color: #06101e;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+.nc-popup-card[data-variant="success"] .nc-popup-btn--primary {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+}
+
+.nc-popup-card[data-variant="error"] .nc-popup-btn--primary {
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  color: #ffffff;
+}
+
+.nc-popup-card[data-variant="warning"] .nc-popup-btn--primary {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #1a0f00;
+}
+
+.nc-popup-btn--secondary {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #cbd5e1;
+}
+

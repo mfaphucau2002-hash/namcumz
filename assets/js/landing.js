@@ -28,6 +28,13 @@ function updateLandingAccountLinks() {
       mobileAccount.href = isLoggedIn ? '/profile.html#orders' : '/login.html?form=login';
       mobileAccount.textContent = isLoggedIn ? 'Tài khoản / Đơn hàng' : 'Đăng nhập / Tạo tài khoản';
     }
+    const reviewsHeroCta = document.getElementById('reviewsHeroCta');
+    if (reviewsHeroCta) {
+      reviewsHeroCta.href = isLoggedIn ? '/profile.html#orders' : '/login.html?form=login&next=%2Fprofile.html';
+      reviewsHeroCta.innerHTML = isLoggedIn
+        ? 'Mở Trạm Thành Viên / Đánh giá đơn <span aria-hidden="true">↗</span>'
+        : 'Đăng nhập để xem đơn hàng <span aria-hidden="true">↗</span>';
+    }
     document.querySelectorAll('[data-order-link]').forEach((link) => {
       const destination = '/dashboard?action=create-order';
       link.href = isLoggedIn ? destination : `/login.html?form=login&next=${encodeURIComponent(destination)}`;
@@ -108,6 +115,14 @@ function setupLandingAccountModal() {
     try { url = new URL(link.href, window.location.href); } catch (_) { return; }
     if (url.origin !== window.location.origin || !['/login', '/login.html'].includes(url.pathname) || !['login', 'register'].includes(url.searchParams.get('form') || 'login')) return;
     event.preventDefault();
+    if (Boolean((window.currentUser || window.NAMCUMZ_PUBLIC_USER)?.id)) {
+      const nextParam = url.searchParams.get('next');
+      const safeNext = nextParam && nextParam.startsWith('/') && !nextParam.startsWith('//') && !nextParam.includes('\\')
+        ? nextParam
+        : '/profile.html#orders';
+      window.location.href = safeNext;
+      return;
+    }
     open(url, link);
   });
   closeButton.addEventListener('click', close);

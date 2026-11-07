@@ -593,6 +593,13 @@
 
       if (error) throw error;
       state.orders = (data || []).filter(o => o.kind !== 'deposit');
+      state.orders = (data || []).filter(o => o.kind !== 'deposit');
+      const hasBoost = state.orders.some(o => (o.kind === 'boost' || !o.kind) && o.kind !== 'topup' && o.kind !== 'game_card' && !String(o.content || '').includes('[Nạp Game]'));
+      const hasTopup = state.orders.some(o => o.kind === 'topup' || String(o.content || '').includes('[Nạp Game]'));
+      if (state.currentOrderSubtab === 'boost' && !hasBoost && hasTopup) {
+        state.currentOrderSubtab = 'topup';
+        document.querySelectorAll('[data-order-subtab]').forEach(b => b.classList.toggle('active', b.getAttribute('data-order-subtab') === 'topup'));
+      }
       renderOrders();
     } catch (err) {
       console.error('Lỗi tải đơn hàng:', err);
@@ -610,7 +617,7 @@
     let filtered = [];
 
     if (subtab === 'boost') {
-      filtered = state.orders.filter(o => o.kind === 'boost' || !o.kind || !String(o.content || '').includes('[Nạp Game]'));
+      filtered = state.orders.filter(o => (o.kind === 'boost' || !o.kind) && o.kind !== 'topup' && o.kind !== 'game_card' && !String(o.content || '').includes('[Nạp Game]'));
     } else if (subtab === 'topup') {
       filtered = state.orders.filter(o => o.kind === 'topup' || String(o.content || '').includes('[Nạp Game]'));
     } else if (subtab === 'cards') {
@@ -761,7 +768,7 @@
 
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 10px;">
           <span style="font-weight: 700; color: var(--text-secondary);">TỔNG THANH TOÁN</span>
-          <span style="font-size: 1.25rem; font-weight: 900; color: #00f0ff;">${order.price ? formatVND(due) : 'Chờ báo giá'}</span>
+          <span style="font-size: 1.25rem; font-weight: 900; color: #00f0ff;">${order.price ? formatVND(due) : 'Chờ báo giá'}</span></div>${order.status === 'hoan_thanh' ? `<div style="background: rgba(16, 185, 129, 0.07); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 10px; padding: 14px;"><div style="font-size: 0.75rem; font-weight: 800; color: #10b981; text-transform: uppercase; margin-bottom: 8px;"><i class="fa-solid fa-star"></i> ĐÁNH GIÁ DỊCH VỤ</div>${order.rating ? `<div style="color: #fbbf24; font-weight: 800; margin-bottom: 4px;">${'★'.repeat(Number(order.rating))}${'☆'.repeat(Math.max(0, 5 - Number(order.rating)))} (${Number(order.rating)}/5)</div><div style="font-size: 0.875rem; color: #cbd5e1;">${esc(order.review_comment || 'Khách hàng đã gửi đánh giá.')}</div>` : `<div style="display: flex; flex-direction: column; gap: 8px;"><select id="hubRateStars" class="hub-form-select" style="padding: 8px 12px;"><option value="5">★★★★★ — 5 Sao (Rất hài lòng)</option><option value="4">★★★★☆ — 4 Sao (Hài lòng)</option><option value="3">★★★☆☆ — 3 Sao (Bình thường)</option><option value="2">★★☆☆☆ — 2 Sao (Cần cải thiện)</option><option value="1">★☆☆☆☆ — 1 Sao (Không hài lòng)</option></select><input type="text" id="hubRateComment" class="hub-form-input" placeholder="Nhập nhận xét của bạn về đơn hàng..." maxlength="500"><button type="button" id="hubBtnSubmitRate" class="hub-btn-submit" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #1a0f00;"><i class="fa-solid fa-paper-plane"></i> Gửi Đánh Giá Đơn Hàng</button></div>`}</div><div>` : '<div>'}
         </div>
 
         <div style="display: flex; gap: 10px; margin-top: 8px; flex-direction: column;">
@@ -785,7 +792,7 @@
     const payWalletBtn = document.getElementById('hubBtnPayOrderWallet');
     if (payWalletBtn) {
       payWalletBtn.addEventListener('click', async () => {
-        if (!confirm(`Xác nhận thanh toán ${formatVND(due)} từ số dư ví cho đơn hàng ${order.order_code}?`)) return;
+        if (!(typeof window.showNamcumzConfirm === 'function' ? await window.showNamcumzConfirm(`Xác nhận thanh toán ${formatVND(due)} từ số dư ví cho đơn hàng ${order.order_code}?`, { title: 'XÁC NHẬN THANH TOÁN VÍ', okText: 'THANH TOÁN NGAY', cancelText: 'HỦY' }) : confirm(`Xác nhận thanh toán ${formatVND(due)} từ số dư ví cho đơn hàng ${order.order_code}?`))) return;
         payWalletBtn.disabled = true;
         payWalletBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý thanh toán...';
 
@@ -800,6 +807,26 @@
           showToast(err.message || 'Thanh toán thất bại!', 'error');
           payWalletBtn.disabled = false;
           payWalletBtn.innerHTML = '<i class="fa-solid fa-wallet"></i> Thử lại';
+        }
+      });
+    }
+
+    const rateBtn = document.getElementById('hubBtnSubmitRate');
+    if (rateBtn) {
+      rateBtn.addEventListener('click', async () => {
+        const rating = Number(document.getElementById('hubRateStars')?.value || 5);
+        const comment = (document.getElementById('hubRateComment')?.value || '').trim();
+        rateBtn.disabled = true;
+        rateBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gửi...';
+        try {
+          await window.OrderAPI.action(window.supabaseClient, order.id, Number(order.version || 1), 'rate', { rating, comment });
+          showToast('Cảm ơn bạn đã gửi đánh giá đơn hàng!', 'success');
+          closeModal('hubOrderDetailModal');
+          loadOrders();
+        } catch (err) {
+          showToast(err.message || 'Không thể gửi đánh giá lúc này.', 'error');
+          rateBtn.disabled = false;
+          rateBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Gửi Đánh Giá Đơn Hàng';
         }
       });
     }
@@ -1013,7 +1040,7 @@
 
     document.querySelectorAll('[data-hub-logout]').forEach(btn => {
       btn.addEventListener('click', async () => {
-        if (!confirm('Bạn có chắc muốn đăng xuất?')) return;
+        if (!(typeof window.showNamcumzConfirm === 'function' ? await window.showNamcumzConfirm('Bạn có chắc chắn muốn đăng xuất khỏi tài khoản?', { title: 'ĐĂNG XUẤT TÀI KHOẢN', okText: 'ĐĂNG XUẤT', cancelText: 'Ở LẠI' }) : confirm('Bạn có chắc muốn đăng xuất?'))) return;
         btn.disabled = true;
         try {
           await window.supabaseClient.auth.signOut();

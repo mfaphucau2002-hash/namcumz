@@ -1895,7 +1895,7 @@ function bindEvents() {
                 if (error) {
                     alert('Tên tài khoản hoặc mật khẩu không đúng!');
                 } else {
-                    continueAfterAuthentication(window.NAMCUMZ_AUTH_NEXT || '/dashboard.html');
+                    continueAfterAuthentication(window.NAMCUMZ_AUTH_NEXT || '/profile.html');
                 }
             } catch (_) {
                 alert('Không kết nối được hệ thống đăng nhập. Vui lòng thử lại.');
@@ -1916,7 +1916,7 @@ function bindEvents() {
             const { data, error } = await supabaseClient.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: window.location.origin + (window.NAMCUMZ_AUTH_NEXT || '/dashboard.html'),
+                    redirectTo: window.location.origin + (window.NAMCUMZ_AUTH_NEXT || '/profile.html'),
                     skipBrowserRedirect: embeddedAuth
                 }
             });
@@ -1962,8 +1962,8 @@ function bindEvents() {
                     if (profileError) throw new Error('Tài khoản đã được tạo nhưng hồ sơ chưa hoàn tất. Vui lòng liên hệ hỗ trợ.');
                 }
                 if (data.session) {
-                    alert('Đăng ký thành công! Đang đăng nhập...');
-                    setTimeout(() => continueAfterAuthentication(window.NAMCUMZ_AUTH_NEXT || '/dashboard.html'), 1000);
+                    alert('Đăng ký thành công! Đang chuyển vào Trạm Thành Viên...');
+                    setTimeout(() => continueAfterAuthentication(window.NAMCUMZ_AUTH_NEXT || '/profile.html'), 1500);
                 } else {
                     alert('Chưa có phiên đăng nhập. Hệ thống yêu cầu xác minh email; luồng tài khoản hiện tại cần được cấu hình trước khi đăng nhập.');
                 }
@@ -1979,7 +1979,7 @@ function bindEvents() {
     const logoutBtn = document.getElementById('navLogoutBtn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async () => {
-            if(confirm('Bạn muốn đăng xuất?') && supabaseClient) {
+            if((typeof window.showNamcumzConfirm === 'function' ? await window.showNamcumzConfirm('Bạn có chắc chắn muốn đăng xuất khỏi tài khoản?', { title: 'ĐĂNG XUẤT TÀI KHOẢN', okText: 'ĐĂNG XUẤT', cancelText: 'Ở LẠI' }) : confirm('Bạn muốn đăng xuất?')) && supabaseClient) {
                 await supabaseClient.auth.signOut();
                 window.location.href = 'index.html';
             }
@@ -2199,7 +2199,7 @@ function initDynamicSlogan() {
 
 // Continue successful auth at the top-level page when this form is embedded by the storefront.
 function continueAfterAuthentication(destination) {
-    const target = destination || '/dashboard.html';
+    const target = destination || '/profile.html';
     const embedded = document.documentElement.classList.contains('auth-embedded') && window.parent !== window;
     if (embedded) {
         try {
@@ -2248,8 +2248,8 @@ async function initSupabaseLogic() {
             if (sequence !== authSequence) return;
             setupNavbar();
             const shouldResumeOrder = ['/dashboard', '/dashboard.html'].includes(window.location.pathname) && new URLSearchParams(window.location.search).get('action') === 'create-order';
-            if (window.NAMCUMZ_AUTH_NEXT) {
-                continueAfterAuthentication(window.NAMCUMZ_AUTH_NEXT);
+            if (window.NAMCUMZ_AUTH_NEXT || ['/login', '/login.html'].includes(window.location.pathname)) {
+                continueAfterAuthentication(window.NAMCUMZ_AUTH_NEXT || '/profile.html');
             } else if (shouldResumeOrder) {
                 window.history.replaceState({}, '', '/dashboard.html');
                 window.setTimeout(() => window.openCreateOrderModal?.(), 0);
