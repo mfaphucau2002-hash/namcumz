@@ -254,6 +254,38 @@
         window.open('https://zalo.me/0763550673', '_blank');
     };
 
+    /* ================= 6B. MAINTENANCE SERVICE NOTIFICATION ================= */
+    let maintToastTimer = null;
+    window.notifyServiceMaintenance = function(serviceName) {
+        let toast = document.getElementById('ncMaintToast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'ncMaintToast';
+            toast.className = 'nc-maint-toast';
+            toast.setAttribute('role', 'status');
+            toast.setAttribute('aria-live', 'polite');
+            document.body.appendChild(toast);
+        }
+        const safeName = String(serviceName || 'Dịch vụ này').replace(/[<>]/g, '');
+        toast.innerHTML =
+            '<div class="nc-maint-toast-icon"><i class="fas fa-screwdriver-wrench"></i></div>' +
+            '<div class="nc-maint-toast-body">' +
+                '<strong>' + safeName + ' — ĐANG BẢO TRÌ</strong>' +
+                '<span>Hiện tại shop đang mở nhận đơn chính thức cho <b>Genshin Impact</b> (Cày Thuê &amp; Nạp Login). Các game khác đang bảo trì cập nhật bảng giá!</span>' +
+                '<div class="nc-maint-toast-actions">' +
+                    '<a href="/caythue.html?game=genshin" class="nc-maint-toast-btn primary"><i class="fas fa-gamepad"></i> Cày Thuê Genshin</a>' +
+                    '<a href="/napgame-detail.html?game=genshin&type=login" class="nc-maint-toast-btn secondary"><i class="fas fa-gem"></i> Nạp Genshin</a>' +
+                    '<a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer" class="nc-maint-toast-btn secondary"><i class="fas fa-comment-dots"></i> Zalo CSKH</a>' +
+                '</div>' +
+            '</div>' +
+            '<button type="button" class="nc-maint-toast-close" aria-label="Đóng thông báo">&times;</button>';
+        const closeBtn = toast.querySelector('.nc-maint-toast-close');
+        if (closeBtn) closeBtn.onclick = () => toast.classList.remove('is-visible');
+        requestAnimationFrame(() => toast.classList.add('is-visible'));
+        clearTimeout(maintToastTimer);
+        maintToastTimer = setTimeout(() => toast.classList.remove('is-visible'), 6000);
+    };
+
     /* ================= 7. MOBILE MENU ================= */
     window.toggleMobileMenu = function(e) {
         if (e) e.preventDefault();

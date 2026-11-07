@@ -50,11 +50,15 @@ async function loadSavedAccounts() {
             .select('*')
             .eq('user_id', window.currentUser.id);
         if (!error && data && data.length) {
-            select.innerHTML = '<option value="">-- Chọn tài khoản đã lưu --</option>';
+            select.innerHTML = '<option value="">-- Chọn tài khoản / UID đã lưu --</option>';
             data.forEach(acc => {
+                const uidLabel = acc.uid || acc.ingame_name || '';
+                const nickLabel = acc.nickname || acc.account_identifier || acc.game || 'Tài khoản';
                 const opt = document.createElement('option');
                 opt.value = JSON.stringify(acc);
-                opt.textContent = `${acc.account_identifier} (${acc.server || 'Asia'})`;
+                opt.textContent = uidLabel
+                    ? `${nickLabel} — UID: ${uidLabel} (${acc.server || 'Asia'})`
+                    : `${nickLabel} (${acc.server || 'Asia'})`;
                 select.appendChild(opt);
             });
         }
@@ -67,11 +71,12 @@ window.onSavedAccountSelect = function(sel) {
         const acc = JSON.parse(sel.value);
         if (acc.account_identifier) {
             const userInp = document.getElementById('formUsername');
-            if (userInp) userInp.value = acc.account_identifier;
+            if (userInp && !userInp.value) userInp.value = acc.account_identifier;
         }
-        if (acc.ingame_name) {
+        const savedUid = acc.uid || acc.ingame_name || '';
+        if (savedUid) {
             const uidInp = document.getElementById('formUID');
-            if (uidInp) uidInp.value = acc.ingame_name;
+            if (uidInp) uidInp.value = savedUid;
         }
         if (acc.server) {
             const srvInp = document.getElementById('formServer');
@@ -97,7 +102,8 @@ const GAMES_CATALOG = {
         { id: 'zzz', name: 'Zenless Zone Zero', image: 'assets/images/games/zzz_card.jpg' },
         { id: 'wuwa', name: 'Wuthering Waves', image: 'assets/images/games/wuwa_card.jpg' }
     ]
-};const GAME_INFO = {
+};
+const GAME_INFO = {
     'genshin': { name: 'Genshin Impact', icon: 'assets/images/games/genshin_icon.webp', type: 'login' },
     'genshin-login': { name: 'Genshin Impact', icon: 'assets/images/games/genshin_icon.webp', type: 'login' },
     'hsr': { name: 'Honkai Star Rail', icon: 'assets/images/games/hsr_icon.webp', type: 'login' },
@@ -110,57 +116,29 @@ const GAMES_CATALOG = {
 };
 
 // ============================================================
+// BẢNG GIÁ CHÍNH THỨC GENSHIN IMPACT (NGUYỄN HOÀNG NAM)
+// Các game khác hiện đang trong trạng thái bảo trì ([]).
+// ============================================================
 const GAME_PACKAGES = {
     // ---------- GENSHIN IMPACT ----------
     'genshin': [
-        { id: '10000000-0000-0000-0000-000000000009', name: 'Nhật Ký Hành Trình Trân Châu',      price:  190000, img: 'assets/images/games/genshin_bp_pearl.png',     tag: 'battlepass', desc: 'Nhật Ký Hành Trình' },
-        { id: '10000000-0000-0000-0000-000000000010', name: 'Bài Ca Trân Châu',                  price:  380000, img: 'assets/images/games/genshin_bp_hymn.png',      tag: 'battlepass', desc: 'Bài Ca Trân Châu' },
-        { id: '10000000-0000-0000-0000-000000000001', name: 'Không Nguyệt Chúc Phúc',             price:   85000, img: 'assets/images/games/genshin_welkin.png',      tag: 'monthly',    desc: 'Thẻ tháng 30 ngày' },
-        { id: '10000000-0000-0000-0000-000000000002', name: '60 Đá Sáng Thế',                     price:   20000, img: 'assets/images/games/genshin_crystals_60.png', tag: 'topup',      desc: '' },
-        { id: '10000000-0000-0000-0000-000000000003', name: '300 Đá Sáng Thế',                    price:   95000, img: 'assets/images/games/genshin_crystals_300.png',tag: 'topup',      desc: '' },
-        { id: '10000000-0000-0000-0000-000000000004', name: '980 Đá Sáng Thế',                    price:  280000, img: 'assets/images/games/genshin_crystals_980.png',tag: 'topup',      desc: '' },
-        { id: '10000000-0000-0000-0000-000000000005', name: '1980 Đá Sáng Thế',                   price:  550000, img: 'assets/images/games/genshin_crystals_1980.png',tag: 'topup',     desc: '' },
-        { id: '10000000-0000-0000-0000-000000000006', name: '3280 Đá Sáng Thế',                   price:  900000, img: 'assets/images/games/genshin_crystals_3280.png',tag: 'topup',     desc: '' },
-        { id: '10000000-0000-0000-0000-000000000007', name: '6480 Đá Sáng Thế',                   price: 1680000, img: 'assets/images/games/genshin_crystals_6480.png',tag: 'topup',     desc: '' },
-        { id: '10000000-0000-0000-0000-000000000008', name: 'Toàn Bộ Gói Đá Sáng Thế',           price: 3450000, img: 'assets/images/games/genshin_crystals_all.jpg', tag: 'topup',    desc: 'Toàn bộ gói nạp lớn nhất' }
+        { id: '10000000-0000-0000-0000-000000000001', name: 'Không Nguyệt Chúc Phúc (Thẻ Tháng)', price:   85000, img: 'assets/images/games/genshin_welkin.png',       tag: 'monthly', desc: 'Thẻ tháng 30 ngày' },
+        { id: '10000000-0000-0000-0000-000000000002', name: '60 Đá Sáng Thế',                     price:   20000, img: 'assets/images/games/genshin_crystals_60.png',  tag: 'topup',   desc: '' },
+        { id: '10000000-0000-0000-0000-000000000003', name: '300 + 30 Đá Sáng Thế',               price:   90000, img: 'assets/images/games/genshin_crystals_300.png', tag: 'topup',   desc: '' },
+        { id: '10000000-0000-0000-0000-000000000004', name: '980 + 110 Đá Sáng Thế',              price:  270000, img: 'assets/images/games/genshin_crystals_980.png', tag: 'topup',   desc: '' },
+        { id: '10000000-0000-0000-0000-000000000005', name: '1980 + 260 Đá Sáng Thế',             price:  570000, img: 'assets/images/games/genshin_crystals_1980.png',tag: 'topup',   desc: '' },
+        { id: '10000000-0000-0000-0000-000000000006', name: '3280 + 600 Đá Sáng Thế',             price:  950000, img: 'assets/images/games/genshin_crystals_3280.png',tag: 'topup',   desc: '' },
+        { id: '10000000-0000-0000-0000-000000000007', name: '6480 + 1600 Đá Sáng Thế',            price: 1850000, img: 'assets/images/games/genshin_crystals_6480.png',tag: 'topup',   desc: '' },
+        { id: '10000000-0000-0000-0000-000000000008', name: 'FULL PACK GENSHIN IMPACT',           price: 3800000, img: 'assets/images/games/genshin_crystals_all.jpg', tag: 'topup',   desc: 'Trọn bộ tất cả các gói nạp đá' }
     ],
     'genshin-login': 'genshin',
 
-    // ---------- HONKAI STAR RAIL ----------
-    'hsr': [
-        { id: '20000000-0000-0000-0000-000000000001', name: 'Thẻ Tháng Express Supply Pass', price:   75000, img: 'assets/images/games/hsr_pass.webp',   tag: 'monthly',    desc: 'Thẻ tháng 30 ngày' },
-        { id: '20000000-0000-0000-0000-000000000002', name: '60 Mộng Cảnh',                 price:   17000, img: 'assets/images/games/hsr_60.webp',    tag: 'topup',      desc: '' },
-        { id: '20000000-0000-0000-0000-000000000003', name: '300 + 30 Mộng Cảnh',           price:   75000, img: 'assets/images/games/hsr_300.webp',   tag: 'topup',      desc: '' },
-        { id: '20000000-0000-0000-0000-000000000004', name: '980 + 110 Mộng Cảnh',          price:  218000, img: 'assets/images/games/hsr_980.webp',   tag: 'topup',      desc: '' },
-        { id: '20000000-0000-0000-0000-000000000005', name: '1980 + 260 Mộng Cảnh',         price:  436000, img: 'assets/images/games/hsr_1980.webp',  tag: 'topup',      desc: '' },
-        { id: '20000000-0000-0000-0000-000000000006', name: '3280 + 600 Mộng Cảnh',         price:  726000, img: 'assets/images/games/hsr_3280.webp',  tag: 'topup',      desc: '' },
-        { id: '20000000-0000-0000-0000-000000000007', name: '6480 + 1600 Mộng Cảnh',        price: 1452000, img: 'assets/images/games/hsr_6480.webp',  tag: 'topup',      desc: '' },
-        { id: '20000000-0000-0000-0000-000000000008', name: 'Nameless Glory (Battle Pass)',  price:  180000, img: 'assets/images/games/hsr_bp.webp',    tag: 'battlepass', desc: 'Battle Pass' }
-    ],
+    // ---------- CÁC GAME ĐANG BẢO TRÌ ----------
+    'hsr': [],
     'hsr-login': 'hsr',
-
-    // ---------- ZENLESS ZONE ZERO ----------
-    'zzz': [
-        { id: '30000000-0000-0000-0000-000000000001', name: 'Thẻ Tháng Ổn Định (30 ngày)', price:   80000, img: 'assets/images/games/zzz_pass.webp',  tag: 'monthly',    desc: 'Thẻ tháng 30 ngày' },
-        { id: '30000000-0000-0000-0000-000000000002', name: '60 Polychrome',               price:   18000, img: 'assets/images/games/zzz_60.webp',   tag: 'topup',      desc: '' },
-        { id: '30000000-0000-0000-0000-000000000003', name: '300 + 30 Polychrome',         price:   85000, img: 'assets/images/games/zzz_300.webp',  tag: 'topup',      desc: '' },
-        { id: '30000000-0000-0000-0000-000000000004', name: '980 + 110 Polychrome',        price:  250000, img: 'assets/images/games/zzz_980.webp',  tag: 'topup',      desc: '' },
-        { id: '30000000-0000-0000-0000-000000000005', name: '1980 + 260 Polychrome',       price:  500000, img: 'assets/images/games/zzz_1980.webp', tag: 'topup',      desc: '' },
-        { id: '30000000-0000-0000-0000-000000000006', name: '3280 + 600 Polychrome',       price:  830000, img: 'assets/images/games/zzz_3280.webp', tag: 'topup',      desc: '' },
-        { id: '30000000-0000-0000-0000-000000000007', name: '6480 + 1600 Polychrome',      price: 1660000, img: 'assets/images/games/zzz_6480.webp', tag: 'topup',      desc: '' }
-    ],
+    'zzz': [],
     'zzz-login': 'zzz',
-
-    // ---------- WUTHERING WAVES ----------
-    'wuwa': [
-        { id: '40000000-0000-0000-0000-000000000001', name: 'Lunite Subscription (Thẻ Tháng)', price:   80000, img: 'assets/images/games/wuwa_pass.webp', tag: 'monthly',    desc: 'Thẻ tháng 30 ngày' },
-        { id: '40000000-0000-0000-0000-000000000002', name: '60 Astrite',                       price:   17000, img: 'assets/images/games/wuwa_60.webp',   tag: 'topup',      desc: '' },
-        { id: '40000000-0000-0000-0000-000000000003', name: '300 + 30 Astrite',                 price:   80000, img: 'assets/images/games/wuwa_300.webp',  tag: 'topup',      desc: '' },
-        { id: '40000000-0000-0000-0000-000000000004', name: '980 + 110 Astrite',                price:  240000, img: 'assets/images/games/wuwa_980.webp',  tag: 'topup',      desc: '' },
-        { id: '40000000-0000-0000-0000-000000000005', name: '1980 + 260 Astrite',               price:  480000, img: 'assets/images/games/wuwa_1980.webp', tag: 'topup',      desc: '' },
-        { id: '40000000-0000-0000-0000-000000000006', name: '3280 + 600 Astrite',               price:  800000, img: 'assets/images/games/wuwa_3280.webp', tag: 'topup',      desc: '' },
-        { id: '40000000-0000-0000-0000-000000000007', name: '6480 + 1600 Astrite',              price: 1600000, img: 'assets/images/games/wuwa_6480.webp', tag: 'topup',      desc: '' }
-    ],
+    'wuwa': [],
     'wuwa-login': 'wuwa',
 
     // ---------- DEFAULT fallback ----------
@@ -199,11 +177,8 @@ function startSlider() {
 
 function resetSlideTimer() {
     if (slideInterval) clearInterval(slideInterval);
-    // Manual navigation avoids moving content while the customer reads.
 }
 
-// ==========================================
-// 4. SOCIAL PROOF POPUP
 // ==========================================
 // 5. CATALOG RENDERING + FILTER
 // ==========================================
@@ -212,19 +187,7 @@ async function initCatalogPage() {
     showCatalogMessage('gridFeatured', 'Đang tải danh mục...');
     document.querySelectorAll('a[href*="zalo.me"]').forEach(a => a.href = ZALO_LINK);
 
-    let activeGames;
-    try {
-        if (!supabaseClient) throw new Error('Chưa kết nối được danh mục nạp game.');
-        const { data, error } = await supabaseClient.from('packages').select('game').eq('active', true);
-        if (error) throw error;
-        activeGames = new Set((data || []).map(row => row.game));
-    } catch (error) {
-        console.error('Không tải được catalog nạp game:', error);
-        showCatalogMessage('gridFeatured', 'Danh mục nạp game đang tạm thời không khả dụng. Vui lòng thử lại sau.');
-        return;
-    }
-
-    const availableFeatured = GAMES_CATALOG.featured.filter(game => activeGames.has(game.name));
+    const availableFeatured = GAMES_CATALOG.featured.filter(game => game.id === 'genshin');
     renderPortrait(availableFeatured);
     if (!availableFeatured.length) showCatalogMessage('gridFeatured', 'Hiện chưa có game nào mở bán.');
 
@@ -292,11 +255,12 @@ function getPackageImage(gameName, packageId, packageName, tag) {
     }
     return Object.values(GAME_INFO).find(info => info.name === gameName)?.icon || 'assets/images/logo.jpg';
 }
+
 // Load active catalog rows; names, ids, and prices come from database, with fallback for offline/preview
 async function loadActivePackages(gameName) {
     const gameKey = Object.entries(GAME_INFO).find(([, info]) => info.name === gameName)?.[0]?.replace('-login', '') || 'genshin';
     const fallbackList = (GAME_PACKAGES[gameKey] || []).slice();
-    if (!supabaseClient) {
+    if (!fallbackList.length || !supabaseClient) {
         return fallbackList;
     }
     try {
@@ -308,34 +272,34 @@ async function loadActivePackages(gameName) {
         if (error || !data || data.length === 0) {
             return fallbackList;
         }
-        const dbPackages = data.filter(row => row && typeof row.name === 'string' && Number.isFinite(Number(row.price)) && Number(row.price) > 0).map(row => {
-            const presentation = getPackagePresentation(row.id, row.name);
-            return {
-                ...presentation,
-                id: row.id,
-                name: row.name,
-                price: Number(row.price),
-                img: getPackageImage(gameName, row.id, row.name, presentation.tag || 'topup'),
-                tag: presentation.tag || 'topup'
-            };
-        });
+        // Build lookup from official price sheet so visual order & updated prices stay consistent
+        const fbById = new Map(fallbackList.map(item => [item.id, item]));
+        const dbPackages = data
+            .filter(row => row && typeof row.name === 'string' && Number.isFinite(Number(row.price)) && Number(row.price) > 0)
+            .map(row => {
+                const presentation = fbById.get(row.id) || getPackagePresentation(row.id, row.name);
+                return {
+                    ...presentation,
+                    id: row.id,
+                    name: presentation.name || row.name,
+                    price: Number(row.price),
+                    img: getPackageImage(gameName, row.id, row.name, presentation.tag || 'topup'),
+                    tag: presentation.tag || 'topup'
+                };
+            });
 
         const dbMap = new Map();
         dbPackages.forEach(pkg => {
             dbMap.set(pkg.id, pkg);
-            if (pkg.name) dbMap.set(pkg.name, pkg);
         });
 
         const result = [];
         const seenIds = new Set();
         fallbackList.forEach(fb => {
-            const dbMatch = dbMap.get(fb.id) || dbMap.get(fb.name);
+            const dbMatch = dbMap.get(fb.id);
             if (dbMatch) {
                 result.push(dbMatch);
                 seenIds.add(dbMatch.id);
-            } else {
-                result.push(fb);
-                seenIds.add(fb.id);
             }
         });
 
@@ -346,7 +310,7 @@ async function loadActivePackages(gameName) {
             }
         });
 
-        return result;
+        return result.length ? result : fallbackList;
     } catch (_) {
         return fallbackList;
     }
@@ -382,10 +346,9 @@ function showCatalogMessage(containerId, message) {
 
 async function initDetailPage() {
     const params = new URLSearchParams(window.location.search);
-    currentGameId = params.get('game') || 'genshin';
-    if (!Object.hasOwn(GAME_INFO, currentGameId) || currentGameId === 'default') {
-        currentGameId = 'genshin';
-    }
+    const rawGameParam = (params.get('game') || 'genshin').toLowerCase();
+    const rawTypeParam = (params.get('type') || 'login').toLowerCase();
+    currentGameId = Object.hasOwn(GAME_INFO, rawGameParam) ? rawGameParam : 'default';
     const gameInfo = GAME_INFO[currentGameId] || GAME_INFO.default;
     const themeGameId = currentGameId.replace('-login', '');
     document.body.dataset.game = themeGameId;
@@ -398,14 +361,14 @@ async function initDetailPage() {
     const icon = document.getElementById('detailGameIcon');
     if (icon) { icon.src = gameInfo.icon; icon.alt = gameInfo.name; icon.onerror = () => { icon.src = 'assets/images/logo.jpg'; }; }
     const cover = document.getElementById('detailGameCover');
-    if (cover && GAMES_CATALOG.featured.some(game => game.id === currentGameId.replace('-login', ''))) {
-        cover.style.backgroundImage = "url(assets/images/games/" + currentGameId.replace("-login", "") + "_banner.jpg)";
+    if (cover && GAMES_CATALOG.featured.some(game => game.id === themeGameId)) {
+        cover.style.backgroundImage = "url(assets/images/games/" + themeGameId + "_banner.jpg)";
     }
     const name = document.getElementById('detailGameName');
     if (name) name.textContent = gameInfo.name;
     const badge = document.getElementById('detailTypeBadge');
     if (badge) {
-        badge.textContent = 'Nạp Login';
+        badge.textContent = rawTypeParam === 'uid' ? 'Nạp UID (Đang bảo trì)' : 'Nạp Login';
         badge.className = 'ng-detail-type-badge ng-type-login';
     }
     if (window.currentUser) {
@@ -414,7 +377,7 @@ async function initDetailPage() {
     }
 
     const requestedPackageId = params.get('package') || '';
-    let packages = (GAME_PACKAGES[themeGameId] || []).slice();
+    let packages = rawTypeParam === 'uid' ? [] : (GAME_PACKAGES[themeGameId] || []).slice();
     if (!packages.length) {
         renderUnsupportedGame(gameInfo);
         return;
@@ -453,16 +416,21 @@ async function initDetailPage() {
 // Give unavailable catalogs a clear return path and prevent checkout.
 function renderUnsupportedGame(gameInfo) {
     currentSelectedPackage = null;
-    showCatalogMessage('pkgGrid', gameInfo
-        ? `Gói nạp cho ${gameInfo.name} đang được cập nhật. Vui lòng chọn game khác hoặc liên hệ Zalo để được hỗ trợ.`
-        : 'Chọn một game đang mở bán trong danh mục để xem các gói nạp.');
+    showCatalogMessage('pkgGrid', gameInfo && gameInfo.name !== 'Game Top-up'
+        ? `Dịch vụ nạp cho ${gameInfo.name} hiện đang bảo trì cập nhật bảng giá. Quý khách vui lòng chọn Nạp Genshin Impact (Login) hoặc liên hệ Zalo CSKH 0763.550.673 để được hỗ trợ.`
+        : 'Dịch vụ này hiện đang bảo trì cập nhật bảng giá. Vui lòng chọn Nạp Genshin Impact (Login) hoặc liên hệ Zalo CSKH.');
     const status = document.querySelector('#pkgGrid .ng-catalog-status');
     if (status) {
         const link = document.createElement('a');
         link.className = 'ng-support-link';
-        link.href = 'napgame.html';
-        link.textContent = '← Quay lại danh mục game';
-        status.append(document.createElement('br'), link);
+        link.href = 'napgame-detail.html?game=genshin&type=login';
+        link.textContent = '→ Chuyển sang Nạp Genshin Impact (Đang mở)';
+        const homeLink = document.createElement('a');
+        homeLink.className = 'ng-support-link';
+        homeLink.style.marginLeft = '16px';
+        homeLink.href = '/index.html#recharge-game-list';
+        homeLink.textContent = '← Về trang chủ';
+        status.append(document.createElement('br'), link, homeLink);
     }
     document.querySelectorAll('.ng-pkg-tabs, .ng-order-steps, #orderInfoBlock, #paymentBlock, .ng-col-right, .ng-mobile-bar').forEach(element => { element.hidden = true; });
     ['btnSubmitOrder', 'mobileBarBtn'].forEach(id => {
@@ -616,6 +584,7 @@ async function submitDetailOrder() {
     setFieldError('formUsername', 'usernameError', '');
     setFieldError('formPassword', 'passwordError', '');
     setFieldError('formPhone', 'phoneError', '');
+    setFieldError('formUID', 'uidError', '');
     const packageError = document.getElementById('packageError');
     if (packageError) packageError.hidden = true;
 
@@ -638,7 +607,7 @@ async function submitDetailOrder() {
     const password = document.getElementById('formPassword')?.value || '';
     const phone = (document.getElementById('formPhone')?.value || '').trim();
     const rawNotes = (document.getElementById('formNotes')?.value || '').trim();
-    const uidVal = (document.getElementById('formUID')?.value || '').trim();
+    const uidVal = (document.getElementById('formUID')?.value || '').replace(/\s+/g, '');
     let notes = rawNotes;
     if (uidVal) {
         notes = `[UID: ${uidVal}] ` + (notes ? notes : '');
@@ -648,8 +617,15 @@ async function submitDetailOrder() {
     }
     let firstInvalid = null;
     if (!account) { setFieldError('formUsername', 'usernameError', 'Vui lòng nhập email hoặc tên đăng nhập.'); firstInvalid ||= 'formUsername'; }
+    if (uidVal && !/^\d{9,10}$/.test(uidVal)) {
+        setFieldError('formUID', 'uidError', 'UID Genshin Impact gồm 9 hoặc 10 chữ số (VD: 812345678).');
+        firstInvalid ||= 'formUID';
+    }
     if (!password) { setFieldError('formPassword', 'passwordError', 'Vui lòng nhập mật khẩu tài khoản game.'); firstInvalid ||= 'formPassword'; }
-    if (!phone) { setFieldError('formPhone', 'phoneError', 'Vui lòng nhập số điện thoại Zalo liên hệ.'); firstInvalid ||= 'formPhone'; }
+    if (!phone || !/^[0-9+ .()\-]{8,25}$/.test(phone)) {
+        setFieldError('formPhone', 'phoneError', 'Vui lòng nhập số điện thoại Zalo hợp lệ (8-15 chữ số).');
+        firstInvalid ||= 'formPhone';
+    }
     if (firstInvalid) {
         document.getElementById(firstInvalid)?.focus();
         showCheckoutMessage('Vui lòng kiểm tra các trường được đánh dấu.');
@@ -669,6 +645,30 @@ async function submitDetailOrder() {
         if (authError || !authData?.user?.id || authData.user.id !== window.currentUser.id) {
             throw new Error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại rồi thử tạo đơn.');
         }
+
+        // Save UID/Server to user_game_accounts if checkbox is checked (never stores password)
+        const saveCheckbox = document.getElementById('saveAccountCheckbox');
+        if (saveCheckbox?.checked && uidVal) {
+            try {
+                const { data: existing } = await client
+                    .from('user_game_accounts')
+                    .select('id')
+                    .eq('user_id', authData.user.id)
+                    .eq('uid', uidVal)
+                    .limit(1);
+                if (!existing || !existing.length) {
+                    await client.from('user_game_accounts').insert({
+                        user_id: authData.user.id,
+                        game: 'Genshin Impact',
+                        uid: uidVal,
+                        server,
+                        nickname: account.split('@')[0].slice(0, 40) || 'Traveler',
+                        notes: `Login: ${loginMethod}`
+                    });
+                }
+            } catch (_) {}
+        }
+
         const order = await OrderAPI.topup(client, authData.user.id, currentSelectedPackage.id, server, loginMethod, account, password, phone, notes);
         showCheckoutMessage('Đã tạo đơn. Đang chuyển đến trang thanh toán...', 'success');
         window.location.href = `checkout.html?order=${encodeURIComponent(order.order_code || order.id)}`;
@@ -725,6 +725,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // 8. FLOATING ZALO WIDGET
 // ==========================================
 function initZaloWidget() {
+    if (document.getElementById('nc-ai-btn') || document.querySelector('.lp-support-float')) return;
     const link = document.createElement('a');
     link.className = 'ng-zalo-float';
     link.href = ZALO_LINK;

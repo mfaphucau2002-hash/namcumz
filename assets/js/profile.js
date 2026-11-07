@@ -1242,17 +1242,18 @@
 
     const bankConfig = window.NAMCUMZ_CONFIG?.bank || {
       bankBin: '970422',
-      bankName: 'MB Bank',
+      bankName: 'MoMo / VietQR Napas 247 (MB Bank)',
       bankCode: 'MB',
       accountNumber: '0763550673',
-      accountName: 'NGUYEN HOANG NAM'
+      accountName: 'NGUYEN HOANG NAM',
+      qrImageUrl: '/assets/images/store/qr-nguyen-hoang-nam.jpg'
     };
 
     const transferContent = `NCZ ${order.payment_reference || order.order_code}`;
 
-    let qrUrl = '';
+    let fallbackQrUrl = '';
     if (window.PaymentProvider?.VietQR) {
-      qrUrl = window.PaymentProvider.VietQR.generateQuickLink({
+      fallbackQrUrl = window.PaymentProvider.VietQR.generateQuickLink({
         bankBin: bankConfig.bankBin,
         accountNumber: bankConfig.accountNumber,
         accountName: bankConfig.accountName,
@@ -1260,17 +1261,18 @@
         transferContent: transferContent
       });
     } else {
-      qrUrl = `https://img.vietqr.io/image/${bankConfig.bankBin}-${bankConfig.accountNumber}-compact2.png?amount=${order.amount}&addInfo=${encodeURIComponent(transferContent)}&accountName=${encodeURIComponent(bankConfig.accountName)}`;
+      fallbackQrUrl = `https://img.vietqr.io/image/${bankConfig.bankBin}-${bankConfig.accountNumber}-compact2.png?amount=${order.amount}&addInfo=${encodeURIComponent(transferContent)}&accountName=${encodeURIComponent(bankConfig.accountName)}`;
     }
+    const qrUrl = bankConfig.qrImageUrl || '/assets/images/store/qr-nguyen-hoang-nam.jpg';
 
     body.innerHTML = `
       <div style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px;">
         <div style="font-size: 0.9375rem; color: #ffb800; font-weight: 700;">
-          <i class="fa-solid fa-clock"></i> Vui lòng chuyển khoản đúng số tiền và nội dung bên dưới
+          <i class="fa-solid fa-clock"></i> Quét QR chính chủ và chuyển đúng số tiền + nội dung bên dưới
         </div>
 
-        <div style="background: #fff; padding: 12px; border-radius: 12px; display: inline-block; box-shadow: 0 0 20px rgba(0, 240, 255, 0.3); cursor: pointer;" onclick="window.copyToClipboard('${transferContent}', 'Đã copy nội dung chuyển khoản!')" title="Nhấp để copy nội dung chuyển khoản">
-          <img src="${qrUrl}" alt="VietQR Nạp Tiền" style="width: 200px; height: 200px; display: block; border-radius: 6px;">
+        <div style="background: #0b0f1d; padding: 10px; border-radius: 14px; border: 1px solid rgba(112, 220, 229, 0.35); display: inline-block; box-shadow: 0 0 20px rgba(0, 240, 255, 0.22); cursor: pointer;" onclick="window.copyToClipboard('${transferContent}', 'Đã copy nội dung chuyển khoản!')" title="Nhấp để copy nội dung chuyển khoản">
+          <img src="${qrUrl}" onerror="this.onerror=null;this.src='${fallbackQrUrl}'" alt="VietQR Nạp Tiền" style="width: 220px; height: auto; max-height: 360px; object-fit: contain; display: block; border-radius: 10px;">
         </div>
 
         <div style="width: 100%; background: rgba(10, 14, 26, 0.8); border-radius: 12px; padding: 14px; border: 1px solid rgba(255, 255, 255, 0.08); text-align: left; display: flex; flex-direction: column; gap: 10px;">

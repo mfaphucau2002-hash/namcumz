@@ -290,17 +290,18 @@ img.chk-brand-logo,
   color: #2563eb;
 }
 
-/* WHITE QR BOX FOR MAXIMUM CONTRAST & RELIABILITY */
+/* QR BOX FOR OFFICIAL GENSHIN QR CARD */
 .chk-qr-box {
-  background: #ffffff;
-  padding: 14px;
-  border-radius: 14px;
+  background: #0b0f1d;
+  border: 1px solid rgba(112, 220, 229, 0.32);
+  padding: 10px;
+  border-radius: 16px;
   display: inline-block;
   margin: 0 auto 14px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.55), 0 0 24px rgba(56, 189, 248, 0.14);
   position: relative;
   min-height: 250px;
-  min-width: 250px;
+  min-width: 240px;
   cursor: pointer;
   transition: transform var(--motion-fast, 150ms) ease;
 }
@@ -339,9 +340,13 @@ img.chk-brand-logo,
 }
 
 .chk-qr-img {
-  width: 230px;
-  height: 230px;
+  width: 100%;
+  max-width: 270px;
+  height: auto;
+  max-height: 440px;
+  border-radius: 12px;
   display: block;
+  margin: 0 auto;
   object-fit: contain;
   transition: opacity var(--motion-smooth, 400ms) ease;
 }

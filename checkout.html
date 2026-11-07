@@ -75,10 +75,10 @@
                     </div>
 
                     <div class="chk-qr-scan-title">
-                        <i class="fa-solid fa-bolt" aria-hidden="true"></i> Quét bằng app Ngân hàng / Ví bất kỳ
+                        <i class="fa-solid fa-bolt" aria-hidden="true"></i> Quét bằng app Ngân hàng / MoMo / Ví bất kỳ
                     </div>
                     <div class="chk-qr-scan-subtitle">
-                        Tự động điền đúng STK, Số tiền và Nội dung chuyển khoản
+                        Quét mã VietQR Napas 247 chính chủ (NGUYỄN HOÀNG NAM • STK: *******125) và sao chép đúng Số tiền + Nội dung bên phải
                     </div>
 
                     <!-- SUPPORTED BANK CHIPS -->
@@ -129,7 +129,12 @@
 
                     <div class="chk-total-row">
                         <span class="chk-total-label">Tổng tiền thanh toán:</span>
-                        <span class="chk-total-amount" id="chkTotalPrice">0 ₫</span>
+                        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                            <span class="chk-total-amount" id="chkTotalPrice">0 ₫</span>
+                            <button type="button" class="chk-btn-copy" id="btnCopyAmount" aria-label="Sao chép số tiền cần chuyển">
+                                <i class="fa-regular fa-copy" aria-hidden="true"></i> Sao Chép Số Tiền
+                            </button>
+                        </div>
                     </div>
 
                     <div class="chk-order-detail-link-row">
@@ -154,8 +159,8 @@
 
                 <!-- 3. NGÂN HÀNG THỤ HƯỞNG -->
                 <div class="chk-card chk-card-glass chk-info-card">
-                    <div class="chk-field-label">NGÂN HÀNG THỤ HƯỞNG:</div>
-                    <div class="chk-val-text" id="chkBankName">MBBANK (Ngân Hàng Quân Đội)</div>
+                    <div class="chk-field-label">NGÂN HÀNG / CỔNG THỤ HƯỞNG:</div>
+                    <div class="chk-val-text" id="chkBankName">MoMo / VietQR Napas 247 (MB Bank)</div>
                 </div>
 
                 <!-- 4. SỐ TÀI KHOẢN (STK) (CYAN HIGHLIGHT) -->
@@ -164,6 +169,7 @@
                         <div>
                             <div class="chk-field-label">SỐ TÀI KHOẢN (STK):</div>
                             <div class="chk-val-cyan" id="chkBankAccount">0763550673</div>
+                            <div style="font-size: 0.78rem; color: #94a3b8; margin-top: 2px;">Hiển thị khi quét QR đa năng: <strong style="color: #7dd3fc;">*******125</strong></div>
                         </div>
                         <button type="button" class="chk-btn-copy" id="btnCopyBankAcc" aria-label="Sao chép số tài khoản">
                             <i class="fa-regular fa-copy" aria-hidden="true"></i> Sao Chép STK
@@ -283,7 +289,7 @@
     <script src="assets/js/payment-provider.js"></script>
     <script src="assets/js/order-api.js"></script>
     <script src="assets/js/checkout-session.js?v=20261014-launch1"></script>
-    <script src="assets/js/checkout.js?v=20261014-launch1"></script>
+    <script src="assets/js/checkout.js?v=20261107-launch2"></script>
 <script src="/assets/js/theme-settings.js" defer></script>
 </body>
 </html>

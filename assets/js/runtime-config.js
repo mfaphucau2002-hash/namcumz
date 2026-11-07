@@ -8,9 +8,11 @@ window.NAMCUMZ_CONFIG = {
     bank: {
         bankBin: '970422',
         bankCode: 'MB',
-        bankName: 'MB Bank (Ngân hàng Quân Đội)',
+        bankName: 'MoMo / VietQR Napas 247 (MB Bank)',
         accountNumber: '0763550673',
+        displayAccountNumber: '0763550673 (STK QR: *******125)',
         accountName: 'NGUYEN HOANG NAM',
+        qrImageUrl: '/assets/images/store/qr-nguyen-hoang-nam.jpg',
         expireMinutes: 15
     }
 };

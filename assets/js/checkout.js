@@ -17,9 +17,10 @@
   const defaultBank = {
     bankBin: '970422',
     bankCode: 'MB',
-    bankName: 'MB Bank (Ngân hàng Quân Đội)',
+    bankName: 'MoMo / VietQR Napas 247 (MB Bank)',
     accountNumber: '0763550673',
     accountName: 'NGUYEN HOANG NAM',
+    qrImageUrl: '/assets/images/store/qr-nguyen-hoang-nam.jpg',
     expireMinutes: 15
   };
 
@@ -237,34 +238,41 @@
     if (bankOwnerEl) bankOwnerEl.textContent = bank.accountName;
     if (transferContentEl) transferContentEl.textContent = transferContent;
 
-    // 4. Dynamic VietQR Generation
+    // 4. Official Shop QR Card + Dynamic VietQR Fallback
     const qrImg = document.getElementById('chkQrImg');
     const qrContainer = document.getElementById('chkQrBox');
     if (qrImg) {
       try {
-        const qrUrl = window.PaymentProvider.VietQR.generateQuickLink({
-          bankBin: bank.bankBin,
-          accountNumber: bank.accountNumber,
-          accountName: bank.accountName,
-          amount: due,
-          transferContent: transferContent,
-          template: 'compact2'
-        });
-        qrImg.src = qrUrl;
+        const officialQr = bank.qrImageUrl || '/assets/images/store/qr-nguyen-hoang-nam.jpg';
+        qrImg.src = officialQr;
         qrImg.onload = () => {
           qrImg.style.opacity = '1';
         };
         qrImg.onerror = () => {
-          // Robust Fallback: render vector QR SVG directly
           try {
-            const emvco = window.PaymentProvider.VietQR.generateEmvCoPayload({
+            const qrUrl = window.PaymentProvider.VietQR.generateQuickLink({
               bankBin: bank.bankBin,
               accountNumber: bank.accountNumber,
+              accountName: bank.accountName,
               amount: due,
-              transferContent: transferContent
+              transferContent: transferContent,
+              template: 'compact2'
             });
-            const svgStr = window.PaymentProvider.VietQR.generateSvgQr(emvco, 250);
-            if (qrContainer) qrContainer.innerHTML = svgStr;
+            qrImg.onerror = () => {
+              try {
+                const emvco = window.PaymentProvider.VietQR.generateEmvCoPayload({
+                  bankBin: bank.bankBin,
+                  accountNumber: bank.accountNumber,
+                  amount: due,
+                  transferContent: transferContent
+                });
+                const svgStr = window.PaymentProvider.VietQR.generateSvgQr(emvco, 250);
+                if (qrContainer) qrContainer.innerHTML = svgStr;
+              } catch (_) {
+                qrImg.alt = 'Vui lòng quét QR bằng ứng dụng ngân hàng';
+              }
+            };
+            qrImg.src = qrUrl;
           } catch (_) {
             qrImg.alt = 'Vui lòng quét QR bằng ứng dụng ngân hàng';
           }
@@ -513,7 +521,7 @@
       if (status) { status.setAttribute('role', 'alert'); status.textContent = 'Không thể xác minh đơn hàng. Hãy đăng nhập đúng tài khoản và tải lại trang; chưa chuyển tiền.'; }
       const qr = document.getElementById('chkQrBox');
       if (qr) qr.hidden = true;
-      document.querySelectorAll('#btnCopyBankAcc, #btnCopyBankOwner, #btnCopyMemo, #btnPayWallet').forEach(button => { button.disabled = true; });
+      document.querySelectorAll('#btnCopyBankAcc, #btnCopyBankOwner, #btnCopyMemo, #btnCopyAmount, #btnPayWallet').forEach(button => { button.disabled = true; });
       const spinner = document.getElementById('chkSpinner');
       if (spinner) spinner.style.display = 'none';
       return;
@@ -557,6 +565,13 @@
     document.getElementById('btnCopyMemo')?.addEventListener('click', function () {
       const val = document.getElementById('chkTransferContent')?.textContent;
       copyToClipboard(val, this, 'Đã sao chép nội dung chuyển khoản');
+    });
+
+    document.getElementById('btnCopyAmount')?.addEventListener('click', function () {
+      const due = Math.max(0, Number(currentOrder?.price || 0) - Number(currentOrder?.paid_amount || 0));
+      if (due > 0) {
+        copyToClipboard(String(due), this, `Đã sao chép số tiền: ${formatMoney(due)}`);
+      }
     });
 
     // Check user session for wallet payment

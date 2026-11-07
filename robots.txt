@@ -5,4 +5,5 @@ Disallow: /dashboard.html
 Disallow: /admin.html
 Disallow: /profile.html
 Disallow: /booster.html
-Sitemap: https://namcum.io.vn/sitemap.xml
+Disallow: /checkout.html
+Sitemap: https://namcumz.io.vn/sitemap.xml

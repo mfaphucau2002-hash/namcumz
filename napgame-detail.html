@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Nạp Game Tốc Độ - Xem gói nạp, tạo đơn và theo dõi xử lý tại NAMCUMZ.">
+    <meta name="description" content="Nạp Game Genshin Impact chính hãng, Không Nguyệt Chúc Phúc 85k, Full Pack 3.800.000đ - Bảo hành không âm nguyên thạch tại NAMCUMZ.">
+    <meta property="og:title" content="Nạp Game Genshin Impact Chính Hãng - NAMCUMZ GAME STORE">
+    <meta property="og:description" content="Nạp Không Nguyệt Chúc Phúc 85k, Đá Sáng Thế Genshin Impact chính hãng 100%, bảo hành uy tín tại NAMCUMZ.">
+    <meta property="og:image" content="https://namcumz.io.vn/assets/images/store/genshin-price-sheet.jpg">
+    <meta property="og:url" content="https://namcumz.io.vn/napgame-detail.html">
+    <meta property="og:type" content="website">
     <link rel="canonical" href="https://namcumz.io.vn/napgame-detail.html">
     <link rel="icon" type="image/jpeg" href="/assets/images/logo.jpg">
     <title id="pageTitle">Nạp Game Tốc Độ - NAMCUMZ GAME STORE</title>
@@ -11,7 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/design-tokens.css">
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/home-page.css?v=20261010-mobile5">
+    <link rel="stylesheet" href="assets/css/home-page.css?v=20261107-launch2">
     <link rel="stylesheet" href="assets/css/napgame.css?v=20261010-largepkg1">
     <link rel="stylesheet" href="assets/css/ui.css">
 <link rel="stylesheet" href="/assets/css/theme-settings.css">
@@ -157,6 +162,16 @@
                                 Thông tin đăng nhập được dùng để xử lý đơn; xem chính sách bảo mật trước khi cung cấp. Không gửi mật khẩu hoặc OTP qua chat hay ghi chú.
                             </p>
                         </div>
+                        <details style="margin-top: 12px; background: rgba(14, 18, 32, 0.65); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 10px; padding: 10px 14px;">
+                            <summary style="cursor: pointer; font-weight: 700; color: #38bdf8; font-size: 0.88rem; user-select: none;">
+                                📋 Xem bảng giá tổng hợp dịch vụ Genshin Impact (Nạp &amp; Cày thuê)
+                            </summary>
+                            <div style="margin-top: 10px; text-align: center;">
+                                <a href="/assets/images/store/genshin-price-sheet.jpg" target="_blank" rel="noopener">
+                                    <img src="/assets/images/store/genshin-price-sheet.jpg" alt="Bảng giá dịch vụ Genshin Impact Nguyễn Hoàng Nam" loading="lazy" style="width: 100%; height: auto; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                                </a>
+                            </div>
+                        </details>
                         <button type="button" class="ng-desc-toggle-btn" onclick="toggleDescExpand(this)">
                             Xem tất cả <i class="fas fa-chevron-down"></i>
                         </button>
@@ -195,8 +210,9 @@
                     <div class="ng-field-wrap">
                         <div class="ng-input-pill ng-pill-dark">
                             <i class="fas fa-id-badge ng-pill-icon" style="color: #00f2fe;"></i>
-                            <input type="text" id="formUID" class="ng-pill-input" placeholder="UID Ingame (Bắt Buộc Để Check)">
+                            <input type="text" id="formUID" class="ng-pill-input" placeholder="UID Ingame 9-10 số (Bắt Buộc Để Check)" inputmode="numeric">
                         </div>
+                        <span class="ng-field-error" id="uidError" hidden></span>
                     </div>
 
                     <!-- 4. Mật khẩu -->
@@ -217,27 +233,39 @@
                         </div>
                     </div>
 
+                    <!-- 5.5 Chọn Máy chủ (Server) & Cổng đăng nhập -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+                        <div>
+                            <label for="formServer" style="display: block; font-size: 0.75rem; font-weight: 700; color: #94a3b8; margin-bottom: 5px;">
+                                <i class="fas fa-globe" style="color: #00f2fe;"></i> Máy chủ (Server)
+                            </label>
+                            <select id="formServer" class="ng-saved-select" style="width: 100%; height: 42px; padding: 0 10px;">
+                                <option value="Asia" selected>Asia</option>
+                                <option value="America">America</option>
+                                <option value="Europe">Europe</option>
+                                <option value="TW/HK/MO">TW/HK/MO</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="formLoginMethod" style="display: block; font-size: 0.75rem; font-weight: 700; color: #94a3b8; margin-bottom: 5px;">
+                                <i class="fas fa-right-to-bracket" style="color: #f59e0b;"></i> Cổng đăng nhập
+                            </label>
+                            <select id="formLoginMethod" class="ng-saved-select" style="width: 100%; height: 42px; padding: 0 10px;">
+                                <option value="Hoyoverse" selected>Hoyoverse</option>
+                                <option value="Google">Google</option>
+                                <option value="Facebook">Facebook</option>
+                                <option value="Khác">Khác</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <!-- 6. Ghi chú / Server cho Admin -->
                     <div class="ng-field-wrap">
                         <div class="ng-input-pill ng-pill-dark">
                             <i class="fas fa-comment-dots ng-pill-icon" style="color: #00f2fe;"></i>
-                            <input type="text" id="formNotes" class="ng-pill-input" placeholder="Server hoặc Ghi chú cho Admin">
+                            <input type="text" id="formNotes" class="ng-pill-input" placeholder="Ghi chú thêm cho Admin (Tên nhân vật, khung giờ onl...)">
                         </div>
                     </div>
-
-                    <!-- Hidden selects for formServer and formLoginMethod to preserve OrderAPI compatibility -->
-                    <select id="formServer" style="display: none;">
-                        <option value="Asia" selected>Asia</option>
-                        <option value="America">America</option>
-                        <option value="Europe">Europe</option>
-                        <option value="TW/HK/MO">TW/HK/MO</option>
-                    </select>
-                    <select id="formLoginMethod" style="display: none;">
-                        <option value="Hoyoverse" selected>Hoyoverse</option>
-                        <option value="Google">Google</option>
-                        <option value="Facebook">Facebook</option>
-                        <option value="Khác">Khác</option>
-                    </select>
 
                     <!-- 7. Số Zalo -->
                     <div class="ng-field-wrap">
@@ -409,11 +437,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/authMediaConfig.js"></script>
     <script src="assets/js/landing.js?v=20261010-ecomode1" defer></script>
-    <script src="assets/js/home-page.js?v=20261010-contact1" defer></script>
+    <script src="assets/js/home-page.js?v=20261107-launch2" defer></script>
     <script src="assets/js/runtime-config.js"></script>
     <script src="assets/js/order-api.js"></script>
     <script src="assets/js/app.js?v=20261005-request13"></script>
-    <script src="assets/js/napgame.js?v=20261015-fullpack1"></script>
+    <script src="assets/js/napgame.js?v=20261107-launch2"></script>
 <script src="/assets/js/theme-settings.js" defer></script>
 </body>
 </html>

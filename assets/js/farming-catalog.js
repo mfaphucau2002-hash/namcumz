@@ -1,79 +1,177 @@
 (() => {
   'use strict';
 
-  const packageCatalog = [
-    ['Rừng mưa Sumeru', 'Cày 100% (quest, thần đồng, rương)', 'map'],
-    ['Phong Thần Đồng (66)', 'Dịch vụ thu thập theo khu vực Mondstadt.', 'map'],
-    ['Nham Thần Đồng (131)', 'Dịch vụ thu thập theo khu vực Liyue.', 'map'],
-    ['Lôi Thần Đồng (181)', 'Dịch vụ thu thập theo khu vực Inazuma.', 'map'],
-    ['Thảo Thần Đồng (271)', 'Thu thập Thảo Thần Đồng theo yêu cầu.', 'map'],
-    ['Thủy Thần Đồng (271)', 'Thu thập Thủy Thần Đồng theo yêu cầu.', 'map'],
-    ['Hỏa Thần Đồng (271)', 'Thu thập Hỏa Thần Đồng theo yêu cầu.', 'map'],
-    ['Nguyệt Thần Đồng', 'Shop xác nhận phạm vi khi nhận yêu cầu.', 'map'],
-    ['Mã Não Đỏ Thẫm', 'Làm nhiệm vụ và thu thập theo tiến độ bạn yêu cầu.', 'quest'],
-    ['Lưu Tinh Minh Thạch (83)', 'Thu thập Lưu Tinh Minh Thạch theo khu vực.', 'map'],
-    ['Cá Chép Thường Linh (50)', 'Thu thập vật phẩm và nhiệm vụ liên quan.', 'map'],
-    ['Sumeru Sa Mạc', 'Chạy 100% khu vực sa mạc theo phạm vi xác nhận.', 'map'],
-    ['Cày Map Fontaine (khu)', 'Chạy 100% một khu vực Fontaine theo yêu cầu.', 'map'],
-    ['Full Fontaine', 'Thần đồng, rương và nhiệm vụ theo phạm vi xác nhận.', 'map'],
-    ['Cày Map Natlan (khu)', 'Chạy 100% một khu vực Natlan theo yêu cầu.', 'map']
-  ];
   const catalog = {
-    map: { title: 'THÁM HIỂM (MAP)', description: 'Chọn phạm vi thám hiểm để shop báo giá.', items: [
-      ['Khám phá bản đồ', 'Theo khu vực và mục tiêu bạn ghi chú.'],
-      ['Thu thập Thần Đồng', 'Ghi rõ khu vực hoặc loại vật phẩm cần làm.'],
-      ['Mở rương & điểm dịch chuyển', 'Nêu khu vực và mức độ hoàn thành mong muốn.'],
-      ['Hoàn thành bản đồ theo yêu cầu', 'Shop xác nhận phạm vi cụ thể trước khi báo giá.']
+    map: { title: 'THÁM HIỂM & BẢN ĐỒ (MAP)', description: 'Chọn khu vực Rush Map 100%, Điểm Dịch Chuyển hoặc Thần Đồng theo bảng giá niêm yết.', items: [
+      ['Rush Map Mondstadt — 120.000đ', 'Cày 100% độ khám phá khu vực Mondstadt.'],
+      ['Rush Map Long Tích Tuyết Sơn — 50.000đ', 'Cày 100% độ khám phá Long Tích Tuyết Sơn.'],
+      ['Rush Map Liyue — 150.000đ', 'Cày 100% độ khám phá khu vực Liyue.'],
+      ['Rush Map Trầm Ngọc Cốc — 90.000đ', 'Cày 100% độ khám phá khu vực Trầm Ngọc Cốc.'],
+      ['Rush Map Vực Đá Sâu — 120.000đ', 'Cày 100% độ khám phá Vực Đá Sâu.'],
+      ['Rush Map Inazuma — 300.000đ', 'Cày 100% độ khám phá quần đảo Inazuma.'],
+      ['Rush Map Sumeru Rừng Mưa — 400.000đ', 'Cày 100% khu vực Rừng Mưa Sumeru.'],
+      ['Rush Map Sumeru Sa Mạc — 450.000đ', 'Cày 100% toàn bộ khu vực Sa Mạc Sumeru.'],
+      ['Rush Map Fontaine — 450.000đ', 'Cày 100% toàn bộ khu vực Fontaine.'],
+      ['Rush Map Biển Kỷ Nguyên Cũ — 150.000đ', 'Cày 100% khu vực Biển Kỷ Nguyên Cũ.'],
+      ['Rush Map Enkanomiya — 150.000đ', 'Cày 100% khu vực Enkanomiya.'],
+      ['Rush Map Nod-Krai — 450.000đ', 'Cày 100% khu vực Nod-Krai.'],
+      ['Rush Map Núi Thánh Viễn Cổ — 150.000đ', 'Cày 100% khu vực Núi Thánh Viễn Cổ.'],
+      ['Rush Map Thần Điện Không Gian — 150.000đ', 'Cày 100% khu vực Thần Điện Không Gian.'],
+      ['Rush Map Sương Nguyệt — 250.000đ', 'Cày 100% khu vực Sương Nguyệt.'],
+      ['Điểm dịch chuyển Full Teyvat — 200.000đ', 'Mở toàn bộ điểm dịch chuyển toàn lục địa Teyvat.'],
+      ['Điểm dịch chuyển lẻ theo quốc gia (25k - 65k)', 'Mondstadt/Liyue/Núi Thánh/Biển Kỷ Nguyên 25k, Inazuma/Nod-Krai/Enkanomiya 30k, Sumeru/Fontaine 65k.'],
+      ['Thu thập Thần Đồng & Vật phẩm (30k - 140k)', 'Phong/Cá chép/Mã não/Lưu Minh Thạch 30k, Nham 50k, Lôi 70k, Thủy 90k, Hỏa/Băng 100k, Thảo 140k.']
     ]},
-    quest: { title: 'NHIỆM VỤ', description: 'Chọn loại nhiệm vụ cần xử lý.', items: [
-      ['Nhiệm vụ cốt truyện', 'Ghi rõ chương hoặc nhiệm vụ đang dừng.'],
-      ['Nhiệm vụ thế giới', 'Ghi tên nhiệm vụ hoặc khu vực nếu biết.'],
-      ['Mở khóa khu vực / nội dung', 'Mô tả điều kiện bạn muốn hoàn thành.'],
-      ['Nhiệm vụ theo yêu cầu', 'Mô tả ngắn mục tiêu riêng của bạn.']
+    quest: { title: 'NHIỆM VỤ (QUEST)', description: 'Chọn loại nhiệm vụ Genshin Impact cần xử lý theo bảng giá.', items: [
+      ['Nhiệm vụ Ma Thần (Trước Natlan) — 20.000đ', 'Hoàn thành chương nhiệm vụ Ma Thần các quốc gia trước Natlan.'],
+      ['Nhiệm vụ Ma Thần (Từ Natlan trở đi) — 25.000đ', 'Hoàn thành chương nhiệm vụ Ma Thần từ Natlan trở đi.'],
+      ['Nhiệm vụ Truyền Thuyết — 10.000đ - 15.000đ/màn', 'Ghi rõ tên nhân vật hoặc chương Truyền Thuyết cần làm.'],
+      ['Nhiệm vụ Đồng Hành — 5.000đ/màn', 'Mở kết thúc nhiệm vụ Đồng Hành theo nhân vật bạn chọn.'],
+      ['Nhiệm vụ Thế Giới — 5.000đ - 10.000đ/quest', 'Ghi tên nhiệm vụ thế giới hoặc khu vực cần mở khóa.'],
+      ['Chuỗi nhiệm vụ Aranyaka (Full) — 140.000đ', 'Hoàn thành trọn bộ chuỗi nhiệm vụ Aranyaka tại Sumeru.'],
+      ['Tìm đủ 76 Aranara — 35.000đ', 'Tìm toàn bộ 76 Aranara trên bản đồ Sumeru.']
     ]},
-    challenge: { title: 'LA HOÀN', description: 'Cho shop biết tầng và mục tiêu bạn cần.', items: [
-      ['Chinh phục La Hoàn', 'Ghi tầng, số sao hoặc mục tiêu mong muốn.'],
-      ['Hoàn thành tầng cụ thể', 'Nêu tầng đang cần hỗ trợ.'],
-      ['Mục tiêu La Hoàn khác', 'Mô tả đội hình hoặc yêu cầu riêng.']
+    challenge: { title: 'CONTENT GAME / LA HOÀN', description: 'La Hoàn Thâm Cảnh, Nhà Hát Giả Tưởng và Ảo Cảnh Chiến Tâm.', items: [
+      ['La Hoàn Tầng 12 — 30.000đ', 'Đánh full sao La Hoàn Thâm Cảnh tầng 12.'],
+      ['Nhà Hát Full 12 Tầng — 80.000đ', 'Hoàn thành toàn bộ 12 màn Nhà Hát Giả Tưởng.'],
+      ['Ảo Cảnh Diff 6 — 45.000đ', 'Vượt thử thách Ảo Cảnh độ khó 6.'],
+      ['Combo toàn bộ Content Game — 130.000đ', 'Trọn gói La Hoàn Tầng 12 + Nhà Hát 12 tầng + Ảo Cảnh Diff 6.']
     ]},
-    events: { title: 'SỰ KIỆN', description: 'Chọn nội dung sự kiện cần hỗ trợ.', items: [
-      ['Hoàn thành nhiệm vụ sự kiện', 'Ghi sự kiện và mốc cần hoàn thành.'],
-      ['Nhận phần thưởng sự kiện', 'Mô tả phần thưởng hoặc điều kiện liên quan.'],
-      ['Nội dung sự kiện khác', 'Mô tả ngắn yêu cầu của bạn.']
+    events: { title: 'SỰ KIỆN PHIÊN BẢN', description: 'Chọn nội dung sự kiện giới hạn cần hỗ trợ.', items: [
+      ['Hoàn thành sự kiện phiên bản', 'Ghi tên sự kiện và mốc phần thưởng cần lấy.'],
+      ['Nhận vũ khí / skin sự kiện', 'Cày full điểm sự kiện để nhận thưởng giới hạn.'],
+      ['Nội dung sự kiện khác', 'Mô tả ngắn yêu cầu sự kiện của bạn.']
     ]},
-    daily: { title: 'NHỰA / ỦY THÁC', description: 'Chọn việc chăm tài khoản cần shop báo giá.', items: [
-      ['Tiêu nhựa theo yêu cầu', 'Ghi hoạt động hoặc vật phẩm cần farm.'],
-      ['Nhiệm vụ ngày', 'Nêu nội dung bạn muốn hoàn thành.'],
-      ['Ủy thác & chăm tài khoản', 'Ghi thời gian hoặc mục tiêu cụ thể.']
+    daily: { title: 'CHĂM ACC / XẢ NHỰA', description: 'Gói chăm sóc tài khoản định kỳ hàng tháng.', items: [
+      ['Daily + Xả nhựa — 140.000đ/tháng', 'Làm ủy thác hàng ngày và xả nhựa theo yêu cầu suốt 30 ngày.'],
+      ['Chăm acc ngắn hạn / theo tuần', 'Ghi rõ số ngày và mục tiêu xả nhựa mong muốn.']
     ]},
-    resources: { title: 'DỊCH VỤ KHÁC', description: 'Mô tả nhân vật, tài nguyên hoặc yêu cầu riêng.', items: [
-      ['Farm nhân vật / tài nguyên', 'Ghi nhân vật hoặc nguyên liệu cần farm.'],
-      ['Nâng cấp / vật phẩm', 'Nêu mục tiêu cần đạt để shop đánh giá.'],
-      ['Yêu cầu riêng', 'Mô tả ngắn nội dung bạn muốn shop xem xét.']
+    resources: { title: 'NÂNG CẤP & BUILD CHAR', description: 'Nâng cấp nhân vật, vũ khí, thiên phú và tối ưu Thánh Di Vật.', items: [
+      ['Up Lv90 Nhân Vật — 25.000đ', 'Farm nguyên liệu đột phá và nâng nhân vật lên Lv90.'],
+      ['Up Vũ Khí — 15.000đ', 'Farm nguyên liệu đột phá và nâng vũ khí lên Lv90.'],
+      ['Nâng Thiên Phú — 40.000đ', 'Farm sách và nguyên liệu nâng cấp thiên phú nhân vật.'],
+      ['Build Char xài tạm — 50.000đ', 'Farm bộ Thánh Di Vật đúng set và dòng chính ổn định.'],
+      ['Build Char ổn / Chỉ số tốt nghiệp — 150.000đ', 'Tối ưu Thánh Di Vật và chỉ số chuẩn tốt nghiệp cho nhân vật.'],
+      ['Yêu cầu cày thuê riêng khác', 'Mô tả chi tiết mục tiêu để shop báo giá nhanh.']
     ]}
   };
-  const rollItems = [
-    ['Map gần như chưa khám phá', 'Ghi server và tiến độ hiện tại để shop xác nhận phạm vi.'],
-    ['Map đã khám phá một phần', 'Cho biết khu vực hoặc phần trăm tiến độ nếu bạn nắm được.'],
-    ['Map đã qua người chơi khác', 'Mô tả trạng thái map hiện tại để shop xem xét.'],
-    ['Map còn ít tài nguyên', 'Ghi rõ tài nguyên hoặc mục tiêu roll cần hỗ trợ.'],
-    ['Map cần kiểm tra trước', 'Shop cần xác nhận tình trạng tài khoản trước khi báo giá.']
-  ];
+
   const categories = [
-    { key: 'map', title: 'CÀY MAP 100%', icon: 'fa-map-location-dot', description: 'Chọn khu vực, Thần Đồng hoặc mục tiêu hoàn thành bản đồ.', items: packageCatalog.filter((item) => item[2] === 'map').map(([name, detail]) => ({ name, detail, preset: 'map' })) },
-    { key: 'roll', title: 'CÀY ROLL', icon: 'fa-dice', description: 'Các lựa chọn theo trạng thái map và tiến độ tài khoản; shop sẽ xác nhận phạm vi trước khi báo giá.', items: rollItems.map(([name, detail]) => ({ name, detail, preset: 'resources' })) },
-    { key: 'content', title: 'CONTENT GAME', icon: 'fa-gamepad', description: 'La Hoàn, sự kiện và các mục tiêu chơi theo nội dung game.', items: ['challenge', 'events', 'daily'].flatMap((key) => catalog[key].items.map(([name, detail]) => ({ name, detail, preset: key }))) },
-    { key: 'quest', title: 'LÀM QUEST', icon: 'fa-scroll', description: 'Chọn nhiệm vụ cụ thể hoặc một mục tiêu cần mở khóa.', items: [
-      ...packageCatalog.filter((item) => item[2] === 'quest').map(([name, detail]) => ({ name, detail, preset: 'quest' })),
-      ...catalog.quest.items.map(([name, detail]) => ({ name, detail, preset: 'quest' }))
-    ] },
-    { key: 'other', title: 'DỊCH VỤ KHÁC', icon: 'fa-wand-magic-sparkles', description: 'Chăm tài khoản, tài nguyên và yêu cầu cần shop xem xét riêng.', items: [...catalog.resources.items, ...catalog.daily.items].map(([name, detail], index) => ({ name, detail, preset: index < catalog.resources.items.length ? 'resources' : 'daily' })) },
-    { key: 'roll-fast', title: 'CÀY ROLL SIÊU TỐC', icon: 'fa-bolt', description: 'Nêu thời hạn mong muốn; shop xác nhận khả năng thực hiện trước khi nhận yêu cầu.', items: rollItems.map(([name]) => ({ name, detail: 'Ghi thời hạn mong muốn và trạng thái map; shop xác nhận lịch trước khi nhận.', preset: 'resources' })) },
-    { key: 'combo', title: 'GÓI COMBO', icon: 'fa-layer-group', description: 'Chọn nhiều mục tiêu muốn kết hợp. Shop sẽ xác nhận phạm vi và báo giá gộp.', items: [
-      { name: 'Kết hợp thám hiểm và nhiệm vụ', detail: 'Ghi khu vực map cùng các quest cần làm.', preset: 'map' },
-      { name: 'Kết hợp map và content game', detail: 'Ghi khu vực map cùng mục tiêu La Hoàn hoặc sự kiện.', preset: 'challenge' },
-      { name: 'Kết hợp nhiều mục tiêu khác', detail: 'Liệt kê các việc muốn ghép để shop xem xét.', preset: 'resources' }
-    ]}
+    {
+      key: 'map',
+      title: 'RUSH MAP 100%',
+      icon: 'fa-map-location-dot',
+      priceHint: 'Từ 50.000đ - 450.000đ',
+      description: 'Cày 100% độ khám phá các quốc gia và khu vực mở rộng tại Teyvat (Cam kết cày tay 100%).',
+      items: [
+        { name: 'Mondstadt', detail: 'Cày 100% độ khám phá khu vực Mondstadt.', price: '120.000đ', preset: 'map' },
+        { name: 'Long Tích Tuyết Sơn', detail: 'Cày 100% độ khám phá Long Tích Tuyết Sơn.', price: '50.000đ', preset: 'map' },
+        { name: 'Liyue', detail: 'Cày 100% độ khám phá khu vực Liyue.', price: '150.000đ', preset: 'map' },
+        { name: 'Trầm Ngọc Cốc', detail: 'Cày 100% độ khám phá khu vực Trầm Ngọc Cốc.', price: '90.000đ', preset: 'map' },
+        { name: 'Vực Đá Sâu', detail: 'Cày 100% độ khám phá Vực Đá Sâu (Trên mặt đất & Khu mỏ ngầm).', price: '120.000đ', preset: 'map' },
+        { name: 'Inazuma', detail: 'Cày 100% độ khám phá toàn bộ các đảo Inazuma.', price: '300.000đ', preset: 'map' },
+        { name: 'Sumeru Rừng Mưa', detail: 'Cày 100% độ khám phá khu vực Rừng Mưa Sumeru.', price: '400.000đ', preset: 'map' },
+        { name: 'Sumeru Sa Mạc', detail: 'Cày 100% độ khám phá toàn bộ vùng Sa Mạc Sumeru.', price: '450.000đ', preset: 'map' },
+        { name: 'Fontaine', detail: 'Cày 100% độ khám phá toàn bộ khu vực Fontaine.', price: '450.000đ', preset: 'map' },
+        { name: 'Biển Kỷ Nguyên Cũ', detail: 'Cày 100% độ khám phá khu vực Biển Kỷ Nguyên Cũ.', price: '150.000đ', preset: 'map' },
+        { name: 'Enkanomiya', detail: 'Cày 100% độ khám phá khu vực Enkanomiya.', price: '150.000đ', preset: 'map' },
+        { name: 'Nod-Krai', detail: 'Cày 100% độ khám phá khu vực Nod-Krai.', price: '450.000đ', preset: 'map' },
+        { name: 'Núi Thánh Viễn Cổ', detail: 'Cày 100% độ khám phá khu vực Núi Thánh Viễn Cổ.', price: '150.000đ', preset: 'map' },
+        { name: 'Thần Điện Không Gian', detail: 'Cày 100% độ khám phá khu vực Thần Điện Không Gian.', price: '150.000đ', preset: 'map' },
+        { name: 'Sương Nguyệt', detail: 'Cày 100% độ khám phá khu vực Sương Nguyệt.', price: '250.000đ', preset: 'map' }
+      ]
+    },
+    {
+      key: 'waypoints',
+      title: 'ĐIỂM DỊCH CHUYỂN',
+      icon: 'fa-location-crosshairs',
+      priceHint: 'Từ 25.000đ • Full Teyvat 200k',
+      description: 'Mở toàn bộ Thất Thiên Thần Tượng và Điểm Dịch Chuyển từng vùng hoặc trọn gói toàn Teyvat.',
+      items: [
+        { name: 'Điểm dịch chuyển Mondstadt', detail: 'Mở full điểm dịch chuyển & Thần Tượng khu vực Mondstadt.', price: '25.000đ', preset: 'map' },
+        { name: 'Điểm dịch chuyển Liyue', detail: 'Mở full điểm dịch chuyển & Thần Tượng khu vực Liyue.', price: '25.000đ', preset: 'map' },
+        { name: 'Điểm dịch chuyển Inazuma', detail: 'Mở full điểm dịch chuyển & Thần Tượng quần đảo Inazuma.', price: '30.000đ', preset: 'map' },
+        { name: 'Điểm dịch chuyển Sumeru', detail: 'Mở full điểm dịch chuyển rừng mưa & sa mạc Sumeru.', price: '65.000đ', preset: 'map' },
+        { name: 'Điểm dịch chuyển Fontaine', detail: 'Mở full điểm dịch chuyển trên cạn & dưới nước Fontaine.', price: '65.000đ', preset: 'map' },
+        { name: 'Điểm dịch chuyển Nod-Krai', detail: 'Mở full điểm dịch chuyển khu vực Nod-Krai.', price: '30.000đ', preset: 'map' },
+        { name: 'Điểm dịch chuyển Núi Thánh Viễn Cổ', detail: 'Mở full điểm dịch chuyển khu vực Núi Thánh Viễn Cổ.', price: '25.000đ', preset: 'map' },
+        { name: 'Điểm dịch chuyển Biển Kỷ Nguyên Cũ', detail: 'Mở full điểm dịch chuyển khu vực Biển Kỷ Nguyên Cũ.', price: '25.000đ', preset: 'map' },
+        { name: 'Điểm dịch chuyển Enkanomiya', detail: 'Mở full điểm dịch chuyển khu vực Enkanomiya.', price: '30.000đ', preset: 'map' },
+        { name: 'Điểm dịch chuyển Full Teyvat', detail: 'Combo mở toàn bộ điểm dịch chuyển toàn lục địa Teyvat (Tiết kiệm nhất).', price: '200.000đ', preset: 'map' }
+      ]
+    },
+    {
+      key: 'oculi',
+      title: 'THẦN ĐỒNG & VẬT PHẨM',
+      icon: 'fa-compass',
+      priceHint: 'Từ 30.000đ - 140.000đ',
+      description: 'Thu thập trọn bộ Thần Đồng các hệ, Cá Chép, Mã Não Đỏ Thẫm và Lưu Minh Thạch.',
+      items: [
+        { name: 'Phong Thần Đồng', detail: 'Thu thập full 66 Phong Thần Đồng khu vực Mondstadt.', price: '30.000đ', preset: 'map' },
+        { name: 'Nham Thần Đồng', detail: 'Thu thập full 131 Nham Thần Đồng khu vực Liyue.', price: '50.000đ', preset: 'map' },
+        { name: 'Lôi Thần Đồng', detail: 'Thu thập full 181 Lôi Thần Đồng khu vực Inazuma.', price: '70.000đ', preset: 'map' },
+        { name: 'Thảo Thần Đồng', detail: 'Thu thập full 271 Thảo Thần Đồng khu vực Sumeru.', price: '140.000đ', preset: 'map' },
+        { name: 'Thủy Thần Đồng', detail: 'Thu thập full 271 Thủy Thần Đồng khu vực Fontaine.', price: '90.000đ', preset: 'map' },
+        { name: 'Hỏa Thần Đồng', detail: 'Thu thập full Hỏa Thần Đồng khu vực Natlan.', price: '100.000đ', preset: 'map' },
+        { name: 'Băng Thần Đồng', detail: 'Thu thập full Băng Thần Đồng.', price: '100.000đ', preset: 'map' },
+        { name: 'Cá Chép Thương Linh', detail: 'Thu thập full 50 Cá Chép Thương Linh tại Trầm Ngọc Cốc.', price: '30.000đ', preset: 'map' },
+        { name: 'Mã Não Đỏ Thẫm', detail: 'Thu thập full Mã Não Đỏ Thẫm tại Long Tích Tuyết Sơn.', price: '30.000đ', preset: 'map' },
+        { name: 'Lưu Minh Thạch', detail: 'Thu thập full Lưu Minh Thạch tại Vực Đá Sâu.', price: '30.000đ', preset: 'map' }
+      ]
+    },
+    {
+      key: 'char',
+      title: 'CHAR & BUILD NHÂN VẬT',
+      icon: 'fa-user-shield',
+      priceHint: 'Từ 15.000đ - 150.000đ',
+      description: 'Nâng cấp Lv90 nhân vật, vũ khí, thiên phú và farm Thánh Di Vật chuẩn chỉ số tốt nghiệp.',
+      items: [
+        { name: 'Up Lv90 Nhân Vật', detail: 'Farm boss, đặc sản khu vực và nâng nhân vật lên Lv90.', price: '25.000đ', preset: 'resources' },
+        { name: 'Vũ Khí Lv90', detail: 'Farm nguyên liệu bí cảnh và nâng cấp vũ khí lên Lv90.', price: '15.000đ', preset: 'resources' },
+        { name: 'Thiên Phú Nhân Vật', detail: 'Farm sách thiên phú và nguyên liệu quái nâng cấp kỹ năng.', price: '40.000đ', preset: 'resources' },
+        { name: 'Build Char xài tạm', detail: 'Farm bộ Thánh Di Vật đúng set và đúng dòng chính để sử dụng ổn định.', price: '50.000đ', preset: 'resources' },
+        { name: 'Build Char ổn / Chỉ số tốt nghiệp', detail: 'Tối ưu bộ Thánh Di Vật và cân bằng chỉ số chuẩn tốt nghiệp cho nhân vật.', price: '150.000đ', preset: 'resources' }
+      ]
+    },
+    {
+      key: 'content',
+      title: 'CONTENT GAME',
+      icon: 'fa-gamepad',
+      priceHint: 'Từ 30.000đ • Combo 130k',
+      description: 'Chinh phục La Hoàn Thâm Cảnh tầng 12, Nhà Hát Giả Tưởng và Ảo Cảnh Diff 6.',
+      items: [
+        { name: 'La Hoàn Tầng 12', detail: 'Đánh full sao La Hoàn Thâm Cảnh tầng 12.', price: '30.000đ', preset: 'challenge' },
+        { name: 'Nhà Hát Full 12 Tầng', detail: 'Hoàn thành toàn bộ 12 màn Nhà Hát Giả Tưởng.', price: '80.000đ', preset: 'challenge' },
+        { name: 'Ảo Cảnh Diff 6', detail: 'Vượt thử thách Ảo Cảnh Chiến Tâm độ khó 6.', price: '45.000đ', preset: 'challenge' },
+        { name: 'Combo toàn bộ ở trên', detail: 'Trọn gói La Hoàn Tầng 12 + Nhà Hát Full 12 tầng + Ảo Cảnh Diff 6 (Tiết kiệm 25.000đ).', price: '130.000đ', preset: 'challenge' }
+      ]
+    },
+    {
+      key: 'daily',
+      title: 'CHĂM ACC',
+      icon: 'fa-calendar-check',
+      priceHint: '140.000đ / tháng',
+      description: 'Dịch vụ chăm sóc tài khoản hàng ngày, làm ủy thác và xả nhựa đều đặn.',
+      items: [
+        { name: 'Daily xả nhựa (30 ngày)', detail: 'Làm nhiệm vụ ủy thác hàng ngày, xả nhựa theo bí cảnh/boss yêu cầu và nhận thưởng Nhật Ký Hành Trình suốt 1 tháng.', price: '140.000đ/tháng', preset: 'daily' }
+      ]
+    },
+    {
+      key: 'quest',
+      title: 'NHIỆM VỤ (QUEST)',
+      icon: 'fa-scroll',
+      priceHint: 'Từ 5.000đ - 140.000đ',
+      description: 'Hoàn thành nhiệm vụ Ma Thần, Truyền Thuyết, Đồng Hành, Thế Giới và chuỗi Aranyaka.',
+      items: [
+        { name: 'Ma Thần (Trước Natlan)', detail: 'Hoàn thành màn nhiệm vụ Ma Thần tại các quốc gia trước Natlan.', price: '20.000đ', preset: 'quest' },
+        { name: 'Ma Thần (Từ Natlan trở đi)', detail: 'Hoàn thành màn nhiệm vụ Ma Thần từ khu vực Natlan trở đi.', price: '25.000đ', preset: 'quest' },
+        { name: 'Nhiệm vụ Truyền Thuyết', detail: 'Hoàn thành nhiệm vụ Truyền Thuyết nhân vật (tính theo màn).', price: '10.000đ - 15.000đ/màn', preset: 'quest' },
+        { name: 'Nhiệm vụ Đồng Hành', detail: 'Mở full kết thúc nhiệm vụ Đồng Hành nhân vật.', price: '5.000đ/màn', preset: 'quest' },
+        { name: 'Nhiệm vụ Thế Giới', detail: 'Hoàn thành các nhiệm vụ thế giới lẻ mở khóa map/cơ chế.', price: '5.000đ - 10.000đ/quest', preset: 'quest' },
+        { name: 'Aranyaka (Full)', detail: 'Hoàn thành trọn bộ chuỗi nhiệm vụ rừng mưa Aranyaka tại Sumeru.', price: '140.000đ', preset: 'quest' },
+        { name: 'Tìm 76 Aranara', detail: 'Tìm đủ toàn bộ 76 Aranara trên bản đồ Sumeru để mở toàn bộ rương.', price: '35.000đ', preset: 'quest' }
+      ]
+    }
   ];
 
   const dialog = document.getElementById('farmingCatalogDialog');
@@ -94,10 +192,18 @@
   const packageEmpty = document.getElementById('farmingPackageEmpty');
   if (!dialog || !title || !description || !options || !requestLink || !categoryGrid || !categoryDetail || !packageGrid) return;
 
+  // Check if visitor arrived with a non-Genshin game query param and display a friendly notice
+  const requestedGameParam = (new URLSearchParams(window.location.search).get('game') || 'genshin').toLowerCase();
+  if (requestedGameParam && requestedGameParam !== 'genshin') {
+    const noticeBox = document.querySelector('.farming-notice div p');
+    if (noticeBox) {
+      noticeBox.innerHTML = '<strong>Thông báo bảo trì:</strong> Dịch vụ cày thuê cho tựa game bạn vừa chọn hiện đang bảo trì cập nhật bảng giá. Hiện tại shop đang mở nhận đơn chính thức cho <strong>Genshin Impact</strong> bên dưới hoặc qua <a href="https://zalo.me/0763550673" target="_blank" rel="noopener noreferrer">Zalo CSKH 0763.550.673</a>.';
+    }
+  }
+
   let activeCategory = null;
   let activeGroup = '';
   let selectedGoal = '';
-  let filteredItems = [];
   const revealObserver = 'IntersectionObserver' in window
     ? new IntersectionObserver((entries, observer) => {
       entries.forEach((entry) => {
@@ -137,10 +243,10 @@
       heading.textContent = category.title;
       const note = document.createElement('span');
       note.className = 'farming-category-copy';
-      note.textContent = 'Khám phá các mục dịch vụ bên trong';
+      note.textContent = category.priceHint ? `${category.priceHint} • ${category.items.length} hạng mục` : 'Khám phá các mục dịch vụ bên trong';
       const action = document.createElement('span');
       action.className = 'farming-category-action';
-      action.textContent = 'XEM CÁC MỤC';
+      action.textContent = 'XEM BẢNG GIÁ';
       const arrow = document.createElement('span');
       arrow.setAttribute('aria-hidden', 'true');
       arrow.textContent = '›';
@@ -156,7 +262,7 @@
   function renderPackageListing() {
     if (!activeCategory) return;
     const query = (packageSearch?.value || '').trim().toLocaleLowerCase('vi');
-    const items = activeCategory.items.filter((item) => `${item.name} ${item.detail}`.toLocaleLowerCase('vi').includes(query));
+    const items = activeCategory.items.filter((item) => `${item.name} ${item.detail} ${item.price || ''}`.toLocaleLowerCase('vi').includes(query));
     packageGrid.replaceChildren();
     items.forEach((item) => {
       const card = document.createElement('article');
@@ -168,16 +274,16 @@
       const quote = document.createElement('div');
       quote.className = 'farming-package-price';
       const quoteLabel = document.createElement('small');
-      quoteLabel.textContent = 'GIÁ DỊCH VỤ';
+      quoteLabel.textContent = 'GIÁ NIÊM YẾT';
       const quoteValue = document.createElement('strong');
-      quoteValue.textContent = 'Báo giá';
+      quoteValue.textContent = item.price || 'Báo giá';
       quote.append(quoteLabel, quoteValue);
       const action = document.createElement('button');
       action.type = 'button';
       action.className = 'lp-button lp-button-primary farming-package-order';
       action.dataset.serviceOpen = item.preset;
-      action.dataset.serviceGoal = `${activeCategory.title}: ${item.name}`;
-      action.textContent = 'CHỌN MỤC NÀY';
+      action.dataset.serviceGoal = `${activeCategory.title}: ${item.name} (${item.price || 'Báo giá'})`;
+      action.textContent = 'ĐẶT MỤC NÀY';
       card.append(heading, note, quote, action);
       observeReveal(card, Math.min(packageGrid.children.length * 55, 330));
       packageGrid.append(card);
@@ -276,7 +382,7 @@
       arrow.textContent = '→';
       option.append(copy, arrow);
       option.addEventListener('click', () => {
-        if (customGoal) customGoal.value = '';
+        if (customGoal) customGoal.value = name;
         options.querySelectorAll('.farming-option').forEach((item) => item.setAttribute('aria-pressed', String(item === option)));
         setRequestGoal(name);
       });
