@@ -7195,3 +7195,261 @@ body.has-vip5-honor-banner .main-content {
     border: 1.5px solid rgba(245, 217, 150, 0.7) !important;
     box-shadow: 0 0 20px rgba(226, 192, 125, 0.22) !important;
 }
+
+
+/* === NAMCUMZ LIVE ORDERS MARQUEE & AI QUICK CHIPS === */
+.nc-live-orders-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px;
+    margin-top: 4px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(13, 16, 28, 0.94) 0%, rgba(20, 24, 42, 0.92) 100%);
+    border: 1px solid rgba(232, 196, 118, 0.32);
+    box-shadow:
+        0 14px 34px rgba(0, 0, 0, 0.48),
+        0 0 24px rgba(232, 196, 118, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    overflow: hidden;
+}
+
+.nc-live-orders-bar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+        90deg,
+        rgba(232, 196, 118, 0.55),
+        rgba(56, 189, 248, 0.45),
+        rgba(168, 85, 247, 0.45),
+        rgba(244, 63, 94, 0.45),
+        rgba(232, 196, 118, 0.55)
+    );
+    background-size: 300% 100%;
+    animation: ncRainbowTextFlow 8s linear infinite;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+.nc-lo-badge {
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(42, 27, 62, 0.95) 0%, rgba(25, 18, 44, 0.95) 100%);
+    border: 1px solid rgba(232, 196, 118, 0.55);
+    box-shadow: 0 0 18px rgba(232, 196, 118, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.nc-lo-badge i {
+    color: #38bdf8;
+    filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.7));
+}
+
+.nc-lo-badge > span:last-child {
+    background: linear-gradient(
+        90deg,
+        #ffe299 0%,
+        #5eead4 25%,
+        #38bdf8 50%,
+        #f472b6 75%,
+        #ffe299 100%
+    );
+    background-size: 250% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: ncRainbowTextFlow 5s linear infinite;
+}
+
+.nc-lo-live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #f43f5e;
+    box-shadow: 0 0 10px #f43f5e, 0 0 18px rgba(244, 63, 94, 0.8);
+    animation: ncLiveDotBlink 1.4s ease-in-out infinite;
+}
+
+@keyframes ncLiveDotBlink {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.28); opacity: 0.55; }
+}
+
+.nc-lo-viewport {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    mask-image: linear-gradient(to right, transparent 0%, #000 3%, #000 97%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 3%, #000 97%, transparent 100%);
+}
+
+.nc-lo-track {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: max-content;
+    animation: ncLiveMarqueeScroll 46s linear infinite;
+    will-change: transform;
+}
+
+@keyframes ncLiveMarqueeScroll {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-50%, 0, 0); }
+}
+
+.nc-lo-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 6px 12px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    white-space: nowrap;
+    transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease;
+}
+
+.nc-lo-card:hover {
+    background: rgba(232, 196, 118, 0.09);
+    border-color: rgba(232, 196, 118, 0.45);
+    transform: translateY(-1px);
+}
+
+.nc-lo-user {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 9px;
+    border-radius: 8px;
+    background: rgba(16, 24, 40, 0.85);
+    border: 1px solid rgba(56, 189, 248, 0.28);
+    color: #f8fafc;
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+.nc-lo-user i {
+    color: #38bdf8;
+    font-size: 0.74rem;
+}
+
+.nc-lo-verb {
+    color: #94a3b8;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.nc-lo-service {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #f8fafc;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.nc-lo-service i {
+    color: #38bdf8;
+    filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.45));
+}
+
+.nc-lo-service strong {
+    color: #fde68a;
+    font-weight: 800;
+}
+
+.nc-lo-price {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(244, 63, 94, 0.18), rgba(232, 196, 118, 0.2));
+    border: 1px solid rgba(244, 114, 182, 0.55);
+    box-shadow: 0 0 12px rgba(244, 63, 94, 0.2);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+}
+
+.nc-lo-price i {
+    color: #fbbf24;
+}
+
+.nc-lo-time {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #94a3b8;
+    font-size: 0.73rem;
+    font-weight: 600;
+}
+
+.nc-lo-star {
+    color: #38bdf8;
+    font-size: 0.78rem;
+    opacity: 0.75;
+    margin: 0 2px;
+}
+
+/* Quick Prompt Chips inside Trợ lý AI Namcumz */
+.nc-ai-quick-prompts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0 14px 10px;
+}
+
+.nc-ai-chip {
+    appearance: none;
+    border: 1px solid rgba(232, 196, 118, 0.35);
+    background: rgba(232, 196, 118, 0.1);
+    color: #fde68a;
+    border-radius: 999px;
+    padding: 5px 10px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.nc-ai-chip:hover {
+    background: rgba(232, 196, 118, 0.24);
+    border-color: rgba(232, 196, 118, 0.75);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+    .nc-live-orders-bar {
+        padding: 8px 10px;
+        gap: 10px;
+    }
+    .nc-lo-badge {
+        padding: 7px 11px;
+        font-size: 0.7rem;
+    }
+}

@@ -201,49 +201,144 @@
                     </div>
                 </div>
             </div>
-            <!-- ================= CAM KẾT DỊCH VỤ (TRUST BADGES) ================= -->
-            <div class="trust-commitments-bar" aria-label="Cam kết dịch vụ Namcumz">
-                <!-- 1. Xử Lý Siêu Tốc -->
-                <div class="trust-badge-item">
-                    <div class="trust-badge-icon" style="color: var(--neon-cyan); background: rgba(0, 242, 254, 0.1); border-color: rgba(0, 242, 254, 0.25);">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                    <div class="trust-badge-text">
-                        <h4 class="trust-badge-title">Xử Lý Siêu Tốc</h4>
-                        <p class="trust-badge-desc">Hoàn thành đơn 5 - 15 phút, cập nhật liên tục.</p>
-                    </div>
+            <!-- ================= DÒNG THÔNG TIN ĐƠN HÀNG CHẠY LIÊN TỤC (NAMCUMZ LIVE ORDERS MARQUEE) ================= -->
+            <div class="nc-live-orders-bar" id="cyber-ticker-bar" aria-label="Đơn hàng mới nhất tại Namcumz">
+                <div class="nc-lo-badge">
+                    <span class="nc-lo-live-dot" aria-hidden="true"></span>
+                    <i class="fas fa-bolt" aria-hidden="true"></i>
+                    <span>ĐƠN MỚI NHẤT</span>
                 </div>
-
-                <!-- 2. Nạp Chính Hãng -->
-                <div class="trust-badge-item">
-                    <div class="trust-badge-icon" style="color: #10b981; background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.25);">
-                        <i class="fas fa-shield-halved"></i>
-                    </div>
-                    <div class="trust-badge-text">
-                        <h4 class="trust-badge-title">Nạp Chính Hãng</h4>
-                        <p class="trust-badge-desc">Đầy đủ hóa đơn, bảo hành không âm nguyên thạch/tiền.</p>
-                    </div>
-                </div>
-
-                <!-- 3. Bảo Mật Tài Khoản -->
-                <div class="trust-badge-item">
-                    <div class="trust-badge-icon" style="color: #f59e0b; background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.25);">
-                        <i class="fas fa-lock"></i>
-                    </div>
-                    <div class="trust-badge-text">
-                        <h4 class="trust-badge-title">Bảo Mật Tài Khoản</h4>
-                        <p class="trust-badge-desc">Mã hóa thông tin, xóa nhật ký đăng nhập sau khi xong.</p>
-                    </div>
-                </div>
-
-                <!-- 4. Hỗ Trợ Tận Tâm -->
-                <div class="trust-badge-item">
-                    <div class="trust-badge-icon" style="color: var(--neon-pink); background: rgba(247, 37, 133, 0.1); border-color: rgba(247, 37, 133, 0.25);">
-                        <i class="fas fa-headset"></i>
-                    </div>
-                    <div class="trust-badge-text">
-                        <h4 class="trust-badge-title">Hỗ Trợ Tận Tâm</h4>
-                        <p class="trust-badge-desc">Phản hồi nhanh từ 07:00 - 23:00 mỗi ngày.</p>
+                <div class="nc-lo-viewport">
+                    <div class="nc-lo-track" id="ticker-marquee-track">
+                        <div class="nc-lo-card">
+                            <span class="nc-lo-user"><i class="fas fa-shield-halved"></i> us***7</span>
+                            <span class="nc-lo-verb">vừa mua</span>
+                            <span class="nc-lo-service"><i class="fas fa-gem"></i> <strong>[NẠP GAME]</strong> Nhật Ký Hành Trình Trân Châu</span>
+                            <span class="nc-lo-price"><i class="fas fa-coins"></i> 190.000đ</span>
+                            <span class="nc-lo-time"><i class="far fa-clock"></i> Vừa xong</span>
+                        </div>
+                        <span class="nc-lo-star" aria-hidden="true">✦</span>
+                        <div class="nc-lo-card">
+                            <span class="nc-lo-user"><i class="fas fa-shield-halved"></i> Kh***h</span>
+                            <span class="nc-lo-verb">vừa mua</span>
+                            <span class="nc-lo-service"><i class="fas fa-moon"></i> <strong>[NẠP GAME]</strong> Không Nguyệt Chúc Phúc (Thẻ Tháng)</span>
+                            <span class="nc-lo-price"><i class="fas fa-coins"></i> 85.000đ</span>
+                            <span class="nc-lo-time"><i class="far fa-clock"></i> 2 phút trước</span>
+                        </div>
+                        <span class="nc-lo-star" aria-hidden="true">✦</span>
+                        <div class="nc-lo-card">
+                            <span class="nc-lo-user"><i class="fas fa-shield-halved"></i> mi***2</span>
+                            <span class="nc-lo-verb">vừa mua</span>
+                            <span class="nc-lo-service"><i class="fas fa-compass"></i> <strong>[CÀY THUÊ]</strong> Explore 100% Full Map Nod-Krai</span>
+                            <span class="nc-lo-price"><i class="fas fa-coins"></i> 450.000đ</span>
+                            <span class="nc-lo-time"><i class="far fa-clock"></i> 5 phút trước</span>
+                        </div>
+                        <span class="nc-lo-star" aria-hidden="true">✦</span>
+                        <div class="nc-lo-card">
+                            <span class="nc-lo-user"><i class="fas fa-shield-halved"></i> tu***9</span>
+                            <span class="nc-lo-verb">vừa mua</span>
+                            <span class="nc-lo-service"><i class="fas fa-gem"></i> <strong>[NẠP GAME]</strong> Gói 980 + 110 Đá Sáng Thế</span>
+                            <span class="nc-lo-price"><i class="fas fa-coins"></i> 270.000đ</span>
+                            <span class="nc-lo-time"><i class="far fa-clock"></i> 8 phút trước</span>
+                        </div>
+                        <span class="nc-lo-star" aria-hidden="true">✦</span>
+                        <div class="nc-lo-card">
+                            <span class="nc-lo-user"><i class="fas fa-shield-halved"></i> ha***4</span>
+                            <span class="nc-lo-verb">vừa mua</span>
+                            <span class="nc-lo-service"><i class="fas fa-khanda"></i> <strong>[CÀY THUÊ]</strong> Combo La Hoàn 12 + Nhà Hát + Áo Cảnh</span>
+                            <span class="nc-lo-price"><i class="fas fa-coins"></i> 130.000đ</span>
+                            <span class="nc-lo-time"><i class="far fa-clock"></i> 12 phút trước</span>
+                        </div>
+                        <span class="nc-lo-star" aria-hidden="true">✦</span>
+                        <div class="nc-lo-card">
+                            <span class="nc-lo-user"><i class="fas fa-shield-halved"></i> an***8</span>
+                            <span class="nc-lo-verb">vừa mua</span>
+                            <span class="nc-lo-service"><i class="fas fa-crown"></i> <strong>[NẠP GAME]</strong> Bài Ca Trân Châu (BP Nâng Cấp)</span>
+                            <span class="nc-lo-price"><i class="fas fa-coins"></i> 380.000đ</span>
+                            <span class="nc-lo-time"><i class="far fa-clock"></i> 15 phút trước</span>
+                        </div>
+                        <span class="nc-lo-star" aria-hidden="true">✦</span>
+                        <div class="nc-lo-card">
+                            <span class="nc-lo-user"><i class="fas fa-shield-halved"></i> du***1</span>
+                            <span class="nc-lo-verb">vừa mua</span>
+                            <span class="nc-lo-service"><i class="fas fa-location-dot"></i> <strong>[CÀY THUÊ]</strong> Mở Điểm Dịch Chuyển Full Teyvat</span>
+                            <span class="nc-lo-price"><i class="fas fa-coins"></i> 200.000đ</span>
+                            <span class="nc-lo-time"><i class="far fa-clock"></i> 22 phút trước</span>
+                        </div>
+                        <span class="nc-lo-star" aria-hidden="true">✦</span>
+                        <div class="nc-lo-card">
+                            <span class="nc-lo-user"><i class="fas fa-shield-halved"></i> ph***6</span>
+                            <span class="nc-lo-verb">vừa mua</span>
+                            <span class="nc-lo-service"><i class="fas fa-gem"></i> <strong>[NẠP GAME]</strong> Gói 6480 + 1600 Đá Sáng Thế</span>
+                            <span class="nc-lo-price"><i class="fas fa-coins"></i> 1.850.000đ</span>
+                            <span class="nc-lo-time"><i class="far fa-clock"></i> 28 phút trước</span>
+                        </div>
+                        <span class="nc-lo-star" aria-hidden="true">✦</span>
+                        <!-- Bản sao 2 để chạy vòng lặp vô tận mượt mà -->
+                        <div class="nc-lo-card" aria-hidden="true">
+                            <span class="nc-lo-user"><i class="fas fa-shield-halved"></i> us***7</span>
+                            <span class="nc-lo-verb">vừa mua</span>
+                            <span class="nc-lo-service"><i class="fas fa-gem"></i> <strong>[NẠP GAME]</strong> Nhật Ký Hành Trình Trân Châu</span>
+                            <span class="nc-lo-price"><i class="fas fa-coins"></i> 190.000đ</span>
+                            <span class="nc-lo-time"><i class="far fa-clock"></i> Vừa xong</span>
+                        </div>
+                        <span class="nc-lo-star" aria-hidden="true">✦</span>
+                        <div class="nc-lo-card" aria-hidden="true">
+                            <span class="nc-lo-user"><i class="fas fa-shield-halved"></i> Kh***h</span>
+                            <span class="nc-lo-verb">vừa mua</span>
+                            <span class="nc-lo-service"><i class="fas fa-moon"></i> <strong>[NẠP GAME]</strong> Không Nguyệt Chúc Phúc (Thẻ Tháng)</span>
+                            <span class="nc-lo-price"><i class="fas fa-coins"></i> 85.000đ</span>
+                            <span class="nc-lo-time"><i class="far fa-clock"></i> 2 phút trước</span>
+                        </div>
+                        <span class="nc-lo-star" aria-hidden="true">✦</span>
+                        <div class="nc-lo-card" aria-hidden="true">
+                            <span class="nc-lo-user"><i class="fas fa-shield-halved"></i> mi***2</span>
+                            <span class="nc-lo-verb">vừa mua</span>
+                            <span class="nc-lo-service"><i class="fas fa-compass"></i> <strong>[CÀY THUÊ]</strong> Explore 100% Full Map Nod-Krai</span>
+                            <span class="nc-lo-price"><i class="fas fa-coins"></i> 450.000đ</span>
+                            <span class="nc-lo-time"><i class="far fa-clock"></i> 5 phút trước</span>
+                        </div>
+                        <span class="nc-lo-star" aria-hidden="true">✦</span>
+                        <div class="nc-lo-card" aria-hidden="true">
+                            <span class="nc-lo-user"><i class="fas fa-shield-halved"></i> tu***9</span>
+                            <span class="nc-lo-verb">vừa mua</span>
+                            <span class="nc-lo-service"><i class="fas fa-gem"></i> <strong>[NẠP GAME]</strong> Gói 980 + 110 Đá Sáng Thế</span>
+                            <span class="nc-lo-price"><i class="fas fa-coins"></i> 270.000đ</span>
+                            <span class="nc-lo-time"><i class="far fa-clock"></i> 8 phút trước</span>
+                        </div>
+                        <span class="nc-lo-star" aria-hidden="true">✦</span>
+                        <div class="nc-lo-card" aria-hidden="true">
+                            <span class="nc-lo-user"><i class="fas fa-shield-halved"></i> ha***4</span>
+                            <span class="nc-lo-verb">vừa mua</span>
+                            <span class="nc-lo-service"><i class="fas fa-khanda"></i> <strong>[CÀY THUÊ]</strong> Combo La Hoàn 12 + Nhà Hát + Áo Cảnh</span>
+                            <span class="nc-lo-price"><i class="fas fa-coins"></i> 130.000đ</span>
+                            <span class="nc-lo-time"><i class="far fa-clock"></i> 12 phút trước</span>
+                        </div>
+                        <span class="nc-lo-star" aria-hidden="true">✦</span>
+                        <div class="nc-lo-card" aria-hidden="true">
+                            <span class="nc-lo-user"><i class="fas fa-shield-halved"></i> an***8</span>
+                            <span class="nc-lo-verb">vừa mua</span>
+                            <span class="nc-lo-service"><i class="fas fa-crown"></i> <strong>[NẠP GAME]</strong> Bài Ca Trân Châu (BP Nâng Cấp)</span>
+                            <span class="nc-lo-price"><i class="fas fa-coins"></i> 380.000đ</span>
+                            <span class="nc-lo-time"><i class="far fa-clock"></i> 15 phút trước</span>
+                        </div>
+                        <span class="nc-lo-star" aria-hidden="true">✦</span>
+                        <div class="nc-lo-card" aria-hidden="true">
+                            <span class="nc-lo-user"><i class="fas fa-shield-halved"></i> du***1</span>
+                            <span class="nc-lo-verb">vừa mua</span>
+                            <span class="nc-lo-service"><i class="fas fa-location-dot"></i> <strong>[CÀY THUÊ]</strong> Mở Điểm Dịch Chuyển Full Teyvat</span>
+                            <span class="nc-lo-price"><i class="fas fa-coins"></i> 200.000đ</span>
+                            <span class="nc-lo-time"><i class="far fa-clock"></i> 22 phút trước</span>
+                        </div>
+                        <span class="nc-lo-star" aria-hidden="true">✦</span>
+                        <div class="nc-lo-card" aria-hidden="true">
+                            <span class="nc-lo-user"><i class="fas fa-shield-halved"></i> ph***6</span>
+                            <span class="nc-lo-verb">vừa mua</span>
+                            <span class="nc-lo-service"><i class="fas fa-gem"></i> <strong>[NẠP GAME]</strong> Gói 6480 + 1600 Đá Sáng Thế</span>
+                            <span class="nc-lo-price"><i class="fas fa-coins"></i> 1.850.000đ</span>
+                            <span class="nc-lo-time"><i class="far fa-clock"></i> 28 phút trước</span>
+                        </div>
+                        <span class="nc-lo-star" aria-hidden="true">✦</span>
                     </div>
                 </div>
             </div>

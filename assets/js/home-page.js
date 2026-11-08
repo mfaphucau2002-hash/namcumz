@@ -205,11 +205,15 @@
         const track = document.getElementById('ticker-marquee-track');
         if (!track) return;
 
-        const link = document.createElement('a');
-        link.href = '/profile.html';
-        link.className = 'ticker-order-item';
-        link.textContent = 'Đăng nhập để xem đơn hàng và lịch sử thanh toán của bạn.';
-        track.replaceChildren(link);
+        const bar = document.getElementById('cyber-ticker-bar');
+        if (bar) {
+            bar.addEventListener('mouseenter', () => {
+                track.style.animationPlayState = 'paused';
+            });
+            bar.addEventListener('mouseleave', () => {
+                track.style.animationPlayState = 'running';
+            });
+        }
     }
 
 /* ================= 5. FLASH SALE COUNTDOWN WIDGET ================= */
