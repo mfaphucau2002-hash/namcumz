@@ -49,8 +49,8 @@
             return [
                 '💎 Bảng giá Nạp Genshin Impact (Login) chính hãng tại Namcumz:',
                 '• Không Nguyệt Chúc Phúc: 85.000đ | BP Trân Châu: 190.000đ | Bài Ca Trân Châu: 380.000đ',
-                '• 60 Đá: 20.000đ | 300+30 Đá: 95.000đ | 980+110 Đá: 270.000đ',
-                '• 1980+260 Đá: 580.000đ | 3280+600 Đá: 920.000đ | 6480+1600 Đá: 1.850.000đ',
+                '• 60 Đá: 20.000đ | 300+30 Đá: 90.000đ | 980+110 Đá: 270.000đ',
+                '• 1980+260 Đá: 570.000đ | 3280+600 Đá: 950.000đ | 6480+1600 Đá: 1.850.000đ | Full Pack: 3.800.000đ',
                 '✅ Nạp chính hãng 100% có hóa đơn, bảo hành không âm nguyên thạch.'
             ].join('\n');
         }
@@ -58,11 +58,11 @@
         if (/cày thuê|cay thue|full map|thần đồng|than dong|la hoàn|la hoan|nhà hát|nha hat|chăm acc|cham acc|nod-krai|nod krai|natlan|fontaine|sumeru/.test(q)) {
             return [
                 '⚔️ Bảng giá Cày Thuê Genshin Impact (Cày tay 100% - Bảo mật tuyệt đối):',
-                '• Mở Điểm Dịch Chuyển: 40.000đ - 50.000đ/vùng | Full Teyvat: 200.000đ.',
-                '• Nhặt Full Thần Đồng: Phong 40k, Nham 60k, Lôi 80k, Thảo/Thủy/Hỏa 100k, Nguyệt 90k.',
-                '• Explore Map 100%: Mondstadt từ 120k, Liyue từ 250k, Inazuma từ 300k, Fontaine/Natlan từ 350k, Full Nod-Krai 450k.',
-                '• La Hoàn Tầng 12 / Nhà Hát / Áo Cảnh: 50.000đ/chế độ (Combo cả 3 chỉ 130.000đ).',
-                '• Chăm Acc: Ngày 5k | Tuần 30k | Tháng 110k | Tháng VIP Full Event 200k.'
+                '• Mở Điểm Dịch Chuyển: 25.000đ - 65.000đ/vùng | Full Teyvat: 200.000đ.',
+                '• Nhặt Full Thần Đồng: Phong 30k, Nham 50k, Lôi 70k, Thủy 90k, Hỏa/Băng 100k, Thảo 140k.',
+                '• Explore Map 100%: Long Tích 50k, Trầm Ngọc Cốc 90k, Mondstadt từ 120k, Liyue từ 150k, Inazuma 300k, Sumeru từ 400k, Fontaine/Nod-Krai 450k.',
+                '• La Hoàn Tầng 12 (30k) | Ảo Cảnh Diff 6 (45k) | Nhà Hát Full (80k) | Combo cả 3 chỉ 130.000đ.',
+                '• Chăm Acc: Ngày 5k | Daily + Xả nhựa: 140.000đ/tháng.'
             ].join('\n');
         }
 
@@ -209,14 +209,4 @@
     document.addEventListener('keydown', event => {
         if (event.key === 'Escape' && !chat.hidden) closeChat();
     });
-
-    if (new URLSearchParams(window.location.search).get('demoAi') === '1') {
-        document.getElementById('lpIntroSkip')?.click();
-        document.getElementById('lp-intro-screen')?.remove();
-        document.documentElement.classList.remove('lp-intro-active');
-        document.documentElement.classList.add('lp-intro-done');
-        openChat();
-        input.value = 'cách nạp tiền vào tk';
-        form.requestSubmit();
-    }
 })();

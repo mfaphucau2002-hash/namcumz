@@ -378,7 +378,38 @@
 
     if (roleBadgeEl) {
       const roleText = user.role === 'admin' || user.role === 'super_admin' ? 'QUẢN TRỊ VIÊN' : (user.role === 'booster' ? 'BOOSTER' : 'KHÁCH HÀNG');
-      roleBadgeEl.textContent = roleText; if (user.role === 'admin' || user.role === 'super_admin' || user.role === 'booster') { const topbarRight = document.querySelector('.hub-topbar-right'); if (topbarRight && !document.getElementById('hubAdminQuickBtn')) { const adminLink = document.createElement('a'); adminLink.id = 'hubAdminQuickBtn'; adminLink.href = user.role === 'booster' ? '/booster.html' : '/admin.html'; adminLink.className = 'hub-btn-deposit-top'; adminLink.style.background = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'; adminLink.style.color = '#1a0f00'; adminLink.style.textDecoration = 'none'; adminLink.innerHTML = `<i class="fa-solid fa-shield-halved" aria-hidden="true"></i><span>${user.role === 'booster' ? 'Trạm Booster' : 'Quản Trị Shop'}</span>`; topbarRight.insertBefore(adminLink, topbarRight.firstChild); } if ((user.role === 'admin' || user.role === 'super_admin') && window.supabaseClient && !window.__ncBpSynced) { window.__ncBpSynced = true; (async () => { try { const { data: pkgs } = await window.supabaseClient.from('packages').select('id,game,name,price,active').eq('game', 'Genshin Impact'); const names = new Set((pkgs || []).map(p => p.name)); if (!names.has('Nhật Ký Hành Trình Trân Châu')) await window.supabaseClient.rpc('save_package', { p_id: null, p_game: 'Genshin Impact', p_name: 'Nhật Ký Hành Trình Trân Châu', p_price: 190000, p_active: true }); if (!names.has('Bài Ca Trân Châu')) await window.supabaseClient.rpc('save_package', { p_id: null, p_game: 'Genshin Impact', p_name: 'Bài Ca Trân Châu', p_price: 380000, p_active: true }); } catch (_) {} })(); } }
+      roleBadgeEl.textContent = roleText;
+
+      if (user.role === 'admin' || user.role === 'super_admin' || user.role === 'booster') {
+        const topbarRight = document.querySelector('.hub-topbar-right');
+        if (topbarRight && !document.getElementById('hubAdminQuickBtn')) {
+          const adminLink = document.createElement('a');
+          adminLink.id = 'hubAdminQuickBtn';
+          adminLink.href = user.role === 'booster' ? '/booster.html' : '/admin.html';
+          adminLink.className = 'hub-btn-deposit-top';
+          adminLink.style.background = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
+          adminLink.style.color = '#1a0f00';
+          adminLink.style.textDecoration = 'none';
+          adminLink.innerHTML = `<i class="fa-solid fa-shield-halved" aria-hidden="true"></i><span>${user.role === 'booster' ? 'Trạm Booster' : 'Quản Trị Shop'}</span>`;
+          topbarRight.insertBefore(adminLink, topbarRight.firstChild);
+        }
+
+        if ((user.role === 'admin' || user.role === 'super_admin') && window.supabaseClient && !window.__ncBpSynced) {
+          window.__ncBpSynced = true;
+          (async () => {
+            try {
+              const { data: pkgs } = await window.supabaseClient.from('packages').select('id,game,name,price,active').eq('game', 'Genshin Impact');
+              const names = new Set((pkgs || []).map(p => p.name));
+              if (!names.has('Nhật Ký Hành Trình Trân Châu')) {
+                await window.supabaseClient.rpc('save_package', { p_id: null, p_game: 'Genshin Impact', p_name: 'Nhật Ký Hành Trình Trân Châu', p_price: 190000, p_active: true });
+              }
+              if (!names.has('Bài Ca Trân Châu')) {
+                await window.supabaseClient.rpc('save_package', { p_id: null, p_game: 'Genshin Impact', p_name: 'Bài Ca Trân Châu', p_price: 380000, p_active: true });
+              }
+            } catch (_) {}
+          })();
+        }
+      }
     }
 
     if (vipBadgeEl) {
@@ -593,7 +624,6 @@
 
       if (error) throw error;
       state.orders = (data || []).filter(o => o.kind !== 'deposit');
-      state.orders = (data || []).filter(o => o.kind !== 'deposit');
       const hasBoost = state.orders.some(o => (o.kind === 'boost' || !o.kind) && o.kind !== 'topup' && o.kind !== 'game_card' && !String(o.content || '').includes('[Nạp Game]'));
       const hasTopup = state.orders.some(o => o.kind === 'topup' || String(o.content || '').includes('[Nạp Game]'));
       if (state.currentOrderSubtab === 'boost' && !hasBoost && hasTopup) {
@@ -768,7 +798,36 @@
 
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 10px;">
           <span style="font-weight: 700; color: var(--text-secondary);">TỔNG THANH TOÁN</span>
-          <span style="font-size: 1.25rem; font-weight: 900; color: #00f0ff;">${order.price ? formatVND(due) : 'Chờ báo giá'}</span></div>${order.status === 'hoan_thanh' ? `<div style="background: rgba(16, 185, 129, 0.07); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 10px; padding: 14px;"><div style="font-size: 0.75rem; font-weight: 800; color: #10b981; text-transform: uppercase; margin-bottom: 8px;"><i class="fa-solid fa-star"></i> ĐÁNH GIÁ DỊCH VỤ</div>${order.rating ? `<div style="color: #fbbf24; font-weight: 800; margin-bottom: 4px;">${'★'.repeat(Number(order.rating))}${'☆'.repeat(Math.max(0, 5 - Number(order.rating)))} (${Number(order.rating)}/5)</div><div style="font-size: 0.875rem; color: #cbd5e1;">${esc(order.review_comment || 'Khách hàng đã gửi đánh giá.')}</div>` : `<div style="display: flex; flex-direction: column; gap: 8px;"><select id="hubRateStars" class="hub-form-select" style="padding: 8px 12px;"><option value="5">★★★★★ — 5 Sao (Rất hài lòng)</option><option value="4">★★★★☆ — 4 Sao (Hài lòng)</option><option value="3">★★★☆☆ — 3 Sao (Bình thường)</option><option value="2">★★☆☆☆ — 2 Sao (Cần cải thiện)</option><option value="1">★☆☆☆☆ — 1 Sao (Không hài lòng)</option></select><input type="text" id="hubRateComment" class="hub-form-input" placeholder="Nhập nhận xét của bạn về đơn hàng..." maxlength="500"><button type="button" id="hubBtnSubmitRate" class="hub-btn-submit" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #1a0f00;"><i class="fa-solid fa-paper-plane"></i> Gửi Đánh Giá Đơn Hàng</button></div>`}</div><div>` : '<div>'}
+          <span style="font-size: 1.25rem; font-weight: 900; color: #00f0ff;">${order.price ? formatVND(due) : 'Chờ báo giá'}</span>
+        </div>
+
+        ${order.status === 'hoan_thanh' ? `
+          <div style="background: rgba(16, 185, 129, 0.07); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 10px; padding: 14px;">
+            <div style="font-size: 0.75rem; font-weight: 800; color: #10b981; text-transform: uppercase; margin-bottom: 8px;">
+              <i class="fa-solid fa-star"></i> ĐÁNH GIÁ DỊCH VỤ
+            </div>
+            ${order.rating ? `
+              <div style="color: #fbbf24; font-weight: 800; margin-bottom: 4px;">
+                ${'★'.repeat(Number(order.rating))}${'☆'.repeat(Math.max(0, 5 - Number(order.rating)))} (${Number(order.rating)}/5)
+              </div>
+              <div style="font-size: 0.875rem; color: #cbd5e1;">${esc(order.review_comment || 'Khách hàng đã gửi đánh giá.')}</div>
+            ` : `
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <select id="hubRateStars" class="hub-form-select" style="padding: 8px 12px;">
+                  <option value="5">★★★★★ — 5 Sao (Rất hài lòng)</option>
+                  <option value="4">★★★★☆ — 4 Sao (Hài lòng)</option>
+                  <option value="3">★★★☆☆ — 3 Sao (Bình thường)</option>
+                  <option value="2">★★☆☆☆ — 2 Sao (Cần cải thiện)</option>
+                  <option value="1">★☆☆☆☆ — 1 Sao (Không hài lòng)</option>
+                </select>
+                <input type="text" id="hubRateComment" class="hub-form-input" placeholder="Nhập nhận xét của bạn về đơn hàng..." maxlength="500">
+                <button type="button" id="hubBtnSubmitRate" class="hub-btn-submit" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #1a0f00;">
+                  <i class="fa-solid fa-paper-plane"></i> Gửi Đánh Giá Đơn Hàng
+                </button>
+              </div>
+            `}
+          </div>
+        ` : ''}
         </div>
 
         <div style="display: flex; gap: 10px; margin-top: 8px; flex-direction: column;">

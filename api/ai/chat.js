@@ -10,6 +10,7 @@ const { createHmac, timingSafeEqual } = crypto;
 const consentCookie = 'namcumz_ai_adult_consent';
 const requestWindows = new Map();
 const CONSENT_TTL_SECONDS = 30 * 60;
+const RUNTIME_FALLBACK_SECRET = crypto.randomBytes(32).toString('hex');
 
 const SYSTEM_INSTRUCTION = [
     'Bạn là Trợ lý AI Namcumz cho website nạp game & cày thuê chính hãng https://namcumz.com.',
@@ -27,13 +28,13 @@ const SYSTEM_INSTRUCTION = [
     '     + Không Nguyệt Chúc Phúc (Thẻ tháng): 85.000đ (Khuyến mãi -29%).',
     '     + Nhật Ký Hành Trình Trân Châu (BP thường): 190.000đ.',
     '     + Bài Ca Trân Châu (BP nâng cấp +20 cấp + danh thiếp): 380.000đ.',
-    '     + Đá Sáng Thế: 60 Đá (20.000đ), 300+30 Đá (95.000đ), 980+110 Đá (270.000đ), 1980+260 Đá (580.000đ), 3280+600 Đá (920.000đ), 6480+1600 Đá (1.850.000đ).',
+    '     + Đá Sáng Thế: 60 Đá (20.000đ), 300+30 Đá (90.000đ), 980+110 Đá (270.000đ), 1980+260 Đá (570.000đ), 3280+600 Đá (950.000đ), 6480+1600 Đá (1.850.000đ), Full Pack (3.800.000đ).',
     '   - Cày Thuê Genshin Impact (Cày tay 100%, bảo mật tuyệt đối):',
-    '     + Điểm dịch chuyển: Liyue/Inazuma/Sumeru/Fontaine 40.000đ/vùng; Natlan/Nod-Krai 50.000đ/vùng; Full Teyvat 200.000đ.',
-    '     + Thần Đồng: Phong 40k, Nham 60k, Lôi 80k, Thảo 100k, Thủy 100k, Hỏa 100k, Nguyệt 90k.',
-    '     + Explore Map 100%: Mondstadt 120k - 220k, Liyue 250k - 400k, Inazuma 300k - 450k, Sumeru 400k - 650k, Fontaine 350k - 550k, Natlan 350k - 550k, Full Nod-Krai 450k.',
-    '     + La Hoàn / Nhà Hát / Áo Cảnh: La Hoàn tầng 12 (50k), Nhà Hát Giả Tưởng (50k), Áo Cảnh (50k - 180k), Combo cả 3 chế độ (130k).',
-    '     + Chăm Acc: Daily ngày 5.000đ, Tuần 30.000đ, Tháng 110.000đ, Tháng VIP Full Event 200.000đ.',
+    '     + Điểm dịch chuyển: Lẻ từng quốc gia 25.000đ - 65.000đ/vùng; Full Teyvat 200.000đ.',
+    '     + Thần Đồng: Phong/Cá Chép/Mã Não/Lưu Minh Thạch 30k, Nham 50k, Lôi 70k, Thủy 90k, Hỏa/Băng 100k, Thảo 140k.',
+    '     + Explore Map 100%: Long Tích 50k, Trầm Ngọc Cốc 90k, Mondstadt/Vực Đá Sâu 120k, Liyue/Enkanomiya/Biển Kỷ Nguyên/Núi Thánh 150k, Sương Nguyệt 250k, Inazuma 300k, Sumeru Rừng Mưa 400k, Sumeru Sa Mạc/Fontaine/Nod-Krai 450k.',
+    '     + Content Game: La Hoàn tầng 12 (30.000đ), Ảo Cảnh Diff 6 (45.000đ), Nhà Hát Full 12 Tầng (80.000đ), Combo cả 3 chế độ (130.000đ).',
+    '     + Chăm Acc: Daily ngày 5.000đ, Daily + Xả nhựa 140.000đ/tháng.',
     '',
     '3. CÁC DỊCH VỤ TẠM NGƯNG (ĐANG BẢO TRÌ):',
     '   - Honkai: Star Rail, Zenless Zone Zero, Wuthering Waves và Mua Thẻ Game hiện đang TẠM NGƯNG để nâng cấp cổng thanh toán.',
@@ -72,8 +73,8 @@ function buildLocalNamcumzReply(rawMessage) {
         return [
             '💎 Bảng giá Nạp Genshin Impact (Login) chính hãng tại Namcumz:',
             '• Không Nguyệt Chúc Phúc: 85.000đ | BP Trân Châu: 190.000đ | Bài Ca Trân Châu: 380.000đ',
-            '• 60 Đá: 20.000đ | 300+30 Đá: 95.000đ | 980+110 Đá: 270.000đ',
-            '• 1980+260 Đá: 580.000đ | 3280+600 Đá: 920.000đ | 6480+1600 Đá: 1.850.000đ',
+            '• 60 Đá: 20.000đ | 300+30 Đá: 90.000đ | 980+110 Đá: 270.000đ',
+            '• 1980+260 Đá: 570.000đ | 3280+600 Đá: 950.000đ | 6480+1600 Đá: 1.850.000đ | Full Pack: 3.800.000đ',
             '✅ Cam kết nạp chính hãng 100% có hóa đơn, bảo hành không âm nguyên thạch. Lưu ý: KHÔNG gửi mật khẩu/OTP vào chat này nhé!'
         ].join('\n');
     }
@@ -81,11 +82,11 @@ function buildLocalNamcumzReply(rawMessage) {
     if (/cày thuê|cay thue|full map|thần đồng|than dong|la hoàn|la hoan|nhà hát|nha hat|chăm acc|cham acc|nod-krai|nod krai|natlan|fontaine|sumeru/.test(q)) {
         return [
             '⚔️ Bảng giá Cày Thuê Genshin Impact (Cày tay 100% - Bảo mật tuyệt đối):',
-            '• Mở Điểm Dịch Chuyển: 40.000đ - 50.000đ/vùng | Full Teyvat: 200.000đ.',
-            '• Nhặt Full Thần Đồng: Phong 40k, Nham 60k, Lôi 80k, Thảo/Thủy/Hỏa 100k, Nguyệt 90k.',
-            '• Explore Map 100%: Mondstadt từ 120k, Liyue từ 250k, Inazuma từ 300k, Fontaine/Natlan từ 350k, Full Nod-Krai 450k.',
-            '• La Hoàn Tầng 12 / Nhà Hát / Áo Cảnh: 50.000đ/chế độ (Combo cả 3 chỉ 130.000đ).',
-            '• Chăm Acc: Ngày 5k | Tuần 30k | Tháng 110k | Tháng VIP Full Event 200k.'
+            '• Mở Điểm Dịch Chuyển: 25.000đ - 65.000đ/vùng | Full Teyvat: 200.000đ.',
+            '• Nhặt Full Thần Đồng: Phong 30k, Nham 50k, Lôi 70k, Thủy 90k, Hỏa/Băng 100k, Thảo 140k.',
+            '• Explore Map 100%: Long Tích 50k, Trầm Ngọc Cốc 90k, Mondstadt từ 120k, Liyue từ 150k, Inazuma 300k, Sumeru từ 400k, Fontaine/Nod-Krai 450k.',
+            '• La Hoàn Tầng 12 (30k) | Ảo Cảnh Diff 6 (45k) | Nhà Hát Full (80k) | Combo cả 3 chỉ 130.000đ.',
+            '• Chăm Acc: Ngày 5k | Daily + Xả nhựa: 140.000đ/tháng.'
         ].join('\n');
     }
 
@@ -126,7 +127,7 @@ function buildLocalNamcumzReply(rawMessage) {
 }
 
 function consentSecret() {
-    return process.env.GEMINI_API_KEY || 'namcumz-ai-public-secret';
+    return process.env.AI_CONSENT_SECRET || process.env.GEMINI_API_KEY || RUNTIME_FALLBACK_SECRET;
 }
 
 function consentSignature(timestamp) {

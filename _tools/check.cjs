@@ -155,6 +155,33 @@ check('order workflow and cancellation use the custom dialog',()=>{
  assert.ok(admin.includes("variant:'prompt', title:'Lý do hủy đơn'"));
  assert.ok(admin.includes('await loadAdminTable();'));
 });
+check('AI chat prices match catalog and no debug hook or static secret exists',()=>{
+ const apiChat=fs.readFileSync(path.join(root,'api/ai/chat.js'),'utf8');
+ const clientChat=fs.readFileSync(path.join(root,'assets/js/ai-chat.js'),'utf8');
+ for (const src of [apiChat, clientChat]) {
+  assert.ok(src.includes('90.000đ'), '300+30 crystals must be 90.000đ');
+  assert.ok(src.includes('570.000đ'), '1980+260 crystals must be 570.000đ');
+  assert.ok(src.includes('950.000đ'), '3280+600 crystals must be 950.000đ');
+  assert.ok(!src.includes('95.000đ'), 'must not contain outdated 95.000đ price');
+  assert.ok(!src.includes('580.000đ'), 'must not contain outdated 580.000đ price');
+  assert.ok(!src.includes('920.000đ'), 'must not contain outdated 920.000đ price');
+  assert.ok(src.includes('140.000đ/tháng'), 'monthly daily care must match 140.000đ/tháng');
+ }
+ assert.ok(!clientChat.includes('demoAi'), 'client ai-chat must not ship demoAi debug hook');
+ assert.ok(!apiChat.includes('namcumz-ai-public-secret'), 'api chat must not hardcode public HMAC fallback secret');
+});
+check('profile.js has clean formatting and no duplicate order filter assignment',()=>{
+ const profileJs=fs.readFileSync(path.join(root,'assets/js/profile.js'),'utf8');
+ const filterMatches=profileJs.match(/state\.orders\s*=\s*\(data\s*\|\|\s*\[\]\)\.filter\(o\s*=>\s*o\.kind\s*!==\s*'deposit'\);/g)||[];
+ assert.equal(filterMatches.length, 1, 'state.orders deposit filter should appear exactly once');
+ assert.ok(!profileJs.includes("</div><div>` : '<div>'"), 'rating block in profile.js must not use unbalanced dummy div tags');
+});
+check('hero banner images are optimized under 350KB each',()=>{
+ for (const name of ['banner2.jpg','banner3.jpg','banner4.jpg','banner5.jpg']) {
+  const stat=fs.statSync(path.join(root,'assets/images/store',name));
+  assert.ok(stat.size < 350 * 1024, `${name} should be under 350KB (got ${stat.size} bytes)`);
+ }
+});
 console.log(`${checks} checks passed; browser/staging/DB permissions are NOT covered.`);
 
 
