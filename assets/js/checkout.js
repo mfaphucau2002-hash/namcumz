@@ -15,12 +15,12 @@
   let isTerminalState = false;
 
   const defaultBank = {
-    bankBin: '970422',
-    bankCode: 'MB',
-    bankName: 'MoMo / VietQR Napas 247 (MB Bank)',
-    accountNumber: '0763550673',
+    bankBin: '970403',
+    bankCode: 'Sacombank',
+    bankName: 'Sacombank (VietQR Napas 247)',
+    accountNumber: '79202012546',
     accountName: 'NGUYEN HOANG NAM',
-    qrImageUrl: '/assets/images/store/qr-nguyen-hoang-nam.jpg',
+    qrImageUrl: '',
     expireMinutes: 15
   };
 
@@ -238,45 +238,50 @@
     if (bankOwnerEl) bankOwnerEl.textContent = bank.accountName;
     if (transferContentEl) transferContentEl.textContent = transferContent;
 
-    // 4. Official Shop QR Card + Dynamic VietQR Fallback
+    // 4. Dynamic VietQR (auto-fills bank, amount & transfer content) + EMVCo SVG Fallback
     const qrImg = document.getElementById('chkQrImg');
     const qrContainer = document.getElementById('chkQrBox');
     if (qrImg) {
       try {
-        const officialQr = bank.qrImageUrl || '/assets/images/store/qr-nguyen-hoang-nam.jpg';
-        qrImg.src = officialQr;
-        qrImg.onload = () => {
-          qrImg.style.opacity = '1';
-        };
-        qrImg.onerror = () => {
+        const renderSvgFallback = () => {
           try {
-            const qrUrl = window.PaymentProvider.VietQR.generateQuickLink({
+            const emvco = window.PaymentProvider.VietQR.generateEmvCoPayload({
+              bankBin: bank.bankBin,
+              accountNumber: bank.accountNumber,
+              amount: due,
+              transferContent: transferContent
+            });
+            const svgStr = window.PaymentProvider.VietQR.generateSvgQr(emvco, 250);
+            if (qrContainer) qrContainer.innerHTML = svgStr;
+          } catch (_) {
+            qrImg.alt = 'Vui lòng quét QR bằng ứng dụng ngân hàng';
+          }
+        };
+
+        const dynamicQrUrl = window.PaymentProvider?.VietQR
+          ? window.PaymentProvider.VietQR.generateQuickLink({
               bankBin: bank.bankBin,
               accountNumber: bank.accountNumber,
               accountName: bank.accountName,
               amount: due,
               transferContent: transferContent,
               template: 'compact2'
-            });
-            qrImg.onerror = () => {
-              try {
-                const emvco = window.PaymentProvider.VietQR.generateEmvCoPayload({
-                  bankBin: bank.bankBin,
-                  accountNumber: bank.accountNumber,
-                  amount: due,
-                  transferContent: transferContent
-                });
-                const svgStr = window.PaymentProvider.VietQR.generateSvgQr(emvco, 250);
-                if (qrContainer) qrContainer.innerHTML = svgStr;
-              } catch (_) {
-                qrImg.alt = 'Vui lòng quét QR bằng ứng dụng ngân hàng';
-              }
-            };
-            qrImg.src = qrUrl;
-          } catch (_) {
-            qrImg.alt = 'Vui lòng quét QR bằng ứng dụng ngân hàng';
+            })
+          : `https://img.vietqr.io/image/${encodeURIComponent(bank.bankBin)}-${encodeURIComponent(bank.accountNumber)}-compact2.png?amount=${Math.max(0, Math.round(due))}&addInfo=${encodeURIComponent(transferContent)}&accountName=${encodeURIComponent(bank.accountName || '')}`;
+
+        const primaryQr = bank.qrImageUrl || dynamicQrUrl;
+        qrImg.onload = () => {
+          qrImg.style.opacity = '1';
+        };
+        qrImg.onerror = () => {
+          if (primaryQr !== dynamicQrUrl) {
+            qrImg.onerror = renderSvgFallback;
+            qrImg.src = dynamicQrUrl;
+          } else {
+            renderSvgFallback();
           }
         };
+        qrImg.src = primaryQr;
       } catch (err) {
         console.error('Error generating VietQR:', err);
       }

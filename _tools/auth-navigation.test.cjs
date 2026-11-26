@@ -93,3 +93,92 @@ test('dashboard top-up filter recognizes server kind without requiring a legacy 
 test('account changes clear old notifications and support responses',()=>{const h=harness();let removed=0;const list={innerHTML:'private data'};const dropdown={style:{display:'flex'}};h.context.document.getElementById=id=>({notificationList:list,notificationDropdown:dropdown,notificationSupport:{remove:()=>removed++}}[id]||null);h.context.currentUser={id:'a'};h.context.setupNavbar();assert.equal(list.innerHTML,'');assert.equal(dropdown.style.display,'none');list.innerHTML='old';h.context.currentUser={id:'b'};h.context.setupNavbar();assert.equal(list.innerHTML,'');assert.equal(removed,2);});
 
 test('guest order links preserve notification destination when opening login',()=>{const h=harness();let href='/login.html?form=login';const link={getAttribute:()=>href,setAttribute:(key,value)=>href=value};h.context.window.location={pathname:'/dashboard',search:'?order=12345678-1234-1234-1234-123456789abc&section=chat'};h.context.document.querySelectorAll=()=>[link];h.context.setupNavbar();assert.equal(new URL('https://namcumz.io.vn'+href).searchParams.get('next'),'/dashboard?order=12345678-1234-1234-1234-123456789abc&section=chat');});
+
+test('Turnstile captcha blocks missing tokens and attaches + resets token on login and register', async () => {
+ const loginSlice = slice(app, "    const loginForm = document.getElementById('loginForm');", "    const googleLoginBtn =");
+ const regSlice = slice(app, "    const registerForm = document.getElementById('registerForm');", "    const logoutBtn =");
+
+ // Login form with Turnstile enabled
+ {
+  let submit; const alerts = []; const resets = []; const signInCalls = [];
+  let currentToken = '';
+  const button = { innerHTML: 'Đăng nhập', disabled: false };
+  const form = { checkValidity: () => true, querySelector: () => button, addEventListener: (_n, fn) => submit = fn };
+  const context = {
+   document: { getElementById: id => id === 'loginForm' ? form : { value: id === 'username' ? 'alice' : 'Pass1234' } },
+   supabaseClient: {
+    auth: {
+     signInWithPassword: async (payload) => { signInCalls.push(payload); return { error: Error('invalid') }; }
+    }
+   },
+   window: {
+    NAMCUMZ_AUTH_NEXT: '/profile.html',
+    NAMCUMZ_AUTH_CAPTCHA: {
+     isEnabled: () => true,
+     getToken: () => currentToken,
+     reset: (mode) => { currentToken = ''; resets.push(mode); }
+    }
+   },
+   alert: m => alerts.push(m),
+   continueAfterAuthentication: () => {}
+  };
+  vm.createContext(context);
+  vm.runInContext(loginSlice, context);
+
+  // Missing token -> blocked before Supabase call
+  await submit({ defaultPrevented: false, preventDefault: () => {} });
+  assert.equal(signInCalls.length, 0);
+  assert.equal(alerts.length, 1);
+
+  // Valid token -> passed in options.captchaToken and reset in finally
+  currentToken = 'cf-tok-login-1';
+  await submit({ defaultPrevented: false, preventDefault: () => {} });
+  assert.equal(signInCalls.length, 1);
+  assert.equal(signInCalls[0].options.captchaToken, 'cf-tok-login-1');
+  assert.deepEqual(resets, ['login']);
+  assert.equal(button.disabled, false);
+ }
+
+ // Register form with Turnstile enabled
+ {
+  let submit; const alerts = []; const resets = []; const signUpCalls = [];
+  let currentToken = '';
+  const button = { innerHTML: 'ĐĂNG KÝ NGAY', disabled: false };
+  const form = { checkValidity: () => true, querySelector: () => button, addEventListener: (_n, fn) => submit = fn };
+  const values = { regUsername: 'bob123', regPassword: 'Pass1234', regPasswordConfirm: 'Pass1234', regDisplayName: 'Bob' };
+  const context = {
+   document: { getElementById: id => id === 'registerForm' ? form : { value: values[id] || '' } },
+   supabaseClient: {
+    auth: {
+     signUp: async (payload) => { signUpCalls.push(payload); return { data: { user: { id: 'u1' }, session: { access_token: 't' } }, error: null }; }
+    }
+   },
+   window: {
+    NAMCUMZ_CONFIG: { environment: 'production' },
+    NAMCUMZ_AUTH_NEXT: '/profile.html',
+    NAMCUMZ_AUTH_CAPTCHA: {
+     isEnabled: () => true,
+     getToken: () => currentToken,
+     reset: (mode) => { currentToken = ''; resets.push(mode); }
+    }
+   },
+   setTimeout: () => {},
+   alert: m => alerts.push(m),
+   continueAfterAuthentication: () => {}
+  };
+  vm.createContext(context);
+  vm.runInContext(regSlice, context);
+
+  // Missing token -> blocked
+  await submit({ defaultPrevented: false, preventDefault: () => {} });
+  assert.equal(signUpCalls.length, 0);
+
+  // Valid token -> passed & reset
+  currentToken = 'cf-tok-reg-1';
+  await submit({ defaultPrevented: false, preventDefault: () => {} });
+  assert.equal(signUpCalls.length, 1);
+  assert.equal(signUpCalls[0].options.captchaToken, 'cf-tok-reg-1');
+  assert.equal(signUpCalls[0].options.data.display_name, 'Bob');
+  assert.deepEqual(resets, ['register']);
+ }
+});

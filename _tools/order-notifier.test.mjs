@@ -339,9 +339,9 @@ test('PaymentService notifies on newly matched payment and still succeeds if not
 
   const payload = {
     id: 'SEPAY-1001',
-    gateway: 'MB',
+    gateway: 'Sacombank',
     transferType: 'in',
-    accountNumber: '0763550673',
+    accountNumber: '79202012546',
     transferAmount: 85000,
     content: 'CK NCZ6666666'
   };

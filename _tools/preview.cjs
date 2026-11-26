@@ -13,11 +13,12 @@ function getStagingConfig() {
  }));
  if (values.NAMCUMZ_STAGING_URL !== stagingProjectUrl || !/^sb_publishable_[A-Za-z0-9_-]+$/.test(values.NAMCUMZ_STAGING_KEY || '')) return null;
  const bank = {
-  bankBin: '970422',
-  bankCode: 'MB',
-  bankName: 'MB Bank (Ngân hàng Quân Đội)',
-  accountNumber: '0763550673',
+  bankBin: '970403',
+  bankCode: 'Sacombank',
+  bankName: 'Sacombank (VietQR Napas 247)',
+  accountNumber: '79202012546',
   accountName: 'NGUYEN HOANG NAM',
+  qrImageUrl: '',
   expireMinutes: 15
  };
  return `window.NAMCUMZ_CONFIG = ${JSON.stringify({environment:'staging',supabaseUrl:stagingProjectUrl,supabaseAnonKey:values.NAMCUMZ_STAGING_KEY,expectedDbVersion:'staging_004_credentials_encryption',bank})};`;

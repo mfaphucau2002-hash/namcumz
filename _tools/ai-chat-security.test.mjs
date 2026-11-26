@@ -193,59 +193,131 @@ test('rejects invalid/oversized inputs with HTTP 400 instead of silently truncat
   assert.equal(gemini.calls.length, 0);
 });
 
-test('enforces Origin/Referer allowlist and rejects foreign origins with HTTP 403', async () => {
+test('enforces strict Origin/Referer allowlist per environment (production, preview, local)', async () => {
   const gemini = createMockGeminiFetch();
-  const handler = chatHandler.createHandler({
+
+  // 1. Production environment: ONLY https://namcumz.io.vn and https://www.namcumz.io.vn allowed
+  const prodHandler = chatHandler.createHandler({
     geminiApiKey: 'test-gemini-key',
-    fetch: gemini.fetchImpl
+    fetch: gemini.fetchImpl,
+    vercelEnv: 'production'
   });
 
-  const rejectedOrigins = [
+  const prodRejectedOrigins = [
     'https://evil.example',
     'https://namcumz.io.vn.evil.com',
     'http://namcumz.io.vn',
     'https://vercel.app',
     'https://evilvercel.app',
+    'https://namcumz.vercel.app',
+    'https://namcumz-git-main-team.vercel.app',
+    'http://localhost:3000',
+    'http://127.0.0.1:4173',
     'null'
   ];
 
-  for (let i = 0; i < rejectedOrigins.length; i += 1) {
+  for (let i = 0; i < prodRejectedOrigins.length; i += 1) {
     const res = createMockRes();
-    await handler({
+    await prodHandler({
       method: 'POST',
-      headers: { origin: rejectedOrigins[i], 'x-forwarded-for': `10.2.0.${i + 1}` },
+      headers: { origin: prodRejectedOrigins[i], 'x-forwarded-for': `10.2.0.${i + 1}` },
       body: { message: 'bảng giá nạp genshin' }
     }, res);
-    assert.equal(res.statusCode, 403, `Expected 403 for Origin: ${rejectedOrigins[i]}`);
+    assert.equal(res.statusCode, 403, `Expected 403 in production for Origin: ${prodRejectedOrigins[i]}`);
   }
 
   // Foreign Referer without Origin must also be rejected
   const resBadReferer = createMockRes();
-  await handler({
+  await prodHandler({
     method: 'POST',
     headers: { referer: 'https://attacker.test/phish', 'x-forwarded-for': '10.2.0.50' },
     body: { message: 'bảng giá nạp genshin' }
   }, resBadReferer);
   assert.equal(resBadReferer.statusCode, 403);
 
-  const allowedOrigins = [
-    'https://namcumz.io.vn',
-    'https://www.namcumz.io.vn',
-    'https://namcumz-git-main-team.vercel.app',
-    'http://localhost:3000',
-    'http://127.0.0.1:4173'
-  ];
-
-  for (let i = 0; i < allowedOrigins.length; i += 1) {
+  for (const [idx, allowedOrigin] of ['https://namcumz.io.vn', 'https://www.namcumz.io.vn'].entries()) {
     const res = createMockRes();
-    await handler({
+    await prodHandler({
       method: 'POST',
-      headers: { origin: allowedOrigins[i], 'x-forwarded-for': `10.2.1.${i + 1}` },
+      headers: { origin: allowedOrigin, 'x-forwarded-for': `10.2.1.${idx + 1}` },
       body: { message: 'bảng giá nạp genshin' }
     }, res);
-    assert.equal(res.statusCode, 200, `Expected 200 for allowed Origin: ${allowedOrigins[i]}`);
+    assert.equal(res.statusCode, 200, `Expected 200 in production for Origin: ${allowedOrigin}`);
     assert.equal(res.body.source, 'namcumz-smart-kb');
   }
+
+  // 2. Preview environment: only the exact deployment VERCEL_URL host (+ production domains)
+  const previewHandler = chatHandler.createHandler({
+    geminiApiKey: 'test-gemini-key',
+    fetch: gemini.fetchImpl,
+    vercelEnv: 'preview',
+    vercelUrl: 'namcumz-git-main-team.vercel.app'
+  });
+
+  const resExactPreview = createMockRes();
+  await previewHandler({
+    method: 'POST',
+    headers: { origin: 'https://namcumz-git-main-team.vercel.app', 'x-forwarded-for': '10.2.2.1' },
+    body: { message: 'bảng giá nạp genshin' }
+  }, resExactPreview);
+  assert.equal(resExactPreview.statusCode, 200);
+
+  for (const foreignPreview of ['https://other-project.vercel.app', 'https://namcumz.vercel.app']) {
+    const res = createMockRes();
+    await previewHandler({
+      method: 'POST',
+      headers: { origin: foreignPreview, 'x-forwarded-for': '10.2.2.2' },
+      body: { message: 'bảng giá nạp genshin' }
+    }, res);
+    assert.equal(res.statusCode, 403, `Preview must reject unrelated vercel origin: ${foreignPreview}`);
+  }
+
+  // 3. Local/development environment: allows localhost & 127.0.0.1
+  const localHandler = chatHandler.createHandler({
+    geminiApiKey: 'test-gemini-key',
+    fetch: gemini.fetchImpl,
+    vercelEnv: ''
+  });
+  for (const [idx, localOrigin] of ['http://localhost:3000', 'http://127.0.0.1:4173'].entries()) {
+    const res = createMockRes();
+    await localHandler({
+      method: 'POST',
+      headers: { origin: localOrigin, 'x-forwarded-for': `10.2.3.${idx + 1}` },
+      body: { message: 'bảng giá nạp genshin' }
+    }, res);
+    assert.equal(res.statusCode, 200, `Expected 200 in local dev for Origin: ${localOrigin}`);
+  }
+
+  assert.equal(gemini.calls.length, 0);
+});
+
+test('out-of-scope guest questions get polite scope guidance instead of welcome menu ($0)', async () => {
+  const gemini = createMockGeminiFetch();
+  const handler = chatHandler.createHandler({
+    geminiApiKey: 'test-gemini-key',
+    fetch: gemini.fetchImpl,
+    vercelEnv: 'production'
+  });
+
+  const resMath = createMockRes();
+  await handler({
+    method: 'POST',
+    headers: { origin: 'https://namcumz.io.vn', 'x-forwarded-for': '10.2.9.1' },
+    body: { message: '2 + 2 bằng mấy?' }
+  }, resMath);
+  assert.equal(resMath.statusCode, 200);
+  assert.equal(resMath.body.source, 'namcumz-smart-kb');
+  assert.ok(resMath.body.text.includes('ngoài phạm vi cửa hàng'));
+  assert.ok(!resMath.body.text.includes('Xin chào! Trợ lý AI Namcumz sẵn sàng'));
+
+  const resGreet = createMockRes();
+  await handler({
+    method: 'POST',
+    headers: { origin: 'https://namcumz.io.vn', 'x-forwarded-for': '10.2.9.2' },
+    body: { message: 'Xin chào shop' }
+  }, resGreet);
+  assert.equal(resGreet.statusCode, 200);
+  assert.ok(resGreet.body.text.includes('Xin chào! Trợ lý AI Namcumz'));
 
   assert.equal(gemini.calls.length, 0);
 });

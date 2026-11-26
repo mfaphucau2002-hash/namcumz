@@ -96,6 +96,9 @@ test('Automated VietQR Payment, Transaction Verification, Anti-Duplicate & Walle
   const paymentService = new PaymentService({
     provider: 'sepay',
     webhookSecret: 'test-secret-123',
+    bankBin: '970422',
+    bankCode: 'MB',
+    accountNumber: '0763550673',
     pgClient: db
   });
 
@@ -454,7 +457,7 @@ test('Automated VietQR Payment, Transaction Verification, Anti-Duplicate & Walle
 
 // Reject invalid bank envelopes before any database call; no valid defaults here.
 test('bank webhook rejects outgoing, wrong account, missing ID and missing destination',async()=>{
- let calls=0;const service=new PaymentService({provider:'sepay',webhookSecret:'secret',pgClient:{query:async()=>{calls++;throw Error('Unexpected settlement');}}});
+ let calls=0;const service=new PaymentService({provider:'sepay',webhookSecret:'secret',bankCode:'MB',accountNumber:'0763550673',pgClient:{query:async()=>{calls++;throw Error('Unexpected settlement');}}});
  const valid={id:'bank-1',gateway:'MB',accountNumber:'0763550673',transferType:'in',transferAmount:20000,content:'NCZREF'};
  for(const patch of [{transferType:'out'},{accountNumber:'999999'},{id:'',referenceCode:''},{accountNumber:'',subAccount:''},{transferType:''}]){
   const response=await service.processWebhook({authorization:'Apikey secret'},{...valid,...patch});assert.equal(response.status,400);assert.equal(response.body.success,false);

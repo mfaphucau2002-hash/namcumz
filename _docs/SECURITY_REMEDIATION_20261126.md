@@ -148,3 +148,25 @@ Resolve-DnsName -Name _dmarc.namcumz.io.vn -Type TXT -Server 1.1.1.1
 - **Kiểm soát bù đắp (Compensating Controls):**
   - Biết tên tham số không tạo ra lỗ hổng vượt quyền: mọi RPC nghiệp vụ đều thu hồi quyền `PUBLIC, anon` và kiểm tra xác thực/vai trò/quyền sở hữu ở tầng DB (`namcumz_private.require_user()`, `namcumz_private.is_admin()`, kiểm tra `super_admin` hoặc `v_order.user_id = v_uid`) kết hợp RLS trên bảng dữ liệu.
   - Không làm lộ dữ liệu nhạy cảm hay bí mật hệ thống; chỉ cần tái đánh giá nếu sau này nâng cấp kiến trúc có API gateway riêng.
+
+---
+
+## 4. Runbook Khắc Phục Vòng 2 (Cập Nhật 26/11/2026 — Chi Phí $0)
+
+Thực hiện đúng theo 4 bước tuần tự sau để đóng toàn bộ các mục **F1, F2, F3, F4, F5 (unpkg), F8, F9, F10** mà không làm gián đoạn khách hàng đang đăng nhập bằng `username`:
+
+1. **Tạo Widget Cloudflare Turnstile & Điền `turnstileSiteKey` (F1 & F3):**
+   - Tạo widget `namcumz-auth-prod` trên Cloudflare Turnstile (Mode: `Managed`, Hostnames: `namcumz.io.vn`, `www.namcumz.io.vn`).
+   - Dán **Site Key** vào `window.NAMCUMZ_CONFIG.turnstileSiteKey` trong `assets/js/runtime-config.js`.
+   - Build & Deploy lên Vercel, sau đó kiểm tra thực tế trên `https://namcumz.io.vn/login` thấy widget Turnstile hiển thị ở cả tab Đăng nhập & Đăng ký.
+   - **Chỉ sau khi widget đã lên production**, mới vào **Supabase Dashboard (`vqnuutdmcekqkbdvawlw`) → Authentication → Attack Protection** bật **Enable Captcha protection** (Provider: `Cloudflare Turnstile`, dán **Secret Key**).
+2. **Siết Supabase Rate Limits & Password Policy (F1 & F3):**
+   - Xác nhận **Confirm email** vẫn **TẮT (OFF)** để bảo toàn đăng nhập `username` nội bộ `@namcumz.com`.
+   - Tại **Authentication → Rate Limits**: siết Token requests (`30 / 5 phút`), Signups (`3 / giờ`), tắt Anonymous sign-ins; tại **Password Requirements**: đặt tối thiểu `8` ký tự + `Letters and digits`.
+3. **Backup & Chạy SQL Vòng 2 trên Supabase SQL Editor (F2, F9, Phần 5):**
+   - Chạy `_backup/backup_supabase.ps1` trước khi thao tác DB.
+   - Chạy `_db/production_014_checkin_hardening.sql` và đối chiếu `_db/production_014_verify.sql` (ra `PASS`).
+   - Chạy `_db/cleanup_pentest_round2_20261126.sql` để xóa sạch 3 tài khoản `zz2_*` + dòng điểm danh test.
+   - Chạy Step 1 (READ ONLY) của `_db/redact_legacy_order_passwords_20261126.sql` để rà các đơn cũ còn sót mật khẩu (`DH597`); sau khi kiểm tra danh sách, mở comment Step 2 để che mật khẩu mà vẫn giữ nguyên lịch sử đơn.
+4. **Thêm DNS SPF & DMARC tại Mắt Bão (F4):**
+   - Thêm 2 bản ghi `TXT`: `@` = `v=spf1 -all` và `_dmarc` = `v=DMARC1; p=reject; sp=reject; adkim=s; aspf=s`, kiểm chứng bằng `Resolve-DnsName -Server 1.1.1.1`.

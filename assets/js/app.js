@@ -1983,12 +1983,24 @@ function bindEvents() {
             const user = document.getElementById('username').value.trim();
             const pass = document.getElementById('password').value;
             const email = user + '@namcumz.com';
+            const captcha = window?.NAMCUMZ_AUTH_CAPTCHA;
+            let captchaToken = '';
+            if (captcha?.isEnabled?.()) {
+                captchaToken = String(captcha.getToken?.('login') || '').trim();
+                if (!captchaToken) {
+                    alert('Vui lòng hoàn thành xác minh bảo mật (Captcha) trước khi đăng nhập.');
+                    return;
+                }
+            }
             
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG ĐĂNG NHẬP...';
             btn.disabled = true;
 
             try {
-                const { error } = await supabaseClient.auth.signInWithPassword({ email: email, password: pass });
+                const payload = captchaToken
+                    ? { email: email, password: pass, options: { captchaToken } }
+                    : { email: email, password: pass };
+                const { error } = await supabaseClient.auth.signInWithPassword(payload);
                 if (error) {
                     alert('Tên tài khoản hoặc mật khẩu không đúng!');
                 } else {
@@ -1997,6 +2009,7 @@ function bindEvents() {
             } catch (_) {
                 alert('Không kết nối được hệ thống đăng nhập. Vui lòng thử lại.');
             } finally {
+                captcha?.reset?.('login');
                 btn.innerHTML = 'ĐĂNG NHẬP';
                 btn.disabled = false;
             }
@@ -2040,14 +2053,26 @@ function bindEvents() {
             const displayName = document.getElementById('regDisplayName').value.trim() || username;
             
             if (pass !== pass2) return alert('Mật khẩu nhập lại không khớp!');
+            const captcha = window?.NAMCUMZ_AUTH_CAPTCHA;
+            let captchaToken = '';
+            if (captcha?.isEnabled?.()) {
+                captchaToken = String(captcha.getToken?.('register') || '').trim();
+                if (!captchaToken) {
+                    alert('Vui lòng hoàn thành xác minh bảo mật (Captcha) trước khi đăng ký.');
+                    return;
+                }
+            }
             
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG TẠO...';
             btn.disabled = true;
 
             try {
+                const signUpOptions = captchaToken
+                    ? { captchaToken, data: { display_name: displayName } }
+                    : { data: { display_name: displayName } };
                 const { data, error } = await supabaseClient.auth.signUp({
                     email: username + '@namcumz.com', password: pass,
-                    options: { data: { display_name: displayName } }
+                    options: signUpOptions
                 });
                 if (error) throw error;
                 if (!data?.user) throw new Error('Chưa nhận được kết quả đăng ký. Vui lòng thử lại.');
@@ -2067,6 +2092,7 @@ function bindEvents() {
             } catch (error) {
                 alert('Không thể hoàn tất đăng ký: ' + (error.message || 'Vui lòng thử lại.'));
             } finally {
+                captcha?.reset?.('register');
                 btn.innerHTML = 'ĐĂNG KÝ NGAY';
                 btn.disabled = false;
             }
@@ -2403,16 +2429,16 @@ document.addEventListener('DOMContentLoaded', () => {
         supabaseClient = window.supabase.createClient(databaseUrl, databaseKey);
         initSupabaseLogic();
     } else {
-        console.warn("Supabase CDN blocked/failed! Trying unpkg fallback...");
+        console.warn("Supabase CDN blocked/failed! Trying local vendor fallback...");
         const script = document.createElement('script');
-        script.src = 'https://unpkg.com/@supabase/supabase-js@2';
+        script.src = '/assets/vendor/supabase.min.js';
         script.onload = () => {
             if (window.supabase) {
                 supabaseClient = window.supabase.createClient(databaseUrl, databaseKey);
                 initSupabaseLogic();
-            } else { alert("Không thể kết nối Supabase (Mạng bị chặn CDN)."); }
+            } else { alert("Không thể kết nối Supabase (Không tải được thư viện cục bộ)."); }
         };
-        script.onerror = () => { alert("Lỗi mạng nghiêm trọng: CDN bị chặn."); };
+        script.onerror = () => { alert("Lỗi mạng nghiêm trọng: Không tải được thư viện kết nối."); };
         document.head.appendChild(script);
     }
 });

@@ -376,6 +376,7 @@
                                     </label>
                                     <a role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}" class="auth-link" onclick="openSupportModal('Không đăng nhập được')">Bạn gặp vấn đề khi đăng nhập?</a>
                                 </div>
+                                <div id="loginTurnstileSlot" class="auth-turnstile-slot" style="margin: 12px 0;"></div>
                                 <button type="submit" class="auth-btn btn-login" id="loginBtn">
                                     <span class="btn-text">Đăng nhập</button>
                                 </button>
@@ -456,6 +457,7 @@
                                         <span>Tôi đồng ý với <a href="/terms.html" class="auth-link" target="_blank" rel="noopener noreferrer">Điều khoản sử dụng</a> và <a href="/privacy.html" class="auth-link" target="_blank" rel="noopener noreferrer">Chính sách bảo mật</a>.</span>
                                     </label>
                                 </div>
+                                <div id="registerTurnstileSlot" class="auth-turnstile-slot" style="margin: 12px 0;"></div>
                                 <button type="submit" class="auth-btn btn-register" id="regSubmitBtn">
                                     <span class="btn-text">Tạo tài khoản</span>
                                 </button>
@@ -624,11 +626,13 @@
                 document.getElementById('tabBoosterBtn').setAttribute('aria-selected', 'false');
                 document.getElementById('viewCustomer').classList.add('active');
                 document.getElementById('viewBooster').classList.remove('active');
+                window.NAMCUMZ_AUTH_CAPTCHA?.ensureRendered?.('register');
             } else {
                 regW.style.display = 'none';
                 loginW.style.display = 'block';
                 authSubtitle.innerText = "Đăng nhập để tiếp tục hành trình cùng NAMCUMZ.";
                 updateAuthMedia('login');
+                window.NAMCUMZ_AUTH_CAPTCHA?.ensureRendered?.('login');
             }
             if (document.documentElement.classList.contains('auth-embedded')) {
                 document.querySelector('.auth-form-col')?.scrollTo({ top: 0, behavior: 'instant' });
@@ -1045,6 +1049,7 @@
                 }
             }
             updateAuthMedia('login');
+            window.NAMCUMZ_AUTH_CAPTCHA?.ensureRendered?.('login');
             const authQuery = new URLSearchParams(window.location.search);
             if (authQuery.get('form') === 'register') { switchCustomerForm('register'); }
             const nextPath = authQuery.get('next');
@@ -1077,6 +1082,82 @@
     <script src="/assets/js/theme-settings.js"></script>
     <script src="assets/js/order-api.js"></script>
     <script src="assets/js/app.js?v=20261107-launch3"></script>
+    <script>
+        (function () {
+            const tokens = { login: '', register: '' };
+            const widgetIds = { login: null, register: null };
+            let scriptState = 'idle';
+            const pendingModes = new Set();
+
+            function getSiteKey() {
+                return String(window.NAMCUMZ_CONFIG?.turnstileSiteKey || '').trim();
+            }
+
+            function renderMode(mode) {
+                const siteKey = getSiteKey();
+                if (!siteKey || !window.turnstile?.render) return;
+                const slotId = mode === 'register' ? 'registerTurnstileSlot' : 'loginTurnstileSlot';
+                const slot = document.getElementById(slotId);
+                if (!slot || widgetIds[mode] !== null) return;
+                widgetIds[mode] = window.turnstile.render(slot, {
+                    sitekey: siteKey,
+                    theme: 'dark',
+                    callback: (token) => { tokens[mode] = String(token || ''); },
+                    'expired-callback': () => { tokens[mode] = ''; },
+                    'error-callback': () => { tokens[mode] = ''; }
+                });
+            }
+
+            function ensureScriptAndRender() {
+                if (window.turnstile?.render) {
+                    scriptState = 'ready';
+                    pendingModes.forEach(renderMode);
+                    pendingModes.clear();
+                    return;
+                }
+                if (scriptState === 'loading') return;
+                scriptState = 'loading';
+                const script = document.createElement('script');
+                script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+                script.async = true;
+                script.defer = true;
+                script.onload = () => {
+                    scriptState = 'ready';
+                    pendingModes.forEach(renderMode);
+                    pendingModes.clear();
+                };
+                script.onerror = () => { scriptState = 'error'; };
+                document.head.appendChild(script);
+            }
+
+            window.NAMCUMZ_AUTH_CAPTCHA = {
+                isEnabled: () => Boolean(getSiteKey()),
+                ensureRendered: (mode) => {
+                    if (!getSiteKey()) return;
+                    const normalized = mode === 'register' ? 'register' : 'login';
+                    if (window.turnstile?.render) {
+                        renderMode(normalized);
+                    } else {
+                        pendingModes.add(normalized);
+                        ensureScriptAndRender();
+                    }
+                },
+                getToken: (mode) => tokens[mode === 'register' ? 'register' : 'login'] || '',
+                reset: (mode) => {
+                    const normalized = mode === 'register' ? 'register' : 'login';
+                    tokens[normalized] = '';
+                    if (widgetIds[normalized] !== null && window.turnstile?.reset) {
+                        try { window.turnstile.reset(widgetIds[normalized]); } catch (_) {}
+                    }
+                }
+            };
+
+            if (getSiteKey()) {
+                const mode = new URLSearchParams(window.location.search).get('form') === 'register' ? 'register' : 'login';
+                window.NAMCUMZ_AUTH_CAPTCHA.ensureRendered(mode);
+            }
+        })();
+    </script>
 </body>
 </html>
 

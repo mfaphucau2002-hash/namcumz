@@ -93,12 +93,29 @@
             ].join('\n');
         }
 
+        if (/điểm danh|diem danh|voucher|mã giảm giá|ma giam gia|ví namcumz|vi namcumz|hội viên|hoi vien/.test(q)) {
+            return [
+                '🎁 Thông tin Ví Thành Viên, Điểm Danh & Voucher Namcumz:',
+                '• Điểm danh hàng ngày tại trang Hồ sơ cá nhân để nhận +500 VNĐ vào ví điểm danh (tài khoản cần hoạt động đủ 24 giờ).',
+                '• Số dư nạp trực tiếp dùng để thanh toán tự động các đơn Nạp Game & Cày Thuê.',
+                '• Xem lịch sử giao dịch, cấp VIP và kho voucher ngay trong Hồ sơ cá nhân!'
+            ].join('\n');
+        }
+
+        if (/^(xin\s*)?(chào|chao|hello|hi|hey|alo|shop\s*ơi|shop\s*oi|ad\s*ơi|ad\s*oi|tư\s*vấn|tu\s*van|hỗ\s*trợ|ho\s*tro|help)\b/.test(q)) {
+            return [
+                '✨ Trợ lý AI Namcumz xin hướng dẫn nhanh cho bạn:',
+                '• 💳 Nạp tiền vào TK web: Đăng nhập -> bấm nút "+ Nạp Tiền" trên thanh menu -> Quét mã QR ngân hàng tự động (1 - 3 phút).',
+                '• 💎 Nạp Genshin (Login): Thẻ tháng 85.000đ, BP Trân Châu 190.000đ, Bài Ca Trân Châu 380.000đ, Đá Sáng Thế từ 20.000đ.',
+                '• ⚔️ Cày Thuê Genshin: Full Map, Thần Đồng, Điểm Dịch Chuyển, La Hoàn & Chăm Acc chỉ từ 5.000đ.',
+                '📞 Hỗ trợ trực tiếp 07:00 - 23:00 qua Zalo CSKH: ' + ZALO_PHONE + '.'
+            ].join('\n');
+        }
+
         return [
-            '✨ Trợ lý AI Namcumz xin hướng dẫn nhanh cho bạn:',
-            '• 💳 Nạp tiền vào TK web: Đăng nhập -> bấm nút "+ Nạp Tiền" trên thanh menu -> Quét mã QR ngân hàng tự động (1 - 3 phút).',
-            '• 💎 Nạp Genshin (Login): Thẻ tháng 85.000đ, BP Trân Châu 190.000đ, Bài Ca Trân Châu 380.000đ, Đá Sáng Thế từ 20.000đ.',
-            '• ⚔️ Cày Thuê Genshin: Full Map, Thần Đồng, Điểm Dịch Chuyển, La Hoàn & Chăm Acc chỉ từ 5.000đ.',
-            '📞 Hỗ trợ trực tiếp 07:00 - 23:00 qua Zalo CSKH: ' + ZALO_PHONE + '.'
+            '🤖 Mình là Trợ lý chuyên hỗ trợ dịch vụ Nạp Game & Cày Thuê tại Namcumz nên chưa trả lời các câu hỏi ngoài phạm vi cửa hàng ở chế độ khách.',
+            '• Bạn có thể đăng nhập tài khoản Namcumz để trò chuyện chi tiết hơn với AI, hoặc bấm các gợi ý nhanh bên dưới (Bảng giá nạp, Cày thuê, Nạp tiền VietQR, Kiểm tra đơn).',
+            '📞 Cần hỗ trợ trực tiếp, nhắn Zalo CSKH: ' + ZALO_PHONE + '.'
         ].join('\n');
     }
 

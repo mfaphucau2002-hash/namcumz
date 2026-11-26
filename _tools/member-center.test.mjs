@@ -57,6 +57,9 @@ test('User Profile / Member Center: Check-in, Wallet Deposit, VIP and Security T
   const paymentService = new PaymentService({
     provider: 'sepay',
     webhookSecret: 'test-webhook-secret',
+    bankBin: '970422',
+    bankCode: 'MB',
+    accountNumber: '0763550673',
     pgClient: db
   });
 

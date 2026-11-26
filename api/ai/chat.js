@@ -22,7 +22,7 @@ const IP_RATE_WINDOW_MS = 60_000;
 const IP_RATE_MAX_REQUESTS = 8;
 const USER_GEMINI_WINDOW_MS = 60 * 60 * 1000;
 const USER_GEMINI_MAX_REQUESTS = 10;
-const VERCEL_APP_HOST_RE = /^[a-z0-9-]+(?:\.[a-z0-9-]+)*\.vercel\.app$/;
+const PRODUCTION_ALLOWED_HOSTS = new Set(['namcumz.io.vn', 'www.namcumz.io.vn']);
 
 const SYSTEM_INSTRUCTION = [
     'Bạn là Trợ lý AI Namcumz cho website nạp game & cày thuê chính hãng https://namcumz.com.',
@@ -129,12 +129,29 @@ function buildLocalNamcumzReply(rawMessage) {
         ].join('\n');
     }
 
+    if (/điểm danh|diem danh|voucher|mã giảm giá|ma giam gia|ví namcumz|vi namcumz|hội viên|hoi vien/.test(q)) {
+        return [
+            '🎁 Thông tin Ví Thành Viên, Điểm Danh & Voucher Namcumz:',
+            '• Điểm danh hàng ngày tại trang Hồ sơ cá nhân để nhận +500 VNĐ vào ví điểm danh (áp dụng cho tài khoản hoạt động đủ 24 giờ).',
+            '• Số dư nạp trực tiếp dùng để thanh toán tự động các đơn Nạp Game & Cày Thuê.',
+            '• Bạn có thể xem lịch sử giao dịch, cấp VIP và kho voucher ngay trong mục Hồ sơ cá nhân!'
+        ].join('\n');
+    }
+
+    if (/^(xin\s*)?(chào|chao|hello|hi|hey|alo|shop\s*ơi|shop\s*oi|ad\s*ơi|ad\s*oi|tư\s*vấn|tu\s*van|hỗ\s*trợ|ho\s*tro|help)\b/.test(q)) {
+        return [
+            '✨ Xin chào! Trợ lý AI Namcumz sẵn sàng hỗ trợ bạn các thông tin chính:',
+            '1️⃣ Cách nạp tiền vào TK: Đăng nhập -> bấm "+ Nạp Tiền" trên menu -> Quét mã VietQR tự động (1-3 phút).',
+            '2️⃣ Nạp Genshin Impact (Login): Thẻ tháng 85.000đ, BP Trân Châu 190.000đ, Bài Ca Trân Châu 380.000đ, Đá Sáng Thế từ 20.000đ.',
+            '3️⃣ Cày Thuê Genshin: Explore Map 100%, Thần Đồng, Điểm Dịch Chuyển, La Hoàn & Chăm Acc chỉ từ 5.000đ.',
+            '💬 Bạn muốn hỏi chi tiết về mục nào, hoặc nhắn Zalo CSKH 0763.550.673 để được hỗ trợ trực tiếp nhé!'
+        ].join('\n');
+    }
+
     return [
-        '✨ Xin chào! Trợ lý AI Namcumz sẵn sàng hỗ trợ bạn các thông tin chính:',
-        '1️⃣ Cách nạp tiền vào TK: Đăng nhập -> bấm "+ Nạp Tiền" trên menu -> Quét mã VietQR tự động (1-3 phút).',
-        '2️⃣ Nạp Genshin Impact (Login): Thẻ tháng 85.000đ, BP Trân Châu 190.000đ, Bài Ca Trân Châu 380.000đ, Đá Sáng Thế từ 20.000đ.',
-        '3️⃣ Cày Thuê Genshin: Explore Map 100%, Thần Đồng, Điểm Dịch Chuyển, La Hoàn & Chăm Acc chỉ từ 5.000đ.',
-        '💬 Bạn muốn hỏi chi tiết về mục nào, hoặc nhắn Zalo CSKH 0763.550.673 để được hỗ trợ trực tiếp nhé!'
+        '🤖 Mình là Trợ lý chuyên hỗ trợ dịch vụ Nạp Game & Cày Thuê tại Namcumz nên chưa trả lời các câu hỏi ngoài phạm vi cửa hàng ở chế độ khách.',
+        '• Bạn có thể đăng nhập tài khoản Namcumz để trò chuyện chi tiết hơn với AI, hoặc hỏi về: Bảng giá nạp Genshin, Bảng giá cày thuê, Cách nạp tiền VietQR, Kiểm tra đơn hàng.',
+        '📞 Cần tư vấn trực tiếp, nhắn Zalo CSKH: 0763.550.673 nhé!'
     ].join('\n');
 }
 
@@ -165,8 +182,20 @@ function getHeader(headers = {}, name) {
     return '';
 }
 
-// Validate Origin or Referer against the strict Namcumz/Vercel/local preview allowlist.
-function isAllowedOrigin(rawValue, { allowPath = false } = {}) {
+// Normalize Vercel deployment hostnames (strips scheme/path if provided).
+function normalizeHostname(rawHost) {
+    const val = String(rawHost || '').trim().toLowerCase();
+    if (!val) return '';
+    try {
+        const parsed = val.includes('://') ? new URL(val) : new URL(`https://${val}`);
+        return parsed.hostname.toLowerCase();
+    } catch (_err) {
+        return '';
+    }
+}
+
+// Validate Origin or Referer against strict Production / exact Preview / local rules.
+function isAllowedOrigin(rawValue, { allowPath = false, vercelEnv = '', allowedPreviewHosts = [] } = {}) {
     const trimmed = String(rawValue || '').trim();
     if (!trimmed || trimmed.toLowerCase() === 'null') return false;
     let parsed;
@@ -192,27 +221,27 @@ function isAllowedOrigin(rawValue, { allowPath = false } = {}) {
     const port = parsed.port;
 
     if (protocol === 'https:' && port === '') {
-        if (hostname === 'namcumz.io.vn' || hostname === 'www.namcumz.io.vn') {
+        if (PRODUCTION_ALLOWED_HOSTS.has(hostname)) {
             return true;
         }
-        if (VERCEL_APP_HOST_RE.test(hostname)) {
+        if (vercelEnv === 'preview' && Array.isArray(allowedPreviewHosts) && allowedPreviewHosts.includes(hostname)) {
             return true;
         }
     }
-    if ((protocol === 'http:' || protocol === 'https:') && (hostname === 'localhost' || hostname === '127.0.0.1')) {
+    if ((!vercelEnv || vercelEnv === 'development') && (protocol === 'http:' || protocol === 'https:') && (hostname === 'localhost' || hostname === '127.0.0.1')) {
         return true;
     }
     return false;
 }
 
 // Reject requests carrying a foreign Origin or foreign Referer header.
-function isOriginAllowed(req) {
+function isOriginAllowed(req, options = {}) {
     const origin = getHeader(req.headers, 'origin').trim();
     const referer = getHeader(req.headers, 'referer').trim();
-    if (origin && !isAllowedOrigin(origin, { allowPath: false })) {
+    if (origin && !isAllowedOrigin(origin, { ...options, allowPath: false })) {
         return false;
     }
-    if (referer && !isAllowedOrigin(referer, { allowPath: true })) {
+    if (referer && !isAllowedOrigin(referer, { ...options, allowPath: true })) {
         return false;
     }
     return true;
@@ -461,6 +490,11 @@ function createHandler(deps = {}) {
     const createSupabaseClient =
         deps.createSupabaseClient ||
         (deps.supabaseClient ? () => deps.supabaseClient : createClient);
+    const vercelEnv = String('vercelEnv' in deps ? (deps.vercelEnv ?? '') : (process.env.VERCEL_ENV || '')).toLowerCase();
+    const rawPreviewHosts = 'vercelUrl' in deps
+        ? [deps.vercelUrl]
+        : [process.env.VERCEL_URL, process.env.VERCEL_BRANCH_URL];
+    const allowedPreviewHosts = rawPreviewHosts.map(normalizeHostname).filter(Boolean);
 
     function checkIpRateLimit(req) {
         const now = nowFn();
@@ -527,7 +561,7 @@ function createHandler(deps = {}) {
             return res.status(405).json({ message: 'Phương thức không được hỗ trợ.' });
         }
 
-        if (!isOriginAllowed(req)) {
+        if (!isOriginAllowed(req, { vercelEnv, allowedPreviewHosts })) {
             return res.status(403).json({ message: 'Nguồn yêu cầu không được phép.' });
         }
 
@@ -620,5 +654,7 @@ function createHandler(deps = {}) {
 const defaultHandler = createHandler();
 defaultHandler.createHandler = createHandler;
 defaultHandler.buildLocalNamcumzReply = buildLocalNamcumzReply;
+defaultHandler.isOriginAllowed = isOriginAllowed;
+defaultHandler.normalizeHostname = normalizeHostname;
 
 module.exports = defaultHandler;

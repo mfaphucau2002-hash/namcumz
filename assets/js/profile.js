@@ -1124,10 +1124,14 @@
           if (res.success) {
             showToast(res.message || 'Điểm danh thành công +500 VNĐ!', 'success');
             await loadProfileSummary();
-          } else {
+          } else if (res.already_checked_in) {
             showToast(res.message || 'Bạn đã điểm danh hôm nay rồi!', 'error');
             checkinBtn.disabled = true;
             checkinBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> ĐÃ ĐIỂM DANH HÔM NAY';
+          } else {
+            showToast(res.message || 'Tài khoản chưa đủ điều kiện điểm danh.', 'error');
+            checkinBtn.disabled = false;
+            checkinBtn.innerHTML = `<i class="fa-solid fa-gift"></i> ĐIỂM DANH NHẬN ${state.checkin.reward_amount}Đ`;
           }
         } catch (err) {
           showToast(err.message || 'Lỗi điểm danh!', 'error');
@@ -1327,19 +1331,20 @@
     if (!body) return;
 
     const bankConfig = window.NAMCUMZ_CONFIG?.bank || {
-      bankBin: '970422',
-      bankName: 'MoMo / VietQR Napas 247 (MB Bank)',
-      bankCode: 'MB',
-      accountNumber: '0763550673',
+      bankBin: '970403',
+      bankName: 'Sacombank (VietQR Napas 247)',
+      bankCode: 'Sacombank',
+      accountNumber: '79202012546',
       accountName: 'NGUYEN HOANG NAM',
-      qrImageUrl: '/assets/images/store/qr-nguyen-hoang-nam.jpg'
+      qrImageUrl: ''
     };
 
-    const transferContent = `NCZ ${order.payment_reference || order.order_code}`;
+    const rawRef = String(order.payment_reference || order.order_code || '').trim();
+    const transferContent = /^NCZ/i.test(rawRef) ? rawRef : `NCZ ${rawRef}`;
 
-    let fallbackQrUrl = '';
+    let dynamicQrUrl = '';
     if (window.PaymentProvider?.VietQR) {
-      fallbackQrUrl = window.PaymentProvider.VietQR.generateQuickLink({
+      dynamicQrUrl = window.PaymentProvider.VietQR.generateQuickLink({
         bankBin: bankConfig.bankBin,
         accountNumber: bankConfig.accountNumber,
         accountName: bankConfig.accountName,
@@ -1347,18 +1352,18 @@
         transferContent: transferContent
       });
     } else {
-      fallbackQrUrl = `https://img.vietqr.io/image/${bankConfig.bankBin}-${bankConfig.accountNumber}-compact2.png?amount=${order.amount}&addInfo=${encodeURIComponent(transferContent)}&accountName=${encodeURIComponent(bankConfig.accountName)}`;
+      dynamicQrUrl = `https://img.vietqr.io/image/${encodeURIComponent(bankConfig.bankBin)}-${encodeURIComponent(bankConfig.accountNumber)}-compact2.png?amount=${Math.max(0, Math.round(Number(order.amount) || 0))}&addInfo=${encodeURIComponent(transferContent)}&accountName=${encodeURIComponent(bankConfig.accountName || '')}`;
     }
-    const qrUrl = bankConfig.qrImageUrl || '/assets/images/store/qr-nguyen-hoang-nam.jpg';
+    const qrUrl = bankConfig.qrImageUrl || dynamicQrUrl;
 
     body.innerHTML = `
       <div style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px;">
         <div style="font-size: 0.9375rem; color: #ffb800; font-weight: 700;">
-          <i class="fa-solid fa-clock"></i> Quét QR chính chủ và chuyển đúng số tiền + nội dung bên dưới
+          <i class="fa-solid fa-clock"></i> Quét mã VietQR Sacombank bên dưới (đã tự điền số tiền &amp; nội dung) để tự động cộng ví
         </div>
 
-        <div style="background: #0b0f1d; padding: 10px; border-radius: 14px; border: 1px solid rgba(112, 220, 229, 0.35); display: inline-block; box-shadow: 0 0 20px rgba(0, 240, 255, 0.22); cursor: pointer;" onclick="window.copyToClipboard('${transferContent}', 'Đã copy nội dung chuyển khoản!')" title="Nhấp để copy nội dung chuyển khoản">
-          <img src="${qrUrl}" onerror="this.onerror=null;this.src='${fallbackQrUrl}'" alt="VietQR Nạp Tiền" style="width: 220px; height: auto; max-height: 360px; object-fit: contain; display: block; border-radius: 10px;">
+        <div id="hubDepositQrWrap" style="background: #0b0f1d; padding: 10px; border-radius: 14px; border: 1px solid rgba(112, 220, 229, 0.35); display: inline-block; box-shadow: 0 0 20px rgba(0, 240, 255, 0.22); cursor: pointer;" title="Nhấp để copy nội dung chuyển khoản">
+          <img id="hubDepositQrImg" src="${esc(qrUrl)}" alt="VietQR Sacombank Nạp Tiền" style="width: 220px; height: auto; max-height: 360px; object-fit: contain; display: block; border-radius: 10px;">
         </div>
 
         <div style="width: 100%; background: rgba(10, 14, 26, 0.8); border-radius: 12px; padding: 14px; border: 1px solid rgba(255, 255, 255, 0.08); text-align: left; display: flex; flex-direction: column; gap: 10px;">
@@ -1370,7 +1375,7 @@
             <span style="font-size: 0.8125rem; color: var(--text-muted);">SỐ TÀI KHOẢN</span>
             <div style="display: flex; align-items: center; gap: 8px;">
               <span style="font-family: monospace; font-weight: 800; color: #00f0ff;">${esc(bankConfig.accountNumber)}</span>
-              <button class="hub-order-btn-view" style="padding: 2px 8px; font-size: 0.75rem;" onclick="window.copyToClipboard('${bankConfig.accountNumber}', 'Đã copy STK!')">Copy</button>
+              <button type="button" id="hubCopyDepositAcc" class="hub-order-btn-view" style="padding: 2px 8px; font-size: 0.75rem;">Copy</button>
             </div>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -1381,7 +1386,7 @@
             <span style="font-size: 0.8125rem; color: var(--text-muted);">SỐ TIỀN NẠP</span>
             <div style="display: flex; align-items: center; gap: 8px;">
               <span style="font-weight: 900; color: #10b981;">${formatVND(order.amount)}</span>
-              <button class="hub-order-btn-view" style="padding: 2px 8px; font-size: 0.75rem;" onclick="window.copyToClipboard('${order.amount}', 'Đã copy số tiền!')">Copy</button>
+              <button type="button" id="hubCopyDepositAmount" class="hub-order-btn-view" style="padding: 2px 8px; font-size: 0.75rem;">Copy</button>
             </div>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 184, 0, 0.08); padding: 8px; border-radius: 8px; border: 1px dashed rgba(255, 184, 0, 0.3);">
@@ -1389,7 +1394,7 @@
               <div style="font-size: 0.75rem; color: #ffb800; font-weight: 700;">NỘI DUNG CHUYỂN KHOẢN (BẮT BUỘC)</div>
               <div style="font-family: monospace; font-weight: 900; color: #ffb800; font-size: 1.1rem;">${esc(transferContent)}</div>
             </div>
-            <button class="hub-order-btn-view" style="padding: 6px 12px; background: #ffb800; color: #000; font-weight: 800;" onclick="window.copyToClipboard('${transferContent}', 'Đã copy nội dung!')">Copy</button>
+            <button type="button" id="hubCopyDepositContent" class="hub-order-btn-view" style="padding: 6px 12px; background: #ffb800; color: #000; font-weight: 800;">Copy</button>
           </div>
         </div>
 
@@ -1404,6 +1409,38 @@
         </div>
       </div>
     `;
+
+    // Bind copy & QR fallback via DOM listeners (avoid inline JS string interpolation)
+    const qrWrap = document.getElementById('hubDepositQrWrap');
+    const qrImg = document.getElementById('hubDepositQrImg');
+    if (qrWrap) {
+      qrWrap.addEventListener('click', () => window.copyToClipboard(transferContent, 'Đã copy nội dung chuyển khoản!'));
+    }
+    if (qrImg) {
+      const renderManualFallback = () => {
+        if (!qrWrap) return;
+        qrWrap.innerHTML = '<div style="width:220px;padding:18px 12px;color:#cbd5e1;font-size:0.85rem;line-height:1.5;">Không tải được ảnh VietQR.<br>Vui lòng chuyển khoản thủ công theo đúng STK &amp; nội dung bên dưới.</div>';
+      };
+      qrImg.addEventListener('error', () => {
+        if (qrUrl !== dynamicQrUrl && qrImg.getAttribute('src') !== dynamicQrUrl) {
+          qrImg.src = dynamicQrUrl;
+        } else {
+          renderManualFallback();
+        }
+      });
+    }
+    const copyAccBtn = document.getElementById('hubCopyDepositAcc');
+    if (copyAccBtn) {
+      copyAccBtn.addEventListener('click', () => window.copyToClipboard(String(bankConfig.accountNumber || ''), 'Đã copy STK!'));
+    }
+    const copyAmtBtn = document.getElementById('hubCopyDepositAmount');
+    if (copyAmtBtn) {
+      copyAmtBtn.addEventListener('click', () => window.copyToClipboard(String(order.amount || ''), 'Đã copy số tiền!'));
+    }
+    const copyContentBtn = document.getElementById('hubCopyDepositContent');
+    if (copyContentBtn) {
+      copyContentBtn.addEventListener('click', () => window.copyToClipboard(transferContent, 'Đã copy nội dung!'));
+    }
 
     // Start live polling for deposit confirmation
     startDepositPolling(order);

@@ -7,6 +7,28 @@
 const PaymentProvider = require('../../assets/js/payment-provider.js');
 const { SAFE_ORDER_SELECT, defaultOrderNotifier } = require('./order-notifier.js');
 
+const BANK_CODE_ALIASES = {
+  sacombank: ['sacombank', 'stb', 'sacom', '970403'],
+  stb: ['sacombank', 'stb', 'sacom', '970403'],
+  sacom: ['sacombank', 'stb', 'sacom', '970403'],
+  '970403': ['sacombank', 'stb', 'sacom', '970403'],
+  mb: ['mb', 'mbbank', 'militarybank', '970422'],
+  mbbank: ['mb', 'mbbank', 'militarybank', '970422'],
+  militarybank: ['mb', 'mbbank', 'militarybank', '970422'],
+  '970422': ['mb', 'mbbank', 'militarybank', '970422']
+};
+
+function isAllowedBankCode(receivedBankCode, expectedBankCode, expectedBankBin) {
+  const normalized = String(receivedBankCode || '').trim().toLowerCase();
+  if (!normalized) return false;
+  const expectedCode = String(expectedBankCode || '').trim().toLowerCase();
+  const expectedBin = String(expectedBankBin || '').trim().toLowerCase();
+  const allowed = new Set(
+    BANK_CODE_ALIASES[expectedCode] || BANK_CODE_ALIASES[expectedBin] || [expectedCode, expectedBin].filter(Boolean)
+  );
+  return allowed.has(normalized);
+}
+
 class PaymentService {
   constructor(options = {}) {
     this.providerName = options.provider || process.env.PAYMENT_PROVIDER || 'sepay';
@@ -15,10 +37,10 @@ class PaymentService {
     this.pgClient = options.pgClient || null; // Support PGlite or pg Pool
     this.orderNotifier = options.orderNotifier || defaultOrderNotifier;
     this.bankConfig = {
-      bankBin: options.bankBin || process.env.BANK_BIN || '970422',
-      bankCode: options.bankCode || process.env.BANK_CODE || 'MB',
-      bankName: options.bankName || process.env.BANK_NAME || 'MB Bank',
-      accountNumber: options.accountNumber || process.env.BANK_ACCOUNT_NUMBER || '0763550673',
+      bankBin: options.bankBin || process.env.BANK_BIN || '970403',
+      bankCode: options.bankCode || process.env.BANK_CODE || 'Sacombank',
+      bankName: options.bankName || process.env.BANK_NAME || 'Sacombank',
+      accountNumber: options.accountNumber || process.env.BANK_ACCOUNT_NUMBER || '79202012546',
       accountName: options.accountName || process.env.BANK_ACCOUNT_NAME || 'NGUYEN HOANG NAM',
       expireMinutes: Number(options.expireMinutes || process.env.PAYMENT_EXPIRE_MINUTES || 15)
     };
@@ -31,11 +53,12 @@ class PaymentService {
     const providerName = this.providerName;
     const logPrefix = `[PaymentService:${providerName}]`;
 
-    // 1. Verify Webhook Signature / Secret
+    // 1. Verify Webhook Signature / Secret first (before parsing untrusted body)
+    const rawBodyForVerify = typeof body === 'string' ? body : JSON.stringify(body ?? {});
     const isValid = PaymentProvider.verifyWebhook(
       providerName,
-      headers,
-      JSON.stringify(body),
+      headers || {},
+      rawBodyForVerify,
       this.webhookSecret
     );
 
@@ -51,10 +74,36 @@ class PaymentService {
       };
     }
 
-    // 2. Parse Normalized Transaction
+    // 2. Parse Normalized Transaction (require JSON plain object)
+    let parsedBody = body;
+    if (typeof parsedBody === 'string') {
+      try {
+        parsedBody = JSON.parse(parsedBody);
+      } catch (_) {
+        return {
+          status: 400,
+          body: {
+            success: false,
+            error: 'MALFORMED_PAYLOAD',
+            message: 'Dữ liệu webhook không đúng định dạng JSON'
+          }
+        };
+      }
+    }
+    if (!parsedBody || typeof parsedBody !== 'object' || Array.isArray(parsedBody)) {
+      return {
+        status: 400,
+        body: {
+          success: false,
+          error: 'MALFORMED_PAYLOAD',
+          message: 'Dữ liệu webhook phải là JSON object'
+        }
+      };
+    }
+
     let transaction;
     try {
-      transaction = PaymentProvider.normalizeTransaction(providerName, headers, body);
+      transaction = PaymentProvider.normalizeTransaction(providerName, headers || {}, parsedBody);
     } catch (err) {
       console.error(`${logPrefix} Error parsing webhook payload:`, err);
       return {
@@ -67,7 +116,16 @@ class PaymentService {
       };
     }
 
-    if (transaction.direction !== 'in' || !transaction.providerTransactionId || !transaction.bankAccount || transaction.bankAccount !== this.bankConfig.accountNumber || !Number.isSafeInteger(transaction.amount)) {
+    const expectedAccount = String(this.bankConfig.accountNumber || '').trim();
+    const validBankCode = isAllowedBankCode(transaction.bankCode, this.bankConfig.bankCode, this.bankConfig.bankBin);
+    if (
+      transaction.direction !== 'in' ||
+      !transaction.providerTransactionId ||
+      !validBankCode ||
+      !transaction.bankAccount ||
+      transaction.bankAccount !== expectedAccount ||
+      !Number.isSafeInteger(transaction.amount)
+    ) {
       return {status:400,body:{success:false,error:'INVALID_PAYMENT_DESTINATION',message:'Giao dịch cần mã ngân hàng hợp lệ, chiều tiền vào và đúng tài khoản nhận.'}};
     }
     if (!transaction.amount || transaction.amount <= 0) {
@@ -100,7 +158,7 @@ class PaymentService {
       await this.recordWebhookEvent({
         provider: providerName,
         eventId: transaction.providerTransactionId,
-        payload: body,
+        payload: parsedBody,
         signatureValid: true,
         processed: confirmResult.success,
         errorMessage: confirmResult.error || null
@@ -151,7 +209,7 @@ class PaymentService {
         [
           provider,
           providerTransactionId,
-          bankCode || this.bankConfig.bankCode,
+          bankCode,
           bankAccount,
           amount,
           transferContent,
@@ -167,7 +225,7 @@ class PaymentService {
       const { data, error } = await this.supabaseClient.rpc('confirm_payment_transaction', {
         p_provider: provider,
         p_provider_txn_id: providerTransactionId,
-        p_bank_code: bankCode || this.bankConfig.bankCode,
+        p_bank_code: bankCode,
         p_bank_account: bankAccount,
         p_amount: amount,
         p_transfer_content: transferContent,

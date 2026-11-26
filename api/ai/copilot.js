@@ -1,10 +1,22 @@
 const { createClient } = require('@supabase/supabase-js');
+const { isOriginAllowed, normalizeHostname } = require('./chat');
 
 // Authenticate each request and use Supabase RLS to limit the order data read.
 module.exports = async function handler(req, res) {
+  res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('Vary', 'Origin');
+
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ message: 'Phương thức không được hỗ trợ.' });
+  }
+
+  const vercelEnv = String(process.env.VERCEL_ENV || '').toLowerCase();
+  const allowedPreviewHosts = [process.env.VERCEL_URL, process.env.VERCEL_BRANCH_URL]
+    .map(normalizeHostname)
+    .filter(Boolean);
+  if (!isOriginAllowed(req, { vercelEnv, allowedPreviewHosts })) {
+    return res.status(403).json({ message: 'Nguồn yêu cầu không được phép.' });
   }
 
   const token = String(req.headers.authorization || '').replace(/^Bearer\s+/i, '');
@@ -39,7 +51,7 @@ module.exports = async function handler(req, res) {
       .eq('id', orderId).maybeSingle();
     if (orderError || !order) return res.status(404).json({ message: 'Không tìm thấy đơn hàng.' });
 
-    const model = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+    const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
     const aiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-goog-api-key': geminiKey },

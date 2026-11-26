@@ -38,6 +38,7 @@ module.exports = async function handler(req, res) {
       supabaseClient: getSupabase()
     });
 
+    // Pass req.body directly so PaymentService enforces auth (401) before body validation (400)
     const result = await service.processWebhook(req.headers, req.body);
     return res.status(result.status).json(result.body);
   } catch (error) {

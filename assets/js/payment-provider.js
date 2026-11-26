@@ -53,13 +53,61 @@
     return { generateSvg };
   })();
 
+  // Constant-time string comparison (hashes both values in Node to avoid length oracle)
+  function safeEqual(a, b) {
+    if (typeof a !== 'string' || typeof b !== 'string') return false;
+    if (typeof require === 'function') {
+      try {
+        const crypto = require('node:crypto');
+        const hashA = crypto.createHash('sha256').update(a, 'utf8').digest();
+        const hashB = crypto.createHash('sha256').update(b, 'utf8').digest();
+        return crypto.timingSafeEqual(hashA, hashB);
+      } catch (_) {
+        // Fallback below if crypto is unavailable in a sandboxed runtime
+      }
+    }
+    if (a.length !== b.length) return false;
+    let diff = 0;
+    for (let i = 0; i < a.length; i++) {
+      diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+    }
+    return diff === 0;
+  }
+
+  // Case-insensitive HTTP header lookup safe against null/non-object headers
+  function getHeader(headers, targetName) {
+    if (!headers || typeof headers !== 'object') return '';
+    const lowerTarget = String(targetName).toLowerCase();
+    for (const key of Object.keys(headers)) {
+      if (key.toLowerCase() === lowerTarget) {
+        const val = headers[key];
+        return Array.isArray(val) ? String(val[0] ?? '') : String(val ?? '');
+      }
+    }
+    return '';
+  }
+
+  // Strict positive-or-zero integer VND parser (rejects floats, booleans, arrays, objects)
+  function parseStrictAmount(raw) {
+    if (typeof raw === 'number') {
+      return Number.isSafeInteger(raw) ? raw : NaN;
+    }
+    if (typeof raw === 'string') {
+      const trimmed = raw.trim();
+      if (!/^\d+$/.test(trimmed)) return NaN;
+      const n = Number(trimmed);
+      return Number.isSafeInteger(n) ? n : NaN;
+    }
+    return NaN;
+  }
+
   // 1. VietQR Engine
   const VietQR = {
     /**
      * Generate standard VietQR image QuickLink URL
      */
     generateQuickLink({
-      bankBin = '970422', // Default: MB Bank
+      bankBin = '970403', // Default: Sacombank
       accountNumber,
       accountName = '',
       amount = 0,
@@ -88,7 +136,7 @@
      * Generate standard EMVCo payload string for VietQR (NAPAS)
      */
     generateEmvCoPayload({
-      bankBin = '970422',
+      bankBin = '970403',
       accountNumber,
       amount = 0,
       transferContent = ''
@@ -130,37 +178,45 @@
     name: 'sepay',
 
     verifyWebhook(headers = {}, rawBody, expectedSecret) {
-      if (!expectedSecret) return false;
-      const authHeader = headers['authorization'] || headers['Authorization'] || '';
-      const apiKeyHeader = headers['x-api-key'] || headers['X-API-KEY'] || '';
-      
-      const expectedBearer = `Apikey ${expectedSecret}`;
-      const expectedBearer2 = `Bearer ${expectedSecret}`;
-      
-      if (authHeader === expectedBearer || authHeader === expectedBearer2 || apiKeyHeader === expectedSecret) {
+      if (!expectedSecret || typeof expectedSecret !== 'string') return false;
+      const authHeader = getHeader(headers, 'authorization').trim();
+      const apiKeyHeader = getHeader(headers, 'x-api-key').trim();
+
+      const authMatch = /^(?:apikey|bearer)\s+(.+)$/i.exec(authHeader);
+      if (authMatch && safeEqual(authMatch[1].trim(), expectedSecret)) {
+        return true;
+      }
+      if (apiKeyHeader && safeEqual(apiKeyHeader, expectedSecret)) {
         return true;
       }
       return false;
     },
 
     parseTransaction(payload = {}) {
-      const amount = Math.round(Number(payload.transferAmount || payload.amount || 0));
-      const content = String(payload.content || payload.description || payload.code || '').trim();
-      const txnId = String(payload.id || payload.transaction_id || payload.referenceCode || '').trim();
-      const bankCode = String(payload.gateway || payload.bank_brand_name || payload.bank_code || '').trim();
-      const bankAccount = String(payload.accountNumber || payload.subAccount || payload.bank_account || '').trim();
-      const txnTime = payload.transactionDate || payload.transaction_time || new Date().toISOString();
+      const safePayload = payload && typeof payload === 'object' && !Array.isArray(payload) ? payload : {};
+      const rawAmount = safePayload.transferAmount !== undefined ? safePayload.transferAmount : safePayload.amount;
+      const amount = parseStrictAmount(rawAmount);
+      const rawContent = String(safePayload.content ?? '').trim();
+      const rawCode = String(safePayload.code ?? '').trim();
+      const rawDesc = String(safePayload.description ?? '').trim();
+      const content = rawContent || rawCode || rawDesc;
+      const hasId = safePayload.id !== undefined && safePayload.id !== null && String(safePayload.id).trim() !== '';
+      const rawId = hasId ? safePayload.id : (safePayload.transaction_id || safePayload.referenceCode || '');
+      const txnId = String(rawId).trim();
+      const bankCode = String(safePayload.gateway || safePayload.bank_brand_name || safePayload.bank_code || '').trim();
+      const bankAccount = String(safePayload.accountNumber || safePayload.subAccount || safePayload.bank_account || '').trim();
+      const txnTime = safePayload.transactionDate || safePayload.transaction_time || new Date().toISOString();
 
       return {
         provider: 'sepay',
         providerTransactionId: txnId,
-        direction: String(payload.transferType || '').toLowerCase(),
+        direction: String(safePayload.transferType || '').trim().toLowerCase(),
         bankCode,
         bankAccount,
         amount,
         transferContent: content,
         transactionTime: txnTime,
-        rawPayload: payload
+        rawPayload: safePayload
       };
     }
   };
@@ -170,9 +226,9 @@
     name: 'casso',
 
     verifyWebhook(headers = {}, rawBody, expectedSecret) {
-      if (!expectedSecret) return false;
-      const token = headers['secure-token'] || headers['Secure-Token'] || '';
-      return token === expectedSecret;
+      if (!expectedSecret || typeof expectedSecret !== 'string') return false;
+      const token = getHeader(headers, 'secure-token').trim();
+      return Boolean(token) && safeEqual(token, expectedSecret);
     },
 
     parseTransaction(payload = {}) {
@@ -204,9 +260,9 @@
     name: 'mock',
 
     verifyWebhook(headers = {}, rawBody, expectedSecret) {
-      if (!expectedSecret) return false;
-      const secret = headers['x-mock-secret'] || headers['authorization'] || '';
-      return secret === expectedSecret;
+      if (!expectedSecret || typeof expectedSecret !== 'string') return false;
+      const secret = (getHeader(headers, 'x-mock-secret') || getHeader(headers, 'authorization')).trim();
+      return Boolean(secret) && safeEqual(secret, expectedSecret);
     },
 
     parseTransaction(payload = {}) {
@@ -272,7 +328,7 @@
       if (typeof provider.verifyWebhook === 'function') {
         return provider.verifyWebhook(headers, rawBody, secret);
       }
-      return true;
+      return false;
     }
   };
 });

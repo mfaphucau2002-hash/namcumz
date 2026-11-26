@@ -199,6 +199,15 @@ check('admin panel exposes topup credentials viewer, payment recording, CSV expo
  assert.ok(admin.includes('data-respond-ticket="${esc(t.id)}"') && !admin.includes("openRespondModal('${esc(t.id)}', '${esc(t.response"), 'ticket response must never enter inline onclick JS');
  assert.ok(!admin.includes('Next.js Dashboard'), 'admin panel must not point to outdated Next.js Dashboard text');
 });
+check('CSP removes unpkg, allows Turnstile, uses local Supabase fallback, and restricts ACAO',()=>{
+ const vercel=fs.readFileSync(path.join(root,'vercel.json'),'utf8');
+ assert.ok(!vercel.includes('unpkg.com'), 'vercel.json must not whitelist unpkg.com');
+ assert.ok(vercel.includes('https://challenges.cloudflare.com'), 'vercel.json CSP must allow Cloudflare Turnstile');
+ assert.ok(vercel.includes('"Access-Control-Allow-Origin"') && vercel.includes('https://namcumz.io.vn'), 'vercel.json must restrict ACAO to production domain');
+ assert.ok(!source.includes('unpkg.com'), 'app.js must not load unpkg.com without SRI');
+ assert.ok(source.includes('/assets/vendor/supabase.min.js'), 'app.js must use local vendor supabase fallback');
+ assert.ok(fs.existsSync(path.join(root,'assets/vendor/supabase.min.js')), 'local vendor supabase bundle must exist');
+});
 console.log(`${checks} checks passed; browser/staging/DB permissions are NOT covered.`);
 
 
