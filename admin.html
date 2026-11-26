@@ -145,15 +145,72 @@
 
         .action-btns {
             display: flex;
-            gap: 8px;
+            gap: 6px;
+            flex-wrap: wrap;
         }
         .btn-sm {
-            padding: 6px 12px;
-            font-size: 0.85rem;
+            padding: 6px 10px;
+            font-size: 0.8rem;
             border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+            white-space: nowrap;
         }
         .btn-edit { background: var(--status-dang-cay); color: #000; border: none; cursor: pointer; }
         .btn-delete { background: var(--status-tam-dung); color: #fff; border: none; cursor: pointer; }
+        .btn-cred { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.45); cursor: pointer; font-weight: 600; }
+        .btn-pay { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.45); cursor: pointer; font-weight: 600; }
+        .btn-view { background: rgba(56, 189, 248, 0.16); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); cursor: pointer; font-weight: 600; }
+        .admin-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 14px 16px;
+        }
+        .admin-toolbar input,
+        .admin-toolbar select {
+            background: var(--bg-secondary, #0f172a);
+            color: var(--text-main, #fff);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 9px 12px;
+            font-size: 0.9rem;
+        }
+        .admin-toolbar input {
+            flex: 1 1 240px;
+            min-width: 200px;
+        }
+        .kind-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 9px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .kind-topup { background: rgba(245, 158, 11, 0.16); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); }
+        .kind-boost { background: rgba(168, 85, 247, 0.16); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.35); }
+        .kind-deposit { background: rgba(56, 189, 248, 0.16); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); }
+        .pay-pill {
+            display: inline-block;
+            margin-top: 4px;
+            padding: 2px 7px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+        .pay-paid { background: rgba(16, 185, 129, 0.18); color: #34d399; }
+        .pay-pending { background: rgba(245, 158, 11, 0.18); color: #fbbf24; }
+        .pay-expired { background: rgba(239, 68, 68, 0.18); color: #f87171; }
 
         /* Modal Styles */
         .modal-overlay {
@@ -200,17 +257,22 @@
             <div id="tab-orders" class="tab-content active">
                 <div class="admin-topbar animate-on-load">
                     <div class="admin-title">
-                        <h1>Quản lý Đơn Cày Thuê</h1>
-                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;" id="adminRoleText">Hệ thống quản trị viên</p>
+                        <h1>Quản lý Toàn Bộ Đơn Hàng</h1>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;" id="adminRoleText">Đang xác thực quyền quản trị...</p>
                     </div>
                     <div class="admin-profile">
+                        <a href="/dashboard.html" class="btn btn-secondary"><i class="fa-solid fa-table-columns"></i> Mở Dashboard</a>
                         <button class="btn btn-accent" id="openAddModalBtn"><i class="fa-solid fa-plus"></i> Thêm Đơn Thủ Công</button>
                         <div class="admin-avatar" id="adminAvatarInitials">AD</div>
                     </div>
                 </div>
 
                 <!-- Stats -->
-                <div class="stats-row animate-on-load" style="animation-delay: 0.1s; margin: 0 0 40px 0;">
+                <div class="stats-row animate-on-load" style="animation-delay: 0.1s; margin: 0 0 24px 0;">
+                    <div class="stat-card">
+                        <div class="stat-lbl">Đơn Nạp Game</div>
+                        <div class="stat-val" style="color: #fbbf24;" id="adm-stat-topup">0</div>
+                    </div>
                     <div class="stat-card">
                         <div class="stat-lbl">Chờ xử lý</div>
                         <div class="stat-val" style="color: #a855f7;" id="adm-stat-pending">0</div>
@@ -223,6 +285,29 @@
                         <div class="stat-lbl">Hoàn thành</div>
                         <div class="stat-val" style="color: var(--status-hoan-thanh);" id="adm-stat-done">0</div>
                     </div>
+                </div>
+
+                <!-- Filter & Export Toolbar -->
+                <div class="admin-toolbar animate-on-load" style="animation-delay: 0.15s;">
+                    <input type="search" id="adminSearchInput" placeholder="Tìm mã đơn, mã CK (NCZ...), khách hàng, nội dung..." aria-label="Tìm kiếm đơn hàng">
+                    <select id="adminFilterKind" aria-label="Lọc loại đơn">
+                        <option value="all">Tất cả loại đơn</option>
+                        <option value="topup">💎 Đơn Nạp Game</option>
+                        <option value="boost">⚔️ Đơn Cày Thuê</option>
+                        <option value="deposit">💳 Đơn Nạp Ví</option>
+                    </select>
+                    <select id="adminFilterStatus" aria-label="Lọc trạng thái đơn">
+                        <option value="active">Đang hoạt động</option>
+                        <option value="cho_xu_ly">Chờ xử lý</option>
+                        <option value="dang_cay">Đang cày</option>
+                        <option value="cho_nghiem_thu">Chờ nghiệm thu</option>
+                        <option value="hoan_thanh">Hoàn thành</option>
+                        <option value="tam_dung">Tạm dừng</option>
+                        <option value="cancelled">Đã hủy</option>
+                        <option value="all">Tất cả (gồm đã hủy)</option>
+                    </select>
+                    <button type="button" class="btn btn-secondary" id="adminRefreshBtn"><i class="fa-solid fa-rotate-right"></i> Tải lại</button>
+                    <button type="button" class="btn btn-primary" id="adminExportCsvBtn"><i class="fa-solid fa-file-csv"></i> Xuất CSV</button>
                 </div>
 
                 <!-- Table Orders -->
@@ -241,7 +326,7 @@
                             </tr>
                         </thead>
                         <tbody id="adminTableBody">
-                            <tr><td colspan="7" style="text-align: center;">Đang tải dữ liệu...</td></tr>
+                            <tr><td colspan="8" style="text-align: center;">Đang tải dữ liệu...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -395,18 +480,65 @@
             document.getElementById('tab-' + tabId).classList.add('active');
             el.classList.add('active');
 
-            if(tabId === 'staff') {
-                loadStaffTable();
+            if (tabId === 'staff') {
+                if (typeof window.loadStaffTable === 'function') window.loadStaffTable();
+            } else if (tabId === 'tickets') {
+                if (typeof window.loadTicketsTable === 'function') window.loadTicketsTable();
             } else {
-                loadAdminTable();
+                if (typeof window.loadAdminTable === 'function') window.loadAdminTable();
             }
         }
 
-        // Admin specific logic
-        document.addEventListener('DOMContentLoaded', () => {
-            const userRole = localStorage.getItem('userRole');
-            const username = localStorage.getItem('username');
-            
+        // Wait briefly for shared Supabase client initialized by app.js
+        async function waitForSupabaseClient(timeoutMs = 3000) {
+            const started = Date.now();
+            while (!window.supabaseClient && Date.now() - started < timeoutMs) {
+                await new Promise(resolve => setTimeout(resolve, 60));
+            }
+            return window.supabaseClient || null;
+        }
+
+        // Admin specific logic (fail-closed: always verify live session and user_roles from Supabase)
+        document.addEventListener('DOMContentLoaded', async () => {
+            const client = await waitForSupabaseClient();
+            if (!client) {
+                alert('Không thể kết nối hệ thống xác thực quản trị. Vui lòng tải lại trang.');
+                window.location.href = '/';
+                return;
+            }
+
+            let userRole = 'customer';
+            let username = '';
+            let verifiedUserId = '';
+
+            try {
+                const { data: sessionData, error: sessionError } = await client.auth.getSession();
+                const sessionUser = !sessionError ? (sessionData?.session?.user || null) : null;
+                if (!sessionUser) {
+                    window.location.href = '/login.html?next=' + encodeURIComponent('/admin.html');
+                    return;
+                }
+                verifiedUserId = sessionUser.id;
+                const { data: roleRow, error: roleError } = await client
+                    .from('user_roles')
+                    .select('username, display_name, role, active')
+                    .eq('id', sessionUser.id)
+                    .maybeSingle();
+
+                if (!roleError && roleRow && roleRow.active !== false) {
+                    userRole = roleRow.role || 'customer';
+                    username = roleRow.display_name || roleRow.username || '';
+                    localStorage.setItem('userRole', userRole);
+                    localStorage.setItem('username', roleRow.username || username);
+                    localStorage.setItem('userId', sessionUser.id);
+                } else {
+                    userRole = 'customer';
+                }
+            } catch (authErr) {
+                console.error('Lỗi xác thực quyền admin:', authErr);
+                userRole = 'customer';
+            }
+
             if (userRole !== 'admin' && userRole !== 'super_admin') {
                 alert('Bạn không có quyền truy cập trang quản trị!');
                 window.location.href = '/';
@@ -416,7 +548,7 @@
             // Setup UI based on role
             document.getElementById('adminAvatarInitials').textContent = username ? username.substring(0,2) : 'AD';
             
-            if(userRole === 'super_admin') {
+            if (userRole === 'super_admin') {
                 document.getElementById('adminRoleText').textContent = 'Quyền hạn: SUPER ADMIN (Trùm cuối)';
                 document.getElementById('staffTabLink').style.display = 'flex';
             } else {
@@ -449,63 +581,229 @@
 
             // Fetch and render Admin Table
             const adminOrdersMap = new Map();
+            let adminOrdersList = [];
+            let lastFilteredOrders = [];
             const esc = typeof escapeHtml === 'function' ? escapeHtml : str => String(str ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+            const formatMoney = val => {
+                const n = Number(val || 0);
+                return Number.isFinite(n) && n > 0 ? n.toLocaleString('vi-VN') + 'đ' : 'Chờ báo giá';
+            };
+            const formatDateTime = iso => {
+                if (!iso) return '—';
+                try {
+                    return new Date(iso).toLocaleString('vi-VN', {
+                        hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric'
+                    });
+                } catch (_) { return String(iso); }
+            };
+            const resolveOrderKind = order => {
+                const raw = String(order.kind || '').toLowerCase();
+                if (raw === 'topup' || raw === 'deposit' || raw === 'boost') return raw;
+                return String(order.content || '').includes('[Nạp Game]') ? 'topup' : 'boost';
+            };
+            const getStatusMeta = order => {
+                if (order.cancelled) return { text: 'Đã hủy', color: '#ef4444' };
+                if (order.status === 'cho_xu_ly') return { text: 'Chờ xử lý', color: '#a855f7' };
+                if (order.status === 'dang_cay') return { text: 'Đang cày', color: 'var(--status-dang-cay)' };
+                if (order.status === 'cho_nghiem_thu') return { text: 'Chờ nghiệm thu', color: '#38bdf8' };
+                if (order.status === 'hoan_thanh') return { text: 'Hoàn thành', color: 'var(--status-hoan-thanh)' };
+                if (order.status === 'tam_dung') return { text: 'Tạm dừng', color: 'var(--status-tam-dung)' };
+                return { text: order.status || '—', color: '#fff' };
+            };
 
-            window.loadAdminTable = async () => {
-                const { data, error } = await supabaseClient.from('orders').select('*').order('created_at', { ascending: false });
-                if(error) return;
-
-                adminOrdersMap.clear();
+            function renderAdminTable() {
                 const tbody = document.getElementById('adminTableBody');
-                tbody.innerHTML = '';
-                
-                let pending = 0, playing = 0, done = 0;
+                if (!tbody) return;
 
-                data.forEach(order => {
-                    adminOrdersMap.set(order.id, order);
-                    if (!order.cancelled) {
-                        if(order.status === 'cho_xu_ly') pending++;
-                        if(order.status === 'dang_cay') playing++;
-                        if(order.status === 'hoan_thanh') done++;
+                const searchVal = (document.getElementById('adminSearchInput')?.value || '').trim().toLowerCase();
+                const kindFilter = document.getElementById('adminFilterKind')?.value || 'all';
+                const statusFilter = document.getElementById('adminFilterStatus')?.value || 'active';
+
+                const filtered = adminOrdersList.filter(order => {
+                    const kind = resolveOrderKind(order);
+                    if (kindFilter !== 'all' && kind !== kindFilter) return false;
+                    if (statusFilter === 'active') {
+                        if (order.cancelled) return false;
+                    } else if (statusFilter === 'cancelled') {
+                        if (!order.cancelled) return false;
+                    } else if (statusFilter !== 'all') {
+                        if (order.cancelled || order.status !== statusFilter) return false;
                     }
+                    if (searchVal) {
+                        const haystack = [
+                            order.order_code,
+                            order.payment_reference,
+                            order.renter_name,
+                            order.booster_name,
+                            order.content,
+                            order.game_server
+                        ].map(v => String(v || '').toLowerCase()).join(' ');
+                        if (!haystack.includes(searchVal)) return false;
+                    }
+                    return true;
+                });
 
-                    let statusText = order.status;
-                    let color = '#fff';
-                    if(order.cancelled) { statusText = 'Đã hủy'; color = '#ef4444'; }
-                    else if(order.status === 'cho_xu_ly') { statusText = 'Chờ xử lý'; color = '#a855f7'; }
-                    else if(order.status === 'dang_cay') { statusText = 'Đang cày'; color = 'var(--status-dang-cay)'; }
-                    else if(order.status === 'cho_nghiem_thu') { statusText = 'Chờ nghiệm thu'; color = '#38bdf8'; }
-                    else if(order.status === 'hoan_thanh') { statusText = 'Hoàn thành'; color = 'var(--status-hoan-thanh)'; }
-                    else if(order.status === 'tam_dung') { statusText = 'Tạm dừng'; color = 'var(--status-tam-dung)'; }
+                lastFilteredOrders = filtered;
+                tbody.innerHTML = '';
+
+                if (filtered.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 28px;">Không có đơn hàng phù hợp bộ lọc.</td></tr>';
+                    return;
+                }
+
+                filtered.forEach(order => {
+                    const kind = resolveOrderKind(order);
+                    const { text: statusText, color } = getStatusMeta(order);
+                    const kindBadge = kind === 'topup'
+                        ? '<span class="kind-badge kind-topup"><i class="fa-solid fa-gem"></i> Nạp Game</span>'
+                        : (kind === 'deposit'
+                            ? '<span class="kind-badge kind-deposit"><i class="fa-solid fa-wallet"></i> Nạp Ví</span>'
+                            : '<span class="kind-badge kind-boost"><i class="fa-solid fa-gamepad"></i> Cày Thuê</span>');
+
+                    const payStatus = String(order.payment_status || 'PENDING').toUpperCase();
+                    const isPaid = payStatus === 'PAID' || (Number(order.price) > 0 && Number(order.paid_amount) >= Number(order.price));
+                    const payPill = isPaid
+                        ? '<span class="pay-pill pay-paid">Đã TT</span>'
+                        : (payStatus === 'EXPIRED'
+                            ? '<span class="pay-pill pay-expired">Hết hạn</span>'
+                            : '<span class="pay-pill pay-pending">Chưa TT</span>');
+
+                    const canRecordPayment = kind !== 'deposit'
+                        && !order.cancelled
+                        && order.status === 'cho_xu_ly'
+                        && order.quote_accepted
+                        && Number(order.price || 0) > Number(order.paid_amount || 0);
+                    const canCancel = !order.cancelled && (!['staging', 'production'].includes(window.NAMCUMZ_CONFIG?.environment) || (Number(order.paid_amount || 0) === 0 && order.status === 'cho_xu_ly'));
+
+                    const actionsHtml = [
+                        kind === 'topup'
+                            ? `<button class="btn-sm btn-cred" onclick="viewAdminCredentials('${esc(order.id)}')" title="Xem thông tin tài khoản nạp"><i class="fa-solid fa-key"></i> Xem TK</button>`
+                            : '',
+                        canRecordPayment
+                            ? `<button class="btn-sm btn-pay" onclick="adminRecordPayment('${esc(order.id)}')" title="Xác nhận thu tiền"><i class="fa-solid fa-money-bill-wave"></i> Thu tiền</button>`
+                            : '',
+                        `<a class="btn-sm btn-view" href="/dashboard.html?order=${encodeURIComponent(order.id)}" target="_blank" rel="noopener" title="Mở chi tiết & Chat"><i class="fa-solid fa-up-right-from-square"></i> Chi tiết</a>`,
+                        !['staging', 'production'].includes(window.NAMCUMZ_CONFIG?.environment)
+                            ? `<button class="btn-sm btn-edit" onclick="editOrder('${esc(order.id)}')" title="Sửa đơn"><i class="fa-solid fa-pen"></i></button>`
+                            : '',
+                        canCancel
+                            ? `<button class="btn-sm btn-delete" onclick="deleteOrder('${esc(order.id)}')" title="Hủy đơn"><i class="fa-solid fa-ban"></i></button>`
+                            : ''
+                    ].filter(Boolean).join('');
 
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td><strong>${esc(order.order_code)}</strong></td>
-                        <td style="color: var(--accent);">${esc(order.renter_name || 'Khách')}</td>
-                        <td style="color: var(--status-dang-cay); font-family: monospace;">${esc(order.secret_code || '-')}</td>
-                        <td>${esc(order.booster_name || '-')}</td>
-                        <td><div style="max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${esc(order.content)}</div></td>
-                        <td style="color: var(--status-dang-cay); font-weight:bold;">${esc(order.price || '-')}</td>
-                        <td style="color: ${color}; font-weight: 600;">${statusText}</td>
-                        <td class="action-btns">
-                            <button class="btn-sm btn-edit" onclick="editOrder('${esc(order.id)}')"><i class="fa-solid fa-pen"></i></button>
-                            <button class="btn-sm btn-delete" onclick="deleteOrder('${esc(order.id)}')"><i class="fa-solid fa-trash"></i></button>
+                        <td>
+                            <strong style="font-family: monospace; font-size: 0.85rem;">${esc(order.order_code || order.id?.slice(0, 8))}</strong>
+                            ${order.payment_reference ? `<div style="font-size: 0.75rem; color: #fbbf24; font-family: monospace; margin-top: 2px;">Ref: ${esc(order.payment_reference)}</div>` : ''}
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">${esc(formatDateTime(order.created_at))}</div>
                         </td>
+                        <td>${kindBadge}</td>
+                        <td>
+                            <div style="color: var(--accent); font-weight: 600;">${esc(order.renter_name || 'Khách')}</div>
+                            ${order.game_server ? `<div style="font-size: 0.76rem; color: var(--text-muted);">Server: ${esc(order.game_server)}</div>` : ''}
+                        </td>
+                        <td>${esc(order.booster_name || 'Chưa nhận')}</td>
+                        <td><div style="max-width:240px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${esc(order.content || '')}">${esc(order.content || '-')}</div></td>
+                        <td>
+                            <div style="color: var(--status-dang-cay); font-weight:bold;">${esc(formatMoney(order.price))}</div>
+                            <div style="font-size: 0.78rem; color: var(--text-muted);">Thu: ${esc(Number(order.paid_amount || 0).toLocaleString('vi-VN'))}đ ${payPill}</div>
+                        </td>
+                        <td style="color: ${color}; font-weight: 600; white-space: nowrap;">${esc(statusText)}</td>
+                        <td class="action-btns">${actionsHtml}</td>
                     `;
                     tbody.appendChild(tr);
                 });
+            }
 
+            window.loadAdminTable = async () => {
+                if (!supabaseClient) return;
+                const tbody = document.getElementById('adminTableBody');
+                if (tbody) tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Đang tải dữ liệu...</td></tr>';
+                const { data, error } = await supabaseClient.from('orders').select('*').order('created_at', { ascending: false });
+                if (error) {
+                    if (tbody) tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #ef4444;">Lỗi tải đơn hàng: ' + esc(error.message) + '</td></tr>';
+                    return;
+                }
+
+                adminOrdersMap.clear();
+                adminOrdersList = data || [];
+                let pending = 0, playing = 0, done = 0, topup = 0;
+
+                adminOrdersList.forEach(order => {
+                    adminOrdersMap.set(order.id, order);
+                    if (!order.cancelled) {
+                        if (resolveOrderKind(order) === 'topup') topup++;
+                        if (order.status === 'cho_xu_ly') pending++;
+                        if (order.status === 'dang_cay') playing++;
+                        if (order.status === 'hoan_thanh') done++;
+                    }
+                });
+
+                const topupEl = document.getElementById('adm-stat-topup');
+                if (topupEl) topupEl.textContent = topup;
                 document.getElementById('adm-stat-pending').textContent = pending;
                 document.getElementById('adm-stat-playing').textContent = playing;
                 document.getElementById('adm-stat-done').textContent = done;
+
+                renderAdminTable();
             };
+
+            // Export safe order summary to UTF-8 BOM CSV (never includes credentials/passwords)
+            window.exportAdminOrdersCsv = () => {
+                const rows = lastFilteredOrders;
+                if (!rows.length) {
+                    alert('Không có đơn hàng phù hợp bộ lọc để xuất CSV.');
+                    return;
+                }
+                const csvCell = val => {
+                    let s = String(val ?? '').replace(/\r?\n/g, ' ');
+                    if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+                    return '"' + s.replace(/"/g, '""') + '"';
+                };
+                const headers = ['Thoi gian', 'Ma don', 'Ma thanh toan', 'Loai', 'Khach hang', 'May chu', 'Nguoi thuc hien', 'Noi dung', 'Gia (VND)', 'Da thu (VND)', 'Trang thai TT', 'Trang thai don', 'Da huy'];
+                const csvLines = [headers.map(csvCell).join(',')];
+                rows.forEach(order => {
+                    csvLines.push([
+                        formatDateTime(order.created_at),
+                        order.order_code || order.id || '',
+                        order.payment_reference || '',
+                        resolveOrderKind(order),
+                        order.renter_name || '',
+                        order.game_server || '',
+                        order.booster_name || '',
+                        order.content || '',
+                        Number(order.price || 0),
+                        Number(order.paid_amount || 0),
+                        order.payment_status || 'PENDING',
+                        order.status || '',
+                        order.cancelled ? 'YES' : 'NO'
+                    ].map(csvCell).join(','));
+                });
+                const blob = new Blob(['\uFEFF' + csvLines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                const stamp = new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '');
+                link.href = url;
+                link.download = `namcumz-orders-${stamp}.csv`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+            };
+
+            document.getElementById('adminSearchInput')?.addEventListener('input', renderAdminTable);
+            document.getElementById('adminFilterKind')?.addEventListener('change', renderAdminTable);
+            document.getElementById('adminFilterStatus')?.addEventListener('change', renderAdminTable);
+            document.getElementById('adminRefreshBtn')?.addEventListener('click', () => loadAdminTable());
+            document.getElementById('adminExportCsvBtn')?.addEventListener('click', () => exportAdminOrdersCsv());
 
             // Global functions for Orders
             window.editOrder = async (id) => {
                 if (['staging', 'production'].includes(window.NAMCUMZ_CONFIG?.environment)) {
                     await window.showOrderDialog({
                         title: 'Quản lý đơn hàng',
-                        message: 'Trong môi trường ' + (window.NAMCUMZ_CONFIG?.environment || 'production') + ', trạng thái, giá và điều phối đơn hàng tuân theo quy trình kiểm soát nghiệp vụ (RPC). Vui lòng thao tác và điều phối đơn tại Next.js Dashboard.',
+                        message: 'Trong môi trường ' + (window.NAMCUMZ_CONFIG?.environment || 'production') + ', trạng thái, báo giá và điều phối đơn tuân theo quy trình RPC. Vui lòng bấm nút "Chi tiết" để thao tác đơn tại trang Dashboard (/dashboard.html).',
                         tone: 'info',
                         confirmText: 'Đã hiểu'
                     });
@@ -764,10 +1062,13 @@
                 });
             };
 
-            // Record payment for an order via RPC
+            // Record payment for an order via RPC (excludes wallet deposit orders which settle atomically via bank webhook)
             window.adminRecordPayment = async (orderId) => {
                 const order = adminOrdersMap.get(orderId);
                 if (!order) return alert('Không tìm thấy đơn hàng.');
+                if (resolveOrderKind(order) === 'deposit') {
+                    return alert('Đơn nạp ví không dùng thao tác thu tiền thủ công (chỉ đối soát tự động qua VietQR/Webhook để cộng số dư ví chính xác).');
+                }
                 const defaultAmount = (order.price || 0) - (order.paid_amount || 0);
                 const amountStr = prompt('Xác nhận số tiền khách đã chuyển (VND):', defaultAmount > 0 ? defaultAmount : 0);
                 if (!amountStr) return;
@@ -789,7 +1090,9 @@
             };
 
             // Support Tickets logic
+            const adminTicketsMap = new Map();
             window.loadTicketsTable = async () => {
+                if (!supabaseClient) return;
                 const tbody = document.getElementById('ticketsTableBody');
                 tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Đang tải dữ liệu...</td></tr>';
                 const { data, error } = await supabaseClient.from('support_tickets').select('*').order('created_at', { ascending: false });
@@ -801,7 +1104,9 @@
                     tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #a1a1aa; padding: 24px;">Hiện không có khiếu nại nào.</td></tr>';
                     return;
                 }
+                adminTicketsMap.clear();
                 tbody.innerHTML = data.map(t => {
+                    adminTicketsMap.set(t.id, t);
                     const isResolved = t.status === 'resolved';
                     const statusHtml = isResolved 
                         ? '<span style="color:#10b981; font-weight:700;">Đã xử lý</span>' 
@@ -817,13 +1122,19 @@
                             <td>${statusHtml}</td>
                             <td><div style="max-width:200px; white-space:pre-wrap; font-size:0.85rem; color:#38bdf8;">${esc(t.response || 'Chưa phản hồi')}</div></td>
                             <td>
-                                <button class="btn-sm btn-edit" onclick="openRespondModal('${esc(t.id)}', '${esc(t.response || '')}')">
+                                <button class="btn-sm btn-edit" data-respond-ticket="${esc(t.id)}">
                                     <i class="fa-solid fa-reply"></i> ${isResolved ? 'Sửa' : 'Trả lời'}
                                 </button>
                             </td>
                         </tr>
                     `;
                 }).join('');
+                tbody.querySelectorAll('[data-respond-ticket]').forEach((button) => {
+                    button.addEventListener('click', () => {
+                        const ticket = adminTicketsMap.get(button.dataset.respondTicket);
+                        if (ticket) openRespondModal(ticket.id, ticket.response || '');
+                    });
+                });
             };
 
             window.openRespondModal = (ticketId, currentResponse) => {

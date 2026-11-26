@@ -5,6 +5,7 @@
  */
 
 const PaymentProvider = require('../../assets/js/payment-provider.js');
+const { SAFE_ORDER_SELECT, defaultOrderNotifier } = require('./order-notifier.js');
 
 class PaymentService {
   constructor(options = {}) {
@@ -12,6 +13,7 @@ class PaymentService {
     this.webhookSecret = options.webhookSecret || process.env.PAYMENT_WEBHOOK_SECRET || '';
     this.supabaseClient = options.supabaseClient || null;
     this.pgClient = options.pgClient || null; // Support PGlite or pg Pool
+    this.orderNotifier = options.orderNotifier || defaultOrderNotifier;
     this.bankConfig = {
       bankBin: options.bankBin || process.env.BANK_BIN || '970422',
       bankCode: options.bankCode || process.env.BANK_CODE || 'MB',
@@ -103,6 +105,11 @@ class PaymentService {
         processed: confirmResult.success,
         errorMessage: confirmResult.error || null
       });
+
+      // Notify configured channels (Telegram/Discord) on newly settled payments without affecting settlement response.
+      if (confirmResult?.success === true && confirmResult?.matched === true && !confirmResult?.is_idempotent_replay) {
+        await this.notifyConfirmedPayment(confirmResult, transaction);
+      }
 
       return {
         status: 200,
@@ -227,6 +234,52 @@ class PaymentService {
     }
 
     return null;
+  }
+
+  /**
+   * Dispatch non-blocking server-side notification after a confirmed bank transfer.
+   * Never reads credentials and never throws to callers.
+   */
+  async notifyConfirmedPayment(confirmResult, transaction) {
+    if (!this.orderNotifier || typeof this.orderNotifier.notifyPaymentConfirmed !== 'function') return;
+    try {
+      let orderRecord = null;
+      if (confirmResult?.order_id) {
+        if (this.pgClient) {
+          const res = await this.pgClient.query(
+            `SELECT ${SAFE_ORDER_SELECT} FROM public.orders WHERE id = $1 LIMIT 1`,
+            [confirmResult.order_id]
+          );
+          orderRecord = res.rows?.[0] || null;
+        } else if (this.supabaseClient) {
+          const { data } = await this.supabaseClient
+            .from('orders')
+            .select(SAFE_ORDER_SELECT)
+            .eq('id', confirmResult.order_id)
+            .maybeSingle();
+          orderRecord = data || null;
+        }
+      }
+
+      const payload = {
+        ...(orderRecord || {}),
+        id: orderRecord?.id || confirmResult.order_id || '',
+        order_code: orderRecord?.order_code || confirmResult.order_code || '',
+        payment_reference: orderRecord?.payment_reference || confirmResult.payment_reference || '',
+        kind: orderRecord?.kind || (confirmResult.is_deposit ? 'deposit' : 'topup'),
+        price: orderRecord?.price || confirmResult.amount || transaction?.amount || 0,
+        paid_amount: orderRecord?.paid_amount || confirmResult.amount || transaction?.amount || 0,
+        payment_status: 'PAID',
+        payment_method: orderRecord?.payment_method || 'bank_transfer'
+      };
+
+      await this.orderNotifier.notifyPaymentConfirmed(payload, {
+        amount: confirmResult.amount || transaction?.amount || 0,
+        provider: transaction?.provider || this.providerName
+      });
+    } catch (_) {
+      // Non-blocking: never fail webhook acknowledgment due to notification errors.
+    }
   }
 }
 

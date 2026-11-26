@@ -379,18 +379,10 @@ function maskString(str) {
     return str.substring(0, 3) + '***' + str.substring(str.length - 1);
 }
 
-const TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE';
-const TELEGRAM_CHAT_ID = 'YOUR_CHAT_ID_HERE';
-
-window.sendTelegramNotification = async function(message) {
-    if(TELEGRAM_BOT_TOKEN === 'YOUR_BOT_TOKEN_HERE') return;
-    try {
-        await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: message })
-        });
-    } catch(e) { console.error("Telegram error:", e); }
+// Telegram notifications are dispatched strictly server-side via /api/notifications/order.
+// Keeping a no-op shim prevents legacy non-RPC branches from throwing while never holding tokens in client JS.
+window.sendTelegramNotification = async function() {
+    return false;
 };
 
 window.logOrderAction = async function(orderId, actionText) {

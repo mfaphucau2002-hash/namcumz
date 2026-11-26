@@ -182,6 +182,23 @@ check('hero banner images are optimized under 350KB each',()=>{
   assert.ok(stat.size < 350 * 1024, `${name} should be under 350KB (got ${stat.size} bytes)`);
  }
 });
+check('frontend never calls Telegram Bot API directly or ships placeholder bot tokens',()=>{
+ for (const file of fs.readdirSync(path.join(root, 'assets/js')).filter(f => f.endsWith('.js'))) {
+  const content = fs.readFileSync(path.join(root, 'assets/js', file), 'utf8');
+  assert.ok(!content.includes('api.telegram.org'), `${file} must not call api.telegram.org directly`);
+  assert.ok(!content.includes('YOUR_BOT_TOKEN_HERE'), `${file} must not contain placeholder Telegram token`);
+ }
+});
+check('admin panel exposes topup credentials viewer, payment recording, CSV export, and tickets tab loader',()=>{
+ const admin=fs.readFileSync(path.join(root,'admin.html'),'utf8');
+ assert.ok(admin.includes("viewAdminCredentials('${esc(order.id)}')"), 'admin table must render Xem TK button');
+ assert.ok(admin.includes("adminRecordPayment('${esc(order.id)}')"), 'admin table must render Thu tien button');
+ assert.ok(admin.includes("kind !== 'deposit'"), 'admin table must not expose manual payment recording on wallet deposit orders');
+ assert.ok(admin.includes('exportAdminOrdersCsv'), 'admin panel must support CSV export');
+ assert.ok(admin.includes("tabId === 'tickets'") && admin.includes('window.loadTicketsTable()'), 'tickets tab must safely call loadTicketsTable');
+ assert.ok(admin.includes('data-respond-ticket="${esc(t.id)}"') && !admin.includes("openRespondModal('${esc(t.id)}', '${esc(t.response"), 'ticket response must never enter inline onclick JS');
+ assert.ok(!admin.includes('Next.js Dashboard'), 'admin panel must not point to outdated Next.js Dashboard text');
+});
 console.log(`${checks} checks passed; browser/staging/DB permissions are NOT covered.`);
 
 

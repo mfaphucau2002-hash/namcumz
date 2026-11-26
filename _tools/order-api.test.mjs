@@ -136,3 +136,53 @@ test('claimDailyCheckin, payByWallet, and cancelPayment call direct RPCs without
  }
 });
 
+test('OrderAPI triggers non-blocking keepalive notification with orderId only and never leaks credentials', async () => {
+ const fetchCalls = [];
+ const context = {
+  window: {},
+  crypto: webcrypto,
+  setTimeout,
+  clearTimeout,
+  fetch: async (url, init) => {
+   fetchCalls.push({ url, init, body: JSON.parse(init.body) });
+   return { ok: true, status: 200 };
+  }
+ };
+ vm.runInNewContext(readFileSync(new URL('../assets/js/order-api.js', import.meta.url), 'utf8'), context);
+ const service = context.window.OrderAPI;
+ const client = {
+  auth: {
+   getSession: async () => ({ data: { session: { access_token: 'jwt-test-token' } } })
+  },
+  rpc: async (name, payload) => {
+   if (name === 'create_topup_order') return { data: { id: 'ord-topup-1' } };
+   if (name === 'create_deposit_order') return { data: { id: 'ord-dep-1', amount: payload.p_amount } };
+   if (name === 'pay_order_by_wallet') return { data: { success: true, order_id: payload.p_order_id } };
+   return { data: { id: 'ord-boost-1' } };
+  }
+ };
+
+ await service.topup(client, 'alice', 'pkg-uuid', 'Asia', 'Hoyoverse', 'player1', 'topsecret_pw', '0987654321', 'note');
+ await service.create(client, 'alice', 'La Hoan', 'Asia');
+ await service.createDeposit(client, 'alice', 50000);
+ await service.payByWallet(client, 'alice', 'ord-topup-1');
+
+ assert.equal(fetchCalls.length, 4);
+ assert.equal(fetchCalls[0].url, '/api/notifications/order');
+ assert.equal(fetchCalls[0].init.keepalive, true);
+ assert.equal(fetchCalls[0].init.headers.Authorization, 'Bearer jwt-test-token');
+ assert.deepEqual(fetchCalls[0].body, { orderId: 'ord-topup-1', event: 'order_created' });
+ assert.deepEqual(fetchCalls[1].body, { orderId: 'ord-boost-1', event: 'order_created' });
+ assert.deepEqual(fetchCalls[2].body, { orderId: 'ord-dep-1', event: 'order_created' });
+ assert.deepEqual(fetchCalls[3].body, { orderId: 'ord-topup-1', event: 'payment_confirmed' });
+
+ for (const call of fetchCalls) {
+  assert.ok(!JSON.stringify(call.body).includes('topsecret_pw'));
+ }
+
+ // Notification failure must never reject order creation
+ context.fetch = async () => { throw new Error('network down'); };
+ const order = await service.create(client, 'alice', 'La Hoan 2', 'Asia');
+ assert.equal(order.id, 'ord-boost-1');
+});
+
