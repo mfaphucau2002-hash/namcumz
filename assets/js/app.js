@@ -97,6 +97,111 @@ async function appendPrivateMessage(msg, orderId, actor) {
     appendMessage({...msg, privateImageUrl:signedUrl, privateAttachmentUnavailable:msg.attachment_path && !signedUrl});
 }
 
+// Guard boosting order notes against accidentally pasted game account passwords or OTP codes.
+const SENSITIVE_CREDENTIAL_WARNING =
+    'Không nhập mật khẩu tài khoản game hoặc mã OTP vào mục tiêu hay ghi chú đơn cày thuê. Vui lòng xóa thông tin đăng nhập khỏi nội dung đơn; shop chỉ trao đổi sau khi xác nhận đơn.';
+
+function isPasswordLikeToken(token, requireMixed) {
+    if (!token || token.length < 6 || token.length > 40) return false;
+    // Require a single printable ASCII token so normal Vietnamese prose does not trigger.
+    if (!/^[\x21-\x7E]+$/.test(token)) return false;
+    // Exclude URLs, email addresses, date strings, and non-password contact/UID labels.
+    if (/^(?:https?:\/\/|www\.)/i.test(token)) return false;
+    if (/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(token)) return false;
+    if (/^\d{1,4}[-/.]\d{1,2}[-/.]\d{1,4}$/.test(token)) return false;
+    if (/^(?:uid|sdt|zalo|fb|facebook|discord|ar|wl|lv)[:=]/i.test(token)) return false;
+    const hasDigitOrSymbol = /[0-9!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~`]/.test(token);
+    if (!hasDigitOrSymbol) return false;
+    if (requireMixed && !/[a-zA-Z]/.test(token)) return false;
+    return true;
+}
+
+function containsSensitiveCredentialText(text) {
+    if (typeof text !== 'string') return false;
+    const normalized = text.normalize('NFC').replace(/\r\n?/g, '\n').trim();
+    if (!normalized) return false;
+
+    // Mask known game pass terms so phrases like "Battle Pass" or "Express Supply Pass" never false-positive.
+    const sanitized = normalized.replace(
+        /(^|[\s,.;:()\[\]{}/|\\'"!?-])(?:battle|express[ \t]+supply|supply|season|gnostic|nameless[ \t]+honor|honor|pioneer|insider|monthly|podcast|vip|welcome|game)[ \t]+pass(?=$|[\s,.;:()\[\]{}/|\\'"!?-])/gi,
+        '$1 '
+    );
+
+    // 1. Explicit credential or OTP labels followed by ":" or "=" and a value.
+    const explicitLabelPattern = /(?:^|[\s,;(\[/|])(?:mk|mật[ \t]*khẩu|mat[ \t]*khau|pass|passwd|password|pw|pwd|otp|mã[ \t]*otp|ma[ \t]*otp)[ \t]*[:=][ \t]*\n?[ \t]*\S+/i;
+    if (explicitLabelPattern.test(sanitized)) return true;
+
+    // 2. Credential or OTP labels separated by whitespace and followed immediately by a password/OTP-like token.
+    const spacedLabelPattern = /(?:^|[\s,;(\[/|])(?:mk|mật[ \t]*khẩu|mat[ \t]*khau|pass|passwd|password|pw|pwd|otp|mã[ \t]*otp|ma[ \t]*otp)(?:[ \t]+(?:là|la))?[ \t]+(\S+)/gi;
+    let spacedMatch;
+    while ((spacedMatch = spacedLabelPattern.exec(sanitized)) !== null) {
+        const candidate = spacedMatch[1].replace(/^[(["'`]+|[)\]"'`,.;!?]+$/g, '');
+        if (isPasswordLikeToken(candidate, false)) return true;
+    }
+
+    // 3. Email paired with a password/OTP cue word or an inline/next-line password-like token.
+    const emailPattern = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
+    if (!emailPattern.test(sanitized)) return false;
+
+    const credentialCuePattern = /(?:^|[\s,.;:()\[\]{}/|\\'"!?-])(?:mk|mật[ \t]*khẩu|mat[ \t]*khau|pass|passwd|password|pw|pwd|otp|mã[ \t]*otp|ma[ \t]*otp)(?=$|[\s,.;:()\[\]{}/|\\'"!?-])/i;
+    if (credentialCuePattern.test(sanitized)) return true;
+
+    const lines = sanitized.split('\n');
+    for (let i = 0; i < lines.length; i++) {
+        const emailMatch = lines[i].match(emailPattern);
+        if (!emailMatch) continue;
+
+        // 3a. Inline password token after email (e.g. "user@gmail.com | abc12345" or "user@gmail.com abc12345").
+        const afterEmail = lines[i].slice(emailMatch.index + emailMatch[0].length);
+        const inlineDelimMatch = afterEmail.match(/^[ \t]*[:|/\\][ \t]*(\S+)/);
+        if (inlineDelimMatch) {
+            const candidate = inlineDelimMatch[1].replace(/^[(["'`]+|[)\]"'`,.;!?]+$/g, '');
+            if (isPasswordLikeToken(candidate, false)) return true;
+        } else {
+            const inlineSpaceMatch = afterEmail.match(/^[ \t]*[-,]?[ \t]+(\S+)/);
+            if (inlineSpaceMatch) {
+                const candidate = inlineSpaceMatch[1].replace(/^[(["'`]+|[)\]"'`,.;!?]+$/g, '');
+                if (isPasswordLikeToken(candidate, true)) return true;
+            }
+        }
+
+        // 3b. Next non-empty line is a standalone non-Vietnamese password-like token (e.g. "user@gmail.com\nabc1234567").
+        for (let j = i + 1; j < lines.length; j++) {
+            const nextLine = lines[j].trim();
+            if (!nextLine) continue;
+            if (!/\s/.test(nextLine) && isPasswordLikeToken(nextLine, false)) return true;
+            break;
+        }
+    }
+
+    return false;
+}
+window.containsSensitiveCredentialText = containsSensitiveCredentialText;
+
+function hasSensitiveOrderCredentials(goal, notes) {
+    if (containsSensitiveCredentialText(goal) || containsSensitiveCredentialText(notes)) return true;
+    if (goal && notes && containsSensitiveCredentialText(goal + '\n' + notes)) return true;
+    return false;
+}
+
+async function warnSensitiveCredentialInput() {
+    if (typeof window.showOrderDialog === 'function') {
+        try {
+            await window.showOrderDialog({
+                variant: 'alert',
+                tone: 'warning',
+                title: 'Không nhập mật khẩu hoặc OTP',
+                message: SENSITIVE_CREDENTIAL_WARNING,
+                confirmText: 'Tôi đã hiểu'
+            });
+            return;
+        } catch (_) {
+            // Fall back to native alert if the modal dialog DOM is unavailable.
+        }
+    }
+    alert(SENSITIVE_CREDENTIAL_WARNING);
+}
+
 // Present consistent, accessible dialogs for order workflow actions.
 window.showOrderDialog = function(options = {}) {
     const config = {
@@ -1989,7 +2094,13 @@ function bindEvents() {
             if (usesOrderRPC()) {
                 if (!createOrderForm.reportValidity()) return;
                 const value = id => document.getElementById(id).value.trim();
-                const content = '[' + value('orderServer') + '] [' + value('orderServiceGroup') + '] ' + value('orderGoal') + '\nDeadline: ' + value('orderDeadline') + '\nGhi chú: ' + value('orderContent');
+                const goal = value('orderGoal');
+                const notes = value('orderContent');
+                if (hasSensitiveOrderCredentials(goal, notes)) {
+                    await warnSensitiveCredentialInput();
+                    return;
+                }
+                const content = '[' + value('orderServer') + '] [' + value('orderServiceGroup') + '] ' + goal + '\nDeadline: ' + value('orderDeadline') + '\nGhi chú: ' + notes;
                 btn.disabled = true;
                 btn.textContent = 'Đang tạo...';
                 try {
@@ -2019,6 +2130,10 @@ function bindEvents() {
             const goal = document.getElementById('orderGoal').value.trim();
             const deadline = document.getElementById('orderDeadline').value;
             const notes = document.getElementById('orderContent').value.trim();
+            if (hasSensitiveOrderCredentials(goal, notes)) {
+                await warnSensitiveCredentialInput();
+                return;
+            }
             
             const content = `[${server}] [${group}] ${goal}\nDeadline: ${deadline}\nGhi chú: ${notes}`;
             

@@ -6,6 +6,10 @@
 
     const endpoint = '/api/ai/chat';
     const ZALO_PHONE = '0763.550.673';
+    const MAX_INPUT_CHARS = 600;
+    const MAX_HISTORY_MESSAGES = 8;
+    const MAX_TOTAL_CHARS = 2000;
+    const MAX_PAYLOAD_BYTES = 3800;
     const messages = [];
     let sending = false;
 
@@ -20,6 +24,11 @@
     const tooltip = document.getElementById('namcumz-support-tooltip');
 
     if (!chat || !toggle || !form || !input || !messageList) return;
+
+    input.maxLength = MAX_INPUT_CHARS;
+    if (typeof input.setAttribute === 'function') {
+        input.setAttribute('maxlength', String(MAX_INPUT_CHARS));
+    }
 
     function buildSmartLocalReply(rawMessage) {
         const q = String(rawMessage || '').trim().toLowerCase();
@@ -148,25 +157,83 @@
         toggle.focus();
     }
 
+    // Compute UTF-8 byte length so client history never exceeds the server's 4096-byte payload cap.
+    function utf8ByteLength(str) {
+        if (typeof TextEncoder === 'function') {
+            return new TextEncoder().encode(str).length;
+        }
+        return str.length * 3;
+    }
+
+    // Build bounded message history matching server limits (<=8 msgs, <=600 chars each, <=2000 total chars).
+    function buildRequestHistory(latestUserText) {
+        const history = [{ role: 'user', text: latestUserText }];
+        let totalChars = latestUserText.length;
+        const prior = messages.slice(-(MAX_HISTORY_MESSAGES - 1));
+        for (let i = prior.length - 1; i >= 0; i -= 1) {
+            const item = prior[i];
+            if (!item || (item.role !== 'user' && item.role !== 'model') || typeof item.text !== 'string') continue;
+            const trimmed = item.text.trim().slice(0, MAX_INPUT_CHARS);
+            if (!trimmed) continue;
+            if (totalChars + trimmed.length > MAX_TOTAL_CHARS) break;
+            history.unshift({ role: item.role, text: trimmed });
+            totalChars += trimmed.length;
+        }
+        while (history.length > 1 && utf8ByteLength(JSON.stringify({ messages: history })) > MAX_PAYLOAD_BYTES) {
+            history.shift();
+        }
+        while (history.length > 1 && history[0]?.role === 'model') {
+            history.shift();
+        }
+        return history;
+    }
+
+    // Attach Supabase Bearer JWT when signed in; never block or fail for guests.
+    async function getOptionalAccessToken() {
+        const client = window.supabaseClient;
+        if (typeof client?.auth?.getSession !== 'function') return '';
+        let timer;
+        try {
+            const sessionRes = await Promise.race([
+                client.auth.getSession(),
+                new Promise(resolve => { timer = setTimeout(() => resolve(null), 500); })
+            ]);
+            const token = sessionRes?.data?.session?.access_token;
+            return typeof token === 'string' ? token.trim() : '';
+        } catch (_err) {
+            return '';
+        } finally {
+            clearTimeout(timer);
+        }
+    }
+
     async function sendMessage(event) {
         event.preventDefault();
-        const text = input.value.trim();
+        const text = String(input.value || '').trim();
         if (!text || sending) return;
+        if (text.length > MAX_INPUT_CHARS) {
+            appendMessage(`Tin nhắn tối đa ${MAX_INPUT_CHARS} ký tự. Vui lòng rút gọn câu hỏi nhé!`, 'assistant', 'is-error');
+            return;
+        }
         sending = true;
         input.value = '';
         input.style.height = '';
         appendMessage(text, 'user');
         const pending = appendMessage('Đang soạn câu trả lời…', 'assistant');
-        sendButton.disabled = true;
+        if (sendButton) sendButton.disabled = true;
         try {
-            const history = [...messages.slice(-5), { role: 'user', text }];
-            if (history[0]?.role === 'model') history.shift();
+            const history = buildRequestHistory(text);
+            const headers = { 'Content-Type': 'application/json' };
+            const accessToken = await getOptionalAccessToken();
+            if (accessToken) {
+                headers.Authorization = 'Bearer ' + accessToken;
+            }
             const response = await fetch(endpoint, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers,
                 body: JSON.stringify({ messages: history })
             });
-            const contentType = response.headers.get('content-type') || '';
+            const contentType = response.headers?.get?.('content-type') || '';
             if (response.ok && contentType.includes('application/json')) {
                 const payload = await response.json().catch(() => ({}));
                 const replyText = payload.text || payload.reply;
@@ -186,7 +253,7 @@
             messages.push({ role: 'user', text }, { role: 'model', text: localReply });
         } finally {
             messageList.scrollTop = messageList.scrollHeight;
-            sendButton.disabled = false;
+            if (sendButton) sendButton.disabled = false;
             sending = false;
             input.focus();
         }
@@ -203,6 +270,9 @@
         }
     });
     input.addEventListener('input', () => {
+        if (input.value.length > MAX_INPUT_CHARS) {
+            input.value = input.value.slice(0, MAX_INPUT_CHARS);
+        }
         input.style.height = 'auto';
         input.style.height = `${Math.min(input.scrollHeight, 100)}px`;
     });

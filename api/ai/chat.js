@@ -1,16 +1,28 @@
 /**
  * Vercel Serverless Function: /api/ai/chat
- * Trợ lý AI Namcumz - Tích hợp Gemini (multi-model 2.5/2.0 Flash) + Smart Knowledge Base Namcumz.
- * Không phụ thuộc module ngoài, hỗ trợ cả { messages: [...] } và { message: "..." },
- * trả về { text, reply, source } để hoạt động 100% ổn định không bao giờ lỗi kết nối.
+ * Trợ lý AI Namcumz - Tích hợp Gemini (multi-model 2.5/2.0 Flash) cho người dùng đã đăng nhập
+ * + Smart Knowledge Base Namcumz ($0, tức thì) cho khách vãng lai & dự phòng.
+ * Bảo vệ anti-abuse: Origin/Referer allowlist, giới hạn payload 4096 bytes (413),
+ * kiểm tra nghiêm đầu vào (400), IP rate limit 8 req/phút (429 + Retry-After),
+ * và giới hạn Gemini 10 req/giờ/user đã xác thực Supabase JWT.
  */
 const crypto = require('node:crypto');
 const { createHmac, timingSafeEqual } = crypto;
+const { createClient } = require('@supabase/supabase-js');
 
 const consentCookie = 'namcumz_ai_adult_consent';
-const requestWindows = new Map();
 const CONSENT_TTL_SECONDS = 30 * 60;
 const RUNTIME_FALLBACK_SECRET = crypto.randomBytes(32).toString('hex');
+
+const MAX_BODY_BYTES = 4096;
+const MAX_MESSAGES = 8;
+const MAX_MESSAGE_CHARS = 600;
+const MAX_TOTAL_CHARS = 2000;
+const IP_RATE_WINDOW_MS = 60_000;
+const IP_RATE_MAX_REQUESTS = 8;
+const USER_GEMINI_WINDOW_MS = 60 * 60 * 1000;
+const USER_GEMINI_MAX_REQUESTS = 10;
+const VERCEL_APP_HOST_RE = /^[a-z0-9-]+(?:\.[a-z0-9-]+)*\.vercel\.app$/;
 
 const SYSTEM_INSTRUCTION = [
     'Bạn là Trợ lý AI Namcumz cho website nạp game & cày thuê chính hãng https://namcumz.com.',
@@ -126,16 +138,106 @@ function buildLocalNamcumzReply(rawMessage) {
     ].join('\n');
 }
 
-function consentSecret() {
-    return process.env.AI_CONSENT_SECRET || process.env.GEMINI_API_KEY || RUNTIME_FALLBACK_SECRET;
+class PayloadTooLargeError extends Error {
+    constructor(message = 'Payload too large') {
+        super(message);
+        this.name = 'PayloadTooLargeError';
+        this.statusCode = 413;
+    }
 }
 
-function consentSignature(timestamp) {
-    return createHmac('sha256', consentSecret()).update(timestamp).digest('hex');
+class InvalidBodyError extends Error {
+    constructor(message = 'Invalid JSON body') {
+        super(message);
+        this.name = 'InvalidBodyError';
+        this.statusCode = 400;
+    }
 }
 
-function hasValidConsent(req) {
-    const entry = String(req.headers?.cookie || '')
+// Read an HTTP header value case-insensitively.
+function getHeader(headers = {}, name) {
+    const target = String(name || '').toLowerCase();
+    for (const [key, value] of Object.entries(headers || {})) {
+        if (key.toLowerCase() === target) {
+            return Array.isArray(value) ? String(value[0] || '') : String(value || '');
+        }
+    }
+    return '';
+}
+
+// Validate Origin or Referer against the strict Namcumz/Vercel/local preview allowlist.
+function isAllowedOrigin(rawValue, { allowPath = false } = {}) {
+    const trimmed = String(rawValue || '').trim();
+    if (!trimmed || trimmed.toLowerCase() === 'null') return false;
+    let parsed;
+    try {
+        parsed = new URL(trimmed);
+    } catch (_err) {
+        return false;
+    }
+    if (!allowPath) {
+        if (
+            parsed.username ||
+            parsed.password ||
+            parsed.search ||
+            parsed.hash ||
+            parsed.pathname !== '/' ||
+            trimmed.endsWith('/')
+        ) {
+            return false;
+        }
+    }
+    const protocol = parsed.protocol.toLowerCase();
+    const hostname = parsed.hostname.toLowerCase();
+    const port = parsed.port;
+
+    if (protocol === 'https:' && port === '') {
+        if (hostname === 'namcumz.io.vn' || hostname === 'www.namcumz.io.vn') {
+            return true;
+        }
+        if (VERCEL_APP_HOST_RE.test(hostname)) {
+            return true;
+        }
+    }
+    if ((protocol === 'http:' || protocol === 'https:') && (hostname === 'localhost' || hostname === '127.0.0.1')) {
+        return true;
+    }
+    return false;
+}
+
+// Reject requests carrying a foreign Origin or foreign Referer header.
+function isOriginAllowed(req) {
+    const origin = getHeader(req.headers, 'origin').trim();
+    const referer = getHeader(req.headers, 'referer').trim();
+    if (origin && !isAllowedOrigin(origin, { allowPath: false })) {
+        return false;
+    }
+    if (referer && !isAllowedOrigin(referer, { allowPath: true })) {
+        return false;
+    }
+    return true;
+}
+
+function getClientIp(req) {
+    const raw =
+        getHeader(req.headers, 'x-vercel-forwarded-for') ||
+        getHeader(req.headers, 'x-real-ip') ||
+        getHeader(req.headers, 'x-forwarded-for') ||
+        req.socket?.remoteAddress ||
+        'unknown';
+    return String(raw).split(',')[0].trim().slice(0, 80) || 'unknown';
+}
+
+function consentSecret(geminiApiKey) {
+    return process.env.AI_CONSENT_SECRET || geminiApiKey || RUNTIME_FALLBACK_SECRET;
+}
+
+function consentSignature(timestamp, geminiApiKey) {
+    return createHmac('sha256', consentSecret(geminiApiKey)).update(timestamp).digest('hex');
+}
+
+function hasValidConsent(req, nowMs, geminiApiKey) {
+    const entry = getHeader(req.headers, 'cookie')
         .split(';')
         .map(part => part.trim())
         .find(part => part.startsWith(`${consentCookie}=`));
@@ -143,56 +245,169 @@ function hasValidConsent(req) {
     const token = entry.slice(consentCookie.length + 1);
     const [timestamp, signature] = token.split('.');
     if (!/^\d{10}$/.test(timestamp || '') || !/^[a-f0-9]{64}$/.test(signature || '')) return false;
-    const ageSeconds = Math.floor(Date.now() / 1000) - Number(timestamp);
+    const ageSeconds = Math.floor(nowMs / 1000) - Number(timestamp);
     if (ageSeconds < 0 || ageSeconds > CONSENT_TTL_SECONDS) return false;
-    const expected = Buffer.from(consentSignature(timestamp));
+    const expected = Buffer.from(consentSignature(timestamp, geminiApiKey));
     const received = Buffer.from(signature);
     return expected.length === received.length && timingSafeEqual(expected, received);
 }
 
-function overLimit(req) {
-    const now = Date.now();
-    const ip = String(req.headers?.['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown')
-        .split(',')[0]
-        .trim()
-        .slice(0, 80);
-    const recent = (requestWindows.get(ip) || []).filter(time => now - time < 60_000);
-    if (recent.length >= 20) return true;
-    recent.push(now);
-    requestWindows.set(ip, recent);
-    if (requestWindows.size > 5000) {
-        for (const [key, times] of requestWindows) {
-            if (!times.some(time => now - time < 60_000)) requestWindows.delete(key);
+// Enforce MAX_BODY_BYTES across Content-Length, rawBody, pre-parsed req.body, and request stream.
+function readJsonBody(req) {
+    const rawContentLength = getHeader(req.headers, 'content-length').trim();
+    if (rawContentLength !== '') {
+        if (!/^\d+$/.test(rawContentLength)) {
+            return Promise.reject(new InvalidBodyError('Invalid Content-Length header'));
+        }
+        if (Number(rawContentLength) > MAX_BODY_BYTES) {
+            return Promise.reject(new PayloadTooLargeError('Content-Length exceeds limit'));
         }
     }
-    return false;
-}
 
-function readJsonBody(req) {
-    if (req.body && typeof req.body === 'object') return Promise.resolve(req.body);
-    if (typeof req.body === 'string') {
-        return Promise.resolve(req.body ? JSON.parse(req.body) : {});
+    if (req.rawBody !== undefined && req.rawBody !== null) {
+        const rawBytes = Buffer.isBuffer(req.rawBody) || req.rawBody instanceof Uint8Array
+            ? req.rawBody.byteLength
+            : Buffer.byteLength(String(req.rawBody), 'utf8');
+        if (rawBytes > MAX_BODY_BYTES) {
+            return Promise.reject(new PayloadTooLargeError('Raw body exceeds limit'));
+        }
     }
+
+    if (req.body !== undefined) {
+        if (Buffer.isBuffer(req.body) || req.body instanceof Uint8Array) {
+            if (req.body.byteLength > MAX_BODY_BYTES) {
+                return Promise.reject(new PayloadTooLargeError('Body buffer exceeds limit'));
+            }
+            const text = Buffer.from(req.body).toString('utf8');
+            try {
+                return Promise.resolve(text ? JSON.parse(text) : {});
+            } catch (_err) {
+                return Promise.reject(new InvalidBodyError());
+            }
+        }
+        if (typeof req.body === 'string') {
+            if (Buffer.byteLength(req.body, 'utf8') > MAX_BODY_BYTES) {
+                return Promise.reject(new PayloadTooLargeError('Body string exceeds limit'));
+            }
+            try {
+                return Promise.resolve(req.body ? JSON.parse(req.body) : {});
+            } catch (_err) {
+                return Promise.reject(new InvalidBodyError());
+            }
+        }
+        if (req.body && typeof req.body === 'object') {
+            let serialized;
+            try {
+                serialized = JSON.stringify(req.body);
+            } catch (_err) {
+                return Promise.reject(new InvalidBodyError());
+            }
+            if (typeof serialized !== 'string') {
+                return Promise.reject(new InvalidBodyError());
+            }
+            if (Buffer.byteLength(serialized, 'utf8') > MAX_BODY_BYTES) {
+                return Promise.reject(new PayloadTooLargeError('Serialized body exceeds limit'));
+            }
+            return Promise.resolve(req.body);
+        }
+        return Promise.reject(new InvalidBodyError());
+    }
+
+    if (typeof req.on !== 'function') {
+        return Promise.resolve({});
+    }
+
     return new Promise((resolve, reject) => {
-        let raw = '';
+        const chunks = [];
+        let totalBytes = 0;
+        let settled = false;
+
         req.on('data', chunk => {
-            raw += chunk;
-            if (raw.length > 32 * 1024) reject(new Error('Payload too large'));
+            if (settled) return;
+            const buf = Buffer.isBuffer(chunk) ? chunk : Buffer.from(String(chunk), 'utf8');
+            totalBytes += buf.length;
+            if (totalBytes > MAX_BODY_BYTES) {
+                settled = true;
+                reject(new PayloadTooLargeError('Streamed payload exceeds limit'));
+                return;
+            }
+            chunks.push(buf);
         });
         req.on('end', () => {
+            if (settled) return;
+            settled = true;
+            const raw = Buffer.concat(chunks).toString('utf8');
             try {
                 resolve(raw ? JSON.parse(raw) : {});
-            } catch (err) {
-                reject(err);
+            } catch (_err) {
+                reject(new InvalidBodyError());
             }
         });
-        req.on('error', reject);
+        req.on('error', err => {
+            if (settled) return;
+            settled = true;
+            reject(err);
+        });
     });
 }
 
-async function tryGeminiModels(apiKey, contents) {
+// Strictly validate chat input without silently truncating oversized arrays or strings.
+function validateChatContents(body) {
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+        return { valid: false, contents: [] };
+    }
+
+    const contents = [];
+
+    if (body.messages !== undefined) {
+        if (!Array.isArray(body.messages) || body.messages.length === 0 || body.messages.length > MAX_MESSAGES) {
+            return { valid: false, contents: [] };
+        }
+        for (const item of body.messages) {
+            if (!item || typeof item !== 'object' || Array.isArray(item)) {
+                return { valid: false, contents: [] };
+            }
+            if (item.role !== 'user' && item.role !== 'model') {
+                return { valid: false, contents: [] };
+            }
+            if (typeof item.text !== 'string') {
+                return { valid: false, contents: [] };
+            }
+            const trimmed = item.text.trim();
+            if (!trimmed || item.text.length > MAX_MESSAGE_CHARS || trimmed.length > MAX_MESSAGE_CHARS) {
+                return { valid: false, contents: [] };
+            }
+            contents.push({ role: item.role, parts: [{ text: trimmed }] });
+        }
+    } else if (body.message !== undefined) {
+        if (typeof body.message !== 'string') {
+            return { valid: false, contents: [] };
+        }
+        const trimmed = body.message.trim();
+        if (!trimmed || body.message.length > MAX_MESSAGE_CHARS || trimmed.length > MAX_MESSAGE_CHARS) {
+            return { valid: false, contents: [] };
+        }
+        contents.push({ role: 'user', parts: [{ text: trimmed }] });
+    } else {
+        return { valid: false, contents: [] };
+    }
+
+    if (!contents.length || contents.at(-1).role !== 'user') {
+        return { valid: false, contents: [] };
+    }
+
+    const totalChars = contents.reduce((sum, item) => sum + item.parts[0].text.length, 0);
+    if (totalChars > MAX_TOTAL_CHARS) {
+        return { valid: false, contents: [] };
+    }
+
+    return { valid: true, contents };
+}
+
+async function tryGeminiModels(apiKey, contents, { fetchImpl, preferredModel }) {
+    if (typeof fetchImpl !== 'function') return null;
     const models = [
-        process.env.GEMINI_MODEL,
+        preferredModel,
         'gemini-2.5-flash',
         'gemini-2.0-flash',
         'gemini-flash-latest'
@@ -204,7 +419,7 @@ async function tryGeminiModels(apiKey, contents) {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 8500);
         try {
-            const response = await fetch(
+            const response = await fetchImpl(
                 `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
                 {
                     method: 'POST',
@@ -220,7 +435,7 @@ async function tryGeminiModels(apiKey, contents) {
                     signal: controller.signal
                 }
             );
-            if (!response.ok) continue;
+            if (!response || !response.ok) continue;
             const payload = await response.json().catch(() => ({}));
             const text = (payload.candidates || [])
                 .flatMap(candidate => candidate.content?.parts || [])
@@ -237,82 +452,173 @@ async function tryGeminiModels(apiKey, contents) {
     return null;
 }
 
-module.exports = async function handler(req, res) {
-    res.setHeader('Cache-Control', 'no-store');
+// Create an isolated /api/ai/chat handler with injectable dependencies for offline testing.
+function createHandler(deps = {}) {
+    const ipRateWindows = deps.ipRateWindows instanceof Map ? deps.ipRateWindows : new Map();
+    const userGeminiWindows = deps.userGeminiWindows instanceof Map ? deps.userGeminiWindows : new Map();
+    const nowFn = typeof deps.now === 'function' ? deps.now : () => Date.now();
+    const fetchImpl = deps.fetch || deps.fetchImpl || globalThis.fetch;
+    const createSupabaseClient =
+        deps.createSupabaseClient ||
+        (deps.supabaseClient ? () => deps.supabaseClient : createClient);
 
-    if (req.method !== 'POST') {
-        res.setHeader('Allow', 'POST');
-        return res.status(405).json({ message: 'Phương thức không được hỗ trợ.' });
+    function checkIpRateLimit(req) {
+        const now = nowFn();
+        const ip = getClientIp(req);
+        const recent = (ipRateWindows.get(ip) || []).filter(time => now - time < IP_RATE_WINDOW_MS);
+        if (recent.length >= IP_RATE_MAX_REQUESTS) {
+            const oldest = recent[0];
+            const retryAfterSeconds = Math.max(1, Math.ceil((IP_RATE_WINDOW_MS - (now - oldest)) / 1000));
+            ipRateWindows.set(ip, recent);
+            return { allowed: false, retryAfterSeconds };
+        }
+        recent.push(now);
+        ipRateWindows.set(ip, recent);
+        if (ipRateWindows.size > 5000) {
+            for (const [key, times] of ipRateWindows) {
+                if (!times.some(time => now - time < IP_RATE_WINDOW_MS)) ipRateWindows.delete(key);
+            }
+        }
+        return { allowed: true, retryAfterSeconds: 0 };
     }
 
-    let body = {};
-    try {
-        body = await readJsonBody(req);
-    } catch (_err) {
-        return res.status(400).json({ message: 'Dữ liệu gửi lên không hợp lệ.' });
+    function consumeUserGeminiQuota(userId) {
+        const now = nowFn();
+        const key = String(userId);
+        const recent = (userGeminiWindows.get(key) || []).filter(time => now - time < USER_GEMINI_WINDOW_MS);
+        if (recent.length >= USER_GEMINI_MAX_REQUESTS) {
+            userGeminiWindows.set(key, recent);
+            return false;
+        }
+        recent.push(now);
+        userGeminiWindows.set(key, recent);
+        if (userGeminiWindows.size > 5000) {
+            for (const [k, times] of userGeminiWindows) {
+                if (!times.some(time => now - time < USER_GEMINI_WINDOW_MS)) userGeminiWindows.delete(k);
+            }
+        }
+        return true;
     }
 
-    if (body.action === 'consent') {
-        const timestamp = String(Math.floor(Date.now() / 1000));
-        const cookieValue = `${timestamp}.${consentSignature(timestamp)}`;
-        res.setHeader(
-            'Set-Cookie',
-            `${consentCookie}=${cookieValue}; Path=/api/ai/chat; Max-Age=${CONSENT_TTL_SECONDS}; HttpOnly; Secure; SameSite=Lax`
-        );
-        return res.status(200).json({ success: true });
-    }
-
-    if (!hasValidConsent(req)) {
-        const timestamp = String(Math.floor(Date.now() / 1000));
-        const cookieValue = `${timestamp}.${consentSignature(timestamp)}`;
-        res.setHeader(
-            'Set-Cookie',
-            `${consentCookie}=${cookieValue}; Path=/api/ai/chat; Max-Age=${CONSENT_TTL_SECONDS}; HttpOnly; Secure; SameSite=Lax`
-        );
-    }
-
-    if (overLimit(req)) {
-        return res.status(429).json({ message: 'Bạn gửi hơi nhanh. Vui lòng đợi ít giây rồi thử lại.' });
-    }
-
-    let contents = [];
-    if (Array.isArray(body.messages)) {
-        contents = body.messages
-            .slice(-8)
-            .filter(m => m && ['user', 'model'].includes(m.role) && typeof m.text === 'string')
-            .map(m => ({ role: m.role, parts: [{ text: m.text.trim().slice(0, 600) }] }))
-            .filter(m => m.parts[0].text);
-    } else if (typeof body.message === 'string' && body.message.trim()) {
-        contents = [{ role: 'user', parts: [{ text: body.message.trim().slice(0, 600) }] }];
-    }
-
-    if (
-        !contents.length ||
-        contents.at(-1).role !== 'user' ||
-        contents.reduce((size, item) => size + item.parts[0].text.length, 0) > 4000
-    ) {
-        return res.status(400).json({ message: 'Nội dung chat không hợp lệ hoặc quá dài.' });
-    }
-
-    const latestUserQuestion = contents.at(-1).parts[0].text;
-    const apiKey = process.env.GEMINI_API_KEY;
-
-    if (apiKey) {
-        const geminiResult = await tryGeminiModels(apiKey, contents);
-        if (geminiResult && geminiResult.text) {
-            return res.status(200).json({
-                text: geminiResult.text,
-                reply: geminiResult.text,
-                source: geminiResult.model
+    async function verifySupabaseUser(token, supabaseUrl, supabaseAnonKey) {
+        if (!token || !supabaseUrl || !supabaseAnonKey || typeof createSupabaseClient !== 'function') {
+            return null;
+        }
+        try {
+            const supabase = createSupabaseClient(supabaseUrl, supabaseAnonKey, {
+                global: { headers: { Authorization: `Bearer ${token}` } },
+                auth: { persistSession: false, autoRefreshToken: false }
             });
+            if (typeof supabase?.auth?.getUser !== 'function') return null;
+            const { data, error } = await supabase.auth.getUser(token);
+            if (error || !data?.user?.id) return null;
+            return data.user;
+        } catch (_err) {
+            return null;
         }
     }
 
-    // Luôn có câu trả lời chuẩn xác từ Smart Knowledge Base của Namcumz (không bao giờ lỗi 502/503)
-    const fallbackText = buildLocalNamcumzReply(latestUserQuestion);
-    return res.status(200).json({
-        text: fallbackText,
-        reply: fallbackText,
-        source: 'namcumz-smart-kb'
-    });
-};
+    return async function handler(req, res) {
+        res.setHeader('Cache-Control', 'no-store');
+        res.setHeader('Vary', 'Origin');
+
+        if (req.method !== 'POST') {
+            res.setHeader('Allow', 'POST');
+            return res.status(405).json({ message: 'Phương thức không được hỗ trợ.' });
+        }
+
+        if (!isOriginAllowed(req)) {
+            return res.status(403).json({ message: 'Nguồn yêu cầu không được phép.' });
+        }
+
+        let body = {};
+        try {
+            body = await readJsonBody(req);
+        } catch (err) {
+            if (err && (err instanceof PayloadTooLargeError || err.statusCode === 413)) {
+                return res.status(413).json({ message: 'Dữ liệu gửi lên vượt quá giới hạn 4096 bytes.' });
+            }
+            return res.status(400).json({ message: 'Dữ liệu gửi lên không hợp lệ.' });
+        }
+
+        const rateCheck = checkIpRateLimit(req);
+        if (!rateCheck.allowed) {
+            res.setHeader('Retry-After', String(rateCheck.retryAfterSeconds));
+            return res.status(429).json({
+                message: 'Bạn gửi hơi nhanh. Vui lòng đợi ít giây rồi thử lại.',
+                retryAfter: rateCheck.retryAfterSeconds
+            });
+        }
+
+        const apiKey = 'geminiApiKey' in deps ? deps.geminiApiKey : process.env.GEMINI_API_KEY;
+        const preferredModel = 'geminiModel' in deps ? deps.geminiModel : process.env.GEMINI_MODEL;
+        const supabaseUrl = 'supabaseUrl' in deps
+            ? deps.supabaseUrl
+            : (process.env.SUPABASE_URL || process.env.NAMCUMZ_STAGING_URL);
+        const supabaseAnonKey = 'supabaseAnonKey' in deps
+            ? deps.supabaseAnonKey
+            : (process.env.SUPABASE_ANON_KEY || process.env.NAMCUMZ_STAGING_KEY);
+
+        const nowMs = nowFn();
+
+        if (body && typeof body === 'object' && !Array.isArray(body) && body.action === 'consent') {
+            const timestamp = String(Math.floor(nowMs / 1000));
+            const cookieValue = `${timestamp}.${consentSignature(timestamp, apiKey)}`;
+            res.setHeader(
+                'Set-Cookie',
+                `${consentCookie}=${cookieValue}; Path=/api/ai/chat; Max-Age=${CONSENT_TTL_SECONDS}; HttpOnly; Secure; SameSite=Lax`
+            );
+            return res.status(200).json({ success: true });
+        }
+
+        if (!hasValidConsent(req, nowMs, apiKey)) {
+            const timestamp = String(Math.floor(nowMs / 1000));
+            const cookieValue = `${timestamp}.${consentSignature(timestamp, apiKey)}`;
+            res.setHeader(
+                'Set-Cookie',
+                `${consentCookie}=${cookieValue}; Path=/api/ai/chat; Max-Age=${CONSENT_TTL_SECONDS}; HttpOnly; Secure; SameSite=Lax`
+            );
+        }
+
+        const validation = validateChatContents(body);
+        if (!validation.valid) {
+            return res.status(400).json({ message: 'Nội dung chat không hợp lệ hoặc vượt quá giới hạn cho phép.' });
+        }
+
+        const { contents } = validation;
+        const latestUserQuestion = contents.at(-1).parts[0].text;
+
+        // Option 3A ($0 guest safety): only verified Supabase users can invoke Gemini within 10 req/hr/user.
+        const authHeader = getHeader(req.headers, 'authorization').trim();
+        const bearerMatch = authHeader.match(/^Bearer\s+(.+)$/i);
+        const token = bearerMatch ? bearerMatch[1].trim() : '';
+
+        if (token && apiKey && supabaseUrl && supabaseAnonKey) {
+            const user = await verifySupabaseUser(token, supabaseUrl, supabaseAnonKey);
+            if (user && consumeUserGeminiQuota(user.id)) {
+                const geminiResult = await tryGeminiModels(apiKey, contents, { fetchImpl, preferredModel });
+                if (geminiResult && geminiResult.text) {
+                    return res.status(200).json({
+                        text: geminiResult.text,
+                        reply: geminiResult.text,
+                        source: geminiResult.model
+                    });
+                }
+            }
+        }
+
+        // Luôn có câu trả lời chuẩn xác từ Smart Knowledge Base của Namcumz ($0, không bao giờ lỗi 502/503)
+        const fallbackText = buildLocalNamcumzReply(latestUserQuestion);
+        return res.status(200).json({
+            text: fallbackText,
+            reply: fallbackText,
+            source: 'namcumz-smart-kb'
+        });
+    };
+}
+
+const defaultHandler = createHandler();
+defaultHandler.createHandler = createHandler;
+defaultHandler.buildLocalNamcumzReply = buildLocalNamcumzReply;
+
+module.exports = defaultHandler;
